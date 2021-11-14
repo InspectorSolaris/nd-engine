@@ -1,0 +1,26 @@
+set(LIBS_NAME nd-src-libs)
+
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+find_package(Vulkan REQUIRED)
+find_package(GLFW REQUIRED)
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
+
+add_library(${LIBS_NAME}-vulkan INTERFACE)
+add_library(${LIBS_NAME}-vulkan-headers INTERFACE)
+add_library(${LIBS_NAME}-glfw INTERFACE)
+add_library(${LIBS_NAME}-glfw-headers INTERFACE)
+add_library(${LIBS_NAME}-fmt INTERFACE)
+add_library(${LIBS_NAME}-fmt-headers INTERFACE)
+add_library(${LIBS_NAME}-spdlog INTERFACE)
+add_library(${LIBS_NAME}-spdlog-headers INTERFACE)
+
+target_link_libraries(${LIBS_NAME}-vulkan INTERFACE Vulkan::Vulkan)
+target_link_libraries(${LIBS_NAME}-vulkan-headers INTERFACE Vulkan::Headers)
+target_link_libraries(${LIBS_NAME}-glfw INTERFACE GLFW::GLFW)
+target_link_libraries(${LIBS_NAME}-glfw-headers INTERFACE GLFW::Headers)
+target_link_libraries(${LIBS_NAME}-fmt INTERFACE fmt::fmt)
+target_link_libraries(${LIBS_NAME}-fmt-headers INTERFACE fmt::fmt-header-only)
+target_link_libraries(${LIBS_NAME}-spdlog INTERFACE spdlog::spdlog)
+target_link_libraries(${LIBS_NAME}-spdlog-headers INTERFACE spdlog::spdlog_header_only)
