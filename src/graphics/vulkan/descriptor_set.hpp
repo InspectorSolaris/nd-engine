@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using AllocateInfo = VkDescriptorSetAllocateInfo;
 
         DescriptorSet() noexcept;
-        DescriptorSet(const VkDevice device, const VkDescriptorPool descriptorPool, const AllocateInfo &allocateInfo);
+        DescriptorSet(const VkDevice device, const VkDescriptorPool descriptorPool, const AllocateInfo& allocateInfo);
 
-        DescriptorSet(const DescriptorSet &descriptorSet) = delete;
-        DescriptorSet(DescriptorSet &&descriptorSet) noexcept;
+        DescriptorSet(const DescriptorSet& descriptorSet) = delete;
+        DescriptorSet(DescriptorSet&& descriptorSet) noexcept;
 
-        DescriptorSet &
-        operator=(const DescriptorSet &descriptorSet) = delete;
-        DescriptorSet &
-        operator=(DescriptorSet &&descriptorSet) noexcept;
+        DescriptorSet&
+        operator=(const DescriptorSet& descriptorSet) = delete;
+        DescriptorSet&
+        operator=(DescriptorSet&& descriptorSet) noexcept;
 
         ~DescriptorSet();
 
@@ -40,5 +40,5 @@ namespace nd::src::graphics::vulkan
     DescriptorSet::AllocateInfo
     getDescriptorSetAllocateInfo(const VkDescriptorPool       descriptorPool,
                                  const uint32_t               setLayoutsCount,
-                                 const VkDescriptorSetLayout *setLayouts) noexcept;
-}    // namespace nd::src::graphics::vulkan
+                                 const VkDescriptorSetLayout* setLayouts) noexcept;
+} // namespace nd::src::graphics::vulkan

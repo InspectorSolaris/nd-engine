@@ -4,21 +4,21 @@
 
 namespace nd::src::graphics::glfw
 {
-    using GlfwWindow = GLFWwindow *;
+    using GlfwWindow = GLFWwindow*;
 
     class Window final
     {
     public:
         Window() noexcept;
-        Window(int width, int height, const char *title) noexcept;
+        Window(int width, int height, const char* title) noexcept;
 
-        Window(const Window &window) = delete;
-        Window(Window &&window) noexcept;
+        Window(const Window& window) = delete;
+        Window(Window&& window) noexcept;
 
-        Window &
-        operator=(const Window &window) = delete;
-        Window &
-        operator=(Window &&window) noexcept;
+        Window&
+        operator=(const Window& window) = delete;
+        Window&
+        operator=(Window&& window) noexcept;
 
         ~Window();
 
@@ -58,4 +58,4 @@ namespace nd::src::graphics::glfw
     {
         return height_;
     }
-}    // namespace nd::src::graphics::glfw
+} // namespace nd::src::graphics::glfw

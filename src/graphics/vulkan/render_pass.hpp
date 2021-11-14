@@ -27,15 +27,15 @@ namespace nd::src::graphics::vulkan
         };
 
         RenderPass() noexcept;
-        RenderPass(const VkDevice device, const CreateInfo &createInfo);
+        RenderPass(const VkDevice device, const CreateInfo& createInfo);
 
-        RenderPass(const RenderPass &renderPass) = delete;
-        RenderPass(RenderPass &&renderPass) noexcept;
+        RenderPass(const RenderPass& renderPass) = delete;
+        RenderPass(RenderPass&& renderPass) noexcept;
 
-        RenderPass &
-        operator=(const RenderPass &renderPass) = delete;
-        RenderPass &
-        operator=(RenderPass &&renderPass) noexcept;
+        RenderPass&
+        operator=(const RenderPass& renderPass) = delete;
+        RenderPass&
+        operator=(RenderPass&& renderPass) noexcept;
 
         ~RenderPass();
 
@@ -71,11 +71,11 @@ namespace nd::src::graphics::vulkan
                          const uint32_t               inputAttachmentsCount,
                          const uint32_t               colorAttachmentsCount,
                          const uint32_t               preserveAttachmentsCount,
-                         const VkAttachmentReference *inputAttachments,
-                         const VkAttachmentReference *colorAttachments,
-                         const VkAttachmentReference *resolveAttachments,
-                         const VkAttachmentReference *depthStencilAttachments,
-                         const uint32_t *             preserveAttachments) noexcept;
+                         const VkAttachmentReference* inputAttachments,
+                         const VkAttachmentReference* colorAttachments,
+                         const VkAttachmentReference* resolveAttachments,
+                         const VkAttachmentReference* depthStencilAttachments,
+                         const uint32_t*              preserveAttachments) noexcept;
 
     RenderPass::Dependency
     getRenderPassDependency(const uint32_t             srcSubpass,
@@ -90,10 +90,10 @@ namespace nd::src::graphics::vulkan
     getRenderPassCreateInfo(const uint32_t                 attachmentsCount,
                             const uint32_t                 subpassesCount,
                             const uint32_t                 dependenciesCount,
-                            const VkAttachmentDescription *attachments,
-                            const VkSubpassDescription *   subpasses,
-                            const VkSubpassDependency *    dependencies) noexcept;
+                            const VkAttachmentDescription* attachments,
+                            const VkSubpassDescription*    subpasses,
+                            const VkSubpassDependency*     dependencies) noexcept;
 
     RenderPass
-    getRenderPass(const RenderPass::Configuration &configuration, const VkDevice device);
-}    // namespace nd::src::graphics::vulkan
+    getRenderPass(const RenderPass::Configuration& configuration, const VkDevice device);
+} // namespace nd::src::graphics::vulkan

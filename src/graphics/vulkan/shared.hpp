@@ -11,8 +11,8 @@ namespace nd::src::graphics::vulkan
     getNextBit(const uint32_t bits) noexcept;
 
     std::vector<std::string>
-    getMerged(const std::vector<std::string> &data1, const std::vector<std::string> &data2) noexcept;
+    getMerged(const std::vector<std::string>& data1, const std::vector<std::string>& data2) noexcept;
 
-    std::vector<const char *>
-    getCStrings(const std::vector<std::string> &data) noexcept;
-}    // namespace nd::src::graphics::vulkan
+    std::vector<const char*>
+    getCStrings(const std::vector<std::string>& data) noexcept;
+} // namespace nd::src::graphics::vulkan

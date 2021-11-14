@@ -16,4 +16,4 @@ namespace nd::src::tools
 
         return std::runtime_error("");
     }
-}    // namespace nd::src::tools
+} // namespace nd::src::tools

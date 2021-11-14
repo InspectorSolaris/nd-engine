@@ -17,13 +17,13 @@ namespace nd::src::graphics::vulkan
         Surface() noexcept;
         Surface(const VkInstance instance, const VkSurfaceKHR surface) noexcept;
 
-        Surface(const Surface &surface) = delete;
-        Surface(Surface &&surface) noexcept;
+        Surface(const Surface& surface) = delete;
+        Surface(Surface&& surface) noexcept;
 
-        Surface &
-        operator=(const Surface &surface) = delete;
-        Surface &
-        operator=(Surface &&surface) noexcept;
+        Surface&
+        operator=(const Surface& surface) = delete;
+        Surface&
+        operator=(Surface&& surface) noexcept;
 
         ~Surface();
 
@@ -52,4 +52,4 @@ namespace nd::src::graphics::vulkan
 
     Surface
     getSurface(const VkInstance instance, const VkSurfaceKHR surface) noexcept;
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

@@ -8,28 +8,29 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    BufferView::BufferView(const VkDevice device, const CreateInfo &createInfo) : device_(device)
+    BufferView::BufferView(const VkDevice device, const CreateInfo& createInfo)
+        : device_(device)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreateBufferView(device_, &createInfo, nullptr, &bufferView_) == VK_SUCCESS);
     }
 
-    BufferView::BufferView(BufferView &&bufferView) noexcept :
-        device_(std::move(bufferView.device_)),
-        bufferView_(std::move(bufferView.bufferView_))
+    BufferView::BufferView(BufferView&& bufferView) noexcept
+        : device_(std::move(bufferView.device_))
+        , bufferView_(std::move(bufferView.bufferView_))
     {
         ND_SET_SCOPE_LOW();
 
         bufferView.bufferView_ = VK_NULL_HANDLE;
     }
 
-    BufferView &
-    BufferView::operator=(BufferView &&bufferView) noexcept
+    BufferView&
+    BufferView::operator=(BufferView&& bufferView) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&bufferView == this)
+        if(&bufferView == this)
         {
             return *this;
         }
@@ -58,13 +59,13 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO,    // sType;
-            nullptr,                                      // pNext;
-            0,                                            // flags;
-            buffer,                                       // buffer;
-            format,                                       // format;
-            offset,                                       // offset;
-            range                                         // range;
+            VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO, // sType;
+            nullptr,                                   // pNext;
+            0,                                         // flags;
+            buffer,                                    // buffer;
+            format,                                    // format;
+            offset,                                    // offset;
+            range                                      // range;
         };
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

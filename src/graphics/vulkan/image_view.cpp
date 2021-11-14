@@ -8,28 +8,29 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    ImageView::ImageView(const VkDevice device, const CreateInfo &createInfo) : device_(device)
+    ImageView::ImageView(const VkDevice device, const CreateInfo& createInfo)
+        : device_(device)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreateImageView(device_, &createInfo, nullptr, &imageView_) == VK_SUCCESS);
     }
 
-    ImageView::ImageView(ImageView &&imageView) noexcept :
-        device_(std::move(imageView.device_)),
-        imageView_(std::move(imageView.imageView_))
+    ImageView::ImageView(ImageView&& imageView) noexcept
+        : device_(std::move(imageView.device_))
+        , imageView_(std::move(imageView.imageView_))
     {
         ND_SET_SCOPE_LOW();
 
         imageView.imageView_ = VK_NULL_HANDLE;
     }
 
-    ImageView &
-    ImageView::operator=(ImageView &&imageView) noexcept
+    ImageView&
+    ImageView::operator=(ImageView&& imageView) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&imageView == this)
+        if(&imageView == this)
         {
             return *this;
         }
@@ -53,25 +54,25 @@ namespace nd::src::graphics::vulkan
     getImageViewCreateInfo(const VkImage                  image,
                            const VkImageViewType          viewType,
                            const VkFormat                 format,
-                           const VkComponentMapping &     components,
-                           const VkImageSubresourceRange &subresourceRange) noexcept
+                           const VkComponentMapping&      components,
+                           const VkImageSubresourceRange& subresourceRange) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,    // sType;
-            nullptr,                                     // pNext;
-            0,                                           // flags;
-            image,                                       // image;
-            viewType,                                    // viewType;
-            format,                                      // format;
-            components,                                  // components;
-            subresourceRange                             // subresourceRange;
+            VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO, // sType;
+            nullptr,                                  // pNext;
+            0,                                        // flags;
+            image,                                    // image;
+            viewType,                                 // viewType;
+            format,                                   // format;
+            components,                               // components;
+            subresourceRange                          // subresourceRange;
         };
     }
 
     ImageView
-    getImageView(const ImageView::Configuration &configuration, const VkDevice device, const VkImage image)
+    getImageView(const ImageView::Configuration& configuration, const VkDevice device, const VkImage image)
     {
         ND_SET_SCOPE_LOW();
 
@@ -83,4 +84,4 @@ namespace nd::src::graphics::vulkan
 
         return ImageView(device, createInfo);
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

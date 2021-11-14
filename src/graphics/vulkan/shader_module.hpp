@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using CreateInfo = VkShaderModuleCreateInfo;
 
         ShaderModule() noexcept;
-        ShaderModule(const VkDevice device, const CreateInfo &createInfo);
+        ShaderModule(const VkDevice device, const CreateInfo& createInfo);
 
-        ShaderModule(const ShaderModule &shaderModule) = delete;
-        ShaderModule(ShaderModule &&shaderModule) noexcept;
+        ShaderModule(const ShaderModule& shaderModule) = delete;
+        ShaderModule(ShaderModule&& shaderModule) noexcept;
 
-        ShaderModule &
-        operator=(const ShaderModule &shaderModule) = delete;
-        ShaderModule &
-        operator=(ShaderModule &&shaderModule) noexcept;
+        ShaderModule&
+        operator=(const ShaderModule& shaderModule) = delete;
+        ShaderModule&
+        operator=(ShaderModule&& shaderModule) noexcept;
 
         ~ShaderModule();
 
@@ -37,5 +37,5 @@ namespace nd::src::graphics::vulkan
     }
 
     ShaderModule::CreateInfo
-    getShaderModuleCreateInfo(const size_t codeSize, const uint32_t *code) noexcept;
-}    // namespace nd::src::graphics::vulkan
+    getShaderModuleCreateInfo(const size_t codeSize, const uint32_t* code) noexcept;
+} // namespace nd::src::graphics::vulkan

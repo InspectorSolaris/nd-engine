@@ -9,32 +9,32 @@ namespace nd::src::graphics::vulkan
     }
 
     Device::Device(const VkPhysicalDevice physicalDevice,
-                   const QueueFamilies &  queueFamilies,
-                   const CreateInfo &     createInfo) :
-        physicalDevice_(physicalDevice),
-        queueFamilies_(queueFamilies)
+                   const QueueFamilies&   queueFamilies,
+                   const CreateInfo&      createInfo)
+        : physicalDevice_(physicalDevice)
+        , queueFamilies_(queueFamilies)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device_) == VK_SUCCESS);
     }
 
-    Device::Device(Device &&device) noexcept :
-        physicalDevice_(std::move(device.physicalDevice_)),
-        device_(std::move(device.device_)),
-        queueFamilies_(std::move(device.queueFamilies_))
+    Device::Device(Device&& device) noexcept
+        : physicalDevice_(std::move(device.physicalDevice_))
+        , device_(std::move(device.device_))
+        , queueFamilies_(std::move(device.queueFamilies_))
     {
         ND_SET_SCOPE_LOW();
 
         device.queueFamilies_ = QueueFamilies {};
     }
 
-    Device &
-    Device::operator=(Device &&device) noexcept
+    Device&
+    Device::operator=(Device&& device) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&device == this)
+        if(&device == this)
         {
             return *this;
         }
@@ -58,40 +58,40 @@ namespace nd::src::graphics::vulkan
     Device::QueueCreateInfo
     getQueueCreateInfo(const uint32_t queueFamilyIndex,
                        const uint32_t queueCount,
-                       const float *  queuePriorities) noexcept
+                       const float*   queuePriorities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,    // sType;
-            nullptr,                                       // pNext;
-            0,                                             // flags;
-            queueFamilyIndex,                              // queueFamilyIndex;
-            queueCount,                                    // queueCount;
-            queuePriorities                                // pQueuePriorities;
+            VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, // sType;
+            nullptr,                                    // pNext;
+            0,                                          // flags;
+            queueFamilyIndex,                           // queueFamilyIndex;
+            queueCount,                                 // queueCount;
+            queuePriorities                             // pQueuePriorities;
         };
     }
 
     Device::CreateInfo
     getDeviceCreateInfo(const uint32_t                  queueCreateInfosCount,
                         const uint32_t                  enabledExtensionsCount,
-                        const VkDeviceQueueCreateInfo * queueCreateInfos,
-                        const char *const *             enabledExtensions,
-                        const VkPhysicalDeviceFeatures *enabledFeatures) noexcept
+                        const VkDeviceQueueCreateInfo*  queueCreateInfos,
+                        const char* const*              enabledExtensions,
+                        const VkPhysicalDeviceFeatures* enabledFeatures) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,    // sType;
-            nullptr,                                 // pNext;
-            0,                                       // flags;
-            queueCreateInfosCount,                   // queueCreateInfoCount;
-            queueCreateInfos,                        // pQueueCreateInfos;
-            0ULL,                                    // enabledLayerCount;
-            nullptr,                                 // ppEnabledLayerNames;
-            enabledExtensionsCount,                  // enabledExtensionCount;
-            enabledExtensions,                       // ppEnabledExtensionNames;
-            enabledFeatures                          // pEnabledFeatures;
+            VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, // sType;
+            nullptr,                              // pNext;
+            0,                                    // flags;
+            queueCreateInfosCount,                // queueCreateInfoCount;
+            queueCreateInfos,                     // pQueueCreateInfos;
+            0ULL,                                 // enabledLayerCount;
+            nullptr,                              // ppEnabledLayerNames;
+            enabledExtensionsCount,               // enabledExtensionCount;
+            enabledExtensions,                    // ppEnabledExtensionNames;
+            enabledFeatures                       // pEnabledFeatures;
         };
     }
 
@@ -120,11 +120,11 @@ namespace nd::src::graphics::vulkan
 
         auto queueFamilies = Device::QueueFamilies {};
 
-        for (size_t i = 0; i < queueFamiliesRaw.size(); ++i)
+        for(size_t i = 0; i < queueFamiliesRaw.size(); ++i)
         {
             const auto queueFamilyRaw = queueFamiliesRaw[i];
 
-            if (queueFamilyRaw.queueFlags & queueFlags)
+            if(queueFamilyRaw.queueFlags & queueFlags)
             {
                 queueFamilies.push_back(Device::QueueFamily {static_cast<uint32_t>(i),
                                                              queueFamilyRaw.queueCount,
@@ -137,7 +137,7 @@ namespace nd::src::graphics::vulkan
 
     bool
     isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice            physicalDevice,
-                                        const PhysicalDevice::Extensions &extensions) noexcept
+                                        const PhysicalDevice::Extensions& extensions) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -149,12 +149,14 @@ namespace nd::src::graphics::vulkan
 
         vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, extensionsProperties.data());
 
-        for (const auto &extension : extensions)
+        for(const auto& extension: extensions)
         {
-            if (std::none_of(extensionsProperties.begin(),
-                             extensionsProperties.end(),
-                             [&extension](const auto &extensionProperties)
-                             { return std::strcmp(extension.c_str(), extensionProperties.extensionName) == 0; }))
+            if(std::none_of(extensionsProperties.begin(),
+                            extensionsProperties.end(),
+                            [&extension](const auto& extensionProperties)
+                            {
+                                return std::strcmp(extension.c_str(), extensionProperties.extensionName) == 0;
+                            }))
             {
                 return false;
             }
@@ -164,8 +166,8 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures *available,
-                                      const VkPhysicalDeviceFeatures *required) noexcept
+    isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available,
+                                      const VkPhysicalDeviceFeatures* required) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -174,12 +176,12 @@ namespace nd::src::graphics::vulkan
         const auto step = sizeof(VkBool32);
         const auto size = sizeof(VkPhysicalDeviceFeatures);
 
-        while (shift * step < size)
+        while(shift * step < size)
         {
-            const auto availableValue = reinterpret_cast<const VkBool32 *>(available) + shift;
-            const auto requiredValue  = reinterpret_cast<const VkBool32 *>(required) + shift;
+            const auto availableValue = reinterpret_cast<const VkBool32*>(available) + shift;
+            const auto requiredValue  = reinterpret_cast<const VkBool32*>(required) + shift;
 
-            if (*requiredValue && !*availableValue)
+            if(*requiredValue && !*availableValue)
             {
                 return false;
             }
@@ -200,14 +202,16 @@ namespace nd::src::graphics::vulkan
 
         const auto queueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice);
 
-        while (queueFlagsLeft)
+        while(queueFlagsLeft)
         {
             const auto queueFlag = static_cast<VkQueueFlagBits>(getNextBit(queueFlagsLeft));
 
-            if (std::any_of(queueFamilies.begin(),
-                            queueFamilies.end(),
-                            [queueFlag](const auto &queueFamily)
-                            { return isSubmask(queueFamily.queueFlags, queueFlag); }))
+            if(std::any_of(queueFamilies.begin(),
+                           queueFamilies.end(),
+                           [queueFlag](const auto& queueFamily)
+                           {
+                               return isSubmask(queueFamily.queueFlags, queueFlag);
+                           }))
             {
                 queueFlagsSupported |= queueFlag;
             }
@@ -223,7 +227,7 @@ namespace nd::src::graphics::vulkan
     }
 
     PhysicalDevice
-    getPhysicalDevice(const Device::Configuration &configuration, const VkInstance instance)
+    getPhysicalDevice(const Device::Configuration& configuration, const VkInstance instance)
     {
         ND_SET_SCOPE_LOW();
 
@@ -238,7 +242,7 @@ namespace nd::src::graphics::vulkan
         auto physicalDeviceMax         = std::optional<PhysicalDevice> {};
         auto physicalDevicePriorityMax = std::optional<size_t> {};
 
-        for (const auto &physicalDevice : physicalDevices)
+        for(const auto& physicalDevice: physicalDevices)
         {
             auto properties = VkPhysicalDeviceProperties {};
             auto features   = VkPhysicalDeviceFeatures {};
@@ -248,10 +252,10 @@ namespace nd::src::graphics::vulkan
 
             auto priority = configuration.physicalDevicePriority({physicalDevice, properties, features});
 
-            if (isPhysicalDeviceExtensionsSupported(physicalDevice, configuration.extensions) &&
-                isPhysicalDeviceFeaturesSupported(&features, &configuration.features) &&
-                isPhysicalDeviceQueuesSupported(physicalDevice, configuration.queueFlags) &&
-                (!physicalDevicePriorityMax.has_value() || physicalDevicePriorityMax < priority))
+            if(isPhysicalDeviceExtensionsSupported(physicalDevice, configuration.extensions) &&
+               isPhysicalDeviceFeaturesSupported(&features, &configuration.features) &&
+               isPhysicalDeviceQueuesSupported(physicalDevice, configuration.queueFlags) &&
+               (!physicalDevicePriorityMax.has_value() || physicalDevicePriorityMax < priority))
             {
                 physicalDeviceMax         = {physicalDevice, properties, features};
                 physicalDevicePriorityMax = priority;
@@ -264,7 +268,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Device
-    getDevice(const Device::Configuration &configuration, const VkInstance instance)
+    getDevice(const Device::Configuration& configuration, const VkInstance instance)
     {
         ND_SET_SCOPE_LOW();
 
@@ -276,9 +280,9 @@ namespace nd::src::graphics::vulkan
         auto queuePriorities  = std::vector<std::vector<float>> {};
         auto queueCreateInfos = std::vector<VkDeviceQueueCreateInfo> {};
 
-        for (const auto &queueFamily : queueFamilies)
+        for(const auto& queueFamily: queueFamilies)
         {
-            if (queueFamily.queueFlags & configuration.queueFlags)
+            if(queueFamily.queueFlags & configuration.queueFlags)
             {
                 queuePriorities.emplace_back(queueFamily.queueCount, 1.0f);
                 queueCreateInfos.push_back(
@@ -294,4 +298,4 @@ namespace nd::src::graphics::vulkan
 
         return Device(physicalDevice.handle, queueFamilies, createInfo);
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

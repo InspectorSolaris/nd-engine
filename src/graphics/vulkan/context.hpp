@@ -37,17 +37,17 @@ namespace nd::src::graphics::vulkan
             const uint32_t height;
         };
 
-        Context(const Configuration &configuration);
+        Context(const Configuration& configuration);
 
-        Context(const Context &vulkanContext) = delete;
-        Context(Context &&vulkanContext)      = delete;
+        Context(const Context& vulkanContext) = delete;
+        Context(Context&& vulkanContext)      = delete;
 
         ~Context();
 
-        Context &
-        operator=(const Context &vulkanContext) = delete;
-        Context &
-        operator=(Context &&vulkanContext) = delete;
+        Context&
+        operator=(const Context& vulkanContext) = delete;
+        Context&
+        operator=(Context&& vulkanContext) = delete;
 
     private:
         Instance                instance_ {};
@@ -59,4 +59,4 @@ namespace nd::src::graphics::vulkan
         Swapchain::ImageViews   swapchainImageViews_ {};
         Swapchain::Framebuffers swapchainFramebuffers_ {};
     };
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

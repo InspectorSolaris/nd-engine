@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using CreateInfo = VkImageCreateInfo;
 
         Image() noexcept;
-        Image(const VkDevice device, const CreateInfo &createInfo);
+        Image(const VkDevice device, const CreateInfo& createInfo);
 
-        Image(const Image &image) = delete;
-        Image(Image &&image) noexcept;
+        Image(const Image& image) = delete;
+        Image(Image&& image) noexcept;
 
-        Image &
-        operator=(const Image &image) = delete;
-        Image &
-        operator=(Image &&image) noexcept;
+        Image&
+        operator=(const Image& image) = delete;
+        Image&
+        operator=(Image&& image) noexcept;
 
         ~Image();
 
@@ -47,6 +47,6 @@ namespace nd::src::graphics::vulkan
                        const VkImageUsageFlags     usage,
                        const VkSharingMode         sharingMode,
                        const uint32_t              queueFamilyIndicesCount,
-                       const uint32_t *            queueFamilyIndices,
+                       const uint32_t*             queueFamilyIndices,
                        const VkImageLayout         initialLayout) noexcept;
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

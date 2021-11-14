@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using CreateInfo = VkGraphicsPipelineCreateInfo;
 
         Pipeline() noexcept;
-        Pipeline(const VkDevice device, const CreateInfo &createInfo);
+        Pipeline(const VkDevice device, const CreateInfo& createInfo);
 
-        Pipeline(const Pipeline &pipeline) = delete;
-        Pipeline(Pipeline &&pipeline) noexcept;
+        Pipeline(const Pipeline& pipeline) = delete;
+        Pipeline(Pipeline&& pipeline) noexcept;
 
-        Pipeline &
-        operator=(const Pipeline &pipeline) = delete;
-        Pipeline &
-        operator=(Pipeline &&pipeline) noexcept;
+        Pipeline&
+        operator=(const Pipeline& pipeline) = delete;
+        Pipeline&
+        operator=(Pipeline&& pipeline) noexcept;
 
         ~Pipeline();
 
@@ -40,8 +40,8 @@ namespace nd::src::graphics::vulkan
     getPipelineVertexInputStateCreateInfo(
         const uint32_t                           vertexBindingDescriptionsCount,
         const uint32_t                           vertexAttributeDescriptionsCount,
-        const VkVertexInputBindingDescription *  vertexBindingDescriptions,
-        const VkVertexInputAttributeDescription *vertexAttributeDescriptions) noexcept;
+        const VkVertexInputBindingDescription*   vertexBindingDescriptions,
+        const VkVertexInputAttributeDescription* vertexAttributeDescriptions) noexcept;
 
     VkPipelineInputAssemblyStateCreateInfo
     getPipelineInputAssemblyStateCreateInfo(const VkPrimitiveTopology topology,
@@ -53,8 +53,8 @@ namespace nd::src::graphics::vulkan
     VkPipelineViewportStateCreateInfo
     getPipelineViewportStateCreateInfo(const uint32_t    viewportsCount,
                                        const uint32_t    scissorsCount,
-                                       const VkViewport *viewports,
-                                       const VkRect2D *  scissors) noexcept;
+                                       const VkViewport* viewports,
+                                       const VkRect2D*   scissors) noexcept;
 
     VkPipelineRasterizationStateCreateInfo
     getPipelineRasterizationStateCreateInfo(const VkBool32        depthClampEnable,
@@ -72,7 +72,7 @@ namespace nd::src::graphics::vulkan
     getPipelineMultisampleStateCreateInfo(const VkSampleCountFlagBits rasterizationSamples,
                                           const VkBool32              sampleShadingEnable,
                                           const float                 minSampleShading,
-                                          const VkSampleMask *        sampleMask,
+                                          const VkSampleMask*         sampleMask,
                                           const VkBool32              alphaToCoverageEnable,
                                           const VkBool32              alphaToOneEnable) noexcept;
 
@@ -91,27 +91,27 @@ namespace nd::src::graphics::vulkan
     getPipelineColorBlendStateCreateInfo(const VkBool32                             logicOpEnable,
                                          const VkLogicOp                            logicOp,
                                          const uint32_t                             attachmentsCount,
-                                         const VkPipelineColorBlendAttachmentState *attachments,
+                                         const VkPipelineColorBlendAttachmentState* attachments,
                                          const float                                blendConstants[4]) noexcept;
 
     VkPipelineDynamicStateCreateInfo
-    getPipelineDynamicStateCreateInfo(const uint32_t dynamicStatesCount, const VkDynamicState *dynamicStates) noexcept;
+    getPipelineDynamicStateCreateInfo(const uint32_t dynamicStatesCount, const VkDynamicState* dynamicStates) noexcept;
 
     Pipeline::CreateInfo
     getGraphicsPipelineCreateInfo(const uint32_t                                stagesCount,
-                                  const VkPipelineShaderStageCreateInfo *       stages,
-                                  const VkPipelineVertexInputStateCreateInfo *  vertexInputState,
-                                  const VkPipelineInputAssemblyStateCreateInfo *inputAssemblyState,
-                                  const VkPipelineTessellationStateCreateInfo * tessellationState,
-                                  const VkPipelineViewportStateCreateInfo *     viewportState,
-                                  const VkPipelineRasterizationStateCreateInfo *rasterizationState,
-                                  const VkPipelineMultisampleStateCreateInfo *  multisampleState,
-                                  const VkPipelineDepthStencilStateCreateInfo * depthStencilState,
-                                  const VkPipelineColorBlendStateCreateInfo *   colorBlendState,
-                                  const VkPipelineDynamicStateCreateInfo *      dynamicState,
+                                  const VkPipelineShaderStageCreateInfo*        stages,
+                                  const VkPipelineVertexInputStateCreateInfo*   vertexInputState,
+                                  const VkPipelineInputAssemblyStateCreateInfo* inputAssemblyState,
+                                  const VkPipelineTessellationStateCreateInfo*  tessellationState,
+                                  const VkPipelineViewportStateCreateInfo*      viewportState,
+                                  const VkPipelineRasterizationStateCreateInfo* rasterizationState,
+                                  const VkPipelineMultisampleStateCreateInfo*   multisampleState,
+                                  const VkPipelineDepthStencilStateCreateInfo*  depthStencilState,
+                                  const VkPipelineColorBlendStateCreateInfo*    colorBlendState,
+                                  const VkPipelineDynamicStateCreateInfo*       dynamicState,
                                   const VkPipelineLayout                        layout,
                                   const VkRenderPass                            renderPass,
                                   const uint32_t                                subpass,
                                   const VkPipeline                              basePipelineHandle,
                                   const int32_t                                 basePipelineIndex) noexcept;
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

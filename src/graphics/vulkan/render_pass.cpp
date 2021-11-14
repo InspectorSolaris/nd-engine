@@ -8,28 +8,29 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    RenderPass::RenderPass(const VkDevice device, const CreateInfo &createInfo) : device_(device)
+    RenderPass::RenderPass(const VkDevice device, const CreateInfo& createInfo)
+        : device_(device)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreateRenderPass(device_, &createInfo, nullptr, &renderPass_) == VK_SUCCESS);
     }
 
-    RenderPass::RenderPass(RenderPass &&renderPass) noexcept :
-        device_(std::move(renderPass.device_)),
-        renderPass_(std::move(renderPass.renderPass_))
+    RenderPass::RenderPass(RenderPass&& renderPass) noexcept
+        : device_(std::move(renderPass.device_))
+        , renderPass_(std::move(renderPass.renderPass_))
     {
         ND_SET_SCOPE_LOW();
 
         renderPass.renderPass_ = VK_NULL_HANDLE;
     }
 
-    RenderPass &
-    RenderPass::operator=(RenderPass &&renderPass) noexcept
+    RenderPass&
+    RenderPass::operator=(RenderPass&& renderPass) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&renderPass == this)
+        if(&renderPass == this)
         {
             return *this;
         }
@@ -55,8 +56,8 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            attachment,    // attachment;
-            layout         // layout;
+            attachment, // attachment;
+            layout      // layout;
         };
     }
 
@@ -73,15 +74,15 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            0,                 // flags;
-            format,            // format;
-            samples,           // samples;
-            loadOp,            // loadOp;
-            storeOp,           // storeOp;
-            stencilLoadOp,     // stencilLoadOp;
-            stencilStoreOp,    // stencilStoreOp;
-            initialLayout,     // initialLayout;
-            finalLayout        // finalLayout;
+            0,              // flags;
+            format,         // format;
+            samples,        // samples;
+            loadOp,         // loadOp;
+            storeOp,        // storeOp;
+            stencilLoadOp,  // stencilLoadOp;
+            stencilStoreOp, // stencilStoreOp;
+            initialLayout,  // initialLayout;
+            finalLayout     // finalLayout;
         };
     }
 
@@ -90,25 +91,25 @@ namespace nd::src::graphics::vulkan
                          const uint32_t               inputAttachmentsCount,
                          const uint32_t               colorAttachmentsCount,
                          const uint32_t               preserveAttachmentsCount,
-                         const VkAttachmentReference *inputAttachments,
-                         const VkAttachmentReference *colorAttachments,
-                         const VkAttachmentReference *resolveAttachments,
-                         const VkAttachmentReference *depthStencilAttachments,
-                         const uint32_t *             preserveAttachments) noexcept
+                         const VkAttachmentReference* inputAttachments,
+                         const VkAttachmentReference* colorAttachments,
+                         const VkAttachmentReference* resolveAttachments,
+                         const VkAttachmentReference* depthStencilAttachments,
+                         const uint32_t*              preserveAttachments) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            0,                           // flags;
-            pipelineBindPoint,           // pipelineBindPoint;
-            inputAttachmentsCount,       // inputAttachmentCount;
-            inputAttachments,            // pInputAttachments;
-            colorAttachmentsCount,       // colorAttachmentCount;
-            colorAttachments,            // pColorAttachments;
-            resolveAttachments,          // pResolveAttachments;
-            depthStencilAttachments,     // pDepthStencilAttachment;
-            preserveAttachmentsCount,    // preserveAttachmentCount;
-            preserveAttachments          // pPreserveAttachments;
+            0,                        // flags;
+            pipelineBindPoint,        // pipelineBindPoint;
+            inputAttachmentsCount,    // inputAttachmentCount;
+            inputAttachments,         // pInputAttachments;
+            colorAttachmentsCount,    // colorAttachmentCount;
+            colorAttachments,         // pColorAttachments;
+            resolveAttachments,       // pResolveAttachments;
+            depthStencilAttachments,  // pDepthStencilAttachment;
+            preserveAttachmentsCount, // preserveAttachmentCount;
+            preserveAttachments       // pPreserveAttachments;
         };
     }
 
@@ -124,13 +125,13 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            srcSubpass,        // srcSubpass;
-            dstSubpass,        // dstSubpass;
-            srcStageMask,      // srcStageMask;
-            dstStageMask,      // dstStageMask;
-            srcAccessMask,     // srcAccessMask;
-            dstAccessMask,     // dstAccessMask;
-            dependencyFlags    // dependencyFlags;
+            srcSubpass,     // srcSubpass;
+            dstSubpass,     // dstSubpass;
+            srcStageMask,   // srcStageMask;
+            dstStageMask,   // dstStageMask;
+            srcAccessMask,  // srcAccessMask;
+            dstAccessMask,  // dstAccessMask;
+            dependencyFlags // dependencyFlags;
         };
     }
 
@@ -138,27 +139,27 @@ namespace nd::src::graphics::vulkan
     getRenderPassCreateInfo(const uint32_t                 attachmentsCount,
                             const uint32_t                 subpassesCount,
                             const uint32_t                 dependenciesCount,
-                            const VkAttachmentDescription *attachments,
-                            const VkSubpassDescription *   subpasses,
-                            const VkSubpassDependency *    dependencies) noexcept
+                            const VkAttachmentDescription* attachments,
+                            const VkSubpassDescription*    subpasses,
+                            const VkSubpassDependency*     dependencies) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,    // sType;
-            nullptr,                                      // pNext;
-            0,                                            // flags;
-            attachmentsCount,                             // attachmentCount;
-            attachments,                                  // pAttachments;
-            subpassesCount,                               // subpassCount;
-            subpasses,                                    // pSubpasses;
-            dependenciesCount,                            // dependencyCount;
-            dependencies                                  // pDependencies;
+            VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO, // sType;
+            nullptr,                                   // pNext;
+            0,                                         // flags;
+            attachmentsCount,                          // attachmentCount;
+            attachments,                               // pAttachments;
+            subpassesCount,                            // subpassCount;
+            subpasses,                                 // pSubpasses;
+            dependenciesCount,                         // dependencyCount;
+            dependencies                               // pDependencies;
         };
     }
 
     RenderPass
-    getRenderPass(const RenderPass::Configuration &configuration, const VkDevice device)
+    getRenderPass(const RenderPass::Configuration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE_LOW();
 
@@ -171,4 +172,4 @@ namespace nd::src::graphics::vulkan
 
         return RenderPass(device, createInfo);
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

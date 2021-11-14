@@ -8,28 +8,29 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    PipelineLayout::PipelineLayout(const VkDevice device, const CreateInfo &createInfo) : device_(device)
+    PipelineLayout::PipelineLayout(const VkDevice device, const CreateInfo& createInfo)
+        : device_(device)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreatePipelineLayout(device_, &createInfo, nullptr, &pipelineLayout_) == VK_SUCCESS);
     }
 
-    PipelineLayout::PipelineLayout(PipelineLayout &&pipelineLayout) noexcept :
-        device_(std::move(pipelineLayout.device_)),
-        pipelineLayout_(std::move(pipelineLayout.pipelineLayout_))
+    PipelineLayout::PipelineLayout(PipelineLayout&& pipelineLayout) noexcept
+        : device_(std::move(pipelineLayout.device_))
+        , pipelineLayout_(std::move(pipelineLayout.pipelineLayout_))
     {
         ND_SET_SCOPE_LOW();
 
         pipelineLayout.pipelineLayout_ = VK_NULL_HANDLE;
     }
 
-    PipelineLayout &
-    PipelineLayout::operator=(PipelineLayout &&pipelineLayout) noexcept
+    PipelineLayout&
+    PipelineLayout::operator=(PipelineLayout&& pipelineLayout) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&pipelineLayout == this)
+        if(&pipelineLayout == this)
         {
             return *this;
         }
@@ -52,19 +53,19 @@ namespace nd::src::graphics::vulkan
     PipelineLayout::CreateInfo
     getPipelineLayoutCreateInfo(const uint32_t               setLayoutsCount,
                                 const uint32_t               pushConstantRangesCount,
-                                const VkDescriptorSetLayout *setLayouts,
-                                const VkPushConstantRange *  pushConstantRanges) noexcept
+                                const VkDescriptorSetLayout* setLayouts,
+                                const VkPushConstantRange*   pushConstantRanges) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,    // sType;
-            nullptr,                                          // pNext;
-            0,                                                // flags;
-            setLayoutsCount,                                  // setLayoutCount;
-            setLayouts,                                       // pSetLayouts;
-            pushConstantRangesCount,                          // pushConstantRangeCount;
-            pushConstantRanges                                // pPushConstantRanges;
+            VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, // sType;
+            nullptr,                                       // pNext;
+            0,                                             // flags;
+            setLayoutsCount,                               // setLayoutCount;
+            setLayouts,                                    // pSetLayouts;
+            pushConstantRangesCount,                       // pushConstantRangeCount;
+            pushConstantRanges                             // pPushConstantRanges;
         };
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

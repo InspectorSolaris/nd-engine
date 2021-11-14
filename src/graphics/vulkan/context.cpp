@@ -3,7 +3,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    Context::Context(const Context::Configuration &configuration)
+    Context::Context(const Context::Configuration& configuration)
     {
         ND_SET_SCOPE_LOW();
 
@@ -22,7 +22,7 @@ namespace nd::src::graphics::vulkan
                                  VK_MAKE_VERSION(0, 1, 0),
                                  VK_API_VERSION_1_2});
 
-        const auto physicalDevicePriority = [](const auto &physicalDevice)
+        const auto physicalDevicePriority = [](const auto& physicalDevice)
         {
             return 1;
         };
@@ -31,16 +31,18 @@ namespace nd::src::graphics::vulkan
 
         surface_ = getSurface(instance_.get(), configuration.getSurface(instance_.get()));
 
-        const auto swapchainConfiguration = Swapchain::Configuration {{configuration.width, configuration.height},
-                                                                      1,
-                                                                      1,
-                                                                      true,
-                                                                      VK_FORMAT_B8G8R8A8_UNORM,
-                                                                      VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-                                                                      VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                                                                      VK_PRESENT_MODE_IMMEDIATE_KHR,
-                                                                      VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
-                                                                      VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
+        const auto swapchainConfiguration = Swapchain::Configuration {
+            {configuration.width, configuration.height},
+            1,
+            1,
+            true,
+            VK_FORMAT_B8G8R8A8_UNORM,
+            VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            VK_PRESENT_MODE_IMMEDIATE_KHR,
+            VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
+            VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR
+        };
 
         swapchain_ = getSwapchain(swapchainConfiguration,
                                   device_.getQueueFamilies(),
@@ -83,5 +85,7 @@ namespace nd::src::graphics::vulkan
             getSwapchainFramebuffers(device_.get(), renderPass_.get(), swapchainImageViews_, swapchainConfiguration);
     }
 
-    Context::~Context() {}
-}    // namespace nd::src::graphics::vulkan
+    Context::~Context()
+    {
+    }
+} // namespace nd::src::graphics::vulkan

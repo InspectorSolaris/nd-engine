@@ -19,15 +19,15 @@ namespace nd::src::graphics::vulkan
         };
 
         Framebuffer() noexcept;
-        Framebuffer(const VkDevice device, const CreateInfo &createInfo);
+        Framebuffer(const VkDevice device, const CreateInfo& createInfo);
 
-        Framebuffer(const Framebuffer &framebuffer) = delete;
-        Framebuffer(Framebuffer &&framebuffer) noexcept;
+        Framebuffer(const Framebuffer& framebuffer) = delete;
+        Framebuffer(Framebuffer&& framebuffer) noexcept;
 
-        Framebuffer &
-        operator=(const Framebuffer &framebuffer) = delete;
-        Framebuffer &
-        operator=(Framebuffer &&framebuffer) noexcept;
+        Framebuffer&
+        operator=(const Framebuffer& framebuffer) = delete;
+        Framebuffer&
+        operator=(Framebuffer&& framebuffer) noexcept;
 
         ~Framebuffer();
 
@@ -48,14 +48,14 @@ namespace nd::src::graphics::vulkan
     Framebuffer::CreateInfo
     getFramebufferCreateInfo(const VkRenderPass renderPass,
                              const uint32_t     attachmentsCount,
-                             const VkImageView *attachments,
+                             const VkImageView* attachments,
                              const uint32_t     width,
                              const uint32_t     height,
                              const uint32_t     layers) noexcept;
 
     Framebuffer
-    getFramebuffer(const Framebuffer::Configuration &configuration,
-                   const Framebuffer::Attachments &  attachments,
+    getFramebuffer(const Framebuffer::Configuration& configuration,
+                   const Framebuffer::Attachments&   attachments,
                    const VkDevice                    device,
                    const VkRenderPass                renderPass);
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

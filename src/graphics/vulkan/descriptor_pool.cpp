@@ -8,28 +8,29 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    DescriptorPool::DescriptorPool(const VkDevice device, const CreateInfo &createInfo) : device_(device)
+    DescriptorPool::DescriptorPool(const VkDevice device, const CreateInfo& createInfo)
+        : device_(device)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreateDescriptorPool(device_, &createInfo, nullptr, &descriptorPool_) == VK_SUCCESS);
     }
 
-    DescriptorPool::DescriptorPool(DescriptorPool &&descriptorPool) noexcept :
-        device_(std::move(descriptorPool.device_)),
-        descriptorPool_(std::move(descriptorPool.descriptorPool_))
+    DescriptorPool::DescriptorPool(DescriptorPool&& descriptorPool) noexcept
+        : device_(std::move(descriptorPool.device_))
+        , descriptorPool_(std::move(descriptorPool.descriptorPool_))
     {
         ND_SET_SCOPE_LOW();
 
         descriptorPool.descriptorPool_ = VK_NULL_HANDLE;
     }
 
-    DescriptorPool &
-    DescriptorPool::operator=(DescriptorPool &&descriptorPool) noexcept
+    DescriptorPool&
+    DescriptorPool::operator=(DescriptorPool&& descriptorPool) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&descriptorPool == this)
+        if(&descriptorPool == this)
         {
             return *this;
         }
@@ -52,17 +53,17 @@ namespace nd::src::graphics::vulkan
     DescriptorPool::CreateInfo
     getDescriptorPoolCreateInfo(const uint32_t              maxSets,
                                 const uint32_t              poolSizesCount,
-                                const VkDescriptorPoolSize *poolSizes) noexcept
+                                const VkDescriptorPoolSize* poolSizes) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,    // sType;
-            nullptr,                                          // pNext;
-            0,                                                // flags;
-            maxSets,                                          // maxSets;
-            poolSizesCount,                                   // poolSizeCount;
-            poolSizes                                         // pPoolSizes;
+            VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, // sType;
+            nullptr,                                       // pNext;
+            0,                                             // flags;
+            maxSets,                                       // maxSets;
+            poolSizesCount,                                // poolSizeCount;
+            poolSizes                                      // pPoolSizes;
         };
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using CreateInfo = VkBufferCreateInfo;
 
         Buffer() noexcept;
-        Buffer(const VkDevice device, const CreateInfo &createInfo);
+        Buffer(const VkDevice device, const CreateInfo& createInfo);
 
-        Buffer(const Buffer &buffer) = delete;
-        Buffer(Buffer &&buffer) noexcept;
+        Buffer(const Buffer& buffer) = delete;
+        Buffer(Buffer&& buffer) noexcept;
 
-        Buffer &
-        operator=(const Buffer &buffer) = delete;
-        Buffer &
-        operator=(Buffer &&buffer) noexcept;
+        Buffer&
+        operator=(const Buffer& buffer) = delete;
+        Buffer&
+        operator=(Buffer&& buffer) noexcept;
 
         ~Buffer();
 
@@ -41,5 +41,5 @@ namespace nd::src::graphics::vulkan
                         const VkBufferUsageFlags usage,
                         const VkSharingMode      sharingMode,
                         const uint32_t           queueFamilyIndicesCount,
-                        const uint32_t *         queueFamilyIndices) noexcept;
-}    // namespace nd::src::graphics::vulkan
+                        const uint32_t*          queueFamilyIndices) noexcept;
+} // namespace nd::src::graphics::vulkan

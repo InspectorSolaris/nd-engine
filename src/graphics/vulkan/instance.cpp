@@ -8,26 +8,28 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    Instance::Instance(const CreateInfo &createInfo) : instance_(VK_NULL_HANDLE)
+    Instance::Instance(const CreateInfo& createInfo)
+        : instance_(VK_NULL_HANDLE)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance_) == VK_SUCCESS);
     }
 
-    Instance::Instance(Instance &&instance) noexcept : instance_(std::move(instance.instance_))
+    Instance::Instance(Instance&& instance) noexcept
+        : instance_(std::move(instance.instance_))
     {
         ND_SET_SCOPE_LOW();
 
         instance.instance_ = VK_NULL_HANDLE;
     }
 
-    Instance &
-    Instance::operator=(Instance &&instance) noexcept
+    Instance&
+    Instance::operator=(Instance&& instance) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&instance == this)
+        if(&instance == this)
         {
             return *this;
         }
@@ -47,8 +49,8 @@ namespace nd::src::graphics::vulkan
     }
 
     VkApplicationInfo
-    getApplicationInfo(const char *   applicationName,
-                       const char *   engineName,
+    getApplicationInfo(const char*    applicationName,
+                       const char*    engineName,
                        const uint32_t applicationVersion,
                        const uint32_t engineVersion,
                        const uint32_t apiVersion) noexcept
@@ -56,39 +58,39 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_APPLICATION_INFO,    // sType;
-            nullptr,                               // pNext;
-            applicationName,                       // pApplicationName;
-            applicationVersion,                    // applicationVersion;
-            engineName,                            // pEngineName;
-            engineVersion,                         // engineVersion;
-            apiVersion                             // apiVersion;
+            VK_STRUCTURE_TYPE_APPLICATION_INFO, // sType;
+            nullptr,                            // pNext;
+            applicationName,                    // pApplicationName;
+            applicationVersion,                 // applicationVersion;
+            engineName,                         // pEngineName;
+            engineVersion,                      // engineVersion;
+            apiVersion                          // apiVersion;
         };
     }
 
     Instance::CreateInfo
-    getInstanceCreateInfo(const VkApplicationInfo *applicationInfo,
+    getInstanceCreateInfo(const VkApplicationInfo* applicationInfo,
                           const uint32_t           enabledLayersCount,
                           const uint32_t           enabledExtensionsCount,
-                          const char *const *      enabledLayers,
-                          const char *const *      enabledExtensions) noexcept
+                          const char* const*       enabledLayers,
+                          const char* const*       enabledExtensions) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,    // sType;
-            nullptr,                                   // pNext;
-            0,                                         // flags;
-            applicationInfo,                           // pApplicationInfo;
-            enabledLayersCount,                        // enabledLayerCount;
-            enabledLayers,                             // ppEnabledLayerNames;
-            enabledExtensionsCount,                    // enabledExtensionCount;
-            enabledExtensions                          // ppEnabledExtensionNames;
+            VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, // sType;
+            nullptr,                                // pNext;
+            0,                                      // flags;
+            applicationInfo,                        // pApplicationInfo;
+            enabledLayersCount,                     // enabledLayerCount;
+            enabledLayers,                          // ppEnabledLayerNames;
+            enabledExtensionsCount,                 // enabledExtensionCount;
+            enabledExtensions                       // ppEnabledExtensionNames;
         };
     }
 
     bool
-    isInstanceLayersSupported(const Instance::Layers &layers) noexcept
+    isInstanceLayersSupported(const Instance::Layers& layers) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -100,12 +102,14 @@ namespace nd::src::graphics::vulkan
 
         vkEnumerateInstanceLayerProperties(&layersCount, layersProperties.data());
 
-        for (const auto &layer : layers)
+        for(const auto& layer: layers)
         {
-            if (std::none_of(layersProperties.begin(),
-                             layersProperties.end(),
-                             [&layer](const auto &layerProperties)
-                             { return std::strcmp(layer.c_str(), layerProperties.layerName) == 0; }))
+            if(std::none_of(layersProperties.begin(),
+                            layersProperties.end(),
+                            [&layer](const auto& layerProperties)
+                            {
+                                return std::strcmp(layer.c_str(), layerProperties.layerName) == 0;
+                            }))
             {
                 return false;
             }
@@ -115,7 +119,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isInstanceExtensionsSupported(const Instance::Extensions &extensions) noexcept
+    isInstanceExtensionsSupported(const Instance::Extensions& extensions) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -127,12 +131,14 @@ namespace nd::src::graphics::vulkan
 
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, extensionsProperties.data());
 
-        for (const auto &extension : extensions)
+        for(const auto& extension: extensions)
         {
-            if (std::none_of(extensionsProperties.begin(),
-                             extensionsProperties.end(),
-                             [&extension](const auto &extensionProperties)
-                             { return std::strcmp(extension.c_str(), extensionProperties.extensionName) == 0; }))
+            if(std::none_of(extensionsProperties.begin(),
+                            extensionsProperties.end(),
+                            [&extension](const auto& extensionProperties)
+                            {
+                                return std::strcmp(extension.c_str(), extensionProperties.extensionName) == 0;
+                            }))
             {
                 return false;
             }
@@ -142,7 +148,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Instance
-    getInstance(const Instance::Configuration &configuration)
+    getInstance(const Instance::Configuration& configuration)
     {
         ND_SET_SCOPE_LOW();
 
@@ -168,4 +174,4 @@ namespace nd::src::graphics::vulkan
 
         return Instance(createInfo);
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

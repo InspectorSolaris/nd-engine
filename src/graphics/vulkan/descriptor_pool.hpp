@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using CreateInfo = VkDescriptorPoolCreateInfo;
 
         DescriptorPool() noexcept;
-        DescriptorPool(const VkDevice device, const CreateInfo &createInfo);
+        DescriptorPool(const VkDevice device, const CreateInfo& createInfo);
 
-        DescriptorPool(const DescriptorPool &descriptorPool) = delete;
-        DescriptorPool(DescriptorPool &&descriptorPool) noexcept;
+        DescriptorPool(const DescriptorPool& descriptorPool) = delete;
+        DescriptorPool(DescriptorPool&& descriptorPool) noexcept;
 
-        DescriptorPool &
-        operator=(const DescriptorPool &descriptorPool) = delete;
-        DescriptorPool &
-        operator=(DescriptorPool &&descriptorPool) noexcept;
+        DescriptorPool&
+        operator=(const DescriptorPool& descriptorPool) = delete;
+        DescriptorPool&
+        operator=(DescriptorPool&& descriptorPool) noexcept;
 
         ~DescriptorPool();
 
@@ -33,5 +33,5 @@ namespace nd::src::graphics::vulkan
     DescriptorPool::CreateInfo
     getDescriptorPoolCreateInfo(const uint32_t              maxSets,
                                 const uint32_t              poolSizesCount,
-                                const VkDescriptorPoolSize *poolSizes) noexcept;
-}    // namespace nd::src::graphics::vulkan
+                                const VkDescriptorPoolSize* poolSizes) noexcept;
+} // namespace nd::src::graphics::vulkan

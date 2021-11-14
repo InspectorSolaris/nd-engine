@@ -3,7 +3,8 @@
 
 namespace nd::src::graphics::glfw
 {
-    Context::Context() noexcept : window_()
+    Context::Context() noexcept
+        : window_()
     {
         ND_SET_SCOPE_LOW();
 
@@ -35,8 +36,11 @@ namespace nd::src::graphics::glfw
         std::transform(cextensions,
                        cextensions + count,
                        std::back_inserter(extensions),
-                       [](const auto cextension) { return std::string(cextension); });
+                       [](const auto cextension)
+                       {
+                           return std::string(cextension);
+                       });
 
         return extensions;
     }
-}    // namespace nd::src::graphics::glfw
+} // namespace nd::src::graphics::glfw

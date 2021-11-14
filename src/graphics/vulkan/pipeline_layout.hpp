@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using CreateInfo = VkPipelineLayoutCreateInfo;
 
         PipelineLayout() noexcept;
-        PipelineLayout(const VkDevice device, const CreateInfo &createInfo);
+        PipelineLayout(const VkDevice device, const CreateInfo& createInfo);
 
-        PipelineLayout(const PipelineLayout &pipelineLayout) = delete;
-        PipelineLayout(PipelineLayout &&pipelineLayout) noexcept;
+        PipelineLayout(const PipelineLayout& pipelineLayout) = delete;
+        PipelineLayout(PipelineLayout&& pipelineLayout) noexcept;
 
-        PipelineLayout &
-        operator=(const PipelineLayout &pipelineLayout) = delete;
-        PipelineLayout &
-        operator=(PipelineLayout &&pipelineLayout) noexcept;
+        PipelineLayout&
+        operator=(const PipelineLayout& pipelineLayout) = delete;
+        PipelineLayout&
+        operator=(PipelineLayout&& pipelineLayout) noexcept;
 
         ~PipelineLayout();
 
@@ -39,6 +39,6 @@ namespace nd::src::graphics::vulkan
     PipelineLayout::CreateInfo
     getPipelineLayoutCreateInfo(const uint32_t               setLayoutsCount,
                                 const uint32_t               pushConstantRangesCount,
-                                const VkDescriptorSetLayout *setLayouts,
-                                const VkPushConstantRange *  pushConstantRanges) noexcept;
-}    // namespace nd::src::graphics::vulkan
+                                const VkDescriptorSetLayout* setLayouts,
+                                const VkPushConstantRange*   pushConstantRanges) noexcept;
+} // namespace nd::src::graphics::vulkan

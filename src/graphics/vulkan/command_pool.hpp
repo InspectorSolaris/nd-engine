@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using CreateInfo = VkCommandPoolCreateInfo;
 
         CommandPool() noexcept;
-        CommandPool(const VkDevice device, const CreateInfo &createInfo);
+        CommandPool(const VkDevice device, const CreateInfo& createInfo);
 
-        CommandPool(const CommandPool &commandPool) = delete;
-        CommandPool(CommandPool &&commandPool) noexcept;
+        CommandPool(const CommandPool& commandPool) = delete;
+        CommandPool(CommandPool&& commandPool) noexcept;
 
-        CommandPool &
-        operator=(const CommandPool &commandPool) = delete;
-        CommandPool &
-        operator=(CommandPool &&commandPool) noexcept;
+        CommandPool&
+        operator=(const CommandPool& commandPool) = delete;
+        CommandPool&
+        operator=(CommandPool&& commandPool) noexcept;
 
         ~CommandPool();
 
@@ -38,4 +38,4 @@ namespace nd::src::graphics::vulkan
 
     CommandPool::CreateInfo
     getCommandPoolCreateInfo(const uint32_t queueFamilyIndex) noexcept;
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

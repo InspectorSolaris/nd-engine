@@ -16,7 +16,7 @@ namespace nd::src::tools
         using OnBegin = void(const LogPtr logPtr, const Name name, const Depth depth);
         using OnEnd   = void(const LogPtr logPtr, const Name name, const Depth depth);
 
-        Scope(const Name name, OnBegin *onBegin, OnEnd *onEnd) noexcept;
+        Scope(const Name name, OnBegin* onBegin, OnEnd* onEnd) noexcept;
 
         ~Scope();
 
@@ -33,7 +33,7 @@ namespace nd::src::tools
         static Depth  s_depth;
 
         Name   name_ {};
-        OnEnd *onEnd_ {};
+        OnEnd* onEnd_ {};
     };
 
     void
@@ -41,4 +41,4 @@ namespace nd::src::tools
 
     void
     onScopeEnd(const Scope::LogPtr logPtr, const Scope::Name name, const Scope::Depth depth) noexcept;
-}    // namespace nd::src::tools
+} // namespace nd::src::tools

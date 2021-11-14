@@ -28,15 +28,15 @@ namespace nd::src::graphics::vulkan
         };
 
         Instance() noexcept;
-        Instance(const CreateInfo &createInfo);
+        Instance(const CreateInfo& createInfo);
 
-        Instance(const Instance &instance) = delete;
-        Instance(Instance &&instance) noexcept;
+        Instance(const Instance& instance) = delete;
+        Instance(Instance&& instance) noexcept;
 
-        Instance &
-        operator=(const Instance &instance) = delete;
-        Instance &
-        operator=(Instance &&instance) noexcept;
+        Instance&
+        operator=(const Instance& instance) = delete;
+        Instance&
+        operator=(Instance&& instance) noexcept;
 
         ~Instance();
 
@@ -54,25 +54,25 @@ namespace nd::src::graphics::vulkan
     }
 
     VkApplicationInfo
-    getApplicationInfo(const char *   applicationName,
-                       const char *   engineName,
+    getApplicationInfo(const char*    applicationName,
+                       const char*    engineName,
                        const uint32_t applicationVersion,
                        const uint32_t engineVersion,
                        const uint32_t apiVersion) noexcept;
 
     Instance::CreateInfo
-    getInstanceCreateInfo(const VkApplicationInfo *applicationInfo,
+    getInstanceCreateInfo(const VkApplicationInfo* applicationInfo,
                           const uint32_t           enabledLayersCount,
                           const uint32_t           enabledExtensionsCount,
-                          const char *const *      enabledLayers,
-                          const char *const *      enabledExtensions) noexcept;
+                          const char* const*       enabledLayers,
+                          const char* const*       enabledExtensions) noexcept;
 
     bool
-    isInstanceLayersSupported(const Instance::Layers &layers) noexcept;
+    isInstanceLayersSupported(const Instance::Layers& layers) noexcept;
 
     bool
-    isInstanceExtensionsSupported(const Instance::Extensions &extensions) noexcept;
+    isInstanceExtensionsSupported(const Instance::Extensions& extensions) noexcept;
 
     Instance
-    getInstance(const Instance::Configuration &configuration);
-}    // namespace nd::src::graphics::vulkan
+    getInstance(const Instance::Configuration& configuration);
+} // namespace nd::src::graphics::vulkan

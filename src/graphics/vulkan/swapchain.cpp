@@ -8,19 +8,19 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    Swapchain::Swapchain(const VkDevice device, const QueueFamilies &queueFamilies, const CreateInfo &createInfo) :
-        device_(device),
-        queueFamilies_(queueFamilies)
+    Swapchain::Swapchain(const VkDevice device, const QueueFamilies& queueFamilies, const CreateInfo& createInfo)
+        : device_(device)
+        , queueFamilies_(queueFamilies)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreateSwapchainKHR(device_, &createInfo, nullptr, &swapchain_) == VK_SUCCESS);
     }
 
-    Swapchain::Swapchain(Swapchain &&swapchain) noexcept :
-        device_(std::move(swapchain.device_)),
-        swapchain_(std::move(swapchain.swapchain_)),
-        queueFamilies_(std::move(swapchain.queueFamilies_))
+    Swapchain::Swapchain(Swapchain&& swapchain) noexcept
+        : device_(std::move(swapchain.device_))
+        , swapchain_(std::move(swapchain.swapchain_))
+        , queueFamilies_(std::move(swapchain.queueFamilies_))
     {
         ND_SET_SCOPE_LOW();
 
@@ -28,12 +28,12 @@ namespace nd::src::graphics::vulkan
         swapchain.queueFamilies_ = {};
     }
 
-    Swapchain &
-    Swapchain::operator=(Swapchain &&swapchain) noexcept
+    Swapchain&
+    Swapchain::operator=(Swapchain&& swapchain) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&swapchain == this)
+        if(&swapchain == this)
         {
             return *this;
         }
@@ -56,33 +56,36 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isFormatSupported(const Swapchain::Configuration &configuration, const Surface::Formats &formats) noexcept
+    isFormatSupported(const Swapchain::Configuration& configuration, const Surface::Formats& formats) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return std::any_of(formats.begin(),
                            formats.end(),
-                           [&configuration](const auto &format) {
+                           [&configuration](const auto& format)
+                           {
                                return configuration.imageFormat == format.format &&
-                                      configuration.imageColorSpace == format.colorSpace;
+                                   configuration.imageColorSpace == format.colorSpace;
                            });
     }
 
     bool
-    isPresentModeSupported(const Swapchain::Configuration &configuration,
-                           const Surface::PresentModes &   presentModes) noexcept
+    isPresentModeSupported(const Swapchain::Configuration& configuration,
+                           const Surface::PresentModes&    presentModes) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return std::any_of(presentModes.begin(),
                            presentModes.end(),
-                           [&configuration](const auto &presentMode)
-                           { return configuration.presentMode == presentMode; });
+                           [&configuration](const auto& presentMode)
+                           {
+                               return configuration.presentMode == presentMode;
+                           });
     }
 
     bool
-    isImageUsageSupported(const Swapchain::Configuration &configuration,
-                          const Surface::Capabilities &   capabilities) noexcept
+    isImageUsageSupported(const Swapchain::Configuration& configuration,
+                          const Surface::Capabilities&    capabilities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -90,8 +93,8 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isTransformSupported(const Swapchain::Configuration &configuration,
-                         const Surface::Capabilities &   capabilities) noexcept
+    isTransformSupported(const Swapchain::Configuration& configuration,
+                         const Surface::Capabilities&    capabilities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -99,8 +102,8 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isCompositeAlphaSupported(const Swapchain::Configuration &configuration,
-                              const Surface::Capabilities &   capabilities) noexcept
+    isCompositeAlphaSupported(const Swapchain::Configuration& configuration,
+                              const Surface::Capabilities&    capabilities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -108,33 +111,33 @@ namespace nd::src::graphics::vulkan
     }
 
     uint32_t
-    getMinImagesCount(const Swapchain::Configuration &configuration, const Surface::Capabilities &capabilities) noexcept
+    getMinImagesCount(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return capabilities.maxImageCount
-                 ? std::clamp(configuration.minImagesCount, capabilities.minImageCount, capabilities.maxImageCount)
-                 : std::max(capabilities.minImageCount, configuration.minImagesCount);
+            ? std::clamp(configuration.minImagesCount, capabilities.minImageCount, capabilities.maxImageCount)
+            : std::max(capabilities.minImageCount, configuration.minImagesCount);
     }
 
     VkExtent2D
-    getImageExtent(const Swapchain::Configuration &configuration, const Surface::Capabilities &capabilities) noexcept
+    getImageExtent(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return capabilities.currentExtent.width != 0xFFFFFFFF || capabilities.currentExtent.height != 0xFFFFFFFF
-                 ? capabilities.currentExtent
-                 : VkExtent2D {std::clamp(configuration.imageExtent.width,
-                                          capabilities.minImageExtent.width,
-                                          capabilities.maxImageExtent.width),
-                               std::clamp(configuration.imageExtent.height,
-                                          capabilities.minImageExtent.height,
-                                          capabilities.maxImageExtent.height)};
+            ? capabilities.currentExtent
+            : VkExtent2D {std::clamp(configuration.imageExtent.width,
+                                     capabilities.minImageExtent.width,
+                                     capabilities.maxImageExtent.width),
+                          std::clamp(configuration.imageExtent.height,
+                                     capabilities.minImageExtent.height,
+                                     capabilities.maxImageExtent.height)};
     }
 
     uint32_t
-    getImageArrayLayers(const Swapchain::Configuration &configuration,
-                        const Surface::Capabilities &   capabilities) noexcept
+    getImageArrayLayers(const Swapchain::Configuration& configuration,
+                        const Surface::Capabilities&    capabilities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -142,7 +145,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Swapchain::QueueFamilies
-    getSwapchainQueueFamilies(const Device::QueueFamilies &deviceQueueFamilies,
+    getSwapchainQueueFamilies(const Device::QueueFamilies& deviceQueueFamilies,
                               const VkPhysicalDevice       physicalDevice,
                               const VkSurfaceKHR           surface) noexcept
     {
@@ -150,13 +153,13 @@ namespace nd::src::graphics::vulkan
 
         Swapchain::QueueFamilies swapchainQueueFamilies;
 
-        for (const auto queueFamily : deviceQueueFamilies)
+        for(const auto queueFamily: deviceQueueFamilies)
         {
             VkBool32 isSupported;
 
             vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamily.index, surface, &isSupported);
 
-            if (isSupported)
+            if(isSupported)
             {
                 swapchainQueueFamilies.emplace_back(&queueFamily);
             }
@@ -166,7 +169,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Swapchain::QueueFamiliesIndicies
-    getSwapchainQueueFamiliesIndices(const Swapchain::QueueFamilies &swapchainQueueFamilies) noexcept
+    getSwapchainQueueFamiliesIndices(const Swapchain::QueueFamilies& swapchainQueueFamilies) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -175,7 +178,10 @@ namespace nd::src::graphics::vulkan
         std::transform(swapchainQueueFamilies.begin(),
                        swapchainQueueFamilies.end(),
                        swapchainQueueFamiliesIndices.begin(),
-                       [](const auto &swapchainQueueFamily) { return swapchainQueueFamily->index; });
+                       [](const auto& swapchainQueueFamily)
+                       {
+                           return swapchainQueueFamily->index;
+                       });
 
         return swapchainQueueFamiliesIndices;
     }
@@ -190,7 +196,7 @@ namespace nd::src::graphics::vulkan
                            const VkImageUsageFlags             imageUsage,
                            const VkSharingMode                 imageSharingMode,
                            const uint32_t                      queueFamilyIndicesCount,
-                           const uint32_t *                    queueFamilyIndices,
+                           const uint32_t*                     queueFamilyIndices,
                            const VkSurfaceTransformFlagBitsKHR preTransform,
                            const VkCompositeAlphaFlagBitsKHR   compositeAlpha,
                            const VkPresentModeKHR              presentMode,
@@ -200,30 +206,30 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,    // sType;
-            nullptr,                                        // pNext;
-            0,                                              // flags;
-            surface,                                        // surface;
-            minImagesCount,                                 // minImageCount;
-            imageFormat,                                    // imageFormat;
-            imageColorSpace,                                // imageColorSpace;
-            imageExtent,                                    // imageExtent;
-            imageArrayLayers,                               // imageArrayLayers;
-            imageUsage,                                     // imageUsage;
-            imageSharingMode,                               // imageSharingMode;
-            queueFamilyIndicesCount,                        // queueFamilyIndexCount;
-            queueFamilyIndices,                             // pQueueFamilyIndices;
-            preTransform,                                   // preTransform;
-            compositeAlpha,                                 // compositeAlpha;
-            presentMode,                                    // presentMode;
-            clipped,                                        // clipped;
-            oldSwapchain,                                   // oldSwapchain;
+            VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR, // sType;
+            nullptr,                                     // pNext;
+            0,                                           // flags;
+            surface,                                     // surface;
+            minImagesCount,                              // minImageCount;
+            imageFormat,                                 // imageFormat;
+            imageColorSpace,                             // imageColorSpace;
+            imageExtent,                                 // imageExtent;
+            imageArrayLayers,                            // imageArrayLayers;
+            imageUsage,                                  // imageUsage;
+            imageSharingMode,                            // imageSharingMode;
+            queueFamilyIndicesCount,                     // queueFamilyIndexCount;
+            queueFamilyIndices,                          // pQueueFamilyIndices;
+            preTransform,                                // preTransform;
+            compositeAlpha,                              // compositeAlpha;
+            presentMode,                                 // presentMode;
+            clipped,                                     // clipped;
+            oldSwapchain,                                // oldSwapchain;
         };
     }
 
     Swapchain
-    getSwapchain(const Swapchain::Configuration &configuration,
-                 const Device::QueueFamilies &   deviceQueueFamilies,
+    getSwapchain(const Swapchain::Configuration& configuration,
+                 const Device::QueueFamilies&    deviceQueueFamilies,
                  const VkPhysicalDevice          physicalDevice,
                  const VkDevice                  device,
                  const VkSurfaceKHR              surface)
@@ -234,7 +240,7 @@ namespace nd::src::graphics::vulkan
         const auto presentModes = getSurfacePresentModes(physicalDevice, surface);
         const auto capabilities = getSurfaceCapabilities(physicalDevice, surface);
 
-        const auto swapchainQueueFamilies = getSwapchainQueueFamilies(deviceQueueFamilies, physicalDevice, surface);
+        const auto swapchainQueueFamilies        = getSwapchainQueueFamilies(deviceQueueFamilies, physicalDevice, surface);
         const auto swapchainQueueFamiliesIndices = getSwapchainQueueFamiliesIndices(swapchainQueueFamilies);
 
         ND_ASSERT(swapchainQueueFamilies.size());
@@ -286,8 +292,8 @@ namespace nd::src::graphics::vulkan
 
     Swapchain::ImageViews
     getSwapchainImageViews(const VkDevice                  device,
-                           const Swapchain::Images &       images,
-                           const Swapchain::Configuration &configuration) noexcept
+                           const Swapchain::Images&        images,
+                           const Swapchain::Configuration& configuration) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -295,7 +301,7 @@ namespace nd::src::graphics::vulkan
 
         imageViews.reserve(images.size());
 
-        for (const auto &image : images)
+        for(const auto& image: images)
         {
             imageViews.push_back(getImageView({VK_IMAGE_ASPECT_COLOR_BIT, 1, 0, 1, 0}, device, image));
         }
@@ -306,8 +312,8 @@ namespace nd::src::graphics::vulkan
     Swapchain::Framebuffers
     getSwapchainFramebuffers(const VkDevice                  device,
                              const VkRenderPass              renderPass,
-                             const Swapchain::ImageViews &   imageViews,
-                             const Swapchain::Configuration &configuration) noexcept
+                             const Swapchain::ImageViews&    imageViews,
+                             const Swapchain::Configuration& configuration) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -315,7 +321,7 @@ namespace nd::src::graphics::vulkan
 
         framebuffers.reserve(imageViews.size());
 
-        for (const auto &imageView : imageViews)
+        for(const auto& imageView: imageViews)
         {
             const auto attachments = Framebuffer::Attachments {1, imageView.get()};
 
@@ -328,4 +334,4 @@ namespace nd::src::graphics::vulkan
 
         return framebuffers;
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

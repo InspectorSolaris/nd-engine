@@ -18,15 +18,15 @@ namespace nd::src::graphics::vulkan
         };
 
         ImageView() noexcept;
-        ImageView(const VkDevice device, const CreateInfo &createInfo);
+        ImageView(const VkDevice device, const CreateInfo& createInfo);
 
-        ImageView(const ImageView &imageView) = delete;
-        ImageView(ImageView &&imageView) noexcept;
+        ImageView(const ImageView& imageView) = delete;
+        ImageView(ImageView&& imageView) noexcept;
 
-        ImageView &
-        operator=(const ImageView &imageView) = delete;
-        ImageView &
-        operator=(ImageView &&imageView) noexcept;
+        ImageView&
+        operator=(const ImageView& imageView) = delete;
+        ImageView&
+        operator=(ImageView&& imageView) noexcept;
 
         ~ImageView();
 
@@ -48,9 +48,9 @@ namespace nd::src::graphics::vulkan
     getImageViewCreateInfo(const VkImage                  image,
                            const VkImageViewType          viewType,
                            const VkFormat                 format,
-                           const VkComponentMapping &     components,
-                           const VkImageSubresourceRange &subresourceRange) noexcept;
+                           const VkComponentMapping&      components,
+                           const VkImageSubresourceRange& subresourceRange) noexcept;
 
     ImageView
-    getImageView(const ImageView::Configuration &configuration, const VkDevice device, const VkImage image);
-}    // namespace nd::src::graphics::vulkan
+    getImageView(const ImageView::Configuration& configuration, const VkDevice device, const VkImage image);
+} // namespace nd::src::graphics::vulkan

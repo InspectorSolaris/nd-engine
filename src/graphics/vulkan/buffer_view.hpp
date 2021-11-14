@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using CreateInfo = VkBufferViewCreateInfo;
 
         BufferView() noexcept;
-        BufferView(const VkDevice device, const CreateInfo &createInfo);
+        BufferView(const VkDevice device, const CreateInfo& createInfo);
 
-        BufferView(const BufferView &bufferView) = delete;
-        BufferView(BufferView &&bufferView) noexcept;
+        BufferView(const BufferView& bufferView) = delete;
+        BufferView(BufferView&& bufferView) noexcept;
 
-        BufferView &
-        operator=(const BufferView &bufferView) = delete;
-        BufferView &
-        operator=(BufferView &&bufferView) noexcept;
+        BufferView&
+        operator=(const BufferView& bufferView) = delete;
+        BufferView&
+        operator=(BufferView&& bufferView) noexcept;
 
         ~BufferView();
 
@@ -41,4 +41,4 @@ namespace nd::src::graphics::vulkan
                             const VkFormat     format,
                             const VkDeviceSize offset,
                             const VkDeviceSize range) noexcept;
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using AllocateInfo = VkCommandBufferAllocateInfo;
 
         CommandBuffer() noexcept;
-        CommandBuffer(const VkDevice device, const VkCommandPool commandPool, const AllocateInfo &allocateInfo);
+        CommandBuffer(const VkDevice device, const VkCommandPool commandPool, const AllocateInfo& allocateInfo);
 
-        CommandBuffer(const CommandBuffer &commandBuffer) = delete;
-        CommandBuffer(CommandBuffer &&commandBuffer) noexcept;
+        CommandBuffer(const CommandBuffer& commandBuffer) = delete;
+        CommandBuffer(CommandBuffer&& commandBuffer) noexcept;
 
-        CommandBuffer &
-        operator=(const CommandBuffer &commandBuffer) = delete;
-        CommandBuffer &
-        operator=(CommandBuffer &&commandBuffer) noexcept;
+        CommandBuffer&
+        operator=(const CommandBuffer& commandBuffer) = delete;
+        CommandBuffer&
+        operator=(CommandBuffer&& commandBuffer) noexcept;
 
         ~CommandBuffer();
 
@@ -41,4 +41,4 @@ namespace nd::src::graphics::vulkan
     getCommandBufferAllocateInfo(const VkCommandPool        commandPool,
                                  const VkCommandBufferLevel level,
                                  const uint32_t             commandBufferCount) noexcept;
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

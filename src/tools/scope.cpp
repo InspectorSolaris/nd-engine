@@ -5,7 +5,9 @@ namespace nd::src::tools
     Scope::LogPtr Scope::s_logPtr {};
     Scope::Depth  Scope::s_depth {};
 
-    Scope::Scope(const Name name, OnBegin *onBegin, OnEnd *onEnd) noexcept : name_(name), onEnd_(onEnd)
+    Scope::Scope(const Name name, OnBegin* onBegin, OnEnd* onEnd) noexcept
+        : name_(name)
+        , onEnd_(onEnd)
     {
         onBegin(s_logPtr, name_, ++s_depth);
     }
@@ -26,4 +28,4 @@ namespace nd::src::tools
     {
         logPtr->trace("[{}] {}", depth, name);
     }
-}    // namespace nd::src::tools
+} // namespace nd::src::tools

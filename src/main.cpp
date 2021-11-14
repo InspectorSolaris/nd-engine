@@ -1,8 +1,7 @@
 #include "main.hpp"
 #include "tools.hpp"
 
-int
-main()
+int main()
 {
     using namespace nd::src::tools;
     using namespace nd::src::graphics;
@@ -35,20 +34,22 @@ main()
     ND_SET_SCOPE();
 
     auto  glfwContext = glfw::Context {};
-    auto &glfwWindow  = glfwContext.getWindow();
+    auto& glfwWindow  = glfwContext.getWindow();
 
     const auto getSurface = [&glfwWindow](const VkInstance instance)
     {
         return glfwWindow.getSurface(instance);
     };
 
-    auto vulkanContext = vulkan::Context {{getSurface,
-                                           {},
-                                           glfw::getRequiredExtensions(),
-                                           static_cast<uint32_t>(glfwWindow.getWidth()),
-                                           static_cast<uint32_t>(glfwWindow.getHeight())}};
+    auto vulkanContext = vulkan::Context {
+        {getSurface,
+         {},
+         glfw::getRequiredExtensions(),
+         static_cast<uint32_t>(glfwWindow.getWidth()),
+         static_cast<uint32_t>(glfwWindow.getHeight())}
+    };
 
-    while (!glfwWindowShouldClose(glfwWindow.get()))
+    while(!glfwWindowShouldClose(glfwWindow.get()))
     {
         glfwPollEvents();
     }

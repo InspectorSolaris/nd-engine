@@ -8,28 +8,29 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    CommandPool::CommandPool(const VkDevice device, const CreateInfo &createInfo) : device_(device)
+    CommandPool::CommandPool(const VkDevice device, const CreateInfo& createInfo)
+        : device_(device)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreateCommandPool(device_, &createInfo, nullptr, &commandPool_) == VK_SUCCESS);
     }
 
-    CommandPool::CommandPool(CommandPool &&commandPool) noexcept :
-        device_(std::move(commandPool.device_)),
-        commandPool_(std::move(commandPool.commandPool_))
+    CommandPool::CommandPool(CommandPool&& commandPool) noexcept
+        : device_(std::move(commandPool.device_))
+        , commandPool_(std::move(commandPool.commandPool_))
     {
         ND_SET_SCOPE_LOW();
 
         commandPool.commandPool_ = VK_NULL_HANDLE;
     }
 
-    CommandPool &
-    CommandPool::operator=(CommandPool &&commandPool) noexcept
+    CommandPool&
+    CommandPool::operator=(CommandPool&& commandPool) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&commandPool == this)
+        if(&commandPool == this)
         {
             return *this;
         }
@@ -55,10 +56,10 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,    // sType;
-            nullptr,                                       // pNext;
-            0,                                             // flags;
-            queueFamilyIndex                               // queueFamilyIndex;
+            VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, // sType;
+            nullptr,                                    // pNext;
+            0,                                          // flags;
+            queueFamilyIndex                            // queueFamilyIndex;
         };
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

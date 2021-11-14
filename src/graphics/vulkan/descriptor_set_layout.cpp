@@ -8,28 +8,29 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    DescriptorSetLayout::DescriptorSetLayout(const VkDevice device, const CreateInfo &createInfo) : device_(device)
+    DescriptorSetLayout::DescriptorSetLayout(const VkDevice device, const CreateInfo& createInfo)
+        : device_(device)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkCreateDescriptorSetLayout(device_, &createInfo, nullptr, &descriptorSetLayout_) == VK_SUCCESS);
     }
 
-    DescriptorSetLayout::DescriptorSetLayout(DescriptorSetLayout &&descriptorSetLayout) noexcept :
-        device_(std::move(descriptorSetLayout.device_)),
-        descriptorSetLayout_(std::move(descriptorSetLayout.descriptorSetLayout_))
+    DescriptorSetLayout::DescriptorSetLayout(DescriptorSetLayout&& descriptorSetLayout) noexcept
+        : device_(std::move(descriptorSetLayout.device_))
+        , descriptorSetLayout_(std::move(descriptorSetLayout.descriptorSetLayout_))
     {
         ND_SET_SCOPE_LOW();
 
         descriptorSetLayout.descriptorSetLayout_ = VK_NULL_HANDLE;
     }
 
-    DescriptorSetLayout &
-    DescriptorSetLayout::operator=(DescriptorSetLayout &&descriptorSetLayout) noexcept
+    DescriptorSetLayout&
+    DescriptorSetLayout::operator=(DescriptorSetLayout&& descriptorSetLayout) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&descriptorSetLayout == this)
+        if(&descriptorSetLayout == this)
         {
             return *this;
         }
@@ -51,16 +52,16 @@ namespace nd::src::graphics::vulkan
 
     DescriptorSetLayout::CreateInfo
     getDescriptorSetLayoutCreateInfo(const uint32_t                      bindingsCount,
-                                     const VkDescriptorSetLayoutBinding *bindings) noexcept
+                                     const VkDescriptorSetLayoutBinding* bindings) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,    // sType;
-            nullptr,                                                // pNext;
-            0,                                                      // flags;
-            bindingsCount,                                          // bindingCount;
-            bindings                                                // pBindings;
+            VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, // sType;
+            nullptr,                                             // pNext;
+            0,                                                   // flags;
+            bindingsCount,                                       // bindingCount;
+            bindings                                             // pBindings;
         };
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

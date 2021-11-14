@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
         using CreateInfo = VkDescriptorSetLayoutCreateInfo;
 
         DescriptorSetLayout() noexcept;
-        DescriptorSetLayout(const VkDevice device, const CreateInfo &createInfo);
+        DescriptorSetLayout(const VkDevice device, const CreateInfo& createInfo);
 
-        DescriptorSetLayout(const DescriptorSetLayout &descriptorSetLayout) = delete;
-        DescriptorSetLayout(DescriptorSetLayout &&descriptorSetLayout) noexcept;
+        DescriptorSetLayout(const DescriptorSetLayout& descriptorSetLayout) = delete;
+        DescriptorSetLayout(DescriptorSetLayout&& descriptorSetLayout) noexcept;
 
-        DescriptorSetLayout &
-        operator=(const DescriptorSetLayout &descriptorSetLayout) = delete;
-        DescriptorSetLayout &
-        operator=(DescriptorSetLayout &&descriptorSetLayout) noexcept;
+        DescriptorSetLayout&
+        operator=(const DescriptorSetLayout& descriptorSetLayout) = delete;
+        DescriptorSetLayout&
+        operator=(DescriptorSetLayout&& descriptorSetLayout) noexcept;
 
         ~DescriptorSetLayout();
 
@@ -38,5 +38,5 @@ namespace nd::src::graphics::vulkan
 
     DescriptorSetLayout::CreateInfo
     getDescriptorSetLayoutCreateInfo(const uint32_t                      bindingsCount,
-                                     const VkDescriptorSetLayoutBinding *bindings) noexcept;
-}    // namespace nd::src::graphics::vulkan
+                                     const VkDescriptorSetLayoutBinding* bindings) noexcept;
+} // namespace nd::src::graphics::vulkan

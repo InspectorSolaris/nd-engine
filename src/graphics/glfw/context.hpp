@@ -13,24 +13,24 @@ namespace nd::src::graphics::glfw
 
         Context() noexcept;
 
-        Context(const Context &context) = delete;
-        Context(Context &&context)      = delete;
+        Context(const Context& context) = delete;
+        Context(Context&& context)      = delete;
 
-        Context &
-        operator=(const Context &context) = delete;
-        Context &
-        operator=(Context &&context) = delete;
+        Context&
+        operator=(const Context& context) = delete;
+        Context&
+        operator=(Context&& context) = delete;
 
         ~Context();
 
-        constexpr Window &
+        constexpr Window&
         getWindow() noexcept;
 
     private:
         Window window_;
     };
 
-    constexpr Window &
+    constexpr Window&
     Context::getWindow() noexcept
     {
         return window_;
@@ -38,4 +38,4 @@ namespace nd::src::graphics::glfw
 
     Context::Extensions
     getRequiredExtensions() noexcept;
-}    // namespace nd::src::graphics::glfw
+} // namespace nd::src::graphics::glfw

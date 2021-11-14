@@ -8,28 +8,28 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    Surface::Surface(const VkInstance instance, const VkSurfaceKHR surface) noexcept :
-        instance_(instance),
-        surface_(surface)
+    Surface::Surface(const VkInstance instance, const VkSurfaceKHR surface) noexcept
+        : instance_(instance)
+        , surface_(surface)
     {
         ND_SET_SCOPE_LOW();
     }
 
-    Surface::Surface(Surface &&surface) noexcept :
-        instance_(std::move(surface.instance_)),
-        surface_(std::move(surface.surface_))
+    Surface::Surface(Surface&& surface) noexcept
+        : instance_(std::move(surface.instance_))
+        , surface_(std::move(surface.surface_))
     {
         ND_SET_SCOPE_LOW();
 
         surface.surface_ = VK_NULL_HANDLE;
     }
 
-    Surface &
-    Surface::operator=(Surface &&surface) noexcept
+    Surface&
+    Surface::operator=(Surface&& surface) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&surface == this)
+        if(&surface == this)
         {
             return *this;
         }
@@ -100,4 +100,4 @@ namespace nd::src::graphics::vulkan
 
         return Surface(instance, surface);
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

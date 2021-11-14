@@ -10,31 +10,31 @@ namespace nd::src::graphics::vulkan
 
     CommandBuffer::CommandBuffer(const VkDevice      device,
                                  const VkCommandPool commandPool,
-                                 const AllocateInfo &allocateInfo) :
-        device_(device),
-        commandPool_(commandPool)
+                                 const AllocateInfo& allocateInfo)
+        : device_(device)
+        , commandPool_(commandPool)
     {
         ND_SET_SCOPE_LOW();
 
         ND_ASSERT(vkAllocateCommandBuffers(device_, &allocateInfo, &commandBuffer_) == VK_SUCCESS);
     }
 
-    CommandBuffer::CommandBuffer(CommandBuffer &&commandBuffer) noexcept :
-        device_(std::move(commandBuffer.device_)),
-        commandPool_(std::move(commandBuffer.commandPool_)),
-        commandBuffer_(std::move(commandBuffer.commandBuffer_))
+    CommandBuffer::CommandBuffer(CommandBuffer&& commandBuffer) noexcept
+        : device_(std::move(commandBuffer.device_))
+        , commandPool_(std::move(commandBuffer.commandPool_))
+        , commandBuffer_(std::move(commandBuffer.commandBuffer_))
     {
         ND_SET_SCOPE_LOW();
 
         commandBuffer.commandBuffer_ = VK_NULL_HANDLE;
     }
 
-    CommandBuffer &
-    CommandBuffer::operator=(CommandBuffer &&commandBuffer) noexcept
+    CommandBuffer&
+    CommandBuffer::operator=(CommandBuffer&& commandBuffer) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&commandBuffer == this)
+        if(&commandBuffer == this)
         {
             return *this;
         }
@@ -63,11 +63,11 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,    // sType;
-            nullptr,                                           // pNext;
-            commandPool,                                       // commandPool;
-            level,                                             // level;
-            commandBufferCount                                 // commandBufferCount;
+            VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, // sType;
+            nullptr,                                        // pNext;
+            commandPool,                                    // commandPool;
+            level,                                          // level;
+            commandBufferCount                              // commandBufferCount;
         };
     }
-}    // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics::vulkan

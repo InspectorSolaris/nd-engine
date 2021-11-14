@@ -8,7 +8,7 @@ namespace nd::src::graphics::glfw
         ND_SET_SCOPE_LOW();
     }
 
-    Window::Window(int width, int height, const char *title) noexcept
+    Window::Window(int width, int height, const char* title) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -17,10 +17,10 @@ namespace nd::src::graphics::glfw
         window_ = glfwCreateWindow(width, height, title, nullptr, nullptr);
     }
 
-    Window::Window(Window &&window) noexcept :
-        window_(std::move(window.window_)),
-        width_(std::move(window.width_)),
-        height_(std::move(window.height_))
+    Window::Window(Window&& window) noexcept
+        : window_(std::move(window.window_))
+        , width_(std::move(window.width_))
+        , height_(std::move(window.height_))
     {
         ND_SET_SCOPE_LOW();
 
@@ -29,12 +29,12 @@ namespace nd::src::graphics::glfw
         window.height_ = 0;
     }
 
-    Window &
-    Window::operator=(Window &&window) noexcept
+    Window&
+    Window::operator=(Window&& window) noexcept
     {
         ND_SET_SCOPE_LOW();
 
-        if (&window == this)
+        if(&window == this)
         {
             return *this;
         }
@@ -54,7 +54,7 @@ namespace nd::src::graphics::glfw
     {
         ND_SET_SCOPE_LOW();
 
-        if (window_ != nullptr)
+        if(window_ != nullptr)
         {
             glfwDestroyWindow(window_);
         }
@@ -67,7 +67,7 @@ namespace nd::src::graphics::glfw
 
         VkSurfaceKHR surface;
 
-        if (glfwCreateWindowSurface(instance, window_, nullptr, &surface) != VK_SUCCESS)
+        if(glfwCreateWindowSurface(instance, window_, nullptr, &surface) != VK_SUCCESS)
         {
             // TODO: Refactor exceptional cases
             throw 0;
@@ -75,4 +75,4 @@ namespace nd::src::graphics::glfw
 
         return surface;
     }
-}    // namespace nd::src::graphics::glfw
+} // namespace nd::src::graphics::glfw
