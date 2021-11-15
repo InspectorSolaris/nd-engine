@@ -37,11 +37,10 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineVertexInputStateCreateInfo
-    getPipelineVertexInputStateCreateInfo(
-        const uint32_t                           vertexBindingDescriptionsCount,
-        const uint32_t                           vertexAttributeDescriptionsCount,
-        const VkVertexInputBindingDescription*   vertexBindingDescriptions,
-        const VkVertexInputAttributeDescription* vertexAttributeDescriptions) noexcept;
+    getPipelineVertexInputStateCreateInfo(const uint32_t                           vertexBindingDescriptionsCount,
+                                          const uint32_t                           vertexAttributeDescriptionsCount,
+                                          const VkVertexInputBindingDescription*   vertexBindingDescriptions,
+                                          const VkVertexInputAttributeDescription* vertexAttributeDescriptions) noexcept;
 
     VkPipelineInputAssemblyStateCreateInfo
     getPipelineInputAssemblyStateCreateInfo(const VkPrimitiveTopology topology,

@@ -51,8 +51,7 @@ namespace nd::src::graphics::vulkan
     }
 
     DescriptorSetLayout::CreateInfo
-    getDescriptorSetLayoutCreateInfo(const uint32_t                      bindingsCount,
-                                     const VkDescriptorSetLayoutBinding* bindings) noexcept
+    getDescriptorSetLayoutCreateInfo(const uint32_t bindingsCount, const VkDescriptorSetLayoutBinding* bindings) noexcept
     {
         ND_SET_SCOPE_LOW();
 

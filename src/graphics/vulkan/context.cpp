@@ -53,18 +53,17 @@ namespace nd::src::graphics::vulkan
         swapchainImages_     = getSwapchainImages(device_.get(), swapchain_.get());
         swapchainImageViews_ = getSwapchainImageViews(device_.get(), swapchainImages_, swapchainConfiguration);
 
-        auto colorAttachments = RenderPass::AttachmentReferences {
-            getRenderPassAttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)};
+        auto colorAttachments =
+            RenderPass::AttachmentReferences {getRenderPassAttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)};
 
-        auto renderPassAttachments =
-            RenderPass::Attachments {getRenderPassAttachment(swapchainConfiguration.imageFormat,
-                                                             VK_SAMPLE_COUNT_1_BIT,
-                                                             VK_ATTACHMENT_LOAD_OP_CLEAR,
-                                                             VK_ATTACHMENT_STORE_OP_STORE,
-                                                             VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-                                                             VK_ATTACHMENT_STORE_OP_DONT_CARE,
-                                                             VK_IMAGE_LAYOUT_UNDEFINED,
-                                                             VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)};
+        auto renderPassAttachments = RenderPass::Attachments {getRenderPassAttachment(swapchainConfiguration.imageFormat,
+                                                                                      VK_SAMPLE_COUNT_1_BIT,
+                                                                                      VK_ATTACHMENT_LOAD_OP_CLEAR,
+                                                                                      VK_ATTACHMENT_STORE_OP_STORE,
+                                                                                      VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                                                                                      VK_ATTACHMENT_STORE_OP_DONT_CARE,
+                                                                                      VK_IMAGE_LAYOUT_UNDEFINED,
+                                                                                      VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)};
 
         auto renderPassSubpasses = RenderPass::Subpasses {getRenderPassSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS,
                                                                                0,
@@ -78,8 +77,7 @@ namespace nd::src::graphics::vulkan
 
         auto renderPassDependencies = RenderPass::Dependencies {};
 
-        renderPass_ =
-            getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device_.get());
+        renderPass_ = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device_.get());
 
         swapchainFramebuffers_ =
             getSwapchainFramebuffers(device_.get(), renderPass_.get(), swapchainImageViews_, swapchainConfiguration);

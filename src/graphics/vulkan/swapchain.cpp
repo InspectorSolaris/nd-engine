@@ -70,8 +70,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isPresentModeSupported(const Swapchain::Configuration& configuration,
-                           const Surface::PresentModes&    presentModes) noexcept
+    isPresentModeSupported(const Swapchain::Configuration& configuration, const Surface::PresentModes& presentModes) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -84,8 +83,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isImageUsageSupported(const Swapchain::Configuration& configuration,
-                          const Surface::Capabilities&    capabilities) noexcept
+    isImageUsageSupported(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -93,8 +91,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isTransformSupported(const Swapchain::Configuration& configuration,
-                         const Surface::Capabilities&    capabilities) noexcept
+    isTransformSupported(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -136,8 +133,7 @@ namespace nd::src::graphics::vulkan
     }
 
     uint32_t
-    getImageArrayLayers(const Swapchain::Configuration& configuration,
-                        const Surface::Capabilities&    capabilities) noexcept
+    getImageArrayLayers(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept
     {
         ND_SET_SCOPE_LOW();
 

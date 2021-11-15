@@ -8,9 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    Device::Device(const VkPhysicalDevice physicalDevice,
-                   const QueueFamilies&   queueFamilies,
-                   const CreateInfo&      createInfo)
+    Device::Device(const VkPhysicalDevice physicalDevice, const QueueFamilies& queueFamilies, const CreateInfo& createInfo)
         : physicalDevice_(physicalDevice)
         , queueFamilies_(queueFamilies)
     {
@@ -56,9 +54,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Device::QueueCreateInfo
-    getQueueCreateInfo(const uint32_t queueFamilyIndex,
-                       const uint32_t queueCount,
-                       const float*   queuePriorities) noexcept
+    getQueueCreateInfo(const uint32_t queueFamilyIndex, const uint32_t queueCount, const float* queuePriorities) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -126,9 +122,8 @@ namespace nd::src::graphics::vulkan
 
             if(queueFamilyRaw.queueFlags & queueFlags)
             {
-                queueFamilies.push_back(Device::QueueFamily {static_cast<uint32_t>(i),
-                                                             queueFamilyRaw.queueCount,
-                                                             queueFamilyRaw.queueFlags});
+                queueFamilies.push_back(
+                    Device::QueueFamily {static_cast<uint32_t>(i), queueFamilyRaw.queueCount, queueFamilyRaw.queueFlags});
             }
         }
 

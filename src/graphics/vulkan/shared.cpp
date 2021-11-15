@@ -21,7 +21,9 @@ namespace nd::src::graphics::vulkan
 
         for(const auto& d2: data2)
         {
-            if(std::none_of(dataMerged.begin(), dataMerged.end(), [&d2](const auto& dm)
+            if(std::none_of(dataMerged.begin(),
+                            dataMerged.end(),
+                            [&d2](const auto& dm)
                             {
                                 return dm == d2;
                             }))
@@ -38,7 +40,10 @@ namespace nd::src::graphics::vulkan
     {
         auto dataCStrings = std::vector<const char*>(data.size());
 
-        std::transform(data.begin(), data.end(), dataCStrings.begin(), [](const auto& str)
+        std::transform(data.begin(),
+                       data.end(),
+                       dataCStrings.begin(),
+                       [](const auto& str)
                        {
                            return str.c_str();
                        });

@@ -3,7 +3,7 @@ set(TARGET_SRC
     scope.cpp
     tools.cpp)
 
-add_library(${TARGET_NAME} STATIC ${TARGET_SRC})
+add_library(${TARGET_NAME} SHARED ${TARGET_SRC})
 
 target_include_directories(${TARGET_NAME} INTERFACE "")
 

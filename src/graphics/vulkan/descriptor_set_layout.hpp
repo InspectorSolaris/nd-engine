@@ -37,6 +37,5 @@ namespace nd::src::graphics::vulkan
     }
 
     DescriptorSetLayout::CreateInfo
-    getDescriptorSetLayoutCreateInfo(const uint32_t                      bindingsCount,
-                                     const VkDescriptorSetLayoutBinding* bindings) noexcept;
+    getDescriptorSetLayoutCreateInfo(const uint32_t bindingsCount, const VkDescriptorSetLayoutBinding* bindings) noexcept;
 } // namespace nd::src::graphics::vulkan

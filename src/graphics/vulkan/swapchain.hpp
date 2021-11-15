@@ -84,27 +84,23 @@ namespace nd::src::graphics::vulkan
                            const Surface::PresentModes&    presentModes) noexcept;
 
     bool
-    isImageUsageSupported(const Swapchain::Configuration& configuration,
-                          const Surface::Capabilities&    capabilities) noexcept;
+    isImageUsageSupported(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept;
 
     bool
-    isTransformSupported(const Swapchain::Configuration& configuration,
-                         const Surface::Capabilities&    capabilities) noexcept;
+    isTransformSupported(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept;
 
     bool
     isCompositeAlphaSupported(const Swapchain::Configuration& configuration,
                               const Surface::Capabilities&    capabilities) noexcept;
 
     uint32_t
-    getMinImagesCount(const Swapchain::Configuration& configuration,
-                      const Surface::Capabilities&    capabilities) noexcept;
+    getMinImagesCount(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept;
 
     VkExtent2D
     getImageExtent(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept;
 
     uint32_t
-    getImageArrayLayers(const Swapchain::Configuration& configuration,
-                        const Surface::Capabilities&    capabilities) noexcept;
+    getImageArrayLayers(const Swapchain::Configuration& configuration, const Surface::Capabilities& capabilities) noexcept;
 
     Swapchain::QueueFamilies
     getSwapchainQueueFamilies(const Device::QueueFamilies& deviceQueueFamilies,

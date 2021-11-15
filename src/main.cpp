@@ -1,7 +1,8 @@
 #include "main.hpp"
 #include "tools.hpp"
 
-int main()
+int
+main()
 {
     using namespace nd::src::tools;
     using namespace nd::src::graphics;

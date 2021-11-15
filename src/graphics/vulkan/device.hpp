@@ -90,9 +90,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Device::QueueCreateInfo
-    getQueueCreateInfo(const uint32_t queueFamilyIndex,
-                       const uint32_t queueCount,
-                       const float*   queuePriorities) noexcept;
+    getQueueCreateInfo(const uint32_t queueFamilyIndex, const uint32_t queueCount, const float* queuePriorities) noexcept;
 
     Device::CreateInfo
     getDeviceCreateInfo(const uint32_t                  queueCreateInfosCount,

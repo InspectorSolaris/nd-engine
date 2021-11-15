@@ -8,9 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    CommandBuffer::CommandBuffer(const VkDevice      device,
-                                 const VkCommandPool commandPool,
-                                 const AllocateInfo& allocateInfo)
+    CommandBuffer::CommandBuffer(const VkDevice device, const VkCommandPool commandPool, const AllocateInfo& allocateInfo)
         : device_(device)
         , commandPool_(commandPool)
     {
