@@ -48,7 +48,7 @@
 #define ND_GET_RUNTIME_ERROR(CONDITION) nd::src::tools::getRuntimeError(__FILE__, ND_FUNCTION, #CONDITION, __LINE__)
 
 #if defined(NDEBUG)
-    #define ND_ASSERT(CONDITION)
+    #define ND_ASSERT(CONDITION) (CONDITION)
 #else
     #define ND_ASSERT(CONDITION)                   \
         if(!(CONDITION))                           \

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.21)
 # set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 # set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CMAKE_COMMAND} -E time")
 
+set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type")
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE CACHE BOOL "Export compile commands")
 
 set(CMAKE_C_COMPILER clang CACHE STRING "C compiler")
