@@ -18,7 +18,7 @@
 #define ND_USE_SCOPE_MEDIUM 2
 #define ND_USE_SCOPE_LOW    1
 
-#define ND_USE_SCOPE_LEVEL 0
+#define ND_USE_SCOPE_LEVEL 5
 
 #if(ND_USE_SCOPE_LEVEL <= ND_USE_SCOPE)
     #define ND_SET_SCOPE() \
@@ -45,15 +45,15 @@
     #define ND_SET_SCOPE_LOW()
 #endif
 
-#define ND_GET_RUNTIME_ERROR(CONDITION) nd::src::tools::getRuntimeError(__FILE__, ND_FUNCTION, #CONDITION, __LINE__)
+#define ND_GET_RUNTIME_ERROR(condition) nd::src::tools::getRuntimeError(__FILE__, ND_FUNCTION, #condition, __LINE__)
 
 #if defined(NDEBUG)
-    #define ND_ASSERT(CONDITION) (CONDITION)
+    #define ND_ASSERT(condition) (condition)
 #else
-    #define ND_ASSERT(CONDITION)                   \
-        if(!(CONDITION))                           \
+    #define ND_ASSERT(condition)                   \
+        if(!(condition))                           \
         {                                          \
-            throw ND_GET_RUNTIME_ERROR(CONDITION); \
+            throw ND_GET_RUNTIME_ERROR(condition); \
         }
 #endif
 

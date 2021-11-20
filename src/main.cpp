@@ -17,20 +17,21 @@ main()
     const auto maxSize  = 1024 * 1024 * 8;
     const auto maxFiles = 8;
 
-    auto fileSinkScopePtr    = FileSinkPtr(new FileSink("log/scope.txt", maxSize, maxFiles));
-    auto consoleSinkScopePtr = ConsoleSinkPtr(new ConsoleSink());
-    auto logScope            = Scope::LogPtr(new Scope::Log(logScopeName, {fileSinkScopePtr, consoleSinkScopePtr}));
-
     auto fileSinkMainPtr    = FileSinkPtr(new FileSink("log/log.txt", maxSize, maxFiles));
     auto consoleSinkMainPtr = ConsoleSinkPtr(new ConsoleSink());
-    auto logMain            = LogPtr(new Log(logMainName, {fileSinkMainPtr, consoleSinkMainPtr}));
+    auto logMain            = LogPtr(new Log(logMainName, {fileSinkMainPtr}));
 
-    logScope->set_level(spdlog::level::level_enum::trace);
+    auto fileSinkScopePtr    = FileSinkPtr(new FileSink("log/scope.txt", maxSize, maxFiles));
+    auto consoleSinkScopePtr = ConsoleSinkPtr(new ConsoleSink());
+    auto logScope            = Scope::LogPtr(new Scope::Log(logScopeName, {fileSinkScopePtr}));
+
     logMain->set_level(spdlog::level::level_enum::trace);
-
-    Scope::set(logScope);
+    logScope->set_level(spdlog::level::level_enum::trace);
 
     spdlog::register_logger(logMain);
+    spdlog::register_logger(logScope);
+
+    Scope::set(logScope);
 
     ND_SET_SCOPE();
 
