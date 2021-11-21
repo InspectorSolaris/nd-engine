@@ -50,17 +50,6 @@ namespace nd::src::graphics::vulkan
         vkDestroyRenderPass(device_, renderPass_, nullptr);
     }
 
-    RenderPass::AttachmentReference
-    getRenderPassAttachmentReference(const uint32_t attachment, const VkImageLayout layout) noexcept
-    {
-        ND_SET_SCOPE_LOW();
-
-        return {
-            attachment, // attachment;
-            layout      // layout;
-        };
-    }
-
     RenderPass::Attachment
     getRenderPassAttachment(const VkFormat              format,
                             const VkSampleCountFlagBits samples,

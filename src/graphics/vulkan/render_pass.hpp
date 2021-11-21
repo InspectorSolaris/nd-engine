@@ -21,9 +21,9 @@ namespace nd::src::graphics::vulkan
 
         struct Configuration
         {
-            const Attachments  attachments;
-            const Subpasses    subpasses;
-            const Dependencies dependencies;
+            const Attachments&  attachments;
+            const Subpasses&    subpasses;
+            const Dependencies& dependencies;
         };
 
         RenderPass() noexcept;
@@ -52,9 +52,6 @@ namespace nd::src::graphics::vulkan
     {
         return renderPass_;
     }
-
-    RenderPass::AttachmentReference
-    getRenderPassAttachmentReference(const uint32_t attachment, const VkImageLayout layout) noexcept;
 
     RenderPass::Attachment
     getRenderPassAttachment(const VkFormat              format,

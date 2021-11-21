@@ -7,5 +7,6 @@
 #include <cstdint>
 #include <cassert>
 #include <exception>
+#include <functional>
 
 #include <spdlog/spdlog.h>

@@ -16,11 +16,11 @@ namespace nd::src::graphics::vulkan
 
         struct Configuration final
         {
-            const std::string applicationName;
-            const std::string engineName;
+            const std::string& applicationName;
+            const std::string& engineName;
 
-            const Layers     layers;
-            const Extensions extensions;
+            const Layers&     layers;
+            const Extensions& extensions;
 
             const uint32_t applicationVersion;
             const uint32_t engineVersion;

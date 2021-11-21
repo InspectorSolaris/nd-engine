@@ -9,8 +9,15 @@ namespace nd::src::graphics::glfw
     class Window final
     {
     public:
+        struct Configuration
+        {
+            const std::string& title;
+            const int          width;
+            const int          height;
+        };
+
         Window() noexcept;
-        Window(int width, int height, const char* title) noexcept;
+        Window(const int width, const int height, const std::string& title) noexcept;
 
         Window(const Window& window) = delete;
         Window(Window&& window) noexcept;
@@ -35,10 +42,10 @@ namespace nd::src::graphics::glfw
         getSurface(const VkInstance instance) const;
 
     private:
-        GlfwWindow window_;
+        GlfwWindow window_ {};
 
-        int width_;
-        int height_;
+        int width_ {};
+        int height_ {};
     };
 
     constexpr GlfwWindow
@@ -58,4 +65,7 @@ namespace nd::src::graphics::glfw
     {
         return height_;
     }
+
+    Window
+    getWindow(const Window::Configuration& configuration) noexcept;
 } // namespace nd::src::graphics::glfw

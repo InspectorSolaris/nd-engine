@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vulkan/context.hpp"
+#include "glfw/state.hpp"
 #include "glfw/context.hpp"
 
 #include <spdlog/spdlog.h>

@@ -8,10 +8,17 @@ namespace nd::src::graphics::glfw
     class Context
     {
     public:
+        struct Configuration
+        {
+            const std::string& title;
+            const int          width;
+            const int          height;
+        };
+
         using Extension  = std::string;
         using Extensions = std::vector<Extension>;
 
-        Context() noexcept;
+        Context(Window&& window) noexcept;
 
         Context(const Context& context) = delete;
         Context(Context&& context)      = delete;
@@ -27,7 +34,7 @@ namespace nd::src::graphics::glfw
         getWindow() noexcept;
 
     private:
-        Window window_;
+        Window window_ {};
     };
 
     constexpr Window&
@@ -38,4 +45,7 @@ namespace nd::src::graphics::glfw
 
     Context::Extensions
     getRequiredExtensions() noexcept;
+
+    Context
+    getContext(const Context::Configuration& configuration) noexcept;
 } // namespace nd::src::graphics::glfw

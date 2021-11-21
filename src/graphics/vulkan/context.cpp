@@ -3,40 +3,65 @@
 
 namespace nd::src::graphics::vulkan
 {
-    Context::Context(const Context::Configuration& configuration)
+    Context::Context(Instance&&                instance,
+                     Device&&                  device,
+                     Surface&&                 surface,
+                     RenderPass&&              renderPass,
+                     Swapchain&&               swapchain,
+                     Swapchain::Images&&       swapchainImages,
+                     Swapchain::ImageViews&&   swapchainImageViews,
+                     Swapchain::Framebuffers&& swapchainFramebuffers)
+        : instance_(std::move(instance))
+        , device_(std::move(device))
+        , surface_(std::move(surface))
+        , renderPass_(std::move(renderPass))
+        , swapchain_(std::move(swapchain))
+        , swapchainImages_(std::move(swapchainImages))
+        , swapchainFramebuffers_(std::move(swapchainFramebuffers))
+    {
+        ND_SET_SCOPE_LOW();
+    }
+
+    Context::~Context()
+    {
+        ND_SET_SCOPE_LOW();
+    }
+
+    Context
+    getContext(const Context::Configuration& configuration)
     {
         ND_SET_SCOPE_LOW();
 
-        const auto instanceLayers = std::vector<std::string> {
+        const auto instanceLayers = Context::Layers {
 #ifndef NDEBUG
             "VK_LAYER_KHRONOS_validation"
 #endif
         };
-        const auto instanceExtensions = std::vector<std::string> {};
+        const auto instanceExtensions = Context::Extensions {};
 
-        instance_ = getInstance({"nd-engine",
-                                 "nd-engine",
-                                 getMerged(instanceLayers, configuration.layers),
-                                 getMerged(instanceExtensions, configuration.extensions),
-                                 VK_MAKE_VERSION(0, 1, 0),
-                                 VK_MAKE_VERSION(0, 1, 0),
-                                 VK_API_VERSION_1_2});
+        auto instance = getInstance({configuration.applicationName,
+                                     configuration.engineName,
+                                     getMerged(instanceLayers, configuration.layers),
+                                     getMerged(instanceExtensions, configuration.extensions),
+                                     VK_MAKE_VERSION(0, 1, 0),
+                                     VK_MAKE_VERSION(0, 1, 0),
+                                     VK_API_VERSION_1_2});
 
         const auto physicalDevicePriority = [](const auto& physicalDevice)
         {
             return 1;
         };
 
-        device_ = getDevice({{}, physicalDevicePriority, {"VK_KHR_swapchain"}, VK_QUEUE_GRAPHICS_BIT}, instance_.get());
+        auto device = getDevice({{}, physicalDevicePriority, {"VK_KHR_swapchain"}, VK_QUEUE_GRAPHICS_BIT}, instance.get());
 
-        surface_ = getSurface(instance_.get(), configuration.getSurface(instance_.get()));
+        auto surface = getSurface(instance.get(), configuration.getSurface(instance.get()));
 
         const auto swapchainConfiguration = Swapchain::Configuration {
             {configuration.width, configuration.height},
             1,
             1,
             true,
-            VK_FORMAT_B8G8R8A8_UNORM,
+            VK_FORMAT_B8G8R8A8_SRGB,
             VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
             VK_PRESENT_MODE_IMMEDIATE_KHR,
@@ -44,17 +69,18 @@ namespace nd::src::graphics::vulkan
             VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR
         };
 
-        swapchain_ = getSwapchain(swapchainConfiguration,
-                                  device_.getQueueFamilies(),
-                                  device_.getPhysical(),
-                                  device_.get(),
-                                  surface_.get());
+        auto swapchain = getSwapchain(swapchainConfiguration,
+                                      device.getQueueFamilies(),
+                                      device.getPhysical(),
+                                      device.get(),
+                                      surface.get());
 
-        swapchainImages_     = getSwapchainImages(device_.get(), swapchain_.get());
-        swapchainImageViews_ = getSwapchainImageViews(device_.get(), swapchainImages_, swapchainConfiguration);
+        auto swapchainImages     = getSwapchainImages(device.get(), swapchain.get());
+        auto swapchainImageViews = getSwapchainImageViews(device.get(), swapchainImages, swapchainConfiguration);
 
-        auto colorAttachments =
-            RenderPass::AttachmentReferences {getRenderPassAttachmentReference(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)};
+        auto colorAttachments = RenderPass::AttachmentReferences {
+            {0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}
+        };
 
         auto renderPassAttachments = RenderPass::Attachments {getRenderPassAttachment(swapchainConfiguration.imageFormat,
                                                                                       VK_SAMPLE_COUNT_1_BIT,
@@ -77,13 +103,18 @@ namespace nd::src::graphics::vulkan
 
         auto renderPassDependencies = RenderPass::Dependencies {};
 
-        renderPass_ = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device_.get());
+        auto renderPass = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device.get());
 
-        swapchainFramebuffers_ =
-            getSwapchainFramebuffers(device_.get(), renderPass_.get(), swapchainImageViews_, swapchainConfiguration);
-    }
+        auto swapchainFramebuffers =
+            getSwapchainFramebuffers(device.get(), renderPass.get(), swapchainImageViews, swapchainConfiguration);
 
-    Context::~Context()
-    {
+        return Context(std::move(instance),
+                       std::move(device),
+                       std::move(surface),
+                       std::move(renderPass),
+                       std::move(swapchain),
+                       std::move(swapchainImages),
+                       std::move(swapchainImageViews),
+                       std::move(swapchainFramebuffers));
     }
 } // namespace nd::src::graphics::vulkan

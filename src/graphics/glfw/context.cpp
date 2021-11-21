@@ -3,21 +3,15 @@
 
 namespace nd::src::graphics::glfw
 {
-    Context::Context() noexcept
-        : window_()
+    Context::Context(Window&& window) noexcept
+        : window_(std::move(window))
     {
         ND_SET_SCOPE_LOW();
-
-        glfwInit();
-
-        window_ = Window(800, 600, "nd-engine");
     }
 
     Context::~Context()
     {
         ND_SET_SCOPE_LOW();
-
-        glfwTerminate();
     }
 
     Context::Extensions
@@ -42,5 +36,13 @@ namespace nd::src::graphics::glfw
                        });
 
         return extensions;
+    }
+
+    Context
+    getContext(const Context::Configuration& configuration) noexcept
+    {
+        auto window = glfw::getWindow({configuration.title, configuration.width, configuration.height});
+
+        return Context(std::move(window));
     }
 } // namespace nd::src::graphics::glfw

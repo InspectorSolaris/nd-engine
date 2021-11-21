@@ -26,18 +26,33 @@ namespace nd::src::graphics::vulkan
     class Context final
     {
     public:
+        using Layer      = std::string;
+        using Layers     = std::vector<Layer>;
+        using Extension  = std::string;
+        using Extensions = std::vector<Extension>;
+
         struct Configuration final
         {
-            const std::function<VkSurfaceKHR(const VkInstance instance)> getSurface;
+            const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface;
 
-            const std::vector<std::string> layers;
-            const std::vector<std::string> extensions;
+            const std::string& applicationName;
+            const std::string& engineName;
+
+            const Layers&     layers;
+            const Extensions& extensions;
 
             const uint32_t width;
             const uint32_t height;
         };
 
-        Context(const Configuration& configuration);
+        Context(Instance&&                instance,
+                Device&&                  device,
+                Surface&&                 surface,
+                RenderPass&&              renderPass,
+                Swapchain&&               swapchain,
+                Swapchain::Images&&       swapchainImages,
+                Swapchain::ImageViews&&   swapchainImageViews,
+                Swapchain::Framebuffers&& swapchainFramebuffers);
 
         Context(const Context& vulkanContext) = delete;
         Context(Context&& vulkanContext)      = delete;
@@ -59,4 +74,7 @@ namespace nd::src::graphics::vulkan
         Swapchain::ImageViews   swapchainImageViews_ {};
         Swapchain::Framebuffers swapchainFramebuffers_ {};
     };
+
+    Context
+    getContext(const Context::Configuration& configuration);
 } // namespace nd::src::graphics::vulkan

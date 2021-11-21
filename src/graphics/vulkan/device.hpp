@@ -27,19 +27,21 @@ namespace nd::src::graphics::vulkan
             const VkQueueFlags queueFlags;
         };
 
+        using Extension       = std::string;
+        using Extensions      = std::vector<Extension>;
         using QueueFamilies   = std::vector<QueueFamily>;
         using QueueCreateInfo = VkDeviceQueueCreateInfo;
         using CreateInfo      = VkDeviceCreateInfo;
 
         struct Configuration final
         {
-            VkPhysicalDeviceFeatures features;
+            const VkPhysicalDeviceFeatures& features;
 
-            std::function<size_t(const PhysicalDevice&)> physicalDevicePriority;
+            const std::function<size_t(const PhysicalDevice&)>& physicalDevicePriority;
 
-            std::vector<std::string> extensions;
+            const Extensions& extensions;
 
-            VkQueueFlags queueFlags;
+            const VkQueueFlags queueFlags;
         };
 
         Device() noexcept;

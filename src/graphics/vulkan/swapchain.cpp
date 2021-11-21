@@ -299,7 +299,15 @@ namespace nd::src::graphics::vulkan
 
         for(const auto& image: images)
         {
-            imageViews.push_back(getImageView({VK_IMAGE_ASPECT_COLOR_BIT, 1, 0, 1, 0}, device, image));
+            imageViews.push_back(getImageView(
+                {
+                    {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
+                    {   },
+                    VK_IMAGE_VIEW_TYPE_2D,
+                    configuration.imageFormat
+            },
+                device,
+                image));
         }
 
         return imageViews;

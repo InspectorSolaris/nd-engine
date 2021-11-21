@@ -8,13 +8,15 @@ namespace nd::src::graphics::glfw
         ND_SET_SCOPE_LOW();
     }
 
-    Window::Window(int width, int height, const char* title) noexcept
+    Window::Window(const int width, const int height, const std::string& title) noexcept
+        : width_(width)
+        , height_(height)
     {
         ND_SET_SCOPE_LOW();
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-        window_ = glfwCreateWindow(width, height, title, nullptr, nullptr);
+        window_ = glfwCreateWindow(width_, height_, title.c_str(), nullptr, nullptr);
     }
 
     Window::Window(Window&& window) noexcept
@@ -67,12 +69,14 @@ namespace nd::src::graphics::glfw
 
         VkSurfaceKHR surface;
 
-        if(glfwCreateWindowSurface(instance, window_, nullptr, &surface) != VK_SUCCESS)
-        {
-            // TODO: Refactor exceptional cases
-            throw 0;
-        }
+        ND_ASSERT(glfwCreateWindowSurface(instance, window_, nullptr, &surface) == VK_SUCCESS);
 
         return surface;
+    }
+
+    Window
+    getWindow(const Window::Configuration& configuration) noexcept
+    {
+        return Window(configuration.width, configuration.height, configuration.title);
     }
 } // namespace nd::src::graphics::glfw

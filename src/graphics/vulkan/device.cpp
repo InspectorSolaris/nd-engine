@@ -24,7 +24,9 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE_LOW();
 
-        device.queueFamilies_ = QueueFamilies {};
+        device.physicalDevice_ = VK_NULL_HANDLE;
+        device.device_         = VK_NULL_HANDLE;
+        device.queueFamilies_  = QueueFamilies {};
     }
 
     Device&
@@ -41,7 +43,9 @@ namespace nd::src::graphics::vulkan
         device_         = std::move(device.device_);
         queueFamilies_  = std::move(device.queueFamilies_);
 
-        device.queueFamilies_ = QueueFamilies {};
+        device.physicalDevice_ = VK_NULL_HANDLE;
+        device.device_         = VK_NULL_HANDLE;
+        device.queueFamilies_  = QueueFamilies {};
 
         return *this;
     }

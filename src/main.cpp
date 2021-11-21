@@ -35,7 +35,10 @@ main()
 
     ND_SET_SCOPE();
 
-    auto  glfwContext = glfw::Context {};
+    const auto name = std::string("nd-engine");
+
+    auto  glfwState   = glfw::getState();
+    auto  glfwContext = glfw::getContext({name, 800, 600});
     auto& glfwWindow  = glfwContext.getWindow();
 
     const auto getSurface = [&glfwWindow](const VkInstance instance)
@@ -43,13 +46,13 @@ main()
         return glfwWindow.getSurface(instance);
     };
 
-    auto vulkanContext = vulkan::Context {
-        {getSurface,
-         {},
-         glfw::getRequiredExtensions(),
-         static_cast<uint32_t>(glfwWindow.getWidth()),
-         static_cast<uint32_t>(glfwWindow.getHeight())}
-    };
+    auto vulkanContext = vulkan::getContext({getSurface,
+                                             name,
+                                             name,
+                                             {},
+                                             glfw::getRequiredExtensions(),
+                                             static_cast<uint32_t>(glfwWindow.getWidth()),
+                                             static_cast<uint32_t>(glfwWindow.getHeight())});
 
     while(!glfwWindowShouldClose(glfwWindow.get()))
     {

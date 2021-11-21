@@ -13,10 +13,10 @@ namespace nd::src::tools
         using Name  = std::string_view;
         using Depth = uint64_t;
 
-        using OnBegin = void(const LogPtr logPtr, const Name name, const Depth depth);
-        using OnEnd   = void(const LogPtr logPtr, const Name name, const Depth depth);
+        using OnBegin = std::function<void(const LogPtr logPtr, const Name name, const Depth depth)>;
+        using OnEnd   = std::function<void(const LogPtr logPtr, const Name name, const Depth depth)>;
 
-        Scope(const Name name, OnBegin* onBegin, OnEnd* onEnd) noexcept;
+        Scope(const Name name, const OnBegin& onBegin, const OnEnd& onEnd) noexcept;
 
         ~Scope();
 
@@ -32,8 +32,8 @@ namespace nd::src::tools
         static LogPtr s_logPtr;
         static Depth  s_depth;
 
-        Name   name_ {};
-        OnEnd* onEnd_ {};
+        const Name   name_ {};
+        const OnEnd& onEnd_ {};
     };
 
     void
