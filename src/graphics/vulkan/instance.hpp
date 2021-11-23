@@ -9,10 +9,6 @@ namespace nd::src::graphics::vulkan
     {
     public:
         using CreateInfo = VkInstanceCreateInfo;
-        using Layer      = std::string;
-        using Layers     = std::vector<Layer>;
-        using Extension  = std::string;
-        using Extensions = std::vector<Extension>;
 
         struct Configuration final
         {
@@ -68,10 +64,10 @@ namespace nd::src::graphics::vulkan
                           const char* const*       enabledExtensions) noexcept;
 
     bool
-    isInstanceLayersSupported(const Instance::Layers& layers) noexcept;
+    isInstanceLayersSupported(const Layers& layers) noexcept;
 
     bool
-    isInstanceExtensionsSupported(const Instance::Extensions& extensions) noexcept;
+    isInstanceExtensionsSupported(const Extensions& extensions) noexcept;
 
     Instance
     getInstance(const Instance::Configuration& configuration);

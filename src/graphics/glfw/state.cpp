@@ -7,7 +7,7 @@ namespace nd::src::graphics::glfw
 
     State::State()
     {
-        ND_ASSERT(s_initialized);
+        ND_ASSERT(!s_initialized);
 
         s_initialized = true;
 

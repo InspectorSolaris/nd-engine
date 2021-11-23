@@ -62,18 +62,6 @@ namespace nd::src::graphics::glfw
         }
     }
 
-    VkSurfaceKHR
-    Window::getSurface(const VkInstance instance) const
-    {
-        ND_SET_SCOPE_LOW();
-
-        VkSurfaceKHR surface;
-
-        ND_ASSERT(glfwCreateWindowSurface(instance, window_, nullptr, &surface) == VK_SUCCESS);
-
-        return surface;
-    }
-
     Window
     getWindow(const Window::Configuration& configuration) noexcept
     {

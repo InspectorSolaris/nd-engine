@@ -38,9 +38,6 @@ namespace nd::src::graphics::glfw
         constexpr int
         getHeight() const noexcept;
 
-        VkSurfaceKHR
-        getSurface(const VkInstance instance) const;
-
     private:
         GlfwWindow window_ {};
 

@@ -135,8 +135,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice            physicalDevice,
-                                        const PhysicalDevice::Extensions& extensions) noexcept
+    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice physicalDevice, const Extensions& extensions) noexcept
     {
         ND_SET_SCOPE_LOW();
 

@@ -90,7 +90,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isInstanceLayersSupported(const Instance::Layers& layers) noexcept
+    isInstanceLayersSupported(const Layers& layers) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -119,7 +119,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isInstanceExtensionsSupported(const Instance::Extensions& extensions) noexcept
+    isInstanceExtensionsSupported(const Extensions& extensions) noexcept
     {
         ND_SET_SCOPE_LOW();
 

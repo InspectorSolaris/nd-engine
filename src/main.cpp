@@ -4,6 +4,7 @@
 int
 main()
 {
+    using namespace std::placeholders;
     using namespace nd::src::tools;
     using namespace nd::src::graphics;
 
@@ -41,12 +42,7 @@ main()
     auto  glfwContext = glfw::getContext({name, 800, 600});
     auto& glfwWindow  = glfwContext.getWindow();
 
-    const auto getSurface = [&glfwWindow](const VkInstance instance)
-    {
-        return glfwWindow.getSurface(instance);
-    };
-
-    auto vulkanContext = vulkan::getContext({getSurface,
+    auto vulkanContext = vulkan::getContext({std::bind(glfw::getSurface, std::ref(glfwWindow), _1),
                                              name,
                                              name,
                                              {},

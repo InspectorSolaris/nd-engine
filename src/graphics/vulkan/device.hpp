@@ -7,8 +7,6 @@ namespace nd::src::graphics::vulkan
 {
     struct PhysicalDevice final
     {
-        using Extension     = std::string;
-        using Extensions    = std::vector<Extension>;
         using QueueFamily   = VkQueueFamilyProperties;
         using QueueFamilies = std::vector<QueueFamily>;
 
@@ -27,8 +25,6 @@ namespace nd::src::graphics::vulkan
             const VkQueueFlags queueFlags;
         };
 
-        using Extension       = std::string;
-        using Extensions      = std::vector<Extension>;
         using QueueFamilies   = std::vector<QueueFamily>;
         using QueueCreateInfo = VkDeviceQueueCreateInfo;
         using CreateInfo      = VkDeviceCreateInfo;
@@ -108,8 +104,7 @@ namespace nd::src::graphics::vulkan
     getDeviceQueueFamilies(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;
 
     bool
-    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice            physicalDevice,
-                                        const PhysicalDevice::Extensions& extensions) noexcept;
+    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice physicalDevice, const Extensions& extensions) noexcept;
 
     bool
     isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available,

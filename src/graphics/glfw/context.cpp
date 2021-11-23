@@ -38,6 +38,18 @@ namespace nd::src::graphics::glfw
         return extensions;
     }
 
+    VkSurfaceKHR
+    getSurface(const Window& window, const VkInstance instance)
+    {
+        ND_SET_SCOPE_LOW();
+
+        VkSurfaceKHR surface;
+
+        ND_ASSERT(glfwCreateWindowSurface(instance, window.get(), nullptr, &surface) == VK_SUCCESS);
+
+        return surface;
+    }
+
     Context
     getContext(const Context::Configuration& configuration) noexcept
     {

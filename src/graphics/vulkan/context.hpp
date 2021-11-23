@@ -26,11 +26,6 @@ namespace nd::src::graphics::vulkan
     class Context final
     {
     public:
-        using Layer      = std::string;
-        using Layers     = std::vector<Layer>;
-        using Extension  = std::string;
-        using Extensions = std::vector<Extension>;
-
         struct Configuration final
         {
             const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface;

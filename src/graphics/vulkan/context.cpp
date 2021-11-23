@@ -32,12 +32,12 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE_LOW();
 
-        const auto instanceLayers = Context::Layers {
+        const auto instanceLayers = Layers {
 #ifndef NDEBUG
             "VK_LAYER_KHRONOS_validation"
 #endif
         };
-        const auto instanceExtensions = Context::Extensions {};
+        const auto instanceExtensions = Extensions {};
 
         auto instance = getInstance({configuration.applicationName,
                                      configuration.engineName,

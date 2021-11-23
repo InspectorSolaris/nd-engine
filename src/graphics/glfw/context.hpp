@@ -46,6 +46,9 @@ namespace nd::src::graphics::glfw
     Context::Extensions
     getRequiredExtensions() noexcept;
 
+    VkSurfaceKHR
+    getSurface(const Window& window, const VkInstance instance);
+
     Context
     getContext(const Context::Configuration& configuration) noexcept;
 } // namespace nd::src::graphics::glfw
