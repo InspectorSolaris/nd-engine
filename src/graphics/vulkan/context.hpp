@@ -47,7 +47,8 @@ namespace nd::src::graphics::vulkan
                 Swapchain&&               swapchain,
                 Swapchain::Images&&       swapchainImages,
                 Swapchain::ImageViews&&   swapchainImageViews,
-                Swapchain::Framebuffers&& swapchainFramebuffers);
+                Swapchain::Framebuffers&& swapchainFramebuffers,
+                ShaderModules&&           shaderModules);
 
         Context(const Context& vulkanContext) = delete;
         Context(Context&& vulkanContext)      = delete;
@@ -68,6 +69,7 @@ namespace nd::src::graphics::vulkan
         Swapchain::Images       swapchainImages_ {};
         Swapchain::ImageViews   swapchainImageViews_ {};
         Swapchain::Framebuffers swapchainFramebuffers_ {};
+        ShaderModules           shaderModules_ {};
     };
 
     Context

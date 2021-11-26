@@ -10,7 +10,8 @@ namespace nd::src::graphics::vulkan
                      Swapchain&&               swapchain,
                      Swapchain::Images&&       swapchainImages,
                      Swapchain::ImageViews&&   swapchainImageViews,
-                     Swapchain::Framebuffers&& swapchainFramebuffers)
+                     Swapchain::Framebuffers&& swapchainFramebuffers,
+                     ShaderModules&&           shaderModules)
         : instance_(std::move(instance))
         , device_(std::move(device))
         , surface_(std::move(surface))
@@ -18,6 +19,7 @@ namespace nd::src::graphics::vulkan
         , swapchain_(std::move(swapchain))
         , swapchainImages_(std::move(swapchainImages))
         , swapchainFramebuffers_(std::move(swapchainFramebuffers))
+        , shaderModules_(std::move(shaderModules))
     {
         ND_SET_SCOPE_LOW();
     }
@@ -108,6 +110,8 @@ namespace nd::src::graphics::vulkan
         auto swapchainFramebuffers =
             getSwapchainFramebuffers(device.get(), renderPass.get(), swapchainImageViews, swapchainConfiguration);
 
+        auto shaderModules = ShaderModules {};
+
         return Context(std::move(instance),
                        std::move(device),
                        std::move(surface),
@@ -115,6 +119,7 @@ namespace nd::src::graphics::vulkan
                        std::move(swapchain),
                        std::move(swapchainImages),
                        std::move(swapchainImageViews),
-                       std::move(swapchainFramebuffers));
+                       std::move(swapchainFramebuffers),
+                       std::move(shaderModules));
     }
 } // namespace nd::src::graphics::vulkan

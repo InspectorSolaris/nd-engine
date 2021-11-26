@@ -8,7 +8,7 @@ namespace nd::src::graphics::glfw
     class Context
     {
     public:
-        struct Configuration
+        struct Configuration final
         {
             const std::string& title;
             const int          width;

@@ -19,7 +19,7 @@ namespace nd::src::graphics::vulkan
         using Subpasses            = std::vector<Subpass>;
         using Dependencies         = std::vector<Dependency>;
 
-        struct Configuration
+        struct Configuration final
         {
             const Attachments&  attachments;
             const Subpasses&    subpasses;
