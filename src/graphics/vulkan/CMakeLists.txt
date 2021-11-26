@@ -21,6 +21,10 @@ set(TARGET_SRC
     surface.cpp
     swapchain.cpp)
 
+set(TARGET_SHADERS_SRC
+    vert.vert
+    frag.frag)
+
 add_library(${TARGET_NAME} STATIC ${TARGET_SRC})
 
 target_link_libraries(${TARGET_NAME}
@@ -28,3 +32,5 @@ target_link_libraries(${TARGET_NAME}
     PRIVATE nd-src-tools)
 
 target_precompile_headers(${TARGET_NAME} PRIVATE pch.hpp)
+
+
