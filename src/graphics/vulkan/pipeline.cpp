@@ -228,14 +228,14 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, // sType;
-            nullptr, // pNext;
-            0, // flags;
-            logicOpEnable, // logicOpEnable;
-            logicOp, // logicOp;
-            attachmentsCount, // attachmentCount;
-            attachments, // pAttachments;
-            {blendConstants[0], blendConstants[1], blendConstants[2], blendConstants[3]}  // blendConstants[4];
+            VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,                    // sType;
+            nullptr,                                                                     // pNext;
+            0,                                                                           // flags;
+            logicOpEnable,                                                               // logicOpEnable;
+            logicOp,                                                                     // logicOp;
+            attachmentsCount,                                                            // attachmentCount;
+            attachments,                                                                 // pAttachments;
+            {blendConstants[0], blendConstants[1], blendConstants[2], blendConstants[3]} // blendConstants[4];
         };
     }
 

@@ -58,18 +58,16 @@ namespace nd::src::graphics::vulkan
 
         auto surface = getSurface(instance.get(), configuration.getSurface(instance.get()));
 
-        const auto swapchainConfiguration = Swapchain::Configuration {
-            {configuration.width, configuration.height},
-            1,
-            1,
-            true,
-            VK_FORMAT_B8G8R8A8_SRGB,
-            VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-            VK_PRESENT_MODE_IMMEDIATE_KHR,
-            VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
-            VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR
-        };
+        const auto swapchainConfiguration = Swapchain::Configuration {{configuration.width, configuration.height},
+                                                                      1,
+                                                                      1,
+                                                                      true,
+                                                                      VK_FORMAT_B8G8R8A8_SRGB,
+                                                                      VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+                                                                      VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                                                                      VK_PRESENT_MODE_IMMEDIATE_KHR,
+                                                                      VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
+                                                                      VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
 
         auto swapchain = getSwapchain(swapchainConfiguration,
                                       device.getQueueFamilies(),
@@ -80,9 +78,7 @@ namespace nd::src::graphics::vulkan
         auto swapchainImages     = getSwapchainImages(device.get(), swapchain.get());
         auto swapchainImageViews = getSwapchainImageViews(device.get(), swapchainImages, swapchainConfiguration);
 
-        auto colorAttachments = RenderPass::AttachmentReferences {
-            {0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}
-        };
+        auto colorAttachments = RenderPass::AttachmentReferences {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
 
         auto renderPassAttachments = RenderPass::Attachments {getRenderPassAttachment(swapchainConfiguration.imageFormat,
                                                                                       VK_SAMPLE_COUNT_1_BIT,
@@ -110,7 +106,9 @@ namespace nd::src::graphics::vulkan
         auto swapchainFramebuffers =
             getSwapchainFramebuffers(device.get(), renderPass.get(), swapchainImageViews, swapchainConfiguration);
 
-        auto shaderModules = ShaderModules {};
+        auto shaderModules = getShaderModules({{"src/graphics/vulkan/shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT},
+                                               {"src/graphics/vulkan/shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT}},
+                                              device.get());
 
         return Context(std::move(instance),
                        std::move(device),
