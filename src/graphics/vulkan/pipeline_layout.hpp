@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.hpp"
+#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -8,6 +9,12 @@ namespace nd::src::graphics::vulkan
     {
     public:
         using CreateInfo = VkPipelineLayoutCreateInfo;
+
+        struct Configuration final
+        {
+            const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts;
+            const std::vector<VkPushConstantRange>&   pushConstantRanges;
+        };
 
         PipelineLayout() noexcept;
         PipelineLayout(const VkDevice device, const CreateInfo& createInfo);
@@ -41,4 +48,7 @@ namespace nd::src::graphics::vulkan
                                 const uint32_t               pushConstantRangesCount,
                                 const VkDescriptorSetLayout* setLayouts,
                                 const VkPushConstantRange*   pushConstantRanges) noexcept;
+
+    PipelineLayout
+    getPipelineLayout(const PipelineLayout::Configuration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

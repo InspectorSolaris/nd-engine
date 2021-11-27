@@ -87,25 +87,14 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    ShaderModules
-    getShaderModules(const ShaderModule::Configurations& configurations, const VkDevice device)
+    ShaderModule
+    getShaderModule(const ShaderModule::Configuration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE_LOW();
 
-        auto shaderModules = ShaderModules {};
+        const auto code       = getShaderCode(configuration.path);
+        const auto createInfo = getShaderModuleCreateInfo(code.size(), reinterpret_cast<const uint32_t*>(code.data()));
 
-        shaderModules.reserve(configurations.size());
-
-        for(const auto configuration: configurations)
-        {
-            const auto code = getShaderCode(configuration.path);
-
-            shaderModules.emplace_back(
-                device,
-                configuration.stage,
-                getShaderModuleCreateInfo(code.size(), reinterpret_cast<const uint32_t*>(code.data())));
-        }
-
-        return shaderModules;
+        return ShaderModule(device, configuration.stage, createInfo);
     }
 } // namespace nd::src::graphics::vulkan

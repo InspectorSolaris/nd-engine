@@ -68,4 +68,17 @@ namespace nd::src::graphics::vulkan
             pushConstantRanges                             // pPushConstantRanges;
         };
     }
+
+    PipelineLayout
+    getPipelineLayout(const PipelineLayout::Configuration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE_LOW();
+
+        const auto createInfo = getPipelineLayoutCreateInfo(configuration.descriptorSetLayouts.size(),
+                                                            configuration.pushConstantRanges.size(),
+                                                            configuration.descriptorSetLayouts.data(),
+                                                            configuration.pushConstantRanges.data());
+
+        return PipelineLayout(device, createInfo);
+    }
 } // namespace nd::src::graphics::vulkan

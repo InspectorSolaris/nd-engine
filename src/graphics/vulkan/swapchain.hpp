@@ -1,6 +1,8 @@
 #pragma once
 
 #include "pch.hpp"
+#include "shared.hpp"
+
 #include "device.hpp"
 #include "surface.hpp"
 #include "image_view.hpp"

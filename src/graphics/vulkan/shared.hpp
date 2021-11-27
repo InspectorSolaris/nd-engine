@@ -20,4 +20,15 @@ namespace nd::src::graphics::vulkan
 
     std::vector<const char*>
     getCStrings(const std::vector<std::string>& data) noexcept;
+
+    template<typename Collection, typename CollectionTransformed, typename Transformer>
+    CollectionTransformed
+    getTransformed(const Collection& collection, const Transformer& transformer)
+    {
+        auto transformed = CollectionTransformed(collection.size());
+
+        std::transform(collection.begin(), collection.end(), transformed.begin(), transformer);
+
+        return transformed;
+    }
 } // namespace nd::src::graphics::vulkan

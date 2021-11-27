@@ -1,4 +1,4 @@
-#pragma occurrences
+#pragma once
 
 #include "pch.hpp"
 #include "shared.hpp"

@@ -1,14 +1,13 @@
 #pragma once
 
 #include "pch.hpp"
+#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
     class ShaderModule final
     {
     public:
-        const std::string kName = "main";
-
         using CreateInfo = VkShaderModuleCreateInfo;
         using Code       = std::vector<char>;
 
@@ -17,8 +16,6 @@ namespace nd::src::graphics::vulkan
             const std::string&          path;
             const VkShaderStageFlagBits stage;
         };
-
-        using Configurations = std::vector<Configuration>;
 
         ShaderModule() noexcept;
         ShaderModule(const VkDevice device, const VkShaderStageFlagBits stage, const CreateInfo& createInfo);
@@ -58,14 +55,12 @@ namespace nd::src::graphics::vulkan
         return stage_;
     }
 
-    using ShaderModules = std::vector<ShaderModule>;
-
     ShaderModule::Code
     getShaderCode(const std::string& path);
 
     ShaderModule::CreateInfo
     getShaderModuleCreateInfo(const size_t codeSize, const uint32_t* code) noexcept;
 
-    ShaderModules
-    getShaderModules(const ShaderModule::Configurations& configurations, const VkDevice device);
+    ShaderModule
+    getShaderModule(const ShaderModule::Configuration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

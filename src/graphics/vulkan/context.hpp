@@ -26,6 +26,8 @@ namespace nd::src::graphics::vulkan
     class Context final
     {
     public:
+        using ShaderModules = std::vector<ShaderModule>;
+
         struct Configuration final
         {
             const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface;

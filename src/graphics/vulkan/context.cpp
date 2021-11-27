@@ -106,9 +106,21 @@ namespace nd::src::graphics::vulkan
         auto swapchainFramebuffers =
             getSwapchainFramebuffers(device.get(), renderPass.get(), swapchainImageViews, swapchainConfiguration);
 
-        auto shaderModules = getShaderModules({{"src/graphics/vulkan/shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT},
-                                               {"src/graphics/vulkan/shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT}},
-                                              device.get());
+        const auto shadersEntryPoint = "main";
+        const auto shadersDir        = "src/graphics/vulkan/shaders";
+
+        const auto shaderModuleConfigurations = std::vector<ShaderModule::Configuration> {
+            {fmt::format("{}/vert.spv", shadersDir), VK_SHADER_STAGE_VERTEX_BIT},
+            {fmt::format("{}/frag.spv", shadersDir), VK_SHADER_STAGE_FRAGMENT_BIT}};
+
+        auto shaderModules = Context::ShaderModules {};
+
+        shaderModules.reserve(shaderModuleConfigurations.size());
+
+        for(const auto& shaderModuleConfiguration: shaderModuleConfigurations)
+        {
+            shaderModules.push_back(getShaderModule(shaderModuleConfiguration, device.get()));
+        }
 
         return Context(std::move(instance),
                        std::move(device),
