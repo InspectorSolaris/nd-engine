@@ -91,7 +91,7 @@ namespace nd::src::graphics::vulkan
 
         auto renderPassSubpasses = RenderPass::Subpasses {getRenderPassSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS,
                                                                                0,
-                                                                               1,
+                                                                               colorAttachments.size(),
                                                                                0,
                                                                                nullptr,
                                                                                colorAttachments.data(),
