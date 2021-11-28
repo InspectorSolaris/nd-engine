@@ -9,6 +9,15 @@ namespace nd::src::graphics::vulkan
     {
     public:
         using AllocateInfo = VkDescriptorSetAllocateInfo;
+        using Handle       = VkDescriptorSet;
+        using Handles      = std::vector<Handle>;
+        using Layout       = VkDescriptorSetLayout;
+        using Layouts      = std::vector<Layout>;
+
+        struct Configuration final
+        {
+            const Layouts layouts;
+        };
 
         DescriptorSet() noexcept;
         DescriptorSet(const VkDevice device, const VkDescriptorPool descriptorPool, const AllocateInfo& allocateInfo);
@@ -24,22 +33,28 @@ namespace nd::src::graphics::vulkan
         ~DescriptorSet();
 
         constexpr VkDescriptorSet
-        get() const noexcept;
+        get(const size_t index) const noexcept;
 
     private:
         VkDevice         device_ {VK_NULL_HANDLE};
         VkDescriptorPool descriptorPool_ {VK_NULL_HANDLE};
-        VkDescriptorSet  descriptorSet_ {VK_NULL_HANDLE};
+
+        Handles descriptorSets_ {VK_NULL_HANDLE};
     };
 
     constexpr VkDescriptorSet
-    DescriptorSet::get() const noexcept
+    DescriptorSet::get(const size_t index) const noexcept
     {
-        return descriptorSet_;
+        return descriptorSets_[index];
     }
 
     DescriptorSet::AllocateInfo
     getDescriptorSetAllocateInfo(const VkDescriptorPool       descriptorPool,
                                  const uint32_t               setLayoutsCount,
                                  const VkDescriptorSetLayout* setLayouts) noexcept;
+
+    DescriptorSet
+    getDescriptorSet(const DescriptorSet::Configuration& configuration,
+                     const VkDevice                      device,
+                     const VkDescriptorPool              descriptorPool);
 } // namespace nd::src::graphics::vulkan

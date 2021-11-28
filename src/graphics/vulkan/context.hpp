@@ -26,8 +26,7 @@ namespace nd::src::graphics::vulkan
     class Context final
     {
     public:
-        using ShaderModules  = std::vector<ShaderModule>;
-        using DescriptorSets = std::vector<DescriptorSet>;
+        using ShaderModules = std::vector<ShaderModule>;
 
         struct Configuration final
         {
@@ -54,7 +53,7 @@ namespace nd::src::graphics::vulkan
                 ShaderModules&&           shaderModules,
                 DescriptorPool&&          descriptorPool,
                 DescriptorSetLayout&&     descriptorSetLayout,
-                DescriptorSets&&          descriptorSets,
+                DescriptorSet&&           descriptorSet,
                 PipelineLayout&&          pipelineLayout,
                 Pipeline&&                pipeline);
 
@@ -80,7 +79,7 @@ namespace nd::src::graphics::vulkan
         ShaderModules           shaderModules_ {};
         DescriptorPool          descriptorPool_ {};
         DescriptorSetLayout     descriptorSetLayout_ {};
-        DescriptorSets          descriptorSets_ {};
+        DescriptorSet           descriptorSet_ {};
         PipelineLayout          pipelineLayout_ {};
         Pipeline                pipeline_ {};
     };

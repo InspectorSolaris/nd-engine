@@ -10,23 +10,25 @@ namespace nd::src::graphics::vulkan
 
     DescriptorSet::DescriptorSet(const VkDevice         device,
                                  const VkDescriptorPool descriptorPool,
-                                 const AllocateInfo&    createInfo)
+                                 const AllocateInfo&    allocateInfo)
         : device_(device)
         , descriptorPool_(descriptorPool)
     {
         ND_SET_SCOPE_LOW();
 
-        ND_ASSERT(vkAllocateDescriptorSets(device_, &createInfo, &descriptorSet_) == VK_SUCCESS);
+        descriptorSets_.resize(allocateInfo.descriptorSetCount);
+
+        ND_ASSERT(vkAllocateDescriptorSets(device_, &allocateInfo, descriptorSets_.data()) == VK_SUCCESS);
     }
 
     DescriptorSet::DescriptorSet(DescriptorSet&& descriptorSet) noexcept
         : device_(std::move(descriptorSet.device_))
         , descriptorPool_(std::move(descriptorSet.descriptorPool_))
-        , descriptorSet_(std::move(descriptorSet.descriptorSet_))
+        , descriptorSets_(std::move(descriptorSet.descriptorSets_))
     {
         ND_SET_SCOPE_LOW();
 
-        descriptorSet.descriptorSet_ = VK_NULL_HANDLE;
+        descriptorSet.descriptorSets_ = Handles(descriptorSets_.size(), VK_NULL_HANDLE);
     }
 
     DescriptorSet&
@@ -41,9 +43,9 @@ namespace nd::src::graphics::vulkan
 
         device_         = std::move(descriptorSet.device_);
         descriptorPool_ = std::move(descriptorSet.descriptorPool_);
-        descriptorSet_  = std::move(descriptorSet.descriptorSet_);
+        descriptorSets_ = std::move(descriptorSet.descriptorSets_);
 
-        descriptorSet.descriptorSet_ = VK_NULL_HANDLE;
+        descriptorSet.descriptorSets_ = Handles(descriptorSets_.size(), VK_NULL_HANDLE);
 
         return *this;
     }
@@ -52,7 +54,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE_LOW();
 
-        vkFreeDescriptorSets(device_, descriptorPool_, 1, &descriptorSet_);
+        vkFreeDescriptorSets(device_, descriptorPool_, descriptorSets_.size(), descriptorSets_.data());
     }
 
     DescriptorSet::AllocateInfo
@@ -69,5 +71,18 @@ namespace nd::src::graphics::vulkan
             setLayoutsCount,                                // descriptorSetCount;
             setLayouts                                      // pSetLayouts;
         };
+    }
+
+    DescriptorSet
+    getDescriptorSet(const DescriptorSet::Configuration& configuration,
+                     const VkDevice                      device,
+                     const VkDescriptorPool              descriptorPool)
+    {
+        ND_SET_SCOPE_LOW();
+
+        const auto allocateInfo =
+            getDescriptorSetAllocateInfo(descriptorPool, configuration.layouts.size(), configuration.layouts.data());
+
+        return DescriptorSet(device, descriptorPool, allocateInfo);
     }
 } // namespace nd::src::graphics::vulkan

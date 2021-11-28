@@ -14,7 +14,7 @@ namespace nd::src::graphics::vulkan
                      ShaderModules&&           shaderModules,
                      DescriptorPool&&          descriptorPool,
                      DescriptorSetLayout&&     descriptorSetLayout,
-                     DescriptorSets&&          descriptorSets,
+                     DescriptorSet&&           descriptorSet,
                      PipelineLayout&&          pipelineLayout,
                      Pipeline&&                pipeline)
         : instance_(std::move(instance))
@@ -27,7 +27,7 @@ namespace nd::src::graphics::vulkan
         , shaderModules_(std::move(shaderModules))
         , descriptorPool_(std::move(descriptorPool))
         , descriptorSetLayout_(std::move(descriptorSetLayout))
-        , descriptorSets_(std::move(descriptorSets))
+        , descriptorSet_(std::move(descriptorSet))
         , pipelineLayout_(std::move(pipelineLayout))
         , pipeline_(std::move(pipeline))
     {
@@ -132,8 +132,9 @@ namespace nd::src::graphics::vulkan
             shaderModules.push_back(getShaderModule(shaderModuleConfiguration, device.get()));
         }
 
-        auto descriptorPool = getDescriptorPool({{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1}, device.get());
+        auto descriptorPool      = getDescriptorPool({{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1}, device.get());
         auto descriptorSetLayout = getDescriptorSetLayout({{}}, device.get());
+        auto descriptorSet       = getDescriptorSet({{}}, device.get(), descriptorPool.get());
 
         return Context(std::move(instance),
                        std::move(device),
@@ -143,6 +144,11 @@ namespace nd::src::graphics::vulkan
                        std::move(swapchainImages),
                        std::move(swapchainImageViews),
                        std::move(swapchainFramebuffers),
-                       std::move(shaderModules));
+                       std::move(shaderModules),
+                       std::move(descriptorPool),
+                       std::move(descriptorSetLayout),
+                       std::move(descriptorSet),
+                       PipelineLayout {},
+                       Pipeline {});
     }
 } // namespace nd::src::graphics::vulkan
