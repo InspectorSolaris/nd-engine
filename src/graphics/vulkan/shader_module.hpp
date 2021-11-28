@@ -9,7 +9,6 @@ namespace nd::src::graphics::vulkan
     {
     public:
         using CreateInfo = VkShaderModuleCreateInfo;
-        using Code       = std::vector<char>;
 
         struct Configuration final
         {
@@ -55,7 +54,7 @@ namespace nd::src::graphics::vulkan
         return stage_;
     }
 
-    ShaderModule::Code
+    std::vector<char>
     getShaderCode(const std::string& path);
 
     ShaderModule::CreateInfo

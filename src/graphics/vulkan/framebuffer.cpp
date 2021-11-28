@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    Framebuffer::Framebuffer(const VkDevice device, const CreateInfo& createInfo)
+    Framebuffer::Framebuffer(const VkDevice device, const VkFramebufferCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyFramebuffer(device_, framebuffer_, nullptr);
     }
 
-    Framebuffer::CreateInfo
+    VkFramebufferCreateInfo
     getFramebufferCreateInfo(const VkRenderPass renderPass,
                              const uint32_t     attachmentsCount,
                              const VkImageView* attachments,
@@ -74,16 +74,13 @@ namespace nd::src::graphics::vulkan
     }
 
     Framebuffer
-    getFramebuffer(const Framebuffer::Configuration& configuration,
-                   const Framebuffer::Attachments&   attachments,
-                   const VkDevice                    device,
-                   const VkRenderPass                renderPass)
+    getFramebuffer(const Framebuffer::Configuration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE_LOW();
 
-        const auto createInfo = getFramebufferCreateInfo(renderPass,
-                                                         attachments.size(),
-                                                         attachments.data(),
+        const auto createInfo = getFramebufferCreateInfo(configuration.renderPass,
+                                                         configuration.attachments.size(),
+                                                         configuration.attachments.data(),
                                                          configuration.width,
                                                          configuration.height,
                                                          configuration.layers);

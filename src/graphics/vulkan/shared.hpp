@@ -4,11 +4,6 @@
 
 namespace nd::src::graphics::vulkan
 {
-    using Layer      = std::string;
-    using Layers     = std::vector<Layer>;
-    using Extension  = std::string;
-    using Extensions = std::vector<Extension>;
-
     bool
     isSubmask(const uint32_t mask, const uint32_t submask) noexcept;
 

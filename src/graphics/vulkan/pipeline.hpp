@@ -3,15 +3,12 @@
 #include "pch.hpp"
 #include "shared.hpp"
 
-#include "shader_module.hpp"
-
 namespace nd::src::graphics::vulkan
 {
     class Pipeline final
     {
     public:
         using CreateInfo    = VkGraphicsPipelineCreateInfo;
-        using ShaderModules = std::vector<ShaderModule>;
 
         struct Configuration final
         {

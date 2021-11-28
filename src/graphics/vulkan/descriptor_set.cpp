@@ -8,15 +8,12 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    DescriptorSet::DescriptorSet(const VkDevice         device,
-                                 const VkDescriptorPool descriptorPool,
-                                 const AllocateInfo&    allocateInfo)
+    DescriptorSet::DescriptorSet(const VkDevice device, const AllocateInfo& allocateInfo)
         : device_(device)
-        , descriptorPool_(descriptorPool)
+        , descriptorPool_(allocateInfo.descriptorPool)
+        , descriptorSets_(allocateInfo.descriptorSetCount)
     {
         ND_SET_SCOPE_LOW();
-
-        descriptorSets_.resize(allocateInfo.descriptorSetCount);
 
         ND_ASSERT(vkAllocateDescriptorSets(device_, &allocateInfo, descriptorSets_.data()) == VK_SUCCESS);
     }
@@ -74,15 +71,14 @@ namespace nd::src::graphics::vulkan
     }
 
     DescriptorSet
-    getDescriptorSet(const DescriptorSet::Configuration& configuration,
-                     const VkDevice                      device,
-                     const VkDescriptorPool              descriptorPool)
+    getDescriptorSet(const DescriptorSet::Configuration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE_LOW();
 
-        const auto allocateInfo =
-            getDescriptorSetAllocateInfo(descriptorPool, configuration.layouts.size(), configuration.layouts.data());
+        const auto allocateInfo = getDescriptorSetAllocateInfo(configuration.descriptorPool,
+                                                               configuration.layouts.size(),
+                                                               configuration.layouts.data());
 
-        return DescriptorSet(device, descriptorPool, allocateInfo);
+        return DescriptorSet(device, allocateInfo);
     }
 } // namespace nd::src::graphics::vulkan

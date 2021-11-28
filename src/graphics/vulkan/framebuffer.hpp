@@ -8,19 +8,19 @@ namespace nd::src::graphics::vulkan
     class Framebuffer final
     {
     public:
-        using CreateInfo  = VkFramebufferCreateInfo;
-        using Attachment  = VkImageView;
-        using Attachments = std::vector<Attachment>;
-
         struct Configuration final
         {
+            const std::vector<VkImageView>& attachments;
+
+            const VkRenderPass renderPass;
+
             const uint32_t width;
             const uint32_t height;
             const uint32_t layers;
         };
 
         Framebuffer() noexcept;
-        Framebuffer(const VkDevice device, const CreateInfo& createInfo);
+        Framebuffer(const VkDevice device, const VkFramebufferCreateInfo& createInfo);
 
         Framebuffer(const Framebuffer& framebuffer) = delete;
         Framebuffer(Framebuffer&& framebuffer) noexcept;
@@ -46,7 +46,7 @@ namespace nd::src::graphics::vulkan
         return framebuffer_;
     }
 
-    Framebuffer::CreateInfo
+    VkFramebufferCreateInfo
     getFramebufferCreateInfo(const VkRenderPass renderPass,
                              const uint32_t     attachmentsCount,
                              const VkImageView* attachments,
@@ -55,8 +55,5 @@ namespace nd::src::graphics::vulkan
                              const uint32_t     layers) noexcept;
 
     Framebuffer
-    getFramebuffer(const Framebuffer::Configuration& configuration,
-                   const Framebuffer::Attachments&   attachments,
-                   const VkDevice                    device,
-                   const VkRenderPass                renderPass);
+    getFramebuffer(const Framebuffer::Configuration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

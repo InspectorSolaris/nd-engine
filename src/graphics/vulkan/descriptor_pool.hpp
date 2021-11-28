@@ -8,6 +8,7 @@ namespace nd::src::graphics::vulkan
     class DescriptorPool final
     {
     public:
+        using Handle     = VkDescriptorPool;
         using CreateInfo = VkDescriptorPoolCreateInfo;
         using Size       = VkDescriptorPoolSize;
         using Sizes      = std::vector<Size>;
@@ -31,7 +32,7 @@ namespace nd::src::graphics::vulkan
 
         ~DescriptorPool();
 
-        constexpr VkDescriptorPool
+        constexpr Handle
         get() const noexcept;
 
     private:
@@ -39,7 +40,7 @@ namespace nd::src::graphics::vulkan
         VkDescriptorPool descriptorPool_ {VK_NULL_HANDLE};
     };
 
-    constexpr VkDescriptorPool
+    constexpr DescriptorPool::Handle
     DescriptorPool::get() const noexcept
     {
         return descriptorPool_;

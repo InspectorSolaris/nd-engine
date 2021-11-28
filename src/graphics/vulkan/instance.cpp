@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    Instance::Instance(const CreateInfo& createInfo)
+    Instance::Instance(const VkInstanceCreateInfo& createInfo)
         : instance_(VK_NULL_HANDLE)
     {
         ND_SET_SCOPE_LOW();
@@ -68,7 +68,7 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    Instance::CreateInfo
+    VkInstanceCreateInfo
     getInstanceCreateInfo(const VkApplicationInfo* applicationInfo,
                           const uint32_t           enabledLayersCount,
                           const uint32_t           enabledExtensionsCount,
@@ -90,7 +90,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isInstanceLayersSupported(const Layers& layers) noexcept
+    isInstanceLayersSupported(const std::vector<std::string>& layers) noexcept
     {
         ND_SET_SCOPE_LOW();
 
@@ -119,7 +119,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isInstanceExtensionsSupported(const Extensions& extensions) noexcept
+    isInstanceExtensionsSupported(const std::vector<std::string>& extensions) noexcept
     {
         ND_SET_SCOPE_LOW();
 

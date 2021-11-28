@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    ImageView::ImageView(const VkDevice device, const CreateInfo& createInfo)
+    ImageView::ImageView(const VkDevice device, const VkImageViewCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyImageView(device_, imageView_, nullptr);
     }
 
-    ImageView::CreateInfo
+    VkImageViewCreateInfo
     getImageViewCreateInfo(const VkImage                  image,
                            const VkImageViewType          viewType,
                            const VkFormat                 format,
@@ -72,11 +72,11 @@ namespace nd::src::graphics::vulkan
     }
 
     ImageView
-    getImageView(const ImageView::Configuration& configuration, const VkDevice device, const VkImage image)
+    getImageView(const ImageView::Configuration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE_LOW();
 
-        const auto createInfo = getImageViewCreateInfo(image,
+        const auto createInfo = getImageViewCreateInfo(configuration.image,
                                                        configuration.viewType,
                                                        configuration.format,
                                                        configuration.components,

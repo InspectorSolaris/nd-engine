@@ -8,19 +8,20 @@ namespace nd::src::graphics::vulkan
     class DescriptorSet final
     {
     public:
-        using AllocateInfo = VkDescriptorSetAllocateInfo;
         using Handle       = VkDescriptorSet;
         using Handles      = std::vector<Handle>;
+        using AllocateInfo = VkDescriptorSetAllocateInfo;
         using Layout       = VkDescriptorSetLayout;
         using Layouts      = std::vector<Layout>;
 
         struct Configuration final
         {
-            const Layouts layouts;
+            const Layouts&         layouts;
+            const VkDescriptorPool descriptorPool;
         };
 
         DescriptorSet() noexcept;
-        DescriptorSet(const VkDevice device, const VkDescriptorPool descriptorPool, const AllocateInfo& allocateInfo);
+        DescriptorSet(const VkDevice device, const AllocateInfo& allocateInfo);
 
         DescriptorSet(const DescriptorSet& descriptorSet) = delete;
         DescriptorSet(DescriptorSet&& descriptorSet) noexcept;
@@ -32,8 +33,8 @@ namespace nd::src::graphics::vulkan
 
         ~DescriptorSet();
 
-        constexpr VkDescriptorSet
-        get(const size_t index) const noexcept;
+        constexpr const Handles&
+        get() const noexcept;
 
     private:
         VkDevice         device_ {VK_NULL_HANDLE};
@@ -42,10 +43,10 @@ namespace nd::src::graphics::vulkan
         Handles descriptorSets_ {VK_NULL_HANDLE};
     };
 
-    constexpr VkDescriptorSet
-    DescriptorSet::get(const size_t index) const noexcept
+    constexpr const DescriptorSet::Handles&
+    DescriptorSet::get() const noexcept
     {
-        return descriptorSets_[index];
+        return descriptorSets_;
     }
 
     DescriptorSet::AllocateInfo
@@ -54,7 +55,5 @@ namespace nd::src::graphics::vulkan
                                  const VkDescriptorSetLayout* setLayouts) noexcept;
 
     DescriptorSet
-    getDescriptorSet(const DescriptorSet::Configuration& configuration,
-                     const VkDevice                      device,
-                     const VkDescriptorPool              descriptorPool);
+    getDescriptorSet(const DescriptorSet::Configuration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

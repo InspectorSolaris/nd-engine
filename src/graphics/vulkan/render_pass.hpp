@@ -10,21 +10,11 @@ namespace nd::src::graphics::vulkan
     public:
         using CreateInfo = VkRenderPassCreateInfo;
 
-        using AttachmentReference = VkAttachmentReference;
-        using Attachment          = VkAttachmentDescription;
-        using Subpass             = VkSubpassDescription;
-        using Dependency          = VkSubpassDependency;
-
-        using AttachmentReferences = std::vector<AttachmentReference>;
-        using Attachments          = std::vector<Attachment>;
-        using Subpasses            = std::vector<Subpass>;
-        using Dependencies         = std::vector<Dependency>;
-
         struct Configuration final
         {
-            const Attachments&  attachments;
-            const Subpasses&    subpasses;
-            const Dependencies& dependencies;
+            const std::vector<VkAttachmentDescription>& attachments;
+            const std::vector<VkSubpassDescription>&    subpasses;
+            const std::vector<VkSubpassDependency>&     dependencies;
         };
 
         RenderPass() noexcept;
@@ -54,7 +44,7 @@ namespace nd::src::graphics::vulkan
         return renderPass_;
     }
 
-    RenderPass::Attachment
+    VkAttachmentDescription
     getRenderPassAttachment(const VkFormat              format,
                             const VkSampleCountFlagBits samples,
                             const VkAttachmentLoadOp    loadOp,
@@ -64,7 +54,7 @@ namespace nd::src::graphics::vulkan
                             const VkImageLayout         initialLayout,
                             const VkImageLayout         finalLayout) noexcept;
 
-    RenderPass::Subpass
+    VkSubpassDescription
     getRenderPassSubpass(const VkPipelineBindPoint    pipelineBindPoint,
                          const uint32_t               inputAttachmentsCount,
                          const uint32_t               colorAttachmentsCount,
@@ -75,7 +65,7 @@ namespace nd::src::graphics::vulkan
                          const VkAttachmentReference* depthStencilAttachments,
                          const uint32_t*              preserveAttachments) noexcept;
 
-    RenderPass::Dependency
+    VkSubpassDependency
     getRenderPassDependency(const uint32_t             srcSubpass,
                             const uint32_t             dstSubpass,
                             const VkPipelineStageFlags srcStageMask,

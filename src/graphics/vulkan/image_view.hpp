@@ -8,18 +8,17 @@ namespace nd::src::graphics::vulkan
     class ImageView final
     {
     public:
-        using CreateInfo = VkImageViewCreateInfo;
-
         struct Configuration final
         {
             const VkImageSubresourceRange& subresourceRange;
             const VkComponentMapping&      components;
             const VkImageViewType          viewType;
             const VkFormat                 format;
+            const VkImage                  image;
         };
 
         ImageView() noexcept;
-        ImageView(const VkDevice device, const CreateInfo& createInfo);
+        ImageView(const VkDevice device, const VkImageViewCreateInfo& createInfo);
 
         ImageView(const ImageView& imageView) = delete;
         ImageView(ImageView&& imageView) noexcept;
@@ -45,7 +44,7 @@ namespace nd::src::graphics::vulkan
         return imageView_;
     }
 
-    ImageView::CreateInfo
+    VkImageViewCreateInfo
     getImageViewCreateInfo(const VkImage                  image,
                            const VkImageViewType          viewType,
                            const VkFormat                 format,
@@ -53,5 +52,5 @@ namespace nd::src::graphics::vulkan
                            const VkImageSubresourceRange& subresourceRange) noexcept;
 
     ImageView
-    getImageView(const ImageView::Configuration& configuration, const VkDevice device, const VkImage image);
+    getImageView(const ImageView::Configuration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

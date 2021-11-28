@@ -8,15 +8,13 @@ namespace nd::src::graphics::vulkan
     class Instance final
     {
     public:
-        using CreateInfo = VkInstanceCreateInfo;
-
         struct Configuration final
         {
             const std::string& applicationName;
             const std::string& engineName;
 
-            const Layers&     layers;
-            const Extensions& extensions;
+            const std::vector<std::string>& layers;
+            const std::vector<std::string>& extensions;
 
             const uint32_t applicationVersion;
             const uint32_t engineVersion;
@@ -24,7 +22,7 @@ namespace nd::src::graphics::vulkan
         };
 
         Instance() noexcept;
-        Instance(const CreateInfo& createInfo);
+        Instance(const VkInstanceCreateInfo& createInfo);
 
         Instance(const Instance& instance) = delete;
         Instance(Instance&& instance) noexcept;
@@ -56,7 +54,7 @@ namespace nd::src::graphics::vulkan
                        const uint32_t engineVersion,
                        const uint32_t apiVersion) noexcept;
 
-    Instance::CreateInfo
+    VkInstanceCreateInfo
     getInstanceCreateInfo(const VkApplicationInfo* applicationInfo,
                           const uint32_t           enabledLayersCount,
                           const uint32_t           enabledExtensionsCount,
@@ -64,10 +62,10 @@ namespace nd::src::graphics::vulkan
                           const char* const*       enabledExtensions) noexcept;
 
     bool
-    isInstanceLayersSupported(const Layers& layers) noexcept;
+    isInstanceLayersSupported(const std::vector<std::string>& layers) noexcept;
 
     bool
-    isInstanceExtensionsSupported(const Extensions& extensions) noexcept;
+    isInstanceExtensionsSupported(const std::vector<std::string>& extensions) noexcept;
 
     Instance
     getInstance(const Instance::Configuration& configuration);

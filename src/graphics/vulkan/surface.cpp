@@ -49,7 +49,7 @@ namespace nd::src::graphics::vulkan
         vkDestroySurfaceKHR(instance_, surface_, nullptr);
     }
 
-    Surface::Formats
+    std::vector<VkSurfaceFormatKHR>
     getSurfaceFormats(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
     {
         ND_SET_SCOPE_LOW();
@@ -65,7 +65,7 @@ namespace nd::src::graphics::vulkan
         return formats;
     }
 
-    Surface::PresentModes
+    std::vector<VkPresentModeKHR>
     getSurfacePresentModes(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
     {
         ND_SET_SCOPE_LOW();
@@ -81,7 +81,7 @@ namespace nd::src::graphics::vulkan
         return presentModes;
     }
 
-    Surface::Capabilities
+    VkSurfaceCapabilitiesKHR
     getSurfaceCapabilities(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
     {
         ND_SET_SCOPE_LOW();

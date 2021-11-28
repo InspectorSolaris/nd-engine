@@ -8,13 +8,6 @@ namespace nd::src::graphics::vulkan
     class Surface final
     {
     public:
-        using Format       = VkSurfaceFormatKHR;
-        using PresentMode  = VkPresentModeKHR;
-        using Capabilities = VkSurfaceCapabilitiesKHR;
-
-        using Formats      = std::vector<Format>;
-        using PresentModes = std::vector<PresentMode>;
-
         Surface() noexcept;
         Surface(const VkInstance instance, const VkSurfaceKHR surface) noexcept;
 
@@ -42,13 +35,13 @@ namespace nd::src::graphics::vulkan
         return surface_;
     }
 
-    Surface::Formats
+    std::vector<VkSurfaceFormatKHR>
     getSurfaceFormats(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
 
-    Surface::PresentModes
+    std::vector<VkPresentModeKHR>
     getSurfacePresentModes(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
 
-    Surface::Capabilities
+    VkSurfaceCapabilitiesKHR
     getSurfaceCapabilities(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
 
     Surface

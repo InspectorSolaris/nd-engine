@@ -16,6 +16,7 @@
 #include "pipeline.hpp"
 #include "image.hpp"
 #include "image_view.hpp"
+#include "framebuffer.hpp"
 #include "buffer.hpp"
 #include "buffer_view.hpp"
 #include "command_pool.hpp"
@@ -26,8 +27,6 @@ namespace nd::src::graphics::vulkan
     class Context final
     {
     public:
-        using ShaderModules = std::vector<ShaderModule>;
-
         struct Configuration final
         {
             const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface;
@@ -35,27 +34,27 @@ namespace nd::src::graphics::vulkan
             const std::string& applicationName;
             const std::string& engineName;
 
-            const Layers&     layers;
-            const Extensions& extensions;
+            const std::vector<std::string>& layers;
+            const std::vector<std::string>& extensions;
 
             const uint32_t width;
             const uint32_t height;
         };
 
-        Context(Instance&&                instance,
-                Device&&                  device,
-                Surface&&                 surface,
-                RenderPass&&              renderPass,
-                Swapchain&&               swapchain,
-                Swapchain::Images&&       swapchainImages,
-                Swapchain::ImageViews&&   swapchainImageViews,
-                Swapchain::Framebuffers&& swapchainFramebuffers,
-                ShaderModules&&           shaderModules,
-                DescriptorPool&&          descriptorPool,
-                DescriptorSetLayout&&     descriptorSetLayout,
-                DescriptorSet&&           descriptorSet,
-                PipelineLayout&&          pipelineLayout,
-                Pipeline&&                pipeline);
+        Context(Instance&&                  instance,
+                Device&&                    device,
+                Surface&&                   surface,
+                Swapchain&&                 swapchain,
+                RenderPass&&                renderPass,
+                std::vector<VkImage>&&      swapchainImages,
+                std::vector<ImageView>&&    swapchainImageViews,
+                std::vector<Framebuffer>&&  swapchainFramebuffers,
+                std::vector<ShaderModule>&& shaderModules,
+                DescriptorPool&&            descriptorPool,
+                DescriptorSetLayout&&       descriptorSetLayout,
+                DescriptorSet&&             descriptorSet,
+                PipelineLayout&&            pipelineLayout,
+                Pipeline&&                  pipeline);
 
         Context(const Context& vulkanContext) = delete;
         Context(Context&& vulkanContext)      = delete;
@@ -68,20 +67,20 @@ namespace nd::src::graphics::vulkan
         operator=(Context&& vulkanContext) = delete;
 
     private:
-        Instance                instance_ {};
-        Device                  device_ {};
-        Surface                 surface_ {};
-        RenderPass              renderPass_ {};
-        Swapchain               swapchain_ {};
-        Swapchain::Images       swapchainImages_ {};
-        Swapchain::ImageViews   swapchainImageViews_ {};
-        Swapchain::Framebuffers swapchainFramebuffers_ {};
-        ShaderModules           shaderModules_ {};
-        DescriptorPool          descriptorPool_ {};
-        DescriptorSetLayout     descriptorSetLayout_ {};
-        DescriptorSet           descriptorSet_ {};
-        PipelineLayout          pipelineLayout_ {};
-        Pipeline                pipeline_ {};
+        Instance                  instance_ {};
+        Device                    device_ {};
+        Surface                   surface_ {};
+        Swapchain                 swapchain_ {};
+        RenderPass                renderPass_ {};
+        std::vector<VkImage>      swapchainImages_ {};
+        std::vector<ImageView>    swapchainImageViews_ {};
+        std::vector<Framebuffer>  swapchainFramebuffers_ {};
+        std::vector<ShaderModule> shaderModules_ {};
+        DescriptorPool            descriptorPool_ {};
+        DescriptorSetLayout       descriptorSetLayout_ {};
+        DescriptorSet             descriptorSet_ {};
+        PipelineLayout            pipelineLayout_ {};
+        Pipeline                  pipeline_ {};
     };
 
     Context

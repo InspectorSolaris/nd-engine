@@ -8,6 +8,7 @@ namespace nd::src::graphics::vulkan
     class DescriptorSetLayout final
     {
     public:
+        using Handle     = VkDescriptorSetLayout;
         using CreateInfo = VkDescriptorSetLayoutCreateInfo;
         using Binding    = VkDescriptorSetLayoutBinding;
         using Bindings   = std::vector<Binding>;
@@ -30,15 +31,15 @@ namespace nd::src::graphics::vulkan
 
         ~DescriptorSetLayout();
 
-        constexpr VkDescriptorSetLayout
+        constexpr Handle
         get() const noexcept;
 
     private:
-        VkDevice              device_ {VK_NULL_HANDLE};
-        VkDescriptorSetLayout descriptorSetLayout_ {VK_NULL_HANDLE};
+        VkDevice device_ {VK_NULL_HANDLE};
+        Handle   descriptorSetLayout_ {VK_NULL_HANDLE};
     };
 
-    constexpr VkDescriptorSetLayout
+    constexpr DescriptorSetLayout::Handle
     DescriptorSetLayout::get() const noexcept
     {
         return descriptorSetLayout_;

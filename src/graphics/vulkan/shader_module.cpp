@@ -53,7 +53,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyShaderModule(device_, shaderModule_, nullptr);
     }
 
-    ShaderModule::Code
+    std::vector<char>
     getShaderCode(const std::string& path)
     {
         ND_SET_SCOPE_LOW();
@@ -65,7 +65,7 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(file);
 
         auto size = static_cast<size_t>(file.tellg());
-        auto code = ShaderModule::Code(size);
+        auto code = std::vector<char>(size);
 
         file.seekg(0);
         file.read(code.data(), size);
