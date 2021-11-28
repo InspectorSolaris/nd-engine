@@ -39,6 +39,12 @@ namespace nd::src::graphics::vulkan
         VkDescriptorPool descriptorPool_ {VK_NULL_HANDLE};
     };
 
+    constexpr VkDescriptorPool
+    DescriptorPool::get() const noexcept
+    {
+        return descriptorPool_;
+    }
+
     DescriptorPool::CreateInfo
     getDescriptorPoolCreateInfo(const uint32_t              maxSets,
                                 const uint32_t              poolSizesCount,
