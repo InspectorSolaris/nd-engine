@@ -114,7 +114,8 @@ namespace nd::src::graphics::vulkan
 
         auto renderPass = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device.get());
 
-        auto swapchainImages     = getSwapchainImages(device.get(), swapchain.get());
+        auto swapchainImages = getSwapchainImages(device.get(), swapchain.get());
+
         auto swapchainImageViews = getSwapchainImageViews(device.get(), swapchainImages, swapchainConfiguration);
         auto swapchainFramebuffers =
             getSwapchainFramebuffers(device.get(), renderPass.get(), swapchainImageViews, swapchainConfiguration);
