@@ -3,12 +3,19 @@
 #include "pch.hpp"
 #include "shared.hpp"
 
+#include "shader_module.hpp"
+
 namespace nd::src::graphics::vulkan
 {
     class Pipeline final
     {
     public:
-        using CreateInfo = VkGraphicsPipelineCreateInfo;
+        using CreateInfo    = VkGraphicsPipelineCreateInfo;
+        using ShaderModules = std::vector<ShaderModule>;
+
+        struct Configuration final
+        {
+        };
 
         Pipeline() noexcept;
         Pipeline(const VkDevice device, const CreateInfo& createInfo);
@@ -114,4 +121,7 @@ namespace nd::src::graphics::vulkan
                                   const uint32_t                                subpass,
                                   const VkPipeline                              basePipelineHandle,
                                   const int32_t                                 basePipelineIndex) noexcept;
+
+    Pipeline
+    getGraphicsPipeline(const Pipeline::Configuration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

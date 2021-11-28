@@ -9,6 +9,13 @@ namespace nd::src::graphics::vulkan
     {
     public:
         using CreateInfo = VkDescriptorSetLayoutCreateInfo;
+        using Binding    = VkDescriptorSetLayoutBinding;
+        using Bindings   = std::vector<Binding>;
+
+        struct Configuration final
+        {
+            const Bindings& bindings;
+        };
 
         DescriptorSetLayout() noexcept;
         DescriptorSetLayout(const VkDevice device, const CreateInfo& createInfo);
@@ -39,4 +46,7 @@ namespace nd::src::graphics::vulkan
 
     DescriptorSetLayout::CreateInfo
     getDescriptorSetLayoutCreateInfo(const uint32_t bindingsCount, const VkDescriptorSetLayoutBinding* bindings) noexcept;
+
+    DescriptorSetLayout
+    getDescriptorSetLayout(const DescriptorSetLayout::Configuration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

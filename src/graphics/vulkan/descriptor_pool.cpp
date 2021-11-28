@@ -66,4 +66,16 @@ namespace nd::src::graphics::vulkan
             poolSizes                                      // pPoolSizes;
         };
     }
+
+    DescriptorPool
+    getDescriptorPool(const DescriptorPool::Configuration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE_LOW();
+
+        const auto createInfo = getDescriptorPoolCreateInfo(configuration.maxSets,
+                                                            configuration.descriptorPoolSizes.size(),
+                                                            configuration.descriptorPoolSizes.data());
+
+        return DescriptorPool(device, createInfo);
+    }
 } // namespace nd::src::graphics::vulkan

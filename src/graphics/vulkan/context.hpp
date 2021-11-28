@@ -26,7 +26,8 @@ namespace nd::src::graphics::vulkan
     class Context final
     {
     public:
-        using ShaderModules = std::vector<ShaderModule>;
+        using ShaderModules  = std::vector<ShaderModule>;
+        using DescriptorSets = std::vector<DescriptorSet>;
 
         struct Configuration final
         {
@@ -50,7 +51,12 @@ namespace nd::src::graphics::vulkan
                 Swapchain::Images&&       swapchainImages,
                 Swapchain::ImageViews&&   swapchainImageViews,
                 Swapchain::Framebuffers&& swapchainFramebuffers,
-                ShaderModules&&           shaderModules);
+                ShaderModules&&           shaderModules,
+                DescriptorPool&&          descriptorPool,
+                DescriptorSetLayout&&     descriptorSetLayout,
+                DescriptorSets&&          descriptorSets,
+                PipelineLayout&&          pipelineLayout,
+                Pipeline&&                pipeline);
 
         Context(const Context& vulkanContext) = delete;
         Context(Context&& vulkanContext)      = delete;
@@ -72,6 +78,11 @@ namespace nd::src::graphics::vulkan
         Swapchain::ImageViews   swapchainImageViews_ {};
         Swapchain::Framebuffers swapchainFramebuffers_ {};
         ShaderModules           shaderModules_ {};
+        DescriptorPool          descriptorPool_ {};
+        DescriptorSetLayout     descriptorSetLayout_ {};
+        DescriptorSets          descriptorSets_ {};
+        PipelineLayout          pipelineLayout_ {};
+        Pipeline                pipeline_ {};
     };
 
     Context

@@ -295,4 +295,9 @@ namespace nd::src::graphics::vulkan
             basePipelineIndex                                // basePipelineIndex;
         };
     }
+
+    Pipeline
+    getGraphicsPipeline(const Pipeline::Configuration& configuration, const VkDevice device)
+    {
+    }
 } // namespace nd::src::graphics::vulkan

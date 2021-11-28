@@ -11,7 +11,12 @@ namespace nd::src::graphics::vulkan
                      Swapchain::Images&&       swapchainImages,
                      Swapchain::ImageViews&&   swapchainImageViews,
                      Swapchain::Framebuffers&& swapchainFramebuffers,
-                     ShaderModules&&           shaderModules)
+                     ShaderModules&&           shaderModules,
+                     DescriptorPool&&          descriptorPool,
+                     DescriptorSetLayout&&     descriptorSetLayout,
+                     DescriptorSets&&          descriptorSets,
+                     PipelineLayout&&          pipelineLayout,
+                     Pipeline&&                pipeline)
         : instance_(std::move(instance))
         , device_(std::move(device))
         , surface_(std::move(surface))
@@ -20,6 +25,11 @@ namespace nd::src::graphics::vulkan
         , swapchainImages_(std::move(swapchainImages))
         , swapchainFramebuffers_(std::move(swapchainFramebuffers))
         , shaderModules_(std::move(shaderModules))
+        , descriptorPool_(std::move(descriptorPool))
+        , descriptorSetLayout_(std::move(descriptorSetLayout))
+        , descriptorSets_(std::move(descriptorSets))
+        , pipelineLayout_(std::move(pipelineLayout))
+        , pipeline_(std::move(pipeline))
     {
         ND_SET_SCOPE_LOW();
     }
@@ -121,6 +131,9 @@ namespace nd::src::graphics::vulkan
         {
             shaderModules.push_back(getShaderModule(shaderModuleConfiguration, device.get()));
         }
+
+        auto descriptorPool = getDescriptorPool({{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1}, device.get());
+        auto descriptorSetLayout = getDescriptorSetLayout({{}}, device.get());
 
         return Context(std::move(instance),
                        std::move(device),

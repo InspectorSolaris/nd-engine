@@ -9,6 +9,14 @@ namespace nd::src::graphics::vulkan
     {
     public:
         using CreateInfo = VkDescriptorPoolCreateInfo;
+        using Size       = VkDescriptorPoolSize;
+        using Sizes      = std::vector<Size>;
+
+        struct Configuration final
+        {
+            const Sizes&   descriptorPoolSizes;
+            const uint32_t maxSets;
+        };
 
         DescriptorPool() noexcept;
         DescriptorPool(const VkDevice device, const CreateInfo& createInfo);
@@ -35,4 +43,7 @@ namespace nd::src::graphics::vulkan
     getDescriptorPoolCreateInfo(const uint32_t              maxSets,
                                 const uint32_t              poolSizesCount,
                                 const VkDescriptorPoolSize* poolSizes) noexcept;
+
+    DescriptorPool
+    getDescriptorPool(const DescriptorPool::Configuration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

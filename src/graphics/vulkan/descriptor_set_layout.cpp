@@ -63,4 +63,15 @@ namespace nd::src::graphics::vulkan
             bindings                                             // pBindings;
         };
     }
+
+    DescriptorSetLayout
+    getDescriptorSetLayout(const DescriptorSetLayout::Configuration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE_LOW();
+
+        const auto createInfo =
+            getDescriptorSetLayoutCreateInfo(configuration.bindings.size(), configuration.bindings.data());
+
+        return DescriptorSetLayout(device, createInfo);
+    }
 } // namespace nd::src::graphics::vulkan
