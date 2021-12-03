@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    DescriptorSetLayout::DescriptorSetLayout(const VkDevice device, const CreateInfo& createInfo)
+    DescriptorSetLayout::DescriptorSetLayout(const VkDevice device, const VkDescriptorSetLayoutCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
     }
 
-    DescriptorSetLayout::CreateInfo
+    VkDescriptorSetLayoutCreateInfo
     getDescriptorSetLayoutCreateInfo(const uint32_t bindingsCount, const VkDescriptorSetLayoutBinding* bindings) noexcept
     {
         ND_SET_SCOPE_LOW();

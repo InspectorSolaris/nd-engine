@@ -29,16 +29,16 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface;
+            const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface {};
 
-            const std::string& applicationName;
-            const std::string& engineName;
+            const std::string& applicationName {};
+            const std::string& engineName {};
 
-            const std::vector<std::string>& layers;
-            const std::vector<std::string>& extensions;
+            const std::vector<std::string>& layers {};
+            const std::vector<std::string>& extensions {};
 
-            const uint32_t width;
-            const uint32_t height;
+            const uint32_t width {};
+            const uint32_t height {};
         };
 
         Context(Instance&&                  instance,

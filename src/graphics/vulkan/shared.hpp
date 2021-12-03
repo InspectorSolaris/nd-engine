@@ -15,4 +15,19 @@ namespace nd::src::graphics::vulkan
 
     std::vector<const char*>
     getCStrings(const std::vector<std::string>& data) noexcept;
+
+    template<typename A,
+             typename B,
+             typename Map,
+             typename CollectionA = std::vector<A>,
+             typename CollectionB = std::vector<B>>
+    CollectionB
+    getMapped(const CollectionA& as, const Map& map) noexcept
+    {
+        auto bs = CollectionB(as.size());
+
+        std::transform(as.begin(), as.end(), bs.begin(), map);
+
+        return bs;
+    }
 } // namespace nd::src::graphics::vulkan

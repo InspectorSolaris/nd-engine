@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    DescriptorSet::DescriptorSet(const VkDevice device, const AllocateInfo& allocateInfo)
+    DescriptorSet::DescriptorSet(const VkDevice device, const VkDescriptorSetAllocateInfo& allocateInfo)
         : device_(device)
         , descriptorPool_(allocateInfo.descriptorPool)
         , descriptorSets_(allocateInfo.descriptorSetCount)
@@ -25,7 +25,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE_LOW();
 
-        descriptorSet.descriptorSets_ = Handles(descriptorSets_.size(), VK_NULL_HANDLE);
+        descriptorSet.descriptorSets_ = std::vector<VkDescriptorSet>(descriptorSets_.size(), VK_NULL_HANDLE);
     }
 
     DescriptorSet&
@@ -42,7 +42,7 @@ namespace nd::src::graphics::vulkan
         descriptorPool_ = std::move(descriptorSet.descriptorPool_);
         descriptorSets_ = std::move(descriptorSet.descriptorSets_);
 
-        descriptorSet.descriptorSets_ = Handles(descriptorSets_.size(), VK_NULL_HANDLE);
+        descriptorSet.descriptorSets_ = std::vector<VkDescriptorSet>(descriptorSets_.size(), VK_NULL_HANDLE);
 
         return *this;
     }
@@ -54,7 +54,7 @@ namespace nd::src::graphics::vulkan
         vkFreeDescriptorSets(device_, descriptorPool_, descriptorSets_.size(), descriptorSets_.data());
     }
 
-    DescriptorSet::AllocateInfo
+    VkDescriptorSetAllocateInfo
     getDescriptorSetAllocateInfo(const VkDescriptorPool       descriptorPool,
                                  const uint32_t               setLayoutsCount,
                                  const VkDescriptorSetLayout* setLayouts) noexcept

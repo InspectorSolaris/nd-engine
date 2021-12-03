@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    CommandPool::CommandPool(const VkDevice device, const CreateInfo& createInfo)
+    CommandPool::CommandPool(const VkDevice device, const VkCommandPoolCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyCommandPool(device_, commandPool_, nullptr);
     }
 
-    CommandPool::CreateInfo
+    VkCommandPoolCreateInfo
     getCommandPoolCreateInfo(const uint32_t queueFamilyIndex) noexcept
     {
         ND_SET_SCOPE_LOW();

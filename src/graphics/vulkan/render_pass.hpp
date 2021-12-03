@@ -8,17 +8,15 @@ namespace nd::src::graphics::vulkan
     class RenderPass final
     {
     public:
-        using CreateInfo = VkRenderPassCreateInfo;
-
         struct Configuration final
         {
-            const std::vector<VkAttachmentDescription>& attachments;
-            const std::vector<VkSubpassDescription>&    subpasses;
-            const std::vector<VkSubpassDependency>&     dependencies;
+            const std::vector<VkAttachmentDescription>& attachments {};
+            const std::vector<VkSubpassDescription>&    subpasses {};
+            const std::vector<VkSubpassDependency>&     dependencies {};
         };
 
         RenderPass() noexcept;
-        RenderPass(const VkDevice device, const CreateInfo& createInfo);
+        RenderPass(const VkDevice device, const VkRenderPassCreateInfo& createInfo);
 
         RenderPass(const RenderPass& renderPass) = delete;
         RenderPass(RenderPass&& renderPass) noexcept;
@@ -74,7 +72,7 @@ namespace nd::src::graphics::vulkan
                             const VkAccessFlags        dstAccessMask,
                             const VkDependencyFlags    dependencyFlags) noexcept;
 
-    RenderPass::CreateInfo
+    VkRenderPassCreateInfo
     getRenderPassCreateInfo(const uint32_t                 attachmentsCount,
                             const uint32_t                 subpassesCount,
                             const uint32_t                 dependenciesCount,

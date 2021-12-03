@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    RenderPass::RenderPass(const VkDevice device, const CreateInfo& createInfo)
+    RenderPass::RenderPass(const VkDevice device, const VkRenderPassCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyRenderPass(device_, renderPass_, nullptr);
     }
 
-    RenderPass::Attachment
+    VkAttachmentDescription
     getRenderPassAttachment(const VkFormat              format,
                             const VkSampleCountFlagBits samples,
                             const VkAttachmentLoadOp    loadOp,
@@ -75,7 +75,7 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    RenderPass::Subpass
+    VkSubpassDescription
     getRenderPassSubpass(const VkPipelineBindPoint    pipelineBindPoint,
                          const uint32_t               inputAttachmentsCount,
                          const uint32_t               colorAttachmentsCount,
@@ -102,7 +102,7 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    RenderPass::Dependency
+    VkSubpassDependency
     getRenderPassDependency(const uint32_t             srcSubpass,
                             const uint32_t             dstSubpass,
                             const VkPipelineStageFlags srcStageMask,
@@ -124,7 +124,7 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    RenderPass::CreateInfo
+    VkRenderPassCreateInfo
     getRenderPassCreateInfo(const uint32_t                 attachmentsCount,
                             const uint32_t                 subpassesCount,
                             const uint32_t                 dependenciesCount,

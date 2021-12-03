@@ -8,10 +8,8 @@ namespace nd::src::graphics::vulkan
     class BufferView final
     {
     public:
-        using CreateInfo = VkBufferViewCreateInfo;
-
         BufferView() noexcept;
-        BufferView(const VkDevice device, const CreateInfo& createInfo);
+        BufferView(const VkDevice device, const VkBufferViewCreateInfo& createInfo);
 
         BufferView(const BufferView& bufferView) = delete;
         BufferView(BufferView&& bufferView) noexcept;
@@ -37,7 +35,7 @@ namespace nd::src::graphics::vulkan
         return bufferView_;
     }
 
-    BufferView::CreateInfo
+    VkBufferViewCreateInfo
     getBufferViewCreateInfo(const VkBuffer     buffer,
                             const VkFormat     format,
                             const VkDeviceSize offset,

@@ -8,18 +8,13 @@ namespace nd::src::graphics::vulkan
     class DescriptorSetLayout final
     {
     public:
-        using Handle     = VkDescriptorSetLayout;
-        using CreateInfo = VkDescriptorSetLayoutCreateInfo;
-        using Binding    = VkDescriptorSetLayoutBinding;
-        using Bindings   = std::vector<Binding>;
-
         struct Configuration final
         {
-            const Bindings& bindings;
+            const std::vector<VkDescriptorSetLayoutBinding>& bindings {};
         };
 
         DescriptorSetLayout() noexcept;
-        DescriptorSetLayout(const VkDevice device, const CreateInfo& createInfo);
+        DescriptorSetLayout(const VkDevice device, const VkDescriptorSetLayoutCreateInfo& createInfo);
 
         DescriptorSetLayout(const DescriptorSetLayout& descriptorSetLayout) = delete;
         DescriptorSetLayout(DescriptorSetLayout&& descriptorSetLayout) noexcept;
@@ -31,21 +26,21 @@ namespace nd::src::graphics::vulkan
 
         ~DescriptorSetLayout();
 
-        constexpr Handle
+        constexpr VkDescriptorSetLayout
         get() const noexcept;
 
     private:
-        VkDevice device_ {VK_NULL_HANDLE};
-        Handle   descriptorSetLayout_ {VK_NULL_HANDLE};
+        VkDevice              device_ {VK_NULL_HANDLE};
+        VkDescriptorSetLayout descriptorSetLayout_ {VK_NULL_HANDLE};
     };
 
-    constexpr DescriptorSetLayout::Handle
+    constexpr VkDescriptorSetLayout
     DescriptorSetLayout::get() const noexcept
     {
         return descriptorSetLayout_;
     }
 
-    DescriptorSetLayout::CreateInfo
+    VkDescriptorSetLayoutCreateInfo
     getDescriptorSetLayoutCreateInfo(const uint32_t bindingsCount, const VkDescriptorSetLayoutBinding* bindings) noexcept;
 
     DescriptorSetLayout

@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    Image::Image(const VkDevice device, const CreateInfo& createInfo)
+    Image::Image(const VkDevice device, const VkImageCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyImage(device_, image_, nullptr);
     }
 
-    Image::CreateInfo
+    VkImageCreateInfo
     getImageCreateInfo(const VkImageType           type,
                        const VkFormat              format,
                        const VkExtent3D            extent,

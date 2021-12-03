@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    DescriptorPool::DescriptorPool(const VkDevice device, const CreateInfo& createInfo)
+    DescriptorPool::DescriptorPool(const VkDevice device, const VkDescriptorPoolCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
     }
 
-    DescriptorPool::CreateInfo
+    VkDescriptorPoolCreateInfo
     getDescriptorPoolCreateInfo(const uint32_t              maxSets,
                                 const uint32_t              poolSizesCount,
                                 const VkDescriptorPoolSize* poolSizes) noexcept

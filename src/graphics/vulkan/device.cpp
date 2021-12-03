@@ -28,7 +28,7 @@ namespace nd::src::graphics::vulkan
 
         device.physicalDevice_ = VK_NULL_HANDLE;
         device.device_         = VK_NULL_HANDLE;
-        device.queueFamilies_  = {};
+        device.queueFamilies_  = std::vector<QueueFamily> {};
     }
 
     Device&
@@ -47,7 +47,7 @@ namespace nd::src::graphics::vulkan
 
         device.physicalDevice_ = VK_NULL_HANDLE;
         device.device_         = VK_NULL_HANDLE;
-        device.queueFamilies_  = {};
+        device.queueFamilies_  = std::vector<QueueFamily> {};
 
         return *this;
     }

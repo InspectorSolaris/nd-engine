@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    PipelineLayout::PipelineLayout(const VkDevice device, const CreateInfo& createInfo)
+    PipelineLayout::PipelineLayout(const VkDevice device, const VkPipelineLayoutCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
     }
 
-    PipelineLayout::CreateInfo
+    VkPipelineLayoutCreateInfo
     getPipelineLayoutCreateInfo(const uint32_t               setLayoutsCount,
                                 const uint32_t               pushConstantRangesCount,
                                 const VkDescriptorSetLayout* setLayouts,

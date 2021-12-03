@@ -8,7 +8,9 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    CommandBuffer::CommandBuffer(const VkDevice device, const VkCommandPool commandPool, const AllocateInfo& allocateInfo)
+    CommandBuffer::CommandBuffer(const VkDevice                     device,
+                                 const VkCommandPool                commandPool,
+                                 const VkCommandBufferAllocateInfo& allocateInfo)
         : device_(device)
         , commandPool_(commandPool)
     {
@@ -53,7 +55,7 @@ namespace nd::src::graphics::vulkan
         vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer_);
     }
 
-    CommandBuffer::AllocateInfo
+    VkCommandBufferAllocateInfo
     getCommandBufferAllocateInfo(const VkCommandPool        commandPool,
                                  const VkCommandBufferLevel level,
                                  const uint32_t             commandBufferCount) noexcept

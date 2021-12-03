@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    BufferView::BufferView(const VkDevice device, const CreateInfo& createInfo)
+    BufferView::BufferView(const VkDevice device, const VkBufferViewCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyBufferView(device_, bufferView_, nullptr);
     }
 
-    BufferView::CreateInfo
+    VkBufferViewCreateInfo
     getBufferViewCreateInfo(const VkBuffer     buffer,
                             const VkFormat     format,
                             const VkDeviceSize offset,

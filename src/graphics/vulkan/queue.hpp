@@ -7,9 +7,9 @@ namespace nd::src::graphics::vulkan
 {
     struct QueueFamily final
     {
-        const uint32_t     index;
-        const uint32_t     queueCount;
-        const VkQueueFlags queueFlags;
+        const uint32_t     index {};
+        const uint32_t     queueCount {};
+        const VkQueueFlags queueFlags {};
     };
 
     std::vector<uint32_t>

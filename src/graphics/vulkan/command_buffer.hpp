@@ -8,10 +8,10 @@ namespace nd::src::graphics::vulkan
     class CommandBuffer final
     {
     public:
-        using AllocateInfo = VkCommandBufferAllocateInfo;
-
         CommandBuffer() noexcept;
-        CommandBuffer(const VkDevice device, const VkCommandPool commandPool, const AllocateInfo& allocateInfo);
+        CommandBuffer(const VkDevice                     device,
+                      const VkCommandPool                commandPool,
+                      const VkCommandBufferAllocateInfo& allocateInfo);
 
         CommandBuffer(const CommandBuffer& commandBuffer) = delete;
         CommandBuffer(CommandBuffer&& commandBuffer) noexcept;
@@ -38,7 +38,7 @@ namespace nd::src::graphics::vulkan
         return commandBuffer_;
     }
 
-    CommandBuffer::AllocateInfo
+    VkCommandBufferAllocateInfo
     getCommandBufferAllocateInfo(const VkCommandPool        commandPool,
                                  const VkCommandBufferLevel level,
                                  const uint32_t             commandBufferCount) noexcept;

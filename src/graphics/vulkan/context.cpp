@@ -116,9 +116,32 @@ namespace nd::src::graphics::vulkan
 
         auto swapchainImages = getSwapchainImages(device.get(), swapchain.get());
 
-        auto swapchainImageViews = getSwapchainImageViews(device.get(), swapchainImages, swapchainConfiguration);
+        auto swapchainImageViews =
+            getMapped<VkImage, ImageView>(swapchainImages,
+                                          [&device, &swapchainConfiguration](const auto image)
+                                          {
+                                              return getImageView({{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
+                                                                   {VK_COMPONENT_SWIZZLE_IDENTITY,
+                                                                    VK_COMPONENT_SWIZZLE_IDENTITY,
+                                                                    VK_COMPONENT_SWIZZLE_IDENTITY,
+                                                                    VK_COMPONENT_SWIZZLE_IDENTITY},
+                                                                   VK_IMAGE_VIEW_TYPE_2D,
+                                                                   swapchainConfiguration.imageFormat,
+                                                                   image},
+                                                                  device.get());
+                                          });
+
         auto swapchainFramebuffers =
-            getSwapchainFramebuffers(device.get(), renderPass.get(), swapchainImageViews, swapchainConfiguration);
+            getMapped<ImageView, Framebuffer>(swapchainImageViews,
+                                              [&device, &renderPass, &swapchainConfiguration](const auto& imageView)
+                                              {
+                                                  return getFramebuffer({{imageView.get()},
+                                                                         renderPass.get(),
+                                                                         swapchainConfiguration.imageExtent.width,
+                                                                         swapchainConfiguration.imageExtent.height,
+                                                                         1},
+                                                                        device.get());
+                                              });
 
         const auto shadersEntryPoint = "main";
         const auto shadersDir        = "src/graphics/vulkan/shaders";

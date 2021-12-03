@@ -10,11 +10,11 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const VkImageSubresourceRange& subresourceRange;
-            const VkComponentMapping&      components;
-            const VkImageViewType          viewType;
-            const VkFormat                 format;
-            const VkImage                  image;
+            const VkImageSubresourceRange& subresourceRange {};
+            const VkComponentMapping&      components {};
+            const VkImageViewType          viewType {};
+            const VkFormat                 format {};
+            const VkImage                  image {};
         };
 
         ImageView() noexcept;

@@ -8,7 +8,9 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    ShaderModule::ShaderModule(const VkDevice device, const VkShaderStageFlagBits stage, const CreateInfo& createInfo)
+    ShaderModule::ShaderModule(const VkDevice                  device,
+                               const VkShaderStageFlagBits     stage,
+                               const VkShaderModuleCreateInfo& createInfo)
         : device_(device)
         , stage_(stage)
     {
@@ -73,7 +75,7 @@ namespace nd::src::graphics::vulkan
         return code;
     }
 
-    ShaderModule::CreateInfo
+    VkShaderModuleCreateInfo
     getShaderModuleCreateInfo(const size_t codeSize, const uint32_t* code) noexcept
     {
         ND_SET_SCOPE_LOW();

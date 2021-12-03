@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    Pipeline::Pipeline(const VkDevice device, const CreateInfo& createInfo)
+    Pipeline::Pipeline(const VkDevice device, const VkGraphicsPipelineCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -253,7 +253,7 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    Pipeline::CreateInfo
+    VkGraphicsPipelineCreateInfo
     getGraphicsPipelineCreateInfo(const uint32_t                                stagesCount,
                                   const VkPipelineShaderStageCreateInfo*        stages,
                                   const VkPipelineVertexInputStateCreateInfo*   vertexInputState,

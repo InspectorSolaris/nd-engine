@@ -9,9 +9,9 @@ namespace nd::src::graphics::vulkan
 {
     struct PhysicalDevice final
     {
-        VkPhysicalDevice           handle;
-        VkPhysicalDeviceProperties properties;
-        VkPhysicalDeviceFeatures   features;
+        VkPhysicalDevice           handle {};
+        VkPhysicalDeviceProperties properties {};
+        VkPhysicalDeviceFeatures   features {};
     };
 
     class Device final
@@ -19,13 +19,13 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const VkPhysicalDeviceFeatures& features;
+            const VkPhysicalDeviceFeatures& features {};
 
-            const std::function<size_t(const PhysicalDevice&)>& physicalDevicePriority;
+            const std::function<size_t(const PhysicalDevice&)>& physicalDevicePriority {};
 
-            const std::vector<std::string>& extensions;
+            const std::vector<std::string>& extensions {};
 
-            const VkQueueFlags queueFlags;
+            const VkQueueFlags queueFlags {};
         };
 
         Device() noexcept;

@@ -8,10 +8,8 @@ namespace nd::src::graphics::vulkan
     class CommandPool final
     {
     public:
-        using CreateInfo = VkCommandPoolCreateInfo;
-
         CommandPool() noexcept;
-        CommandPool(const VkDevice device, const CreateInfo& createInfo);
+        CommandPool(const VkDevice device, const VkCommandPoolCreateInfo& createInfo);
 
         CommandPool(const CommandPool& commandPool) = delete;
         CommandPool(CommandPool&& commandPool) noexcept;
@@ -37,6 +35,6 @@ namespace nd::src::graphics::vulkan
         return commandPool_;
     }
 
-    CommandPool::CreateInfo
+    VkCommandPoolCreateInfo
     getCommandPoolCreateInfo(const uint32_t queueFamilyIndex) noexcept;
 } // namespace nd::src::graphics::vulkan

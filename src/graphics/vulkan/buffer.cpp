@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
     }
 
-    Buffer::Buffer(const VkDevice device, const CreateInfo& createInfo)
+    Buffer::Buffer(const VkDevice device, const VkBufferCreateInfo& createInfo)
         : device_(device)
     {
         ND_SET_SCOPE_LOW();
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyBuffer(device_, buffer_, nullptr);
     }
 
-    Buffer::CreateInfo
+    VkBufferCreateInfo
     getBufferCreateInfo(const VkDeviceSize       size,
                         const VkBufferUsageFlags usage,
                         const VkSharingMode      sharingMode,

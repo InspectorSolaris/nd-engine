@@ -13,8 +13,9 @@ set(TARGET_SRC
     image.cpp
     image_view.cpp
     instance.cpp
-    pipeline.cpp
     pipeline_layout.cpp
+    pipeline.cpp
+    queue.cpp
     render_pass.cpp
     shader_module.cpp
     shared.cpp

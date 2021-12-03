@@ -8,14 +8,12 @@ namespace nd::src::graphics::vulkan
     class Pipeline final
     {
     public:
-        using CreateInfo    = VkGraphicsPipelineCreateInfo;
-
         struct Configuration final
         {
         };
 
         Pipeline() noexcept;
-        Pipeline(const VkDevice device, const CreateInfo& createInfo);
+        Pipeline(const VkDevice device, const VkGraphicsPipelineCreateInfo& createInfo);
 
         Pipeline(const Pipeline& pipeline) = delete;
         Pipeline(Pipeline&& pipeline) noexcept;
@@ -101,7 +99,7 @@ namespace nd::src::graphics::vulkan
     VkPipelineDynamicStateCreateInfo
     getPipelineDynamicStateCreateInfo(const uint32_t dynamicStatesCount, const VkDynamicState* dynamicStates) noexcept;
 
-    Pipeline::CreateInfo
+    VkGraphicsPipelineCreateInfo
     getGraphicsPipelineCreateInfo(const uint32_t                                stagesCount,
                                   const VkPipelineShaderStageCreateInfo*        stages,
                                   const VkPipelineVertexInputStateCreateInfo*   vertexInputState,

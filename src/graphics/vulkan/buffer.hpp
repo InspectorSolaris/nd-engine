@@ -8,10 +8,8 @@ namespace nd::src::graphics::vulkan
     class Buffer final
     {
     public:
-        using CreateInfo = VkBufferCreateInfo;
-
         Buffer() noexcept;
-        Buffer(const VkDevice device, const CreateInfo& createInfo);
+        Buffer(const VkDevice device, const VkBufferCreateInfo& createInfo);
 
         Buffer(const Buffer& buffer) = delete;
         Buffer(Buffer&& buffer) noexcept;
@@ -37,7 +35,7 @@ namespace nd::src::graphics::vulkan
         return buffer_;
     }
 
-    Buffer::CreateInfo
+    VkBufferCreateInfo
     getBufferCreateInfo(const VkDeviceSize       size,
                         const VkBufferUsageFlags usage,
                         const VkSharingMode      sharingMode,

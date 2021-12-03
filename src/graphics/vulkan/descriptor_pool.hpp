@@ -8,19 +8,14 @@ namespace nd::src::graphics::vulkan
     class DescriptorPool final
     {
     public:
-        using Handle     = VkDescriptorPool;
-        using CreateInfo = VkDescriptorPoolCreateInfo;
-        using Size       = VkDescriptorPoolSize;
-        using Sizes      = std::vector<Size>;
-
         struct Configuration final
         {
-            const Sizes&   descriptorPoolSizes;
-            const uint32_t maxSets;
+            const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes {};
+            const uint32_t                           maxSets {};
         };
 
         DescriptorPool() noexcept;
-        DescriptorPool(const VkDevice device, const CreateInfo& createInfo);
+        DescriptorPool(const VkDevice device, const VkDescriptorPoolCreateInfo& createInfo);
 
         DescriptorPool(const DescriptorPool& descriptorPool) = delete;
         DescriptorPool(DescriptorPool&& descriptorPool) noexcept;
@@ -32,7 +27,7 @@ namespace nd::src::graphics::vulkan
 
         ~DescriptorPool();
 
-        constexpr Handle
+        constexpr VkDescriptorPool
         get() const noexcept;
 
     private:
@@ -40,13 +35,13 @@ namespace nd::src::graphics::vulkan
         VkDescriptorPool descriptorPool_ {VK_NULL_HANDLE};
     };
 
-    constexpr DescriptorPool::Handle
+    constexpr VkDescriptorPool
     DescriptorPool::get() const noexcept
     {
         return descriptorPool_;
     }
 
-    DescriptorPool::CreateInfo
+    VkDescriptorPoolCreateInfo
     getDescriptorPoolCreateInfo(const uint32_t              maxSets,
                                 const uint32_t              poolSizesCount,
                                 const VkDescriptorPoolSize* poolSizes) noexcept;

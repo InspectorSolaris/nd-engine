@@ -8,16 +8,14 @@ namespace nd::src::graphics::vulkan
     class ShaderModule final
     {
     public:
-        using CreateInfo = VkShaderModuleCreateInfo;
-
         struct Configuration final
         {
-            const std::string&          path;
-            const VkShaderStageFlagBits stage;
+            const std::string&          path {};
+            const VkShaderStageFlagBits stage {};
         };
 
         ShaderModule() noexcept;
-        ShaderModule(const VkDevice device, const VkShaderStageFlagBits stage, const CreateInfo& createInfo);
+        ShaderModule(const VkDevice device, const VkShaderStageFlagBits stage, const VkShaderModuleCreateInfo& createInfo);
 
         ShaderModule(const ShaderModule& shaderModule) = delete;
         ShaderModule(ShaderModule&& shaderModule) noexcept;
@@ -57,7 +55,7 @@ namespace nd::src::graphics::vulkan
     std::vector<char>
     getShaderCode(const std::string& path);
 
-    ShaderModule::CreateInfo
+    VkShaderModuleCreateInfo
     getShaderModuleCreateInfo(const size_t codeSize, const uint32_t* code) noexcept;
 
     ShaderModule

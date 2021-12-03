@@ -8,10 +8,8 @@ namespace nd::src::graphics::vulkan
     class Image final
     {
     public:
-        using CreateInfo = VkImageCreateInfo;
-
         Image() noexcept;
-        Image(const VkDevice device, const CreateInfo& createInfo);
+        Image(const VkDevice device, const VkImageCreateInfo& createInfo);
 
         Image(const Image& image) = delete;
         Image(Image&& image) noexcept;
@@ -37,7 +35,7 @@ namespace nd::src::graphics::vulkan
         return image_;
     }
 
-    Image::CreateInfo
+    VkImageCreateInfo
     getImageCreateInfo(const VkImageType           type,
                        const VkFormat              format,
                        const VkExtent3D            extent,

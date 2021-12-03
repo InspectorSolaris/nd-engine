@@ -8,16 +8,14 @@ namespace nd::src::graphics::vulkan
     class PipelineLayout final
     {
     public:
-        using CreateInfo = VkPipelineLayoutCreateInfo;
-
         struct Configuration final
         {
-            const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts;
-            const std::vector<VkPushConstantRange>&   pushConstantRanges;
+            const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts {};
+            const std::vector<VkPushConstantRange>&   pushConstantRanges {};
         };
 
         PipelineLayout() noexcept;
-        PipelineLayout(const VkDevice device, const CreateInfo& createInfo);
+        PipelineLayout(const VkDevice device, const VkPipelineLayoutCreateInfo& createInfo);
 
         PipelineLayout(const PipelineLayout& pipelineLayout) = delete;
         PipelineLayout(PipelineLayout&& pipelineLayout) noexcept;
@@ -43,7 +41,7 @@ namespace nd::src::graphics::vulkan
         return pipelineLayout_;
     }
 
-    PipelineLayout::CreateInfo
+    VkPipelineLayoutCreateInfo
     getPipelineLayoutCreateInfo(const uint32_t               setLayoutsCount,
                                 const uint32_t               pushConstantRangesCount,
                                 const VkDescriptorSetLayout* setLayouts,
