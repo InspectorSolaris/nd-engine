@@ -36,18 +36,12 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<const char*>
-    getCStrings(const std::vector<std::string>& data) noexcept
+    getRawStrings(const std::vector<std::string>& strings) noexcept
     {
-        auto dataCStrings = std::vector<const char*>(data.size());
-
-        std::transform(data.begin(),
-                       data.end(),
-                       dataCStrings.begin(),
-                       [](const auto& str)
-                       {
-                           return str.c_str();
-                       });
-
-        return dataCStrings;
+        return getMapped<std::string, const char*>(strings,
+                                                   [](const auto& string)
+                                                   {
+                                                       return string.c_str();
+                                                   });
     }
 } // namespace nd::src::graphics::vulkan

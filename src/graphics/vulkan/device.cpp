@@ -126,7 +126,7 @@ namespace nd::src::graphics::vulkan
         {
             const auto queueFamilyRaw = queueFamiliesRaw[i];
 
-            if(queueFamilyRaw.queueFlags & queueFlags)
+            if(isSubmask(queueFamilyRaw.queueFlags, queueFlags))
             {
                 queueFamilies.push_back(
                     QueueFamily {static_cast<uint32_t>(i), queueFamilyRaw.queueCount, queueFamilyRaw.queueFlags});
@@ -134,6 +134,33 @@ namespace nd::src::graphics::vulkan
         }
 
         return queueFamilies;
+    }
+
+    bool
+    isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available,
+                                      const VkPhysicalDeviceFeatures* required) noexcept
+    {
+        ND_SET_SCOPE_LOW();
+
+        auto shift = 0ULL;
+
+        const auto step = sizeof(VkBool32);
+        const auto size = sizeof(VkPhysicalDeviceFeatures);
+
+        while(shift * step < size)
+        {
+            const auto availableValue = reinterpret_cast<const VkBool32*>(available) + shift;
+            const auto requiredValue  = reinterpret_cast<const VkBool32*>(required) + shift;
+
+            if(*requiredValue && !*availableValue)
+            {
+                return false;
+            }
+
+            ++shift;
+        }
+
+        return true;
     }
 
     bool
@@ -161,33 +188,6 @@ namespace nd::src::graphics::vulkan
             {
                 return false;
             }
-        }
-
-        return true;
-    }
-
-    bool
-    isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available,
-                                      const VkPhysicalDeviceFeatures* required) noexcept
-    {
-        ND_SET_SCOPE_LOW();
-
-        auto shift = 0ULL;
-
-        const auto step = sizeof(VkBool32);
-        const auto size = sizeof(VkPhysicalDeviceFeatures);
-
-        while(shift * step < size)
-        {
-            const auto availableValue = reinterpret_cast<const VkBool32*>(available) + shift;
-            const auto requiredValue  = reinterpret_cast<const VkBool32*>(required) + shift;
-
-            if(*requiredValue && !*availableValue)
-            {
-                return false;
-            }
-
-            ++shift;
         }
 
         return true;
@@ -251,10 +251,10 @@ namespace nd::src::graphics::vulkan
             vkGetPhysicalDeviceProperties(physicalDevice, &properties);
             vkGetPhysicalDeviceFeatures(physicalDevice, &features);
 
-            auto priority = configuration.physicalDevicePriority({physicalDevice, properties, features});
+            const auto priority = configuration.physicalDevicePriority({physicalDevice, properties, features});
 
-            if(isPhysicalDeviceExtensionsSupported(physicalDevice, configuration.extensions) &&
-               isPhysicalDeviceFeaturesSupported(&features, &configuration.features) &&
+            if(isPhysicalDeviceFeaturesSupported(&features, &configuration.features) &&
+               isPhysicalDeviceExtensionsSupported(physicalDevice, configuration.extensions) &&
                isPhysicalDeviceQueuesSupported(physicalDevice, configuration.queueFlags) &&
                (!physicalDevicePriorityMax.has_value() || physicalDevicePriorityMax < priority))
             {
@@ -275,7 +275,7 @@ namespace nd::src::graphics::vulkan
 
         const auto physicalDevice = getPhysicalDevice(configuration, instance);
 
-        const auto cextensions   = getCStrings(configuration.extensions);
+        const auto cextensions   = getRawStrings(configuration.extensions);
         const auto queueFamilies = getDeviceQueueFamilies(physicalDevice.handle, configuration.queueFlags);
 
         auto queuePriorities  = std::vector<std::vector<float>> {};

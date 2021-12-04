@@ -8,11 +8,6 @@ namespace nd::src::tools
                     const std::string_view condition,
                     const size_t           line) noexcept
     {
-        const auto logMain = spdlog::get(logMainName);
-        const auto message = fmt::format("File: {}. Function: {}. Condition: {}. Line: {}", file, function, condition, line);
-
-        logMain->critical(message);
-
-        return std::runtime_error("");
+        return std::runtime_error(fmt::format("{}:{} ({}) {}", file, line, function, condition));
     }
 } // namespace nd::src::tools

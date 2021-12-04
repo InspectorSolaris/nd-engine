@@ -94,12 +94,12 @@ namespace nd::src::graphics::vulkan
     getDeviceQueueFamilies(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;
 
     bool
-    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice          physicalDevice,
-                                        const std::vector<std::string>& extensions) noexcept;
-
-    bool
     isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available,
                                       const VkPhysicalDeviceFeatures* required) noexcept;
+
+    bool
+    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice          physicalDevice,
+                                        const std::vector<std::string>& extensions) noexcept;
 
     bool
     isPhysicalDeviceQueuesSupported(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;

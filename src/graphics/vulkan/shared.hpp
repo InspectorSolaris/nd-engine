@@ -14,7 +14,7 @@ namespace nd::src::graphics::vulkan
     getMerged(const std::vector<std::string>& data1, const std::vector<std::string>& data2) noexcept;
 
     std::vector<const char*>
-    getCStrings(const std::vector<std::string>& data) noexcept;
+    getRawStrings(const std::vector<std::string>& strings) noexcept;
 
     template<typename A,
              typename B,

@@ -157,8 +157,8 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT(layersSupported && extensionsSupported);
 
-        const auto clayers     = getCStrings(configuration.layers);
-        const auto cextensions = getCStrings(configuration.extensions);
+        const auto clayers     = getRawStrings(configuration.layers);
+        const auto cextensions = getRawStrings(configuration.extensions);
 
         const auto applicationInfo = getApplicationInfo(configuration.applicationName.c_str(),
                                                         configuration.engineName.c_str(),

@@ -68,22 +68,25 @@ namespace nd::src::graphics::vulkan
 
         auto surface = getSurface(instance.get(), configuration.getSurface(instance.get()));
 
-        const auto swapchainConfiguration =
-            Swapchain::Configuration {getSurfaceFormats(device.getPhysical(), surface.get()),
-                                      getSurfacePresentModes(device.getPhysical(), surface.get()),
-                                      getSurfaceCapabilities(device.getPhysical(), surface.get()),
-                                      device.getPhysical(),
-                                      surface.get(),
-                                      {configuration.width, configuration.height},
-                                      1,
-                                      1,
-                                      true,
-                                      VK_FORMAT_B8G8R8A8_SRGB,
-                                      VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-                                      VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                                      VK_PRESENT_MODE_IMMEDIATE_KHR,
-                                      VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
-                                      VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
+        const auto surfaceFormats      = getSurfaceFormats(device.getPhysical(), surface.get());
+        const auto surfacePresentModes = getSurfacePresentModes(device.getPhysical(), surface.get());
+        const auto surfaceCapabilities = getSurfaceCapabilities(device.getPhysical(), surface.get());
+
+        const auto swapchainConfiguration = Swapchain::Configuration {surfaceFormats,
+                                                                      surfacePresentModes,
+                                                                      surfaceCapabilities,
+                                                                      device.getPhysical(),
+                                                                      surface.get(),
+                                                                      {configuration.width, configuration.height},
+                                                                      1,
+                                                                      1,
+                                                                      true,
+                                                                      VK_FORMAT_B8G8R8A8_SRGB,
+                                                                      VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+                                                                      VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                                                                      VK_PRESENT_MODE_IMMEDIATE_KHR,
+                                                                      VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
+                                                                      VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
 
         auto swapchain = getSwapchain(swapchainConfiguration, device.getQueueFamilies(), device.get());
 
@@ -150,14 +153,12 @@ namespace nd::src::graphics::vulkan
             {fmt::format("{}/vert.spv", shadersDir), VK_SHADER_STAGE_VERTEX_BIT},
             {fmt::format("{}/frag.spv", shadersDir), VK_SHADER_STAGE_FRAGMENT_BIT}};
 
-        auto shaderModules = std::vector<ShaderModule> {};
-
-        shaderModules.reserve(shaderModuleConfigurations.size());
-
-        for(const auto& shaderModuleConfiguration: shaderModuleConfigurations)
-        {
-            shaderModules.push_back(getShaderModule(shaderModuleConfiguration, device.get()));
-        }
+        auto shaderModules = getMapped<ShaderModule::Configuration, ShaderModule>(
+            shaderModuleConfigurations,
+            [&device](const auto& shaderModuleConfiguration)
+            {
+                return getShaderModule(shaderModuleConfiguration, device.get());
+            });
 
         auto descriptorPool      = getDescriptorPool({{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1}, device.get());
         auto descriptorSetLayout = getDescriptorSetLayout({{}}, device.get());

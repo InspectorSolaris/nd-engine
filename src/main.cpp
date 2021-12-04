@@ -26,33 +26,41 @@ main()
     auto consoleSinkScopePtr = ConsoleSinkPtr(new ConsoleSink());
     auto logScope            = Scope::LogPtr(new Scope::Log(logScopeName, {fileSinkScopePtr}));
 
-    logMain->set_level(spdlog::level::level_enum::trace);
-    logScope->set_level(spdlog::level::level_enum::trace);
-
     spdlog::register_logger(logMain);
     spdlog::register_logger(logScope);
 
+    spdlog::set_level(spdlog::level::level_enum::trace);
+    logMain->set_level(spdlog::level::level_enum::trace);
+    logScope->set_level(spdlog::level::level_enum::trace);
+
     Scope::set(logScope);
 
-    ND_SET_SCOPE();
-
-    const auto name = std::string("nd-engine");
-
-    auto  glfwState   = glfw::getState();
-    auto  glfwContext = glfw::getContext({name, 800, 600});
-    auto& glfwWindow  = glfwContext.getWindow();
-
-    auto vulkanContext = vulkan::getContext({std::bind(glfw::getSurface, std::ref(glfwWindow), _1),
-                                             name,
-                                             name,
-                                             {},
-                                             glfw::getRequiredExtensions(),
-                                             static_cast<uint32_t>(glfwWindow.getWidth()),
-                                             static_cast<uint32_t>(glfwWindow.getHeight())});
-
-    while(!glfwWindowShouldClose(glfwWindow.get()))
+    try
     {
-        glfwPollEvents();
+        ND_SET_SCOPE();
+
+        const auto name = std::string("nd-engine");
+
+        auto  glfwState   = glfw::getState();
+        auto  glfwContext = glfw::getContext({name, 800, 600});
+        auto& glfwWindow  = glfwContext.getWindow();
+
+        auto vulkanContext = vulkan::getContext({std::bind(glfw::getSurface, std::ref(glfwWindow), _1),
+                                                 name,
+                                                 name,
+                                                 {},
+                                                 glfw::getRequiredExtensions(),
+                                                 static_cast<uint32_t>(glfwWindow.getWidth()),
+                                                 static_cast<uint32_t>(glfwWindow.getHeight())});
+
+        while(!glfwWindowShouldClose(glfwWindow.get()))
+        {
+            glfwPollEvents();
+        }
+    }
+    catch(std::runtime_error error)
+    {
+        logMain->critical(error.what());
     }
 
     return 0;
