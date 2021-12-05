@@ -8,8 +8,22 @@ namespace nd::src::graphics::vulkan
     class Pipeline final
     {
     public:
+        struct ShaderInfo final
+        {
+            const VkShaderModule        shaderModule;
+            const VkShaderStageFlagBits shaderStage;
+        };
+
         struct Configuration final
         {
+            const std::vector<ShaderInfo>& shaderInfos;
+
+            const VkPipelineLayout pipelineLayout;
+            const VkRenderPass     renderPass;
+            const uint32_t         subpass;
+
+            const uint32_t width;
+            const uint32_t height;
         };
 
         Pipeline() noexcept;

@@ -162,19 +162,19 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, // sType;
-            next,                                            // pNext;
-            flags,                                           // flags;
-            depthClampEnable,                                // depthClampEnable;
-            rasterizerDiscardEnable,                         // rasterizerDiscardEnable;
-            polygonMode,                                     // polygonMode;
-            cullMode,                                        // cullMode;
-            frontFace,                                       // frontFace;
-            depthBiasEnable,                                 // depthBiasEnable;
-            depthBiasConstantFactor,                         // depthBiasConstantFactor;
-            depthBiasClamp,                                  // depthBiasClamp;
-            depthBiasSlopeFactor,                            // depthBiasSlopeFactor;
-            lineWidth                                        // lineWidth;
+            VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO, // sType;
+            next,                                                       // pNext;
+            flags,                                                      // flags;
+            depthClampEnable,                                           // depthClampEnable;
+            rasterizerDiscardEnable,                                    // rasterizerDiscardEnable;
+            polygonMode,                                                // polygonMode;
+            cullMode,                                                   // cullMode;
+            frontFace,                                                  // frontFace;
+            depthBiasEnable,                                            // depthBiasEnable;
+            depthBiasConstantFactor,                                    // depthBiasConstantFactor;
+            depthBiasClamp,                                             // depthBiasClamp;
+            depthBiasSlopeFactor,                                       // depthBiasSlopeFactor;
+            lineWidth                                                   // lineWidth;
         };
     }
 
@@ -322,5 +322,78 @@ namespace nd::src::graphics::vulkan
     Pipeline
     getGraphicsPipeline(const Pipeline::Configuration& configuration, const VkDevice device)
     {
+        const auto shaderStages = getMapped<Pipeline::ShaderInfo, VkPipelineShaderStageCreateInfo>(
+            configuration.shaderInfos,
+            [](const auto& shaderInfo)
+            {
+                return getPipelineShaderStageCreateInfo(shaderInfo.shaderStage, shaderInfo.shaderModule, "main", nullptr);
+            });
+
+        const auto vertexInputState = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
+        const auto inputAssemblyState =
+            getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
+
+        const auto tessellationState = VkPipelineTessellationStateCreateInfo {};
+
+        const auto scissors = VkRect2D {{0, 0}, {configuration.width, configuration.height}};
+        const auto viewport = VkViewport {0.0f,
+                                          0.0f,
+                                          static_cast<float>(configuration.width),
+                                          static_cast<float>(configuration.height),
+                                          0.0f,
+                                          0.1f};
+
+        const auto viewportState = getPipelineViewportStateCreateInfo(1, 1, &viewport, &scissors);
+
+        const auto rasterizationState = getPipelineRasterizationStateCreateInfo(VK_FALSE,
+                                                                                VK_FALSE,
+                                                                                VK_POLYGON_MODE_FILL,
+                                                                                VK_CULL_MODE_NONE,
+                                                                                VK_FRONT_FACE_CLOCKWISE,
+                                                                                VK_FALSE,
+                                                                                0.0f,
+                                                                                0.0f,
+                                                                                0.0f,
+                                                                                1.0f);
+
+        const auto multisampleState =
+            getPipelineMultisampleStateCreateInfo(VK_SAMPLE_COUNT_1_BIT, VK_FALSE, 1.0f, nullptr, VK_FALSE, VK_FALSE);
+
+        const auto depthStencilState = VkPipelineDepthStencilStateCreateInfo {};
+
+        const auto blendConstants       = std::vector<float> {0.0f, 0.0f, 0.0f, 0.0f};
+        const auto colorBlendAttachment = VkPipelineColorBlendAttachmentState {
+            VK_TRUE,
+            VK_BLEND_FACTOR_SRC_ALPHA,
+            VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+            VK_BLEND_OP_ADD,
+            VK_BLEND_FACTOR_ONE,
+            VK_BLEND_FACTOR_ZERO,
+            VK_BLEND_OP_ADD,
+            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
+
+        const auto colorBlendState =
+            getPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_OR, 1, &colorBlendAttachment, blendConstants.data());
+
+        const auto dynamicState = getPipelineDynamicStateCreateInfo(0, nullptr);
+
+        const auto createInfo = getGraphicsPipelineCreateInfo(shaderStages.size(),
+                                                              shaderStages.data(),
+                                                              &vertexInputState,
+                                                              &inputAssemblyState,
+                                                              nullptr,
+                                                              &viewportState,
+                                                              &rasterizationState,
+                                                              &multisampleState,
+                                                              nullptr,
+                                                              &colorBlendState,
+                                                              &dynamicState,
+                                                              configuration.pipelineLayout,
+                                                              configuration.renderPass,
+                                                              configuration.subpass,
+                                                              VK_NULL_HANDLE,
+                                                              0);
+
+        return Pipeline(device, createInfo);
     }
 } // namespace nd::src::graphics::vulkan

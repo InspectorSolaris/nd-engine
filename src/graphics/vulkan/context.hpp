@@ -37,8 +37,8 @@ namespace nd::src::graphics::vulkan
             const std::vector<std::string>& layers;
             const std::vector<std::string>& extensions;
 
-            const uint32_t width {};
-            const uint32_t height {};
+            const uint32_t width;
+            const uint32_t height;
         };
 
         Context(Instance&&                  instance,
@@ -52,7 +52,9 @@ namespace nd::src::graphics::vulkan
                 std::vector<ShaderModule>&& shaderModules,
                 DescriptorPool&&            descriptorPool,
                 DescriptorSetLayout&&       descriptorSetLayout,
-                DescriptorSet&&             descriptorSet);
+                DescriptorSet&&             descriptorSet,
+                PipelineLayout&&            pipelineLayout,
+                Pipeline&&                  pipeline);
 
         Context(const Context& vulkanContext) = delete;
         Context(Context&& vulkanContext)      = delete;
@@ -77,6 +79,8 @@ namespace nd::src::graphics::vulkan
         DescriptorPool            descriptorPool_ {};
         DescriptorSetLayout       descriptorSetLayout_ {};
         DescriptorSet             descriptorSet_ {};
+        PipelineLayout            pipelineLayout_ {};
+        Pipeline                  pipeline_ {};
     };
 
     Context

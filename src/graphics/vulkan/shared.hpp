@@ -24,9 +24,14 @@ namespace nd::src::graphics::vulkan
     CollectionB
     getMapped(const CollectionA& as, const Map& map) noexcept
     {
-        auto bs = CollectionB(as.size());
+        auto bs = CollectionB {};
 
-        std::transform(as.begin(), as.end(), bs.begin(), map);
+        bs.reserve(as.size());
+
+        for(const auto& a: as)
+        {
+            bs.push_back(map(a));
+        }
 
         return bs;
     }
