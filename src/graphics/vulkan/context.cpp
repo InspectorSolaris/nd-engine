@@ -153,7 +153,10 @@ namespace nd::src::graphics::vulkan
                 return getShaderModule(configuration, device.get());
             });
 
-        auto descriptorPool      = getDescriptorPool({{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1}, device.get());
+        auto descriptorPool = getDescriptorPool(
+            {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
+            device.get());
+
         auto descriptorSetLayout = getDescriptorSetLayout({{}}, device.get());
         auto descriptorSet       = getDescriptorSet({{descriptorSetLayout.get()}, descriptorPool.get()}, device.get());
 

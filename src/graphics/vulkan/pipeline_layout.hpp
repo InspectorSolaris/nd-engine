@@ -42,10 +42,12 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineLayoutCreateInfo
-    getPipelineLayoutCreateInfo(const uint32_t               setLayoutsCount,
-                                const uint32_t               pushConstantRangesCount,
-                                const VkDescriptorSetLayout* setLayouts,
-                                const VkPushConstantRange*   pushConstantRanges) noexcept;
+    getPipelineLayoutCreateInfo(const uint32_t                    setLayoutsCount,
+                                const uint32_t                    pushConstantRangesCount,
+                                const VkDescriptorSetLayout*      setLayouts,
+                                const VkPushConstantRange*        pushConstantRanges,
+                                const VkPipelineLayoutCreateFlags flags = {},
+                                const void*                       next  = {}) noexcept;
 
     PipelineLayout
     getPipelineLayout(const PipelineLayout::Configuration& configuration, const VkDevice device);

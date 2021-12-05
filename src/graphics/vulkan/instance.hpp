@@ -55,11 +55,13 @@ namespace nd::src::graphics::vulkan
                        const uint32_t apiVersion) noexcept;
 
     VkInstanceCreateInfo
-    getInstanceCreateInfo(const VkApplicationInfo* applicationInfo,
-                          const uint32_t           enabledLayersCount,
-                          const uint32_t           enabledExtensionsCount,
-                          const char* const*       enabledLayers,
-                          const char* const*       enabledExtensions) noexcept;
+    getInstanceCreateInfo(const VkApplicationInfo*    applicationInfo,
+                          const uint32_t              enabledLayersCount,
+                          const uint32_t              enabledExtensionsCount,
+                          const char* const*          enabledLayers,
+                          const char* const*          enabledExtensions,
+                          const VkInstanceCreateFlags flags = {},
+                          const void*                 next  = {}) noexcept;
 
     bool
     isInstanceLayersSupported(const std::vector<std::string>& layers) noexcept;

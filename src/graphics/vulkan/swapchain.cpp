@@ -184,14 +184,16 @@ namespace nd::src::graphics::vulkan
                            const VkCompositeAlphaFlagBitsKHR   compositeAlpha,
                            const VkPresentModeKHR              presentMode,
                            const VkBool32                      clipped,
-                           const VkSwapchainKHR                oldSwapchain) noexcept
+                           const VkSwapchainKHR                oldSwapchain,
+                           const VkSwapchainCreateFlagsKHR     flags,
+                           const void*                         next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR, // sType;
-            nullptr,                                     // pNext;
-            0,                                           // flags;
+            next,                                        // pNext;
+            flags,                                       // flags;
             surface,                                     // surface;
             minImagesCount,                              // minImageCount;
             imageFormat,                                 // imageFormat;

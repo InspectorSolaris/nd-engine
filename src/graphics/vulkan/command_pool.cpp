@@ -51,14 +51,16 @@ namespace nd::src::graphics::vulkan
     }
 
     VkCommandPoolCreateInfo
-    getCommandPoolCreateInfo(const uint32_t queueFamilyIndex) noexcept
+    getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
+                             const VkCommandPoolCreateFlags flags,
+                             const void*                    next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, // sType;
-            nullptr,                                    // pNext;
-            0,                                          // flags;
+            next,                                       // pNext;
+            flags,                                      // flags;
             queueFamilyIndex                            // queueFamilyIndex;
         };
     }

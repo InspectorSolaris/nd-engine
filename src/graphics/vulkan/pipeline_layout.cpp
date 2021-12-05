@@ -51,17 +51,19 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineLayoutCreateInfo
-    getPipelineLayoutCreateInfo(const uint32_t               setLayoutsCount,
-                                const uint32_t               pushConstantRangesCount,
-                                const VkDescriptorSetLayout* setLayouts,
-                                const VkPushConstantRange*   pushConstantRanges) noexcept
+    getPipelineLayoutCreateInfo(const uint32_t                    setLayoutsCount,
+                                const uint32_t                    pushConstantRangesCount,
+                                const VkDescriptorSetLayout*      setLayouts,
+                                const VkPushConstantRange*        pushConstantRanges,
+                                const VkPipelineLayoutCreateFlags flags,
+                                const void*                       next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, // sType;
-            nullptr,                                       // pNext;
-            0,                                             // flags;
+            next,                                          // pNext;
+            flags,                                         // flags;
             setLayoutsCount,                               // setLayoutCount;
             setLayouts,                                    // pSetLayouts;
             pushConstantRangesCount,                       // pushConstantRangeCount;

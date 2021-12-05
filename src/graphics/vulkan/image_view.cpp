@@ -55,14 +55,16 @@ namespace nd::src::graphics::vulkan
                            const VkImageViewType          viewType,
                            const VkFormat                 format,
                            const VkComponentMapping&      components,
-                           const VkImageSubresourceRange& subresourceRange) noexcept
+                           const VkImageSubresourceRange& subresourceRange,
+                           const VkImageViewCreateFlags   flags,
+                           const void*                    next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO, // sType;
-            nullptr,                                  // pNext;
-            0,                                        // flags;
+            next,                                     // pNext;
+            flags,                                    // flags;
             image,                                    // image;
             viewType,                                 // viewType;
             format,                                   // format;

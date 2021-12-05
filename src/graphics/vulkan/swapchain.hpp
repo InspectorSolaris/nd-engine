@@ -124,7 +124,9 @@ namespace nd::src::graphics::vulkan
                            const VkCompositeAlphaFlagBitsKHR   compositeAlpha,
                            const VkPresentModeKHR              presentMode,
                            const VkBool32                      clipped,
-                           const VkSwapchainKHR                oldSwapchain) noexcept;
+                           const VkSwapchainKHR                oldSwapchain,
+                           const VkSwapchainCreateFlagsKHR     flags = {},
+                           const void*                         next  = {}) noexcept;
 
     Swapchain
     getSwapchain(const Swapchain::Configuration& configuration,

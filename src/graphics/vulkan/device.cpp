@@ -60,14 +60,18 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDeviceQueueCreateInfo
-    getQueueCreateInfo(const uint32_t queueFamilyIndex, const uint32_t queueCount, const float* queuePriorities) noexcept
+    getQueueCreateInfo(const uint32_t                 queueFamilyIndex,
+                       const uint32_t                 queueCount,
+                       const float*                   queuePriorities,
+                       const VkDeviceQueueCreateFlags flags,
+                       const void*                    next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, // sType;
-            nullptr,                                    // pNext;
-            0,                                          // flags;
+            next,                                       // pNext;
+            flags,                                      // flags;
             queueFamilyIndex,                           // queueFamilyIndex;
             queueCount,                                 // queueCount;
             queuePriorities                             // pQueuePriorities;
@@ -79,14 +83,16 @@ namespace nd::src::graphics::vulkan
                         const uint32_t                  enabledExtensionsCount,
                         const VkDeviceQueueCreateInfo*  queueCreateInfos,
                         const char* const*              enabledExtensions,
-                        const VkPhysicalDeviceFeatures* enabledFeatures) noexcept
+                        const VkPhysicalDeviceFeatures* enabledFeatures,
+                        const VkDeviceCreateFlags       flags,
+                        const void*                     next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, // sType;
-            nullptr,                              // pNext;
-            0,                                    // flags;
+            next,                                 // pNext;
+            flags,                                // flags;
             queueCreateInfosCount,                // queueCreateInfoCount;
             queueCreateInfos,                     // pQueueCreateInfos;
             0ULL,                                 // enabledLayerCount;

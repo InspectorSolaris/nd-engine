@@ -51,14 +51,17 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDescriptorSetLayoutCreateInfo
-    getDescriptorSetLayoutCreateInfo(const uint32_t bindingsCount, const VkDescriptorSetLayoutBinding* bindings) noexcept
+    getDescriptorSetLayoutCreateInfo(const uint32_t                         bindingsCount,
+                                     const VkDescriptorSetLayoutBinding*    bindings,
+                                     const VkDescriptorSetLayoutCreateFlags flags,
+                                     const void*                            next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, // sType;
-            nullptr,                                             // pNext;
-            0,                                                   // flags;
+            next,                                                // pNext;
+            flags,                                               // flags;
             bindingsCount,                                       // bindingCount;
             bindings                                             // pBindings;
         };

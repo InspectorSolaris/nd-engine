@@ -51,19 +51,19 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineShaderStageCreateInfo
-    getPipelineShaderStageCreateInfo(const VkShaderStageFlagBits            stage,
-                                     const VkShaderModule                   shaderModule,
-                                     const char*                            name,
-                                     const VkSpecializationInfo*            specializationInfo,
-                                     const VkPipelineShaderStageCreateFlags flags,
-                                     const void*                            next) noexcept
+    getPipelineShaderStageCreateInfo(const VkShaderStageFlagBits                 stage,
+                                     const VkShaderModule                        shaderModule,
+                                     const char*                                 name,
+                                     const VkSpecializationInfo*                 specializationInfo,
+                                     const VkPipelineVertexInputStateCreateFlags flags,
+                                     const void*                                 next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, // sType;
-            next,                                                // pNext;
-            flags,                                               // flags;
+            next,                                             // pNext;
+            flags,                                                   // flags;
             stage,                                               // stage;
             shaderModule,                                        // module;
             name,                                                // pName;
@@ -72,19 +72,17 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineVertexInputStateCreateInfo
-    getPipelineVertexInputStateCreateInfo(const uint32_t                              vertexBindingDescriptionsCount,
-                                          const uint32_t                              vertexAttributeDescriptionsCount,
-                                          const VkVertexInputBindingDescription*      vertexBindingDescriptions,
-                                          const VkVertexInputAttributeDescription*    vertexAttributeDescriptions,
-                                          const VkPipelineVertexInputStateCreateFlags flags,
-                                          const void*                                 next) noexcept
+    getPipelineVertexInputStateCreateInfo(const uint32_t                           vertexBindingDescriptionsCount,
+                                          const uint32_t                           vertexAttributeDescriptionsCount,
+                                          const VkVertexInputBindingDescription*   vertexBindingDescriptions,
+                                          const VkVertexInputAttributeDescription* vertexAttributeDescriptions) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO, // sType;
-            next,                                                      // pNext;
-            flags,                                                     // flags;
+            nullptr,                                                   // pNext;
+            0,                                                         // flags;
             vertexBindingDescriptionsCount,                            // vertexBindingDescriptionCount;
             vertexBindingDescriptions,                                 // pVertexBindingDescriptions;
             vertexAttributeDescriptionsCount,                          // vertexAttributeDescriptionCount;
@@ -93,51 +91,45 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineInputAssemblyStateCreateInfo
-    getPipelineInputAssemblyStateCreateInfo(const VkPrimitiveTopology                     topology,
-                                            const VkBool32                                primitiveRestartEnable,
-                                            const VkPipelineInputAssemblyStateCreateFlags flags,
-                                            const void*                                   next) noexcept
+    getPipelineInputAssemblyStateCreateInfo(const VkPrimitiveTopology topology,
+                                            const VkBool32            primitiveRestartEnable) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO, // sType;
-            next,                                                        // pNext;
-            flags,                                                       // flags;
+            nullptr,                                                     // pNext;
+            0,                                                           // flags;
             topology,                                                    // topology;
             primitiveRestartEnable                                       // primitiveRestartEnable;
         };
     }
 
     VkPipelineTessellationStateCreateInfo
-    getPipelineTessellationStateCreateInfo(const uint32_t                               patchControlPoints,
-                                           const VkPipelineTessellationStateCreateFlags flags,
-                                           const void*                                  next) noexcept
+    getPipelineTessellationStateCreateInfo(const uint32_t patchControlPoints) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO, // sType;
-            next,                                                      // pNext;
-            flags,                                                     // flags;
+            nullptr,                                                   // pNext;
+            0,                                                         // flags;
             patchControlPoints                                         // patchControlPoints;
         };
     }
 
     VkPipelineViewportStateCreateInfo
-    getPipelineViewportStateCreateInfo(const uint32_t                           viewportsCount,
-                                       const uint32_t                           scissorsCount,
-                                       const VkViewport*                        viewports,
-                                       const VkRect2D*                          scissors,
-                                       const VkPipelineViewportStateCreateFlags flags,
-                                       const void*                              next) noexcept
+    getPipelineViewportStateCreateInfo(const uint32_t    viewportsCount,
+                                       const uint32_t    scissorsCount,
+                                       const VkViewport* viewports,
+                                       const VkRect2D*   scissors) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO, // sType;
-            next,                                                  // pNext;
-            flags,                                                 // flags;
+            nullptr,                                               // pNext;
+            0,                                                     // flags;
             viewportsCount,                                        // viewportCount;
             viewports,                                             // pViewports;
             scissorsCount,                                         // scissorCount;
@@ -146,25 +138,23 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineRasterizationStateCreateInfo
-    getPipelineRasterizationStateCreateInfo(const VkBool32                                depthClampEnable,
-                                            const VkBool32                                rasterizerDiscardEnable,
-                                            const VkPolygonMode                           polygonMode,
-                                            const VkCullModeFlags                         cullMode,
-                                            const VkFrontFace                             frontFace,
-                                            const VkBool32                                depthBiasEnable,
-                                            const float                                   depthBiasConstantFactor,
-                                            const float                                   depthBiasClamp,
-                                            const float                                   depthBiasSlopeFactor,
-                                            const float                                   lineWidth,
-                                            const VkPipelineRasterizationStateCreateFlags flags,
-                                            const void*                                   next) noexcept
+    getPipelineRasterizationStateCreateInfo(const VkBool32        depthClampEnable,
+                                            const VkBool32        rasterizerDiscardEnable,
+                                            const VkPolygonMode   polygonMode,
+                                            const VkCullModeFlags cullMode,
+                                            const VkFrontFace     frontFace,
+                                            const VkBool32        depthBiasEnable,
+                                            const float           depthBiasConstantFactor,
+                                            const float           depthBiasClamp,
+                                            const float           depthBiasSlopeFactor,
+                                            const float           lineWidth) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, // sType;
-            next,                                            // pNext;
-            flags,                                           // flags;
+            nullptr,                                         // pNext;
+            0,                                               // flags;
             depthClampEnable,                                // depthClampEnable;
             rasterizerDiscardEnable,                         // rasterizerDiscardEnable;
             polygonMode,                                     // polygonMode;
@@ -179,21 +169,19 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineMultisampleStateCreateInfo
-    getPipelineMultisampleStateCreateInfo(const VkSampleCountFlagBits                 rasterizationSamples,
-                                          const VkBool32                              sampleShadingEnable,
-                                          const float                                 minSampleShading,
-                                          const VkSampleMask*                         sampleMask,
-                                          const VkBool32                              alphaToCoverageEnable,
-                                          const VkBool32                              alphaToOneEnable,
-                                          const VkPipelineMultisampleStateCreateFlags flags,
-                                          const void*                                 next) noexcept
+    getPipelineMultisampleStateCreateInfo(const VkSampleCountFlagBits rasterizationSamples,
+                                          const VkBool32              sampleShadingEnable,
+                                          const float                 minSampleShading,
+                                          const VkSampleMask*         sampleMask,
+                                          const VkBool32              alphaToCoverageEnable,
+                                          const VkBool32              alphaToOneEnable) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO, // sType;
-            next,                                                     // pNext;
-            flags,                                                    // flags;
+            nullptr,                                                  // pNext;
+            0,                                                        // flags;
             rasterizationSamples,                                     // rasterizationSamples;
             sampleShadingEnable,                                      // sampleShadingEnable;
             minSampleShading,                                         // minSampleShading;
@@ -204,24 +192,22 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineDepthStencilStateCreateInfo
-    getPipelineDepthStencilStateCreateInfo(const VkBool32                               depthTestEnable,
-                                           const VkBool32                               depthWriteEnable,
-                                           const VkCompareOp                            depthCompareOp,
-                                           const VkBool32                               depthBoundsTestEnable,
-                                           const VkBool32                               stencilTestEnable,
-                                           const VkStencilOpState                       front,
-                                           const VkStencilOpState                       back,
-                                           const float                                  minDepthBounds,
-                                           const float                                  maxDepthBounds,
-                                           const VkPipelineDepthStencilStateCreateFlags flags,
-                                           const void*                                  next) noexcept
+    getPipelineDepthStencilStateCreateInfo(const VkBool32         depthTestEnable,
+                                           const VkBool32         depthWriteEnable,
+                                           const VkCompareOp      depthCompareOp,
+                                           const VkBool32         depthBoundsTestEnable,
+                                           const VkBool32         stencilTestEnable,
+                                           const VkStencilOpState front,
+                                           const VkStencilOpState back,
+                                           const float            minDepthBounds,
+                                           const float            maxDepthBounds) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO, // sType;
-            next,                                                       // pNext;
-            flags,                                                      // flags;
+            nullptr,                                                    // pNext;
+            0,                                                          // flags;
             depthTestEnable,                                            // depthTestEnable;
             depthWriteEnable,                                           // depthWriteEnable;
             depthCompareOp,                                             // depthCompareOp;
@@ -239,16 +225,14 @@ namespace nd::src::graphics::vulkan
                                          const VkLogicOp                            logicOp,
                                          const uint32_t                             attachmentsCount,
                                          const VkPipelineColorBlendAttachmentState* attachments,
-                                         const float                                blendConstants[4],
-                                         const VkPipelineColorBlendStateCreateFlags flags,
-                                         const void*                                next) noexcept
+                                         const float                                blendConstants[4]) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,                    // sType;
-            next,                                                                        // pNext;
-            flags,                                                                       // flags;
+            nullptr,                                                                     // pNext;
+            0,                                                                           // flags;
             logicOpEnable,                                                               // logicOpEnable;
             logicOp,                                                                     // logicOp;
             attachmentsCount,                                                            // attachmentCount;
@@ -258,17 +242,14 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineDynamicStateCreateInfo
-    getPipelineDynamicStateCreateInfo(const uint32_t                          dynamicStatesCount,
-                                      const VkDynamicState*                   dynamicStates,
-                                      const VkPipelineDynamicStateCreateFlags flags,
-                                      const void*                             next) noexcept
+    getPipelineDynamicStateCreateInfo(const uint32_t dynamicStatesCount, const VkDynamicState* dynamicStates) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO, // sType;
-            next,                                                 // pNext;
-            flags,                                                // flags;
+            nullptr,                                              // pNext;
+            0,                                                    // flags;
             dynamicStatesCount,                                   // dynamicStateCount;
             dynamicStates                                         // pDynamicStates;
         };
@@ -290,16 +271,14 @@ namespace nd::src::graphics::vulkan
                                   const VkRenderPass                            renderPass,
                                   const uint32_t                                subpass,
                                   const VkPipeline                              basePipelineHandle,
-                                  const int32_t                                 basePipelineIndex,
-                                  const VkPipelineCreateFlags                   flags,
-                                  const void*                                   next) noexcept
+                                  const int32_t                                 basePipelineIndex) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, // sType;
-            next,                                            // pNext;
-            flags,                                           // flags;
+            nullptr,                                         // pNext;
+            0,                                               // flags;
             stagesCount,                                     // stageCount;
             stages,                                          // pStages;
             vertexInputState,                                // pVertexInputState;

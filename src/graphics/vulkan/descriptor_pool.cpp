@@ -51,19 +51,21 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDescriptorPoolCreateInfo
-    getDescriptorPoolCreateInfo(const uint32_t              maxSets,
-                                const uint32_t              poolSizesCount,
-                                const VkDescriptorPoolSize* poolSizes) noexcept
+    getDescriptorPoolCreateInfo(const uint32_t                    maxSets,
+                                const uint32_t                    poolSizesCount,
+                                const VkDescriptorPoolSize*       poolSizes,
+                                const VkDescriptorPoolCreateFlags flags,
+                                const void*                       next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,     // sType;
-            nullptr,                                           // pNext;
-            VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT, // flags;
-            maxSets,                                           // maxSets;
-            poolSizesCount,                                    // poolSizeCount;
-            poolSizes                                          // pPoolSizes;
+            VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, // sType;
+            next,                                          // pNext;
+            flags,                                         // flags;
+            maxSets,                                       // maxSets;
+            poolSizesCount,                                // poolSizeCount;
+            poolSizes                                      // pPoolSizes;
         };
     }
 
@@ -74,7 +76,8 @@ namespace nd::src::graphics::vulkan
 
         const auto createInfo = getDescriptorPoolCreateInfo(configuration.maxSets,
                                                             configuration.descriptorPoolSizes.size(),
-                                                            configuration.descriptorPoolSizes.data());
+                                                            configuration.descriptorPoolSizes.data(),
+                                                            configuration.flags);
 
         return DescriptorPool(device, createInfo);
     }

@@ -57,13 +57,14 @@ namespace nd::src::graphics::vulkan
     VkDescriptorSetAllocateInfo
     getDescriptorSetAllocateInfo(const VkDescriptorPool       descriptorPool,
                                  const uint32_t               setLayoutsCount,
-                                 const VkDescriptorSetLayout* setLayouts) noexcept
+                                 const VkDescriptorSetLayout* setLayouts,
+                                 const void*                  next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO, // sType;
-            nullptr,                                        // pNext;
+            next,                                           // pNext;
             descriptorPool,                                 // descriptorPool;
             setLayoutsCount,                                // descriptorSetCount;
             setLayouts                                      // pSetLayouts;

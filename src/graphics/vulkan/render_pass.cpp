@@ -51,19 +51,20 @@ namespace nd::src::graphics::vulkan
     }
 
     VkAttachmentDescription
-    getRenderPassAttachment(const VkFormat              format,
-                            const VkSampleCountFlagBits samples,
-                            const VkAttachmentLoadOp    loadOp,
-                            const VkAttachmentStoreOp   storeOp,
-                            const VkAttachmentLoadOp    stencilLoadOp,
-                            const VkAttachmentStoreOp   stencilStoreOp,
-                            const VkImageLayout         initialLayout,
-                            const VkImageLayout         finalLayout) noexcept
+    getRenderPassAttachment(const VkFormat                     format,
+                            const VkSampleCountFlagBits        samples,
+                            const VkAttachmentLoadOp           loadOp,
+                            const VkAttachmentStoreOp          storeOp,
+                            const VkAttachmentLoadOp           stencilLoadOp,
+                            const VkAttachmentStoreOp          stencilStoreOp,
+                            const VkImageLayout                initialLayout,
+                            const VkImageLayout                finalLayout,
+                            const VkAttachmentDescriptionFlags flags) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            0,              // flags;
+            flags,          // flags;
             format,         // format;
             samples,        // samples;
             loadOp,         // loadOp;
@@ -76,20 +77,21 @@ namespace nd::src::graphics::vulkan
     }
 
     VkSubpassDescription
-    getRenderPassSubpass(const VkPipelineBindPoint    pipelineBindPoint,
-                         const uint32_t               inputAttachmentsCount,
-                         const uint32_t               colorAttachmentsCount,
-                         const uint32_t               preserveAttachmentsCount,
-                         const VkAttachmentReference* inputAttachments,
-                         const VkAttachmentReference* colorAttachments,
-                         const VkAttachmentReference* resolveAttachments,
-                         const VkAttachmentReference* depthStencilAttachments,
-                         const uint32_t*              preserveAttachments) noexcept
+    getRenderPassSubpass(const VkPipelineBindPoint       pipelineBindPoint,
+                         const uint32_t                  inputAttachmentsCount,
+                         const uint32_t                  colorAttachmentsCount,
+                         const uint32_t                  preserveAttachmentsCount,
+                         const VkAttachmentReference*    inputAttachments,
+                         const VkAttachmentReference*    colorAttachments,
+                         const VkAttachmentReference*    resolveAttachments,
+                         const VkAttachmentReference*    depthStencilAttachments,
+                         const uint32_t*                 preserveAttachments,
+                         const VkSubpassDescriptionFlags flags) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
-            0,                        // flags;
+            flags,                    // flags;
             pipelineBindPoint,        // pipelineBindPoint;
             inputAttachmentsCount,    // inputAttachmentCount;
             inputAttachments,         // pInputAttachments;
@@ -130,14 +132,16 @@ namespace nd::src::graphics::vulkan
                             const uint32_t                 dependenciesCount,
                             const VkAttachmentDescription* attachments,
                             const VkSubpassDescription*    subpasses,
-                            const VkSubpassDependency*     dependencies) noexcept
+                            const VkSubpassDependency*     dependencies,
+                            const VkRenderPassCreateFlags  flags,
+                            const void*                    next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO, // sType;
-            nullptr,                                   // pNext;
-            0,                                         // flags;
+            next,                                      // pNext;
+            flags,                                     // flags;
             attachmentsCount,                          // attachmentCount;
             attachments,                               // pAttachments;
             subpassesCount,                            // subpassCount;

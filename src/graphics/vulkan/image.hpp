@@ -47,5 +47,7 @@ namespace nd::src::graphics::vulkan
                        const VkSharingMode         sharingMode,
                        const uint32_t              queueFamilyIndicesCount,
                        const uint32_t*             queueFamilyIndices,
-                       const VkImageLayout         initialLayout) noexcept;
+                       const VkImageLayout         initialLayout,
+                       const VkImageCreateFlags    flags = {},
+                       const void*                 next  = {}) noexcept;
 } // namespace nd::src::graphics::vulkan

@@ -41,5 +41,6 @@ namespace nd::src::graphics::vulkan
     VkCommandBufferAllocateInfo
     getCommandBufferAllocateInfo(const VkCommandPool        commandPool,
                                  const VkCommandBufferLevel level,
-                                 const uint32_t             commandBufferCount) noexcept;
+                                 const uint32_t             commandBufferCount,
+                                 const void*                next = {}) noexcept;
 } // namespace nd::src::graphics::vulkan

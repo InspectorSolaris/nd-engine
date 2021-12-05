@@ -43,25 +43,27 @@ namespace nd::src::graphics::vulkan
     }
 
     VkAttachmentDescription
-    getRenderPassAttachment(const VkFormat              format,
-                            const VkSampleCountFlagBits samples,
-                            const VkAttachmentLoadOp    loadOp,
-                            const VkAttachmentStoreOp   storeOp,
-                            const VkAttachmentLoadOp    stencilLoadOp,
-                            const VkAttachmentStoreOp   stencilStoreOp,
-                            const VkImageLayout         initialLayout,
-                            const VkImageLayout         finalLayout) noexcept;
+    getRenderPassAttachment(const VkFormat                     format,
+                            const VkSampleCountFlagBits        samples,
+                            const VkAttachmentLoadOp           loadOp,
+                            const VkAttachmentStoreOp          storeOp,
+                            const VkAttachmentLoadOp           stencilLoadOp,
+                            const VkAttachmentStoreOp          stencilStoreOp,
+                            const VkImageLayout                initialLayout,
+                            const VkImageLayout                finalLayout,
+                            const VkAttachmentDescriptionFlags flags = {}) noexcept;
 
     VkSubpassDescription
-    getRenderPassSubpass(const VkPipelineBindPoint    pipelineBindPoint,
-                         const uint32_t               inputAttachmentsCount,
-                         const uint32_t               colorAttachmentsCount,
-                         const uint32_t               preserveAttachmentsCount,
-                         const VkAttachmentReference* inputAttachments,
-                         const VkAttachmentReference* colorAttachments,
-                         const VkAttachmentReference* resolveAttachments,
-                         const VkAttachmentReference* depthStencilAttachments,
-                         const uint32_t*              preserveAttachments) noexcept;
+    getRenderPassSubpass(const VkPipelineBindPoint       pipelineBindPoint,
+                         const uint32_t                  inputAttachmentsCount,
+                         const uint32_t                  colorAttachmentsCount,
+                         const uint32_t                  preserveAttachmentsCount,
+                         const VkAttachmentReference*    inputAttachments,
+                         const VkAttachmentReference*    colorAttachments,
+                         const VkAttachmentReference*    resolveAttachments,
+                         const VkAttachmentReference*    depthStencilAttachments,
+                         const uint32_t*                 preserveAttachments,
+                         const VkSubpassDescriptionFlags flags = {}) noexcept;
 
     VkSubpassDependency
     getRenderPassDependency(const uint32_t             srcSubpass,
@@ -78,7 +80,9 @@ namespace nd::src::graphics::vulkan
                             const uint32_t                 dependenciesCount,
                             const VkAttachmentDescription* attachments,
                             const VkSubpassDescription*    subpasses,
-                            const VkSubpassDependency*     dependencies) noexcept;
+                            const VkSubpassDependency*     dependencies,
+                            const VkRenderPassCreateFlags  flags = {},
+                            const void*                    next  = {}) noexcept;
 
     RenderPass
     getRenderPass(const RenderPass::Configuration& configuration, const VkDevice device);

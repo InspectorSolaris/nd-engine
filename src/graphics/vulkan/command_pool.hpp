@@ -36,5 +36,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkCommandPoolCreateInfo
-    getCommandPoolCreateInfo(const uint32_t queueFamilyIndex) noexcept;
+    getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
+                             const VkCommandPoolCreateFlags flags = {},
+                             const void*                    next  = {}) noexcept;
 } // namespace nd::src::graphics::vulkan

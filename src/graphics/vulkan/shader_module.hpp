@@ -56,7 +56,10 @@ namespace nd::src::graphics::vulkan
     getShaderCode(const std::string& path);
 
     VkShaderModuleCreateInfo
-    getShaderModuleCreateInfo(const size_t codeSize, const uint32_t* code) noexcept;
+    getShaderModuleCreateInfo(const size_t                    codeSize,
+                              const uint32_t*                 code,
+                              const VkShaderModuleCreateFlags flags = {},
+                              const void*                     next  = {}) noexcept;
 
     ShaderModule
     getShaderModule(const ShaderModule::Configuration& configuration, const VkDevice device);

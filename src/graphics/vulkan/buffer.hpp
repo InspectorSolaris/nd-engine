@@ -36,9 +36,11 @@ namespace nd::src::graphics::vulkan
     }
 
     VkBufferCreateInfo
-    getBufferCreateInfo(const VkDeviceSize       size,
-                        const VkBufferUsageFlags usage,
-                        const VkSharingMode      sharingMode,
-                        const uint32_t           queueFamilyIndicesCount,
-                        const uint32_t*          queueFamilyIndices) noexcept;
+    getBufferCreateInfo(const VkDeviceSize        size,
+                        const VkBufferUsageFlags  usage,
+                        const VkSharingMode       sharingMode,
+                        const uint32_t            queueFamilyIndicesCount,
+                        const uint32_t*           queueFamilyIndices,
+                        const VkBufferCreateFlags flags = {},
+                        const void*               next  = {}) noexcept;
 } // namespace nd::src::graphics::vulkan

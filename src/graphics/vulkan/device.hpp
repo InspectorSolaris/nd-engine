@@ -78,14 +78,20 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDeviceQueueCreateInfo
-    getQueueCreateInfo(const uint32_t queueFamilyIndex, const uint32_t queueCount, const float* queuePriorities) noexcept;
+    getQueueCreateInfo(const uint32_t                 queueFamilyIndex,
+                       const uint32_t                 queueCount,
+                       const float*                   queuePriorities,
+                       const VkDeviceQueueCreateFlags flags = {},
+                       const void*                    next  = {}) noexcept;
 
     VkDeviceCreateInfo
     getDeviceCreateInfo(const uint32_t                  queueCreateInfosCount,
                         const uint32_t                  enabledExtensionsCount,
                         const VkDeviceQueueCreateInfo*  queueCreateInfos,
                         const char* const*              enabledExtensions,
-                        const VkPhysicalDeviceFeatures* enabledFeatures) noexcept;
+                        const VkPhysicalDeviceFeatures* enabledFeatures,
+                        const VkDeviceCreateFlags       flags = {},
+                        const void*                     next  = {}) noexcept;
 
     std::vector<VkQueueFamilyProperties>
     getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept;

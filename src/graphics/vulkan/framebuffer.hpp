@@ -47,12 +47,14 @@ namespace nd::src::graphics::vulkan
     }
 
     VkFramebufferCreateInfo
-    getFramebufferCreateInfo(const VkRenderPass renderPass,
-                             const uint32_t     attachmentsCount,
-                             const VkImageView* attachments,
-                             const uint32_t     width,
-                             const uint32_t     height,
-                             const uint32_t     layers) noexcept;
+    getFramebufferCreateInfo(const VkRenderPass             renderPass,
+                             const uint32_t                 attachmentsCount,
+                             const VkImageView*             attachments,
+                             const uint32_t                 width,
+                             const uint32_t                 height,
+                             const uint32_t                 layers,
+                             const VkFramebufferCreateFlags flags = {},
+                             const void*                    next  = {}) noexcept;
 
     Framebuffer
     getFramebuffer(const Framebuffer::Configuration& configuration, const VkDevice device);

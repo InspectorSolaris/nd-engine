@@ -62,14 +62,16 @@ namespace nd::src::graphics::vulkan
                        const VkSharingMode         sharingMode,
                        const uint32_t              queueFamilyIndicesCount,
                        const uint32_t*             queueFamilyIndices,
-                       const VkImageLayout         initialLayout) noexcept
+                       const VkImageLayout         initialLayout,
+                       const VkImageCreateFlags    flags,
+                       const void*                 next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, // sType;
-            nullptr,                             // pNext;
-            0,                                   // flags;
+            next,                                // pNext;
+            flags,                               // flags;
             type,                                // imageType;
             format,                              // format;
             extent,                              // extent;

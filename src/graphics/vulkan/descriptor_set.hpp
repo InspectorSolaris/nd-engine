@@ -46,7 +46,8 @@ namespace nd::src::graphics::vulkan
     VkDescriptorSetAllocateInfo
     getDescriptorSetAllocateInfo(const VkDescriptorPool       descriptorPool,
                                  const uint32_t               setLayoutsCount,
-                                 const VkDescriptorSetLayout* setLayouts) noexcept;
+                                 const VkDescriptorSetLayout* setLayouts,
+                                 const void*                  next = {}) noexcept;
 
     DescriptorSet
     getDescriptorSet(const DescriptorSet::Configuration& configuration, const VkDevice device);

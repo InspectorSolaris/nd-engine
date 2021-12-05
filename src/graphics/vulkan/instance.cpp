@@ -69,18 +69,20 @@ namespace nd::src::graphics::vulkan
     }
 
     VkInstanceCreateInfo
-    getInstanceCreateInfo(const VkApplicationInfo* applicationInfo,
-                          const uint32_t           enabledLayersCount,
-                          const uint32_t           enabledExtensionsCount,
-                          const char* const*       enabledLayers,
-                          const char* const*       enabledExtensions) noexcept
+    getInstanceCreateInfo(const VkApplicationInfo*    applicationInfo,
+                          const uint32_t              enabledLayersCount,
+                          const uint32_t              enabledExtensionsCount,
+                          const char* const*          enabledLayers,
+                          const char* const*          enabledExtensions,
+                          const VkInstanceCreateFlags flags,
+                          const void*                 next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, // sType;
-            nullptr,                                // pNext;
-            0,                                      // flags;
+            next,                                   // pNext;
+            flags,                                  // flags;
             applicationInfo,                        // pApplicationInfo;
             enabledLayersCount,                     // enabledLayerCount;
             enabledLayers,                          // ppEnabledLayerNames;

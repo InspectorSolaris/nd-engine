@@ -41,7 +41,10 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDescriptorSetLayoutCreateInfo
-    getDescriptorSetLayoutCreateInfo(const uint32_t bindingsCount, const VkDescriptorSetLayoutBinding* bindings) noexcept;
+    getDescriptorSetLayoutCreateInfo(const uint32_t                         bindingsCount,
+                                     const VkDescriptorSetLayoutBinding*    bindings,
+                                     const VkDescriptorSetLayoutCreateFlags flags = {},
+                                     const void*                            next  = {}) noexcept;
 
     DescriptorSetLayout
     getDescriptorSetLayout(const DescriptorSetLayout::Configuration& configuration, const VkDevice device);

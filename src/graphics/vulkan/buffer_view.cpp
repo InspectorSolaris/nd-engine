@@ -51,17 +51,19 @@ namespace nd::src::graphics::vulkan
     }
 
     VkBufferViewCreateInfo
-    getBufferViewCreateInfo(const VkBuffer     buffer,
-                            const VkFormat     format,
-                            const VkDeviceSize offset,
-                            const VkDeviceSize range) noexcept
+    getBufferViewCreateInfo(const VkBuffer                buffer,
+                            const VkFormat                format,
+                            const VkDeviceSize            offset,
+                            const VkDeviceSize            range,
+                            const VkBufferViewCreateFlags flags,
+                            const void*                   next) noexcept
     {
         ND_SET_SCOPE_LOW();
 
         return {
             VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO, // sType;
-            nullptr,                                   // pNext;
-            0,                                         // flags;
+            next,                                      // pNext;
+            flags,                                     // flags;
             buffer,                                    // buffer;
             format,                                    // format;
             offset,                                    // offset;

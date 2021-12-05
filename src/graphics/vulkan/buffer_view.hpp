@@ -36,8 +36,10 @@ namespace nd::src::graphics::vulkan
     }
 
     VkBufferViewCreateInfo
-    getBufferViewCreateInfo(const VkBuffer     buffer,
-                            const VkFormat     format,
-                            const VkDeviceSize offset,
-                            const VkDeviceSize range) noexcept;
+    getBufferViewCreateInfo(const VkBuffer                buffer,
+                            const VkFormat                format,
+                            const VkDeviceSize            offset,
+                            const VkDeviceSize            range,
+                            const VkBufferViewCreateFlags flags = {},
+                            const void*                   next  = {}) noexcept;
 } // namespace nd::src::graphics::vulkan

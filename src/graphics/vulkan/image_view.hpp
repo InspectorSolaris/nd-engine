@@ -49,7 +49,9 @@ namespace nd::src::graphics::vulkan
                            const VkImageViewType          viewType,
                            const VkFormat                 format,
                            const VkComponentMapping&      components,
-                           const VkImageSubresourceRange& subresourceRange) noexcept;
+                           const VkImageSubresourceRange& subresourceRange,
+                           const VkImageViewCreateFlags   flags = {},
+                           const void*                    next  = {}) noexcept;
 
     ImageView
     getImageView(const ImageView::Configuration& configuration, const VkDevice device);
