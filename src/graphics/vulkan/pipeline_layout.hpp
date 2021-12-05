@@ -10,8 +10,8 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts {};
-            const std::vector<VkPushConstantRange>&   pushConstantRanges {};
+            const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts;
+            const std::vector<VkPushConstantRange>&   pushConstantRanges;
         };
 
         PipelineLayout() noexcept;

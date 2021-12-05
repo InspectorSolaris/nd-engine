@@ -29,13 +29,13 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface {};
+            const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface;
 
-            const std::string& applicationName {};
-            const std::string& engineName {};
+            const std::string& applicationName;
+            const std::string& engineName;
 
-            const std::vector<std::string>& layers {};
-            const std::vector<std::string>& extensions {};
+            const std::vector<std::string>& layers;
+            const std::vector<std::string>& extensions;
 
             const uint32_t width {};
             const uint32_t height {};
@@ -52,9 +52,7 @@ namespace nd::src::graphics::vulkan
                 std::vector<ShaderModule>&& shaderModules,
                 DescriptorPool&&            descriptorPool,
                 DescriptorSetLayout&&       descriptorSetLayout,
-                DescriptorSet&&             descriptorSet,
-                PipelineLayout&&            pipelineLayout,
-                Pipeline&&                  pipeline);
+                DescriptorSet&&             descriptorSet);
 
         Context(const Context& vulkanContext) = delete;
         Context(Context&& vulkanContext)      = delete;
@@ -79,8 +77,6 @@ namespace nd::src::graphics::vulkan
         DescriptorPool            descriptorPool_ {};
         DescriptorSetLayout       descriptorSetLayout_ {};
         DescriptorSet             descriptorSet_ {};
-        PipelineLayout            pipelineLayout_ {};
-        Pipeline                  pipeline_ {};
     };
 
     Context

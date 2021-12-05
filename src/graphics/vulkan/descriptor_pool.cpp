@@ -58,12 +58,12 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE_LOW();
 
         return {
-            VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, // sType;
-            nullptr,                                       // pNext;
-            0,                                             // flags;
-            maxSets,                                       // maxSets;
-            poolSizesCount,                                // poolSizeCount;
-            poolSizes                                      // pPoolSizes;
+            VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,     // sType;
+            nullptr,                                           // pNext;
+            VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT, // flags;
+            maxSets,                                           // maxSets;
+            poolSizesCount,                                    // poolSizeCount;
+            poolSizes                                          // pPoolSizes;
         };
     }
 

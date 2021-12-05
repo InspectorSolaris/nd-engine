@@ -10,8 +10,8 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::string&          path {};
-            const VkShaderStageFlagBits stage {};
+            const std::string&          path;
+            const VkShaderStageFlagBits stage;
         };
 
         ShaderModule() noexcept;

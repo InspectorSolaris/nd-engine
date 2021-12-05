@@ -10,13 +10,13 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::vector<VkImageView>& attachments {};
+            const std::vector<VkImageView>& attachments;
 
-            const VkRenderPass renderPass {};
+            const VkRenderPass renderPass;
 
-            const uint32_t width {};
-            const uint32_t height {};
-            const uint32_t layers {};
+            const uint32_t width;
+            const uint32_t height;
+            const uint32_t layers;
         };
 
         Framebuffer() noexcept;

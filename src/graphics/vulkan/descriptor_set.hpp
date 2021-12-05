@@ -10,8 +10,8 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::vector<VkDescriptorSetLayout>& layouts {};
-            const VkDescriptorPool                    descriptorPool {};
+            const std::vector<VkDescriptorSetLayout>& layouts;
+            const VkDescriptorPool                    descriptorPool;
         };
 
         DescriptorSet() noexcept;

@@ -12,26 +12,26 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::vector<VkSurfaceFormatKHR>& formats {};
-            const std::vector<VkPresentModeKHR>&   presentModes {};
-            const VkSurfaceCapabilitiesKHR&        capabilities {};
+            const std::vector<VkSurfaceFormatKHR>& formats;
+            const std::vector<VkPresentModeKHR>&   presentModes;
+            const VkSurfaceCapabilitiesKHR&        capabilities;
 
-            const VkPhysicalDevice physicalDevice {};
-            const VkSurfaceKHR     surface {};
+            const VkPhysicalDevice physicalDevice;
+            const VkSurfaceKHR     surface;
 
-            const VkExtent2D imageExtent {};
+            const VkExtent2D imageExtent;
 
-            const uint32_t minImagesCount {};
-            const uint32_t imageArrayLayers {};
+            const uint32_t minImagesCount;
+            const uint32_t imageArrayLayers;
 
-            const VkBool32          clipped {};
-            const VkFormat          imageFormat {};
-            const VkColorSpaceKHR   imageColorSpace {};
-            const VkImageUsageFlags imageUsage {};
-            const VkPresentModeKHR  presentMode {};
+            const VkBool32          clipped;
+            const VkFormat          imageFormat;
+            const VkColorSpaceKHR   imageColorSpace;
+            const VkImageUsageFlags imageUsage;
+            const VkPresentModeKHR  presentMode;
 
-            const VkSurfaceTransformFlagBitsKHR transform {};
-            const VkCompositeAlphaFlagBitsKHR   compositeAlpha {};
+            const VkSurfaceTransformFlagBitsKHR transform;
+            const VkCompositeAlphaFlagBitsKHR   compositeAlpha;
         };
 
         Swapchain() noexcept;

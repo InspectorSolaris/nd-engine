@@ -15,24 +15,24 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<std::string>
-    getMerged(const std::vector<std::string>& data1, const std::vector<std::string>& data2) noexcept
+    getMerged(const std::vector<std::string>& strings1, const std::vector<std::string>& strings2) noexcept
     {
-        auto dataMerged = std::vector<std::string>(data1.begin(), data1.end());
+        auto strings = std::vector<std::string>(strings1.begin(), strings1.end());
 
-        for(const auto& d2: data2)
+        for(const auto& s2: strings2)
         {
-            if(std::none_of(dataMerged.begin(),
-                            dataMerged.end(),
-                            [&d2](const auto& dm)
+            if(std::none_of(strings.begin(),
+                            strings.end(),
+                            [&s2](const auto& s)
                             {
-                                return dm == d2;
+                                return s == s2;
                             }))
             {
-                dataMerged.push_back(d2);
+                strings.push_back(s2);
             }
         }
 
-        return dataMerged;
+        return strings;
     }
 
     std::vector<const char*>

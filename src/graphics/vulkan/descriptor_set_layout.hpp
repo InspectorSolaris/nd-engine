@@ -10,7 +10,7 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::vector<VkDescriptorSetLayoutBinding>& bindings {};
+            const std::vector<VkDescriptorSetLayoutBinding>& bindings;
         };
 
         DescriptorSetLayout() noexcept;

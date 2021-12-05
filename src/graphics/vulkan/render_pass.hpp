@@ -10,9 +10,9 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::vector<VkAttachmentDescription>& attachments {};
-            const std::vector<VkSubpassDescription>&    subpasses {};
-            const std::vector<VkSubpassDependency>&     dependencies {};
+            const std::vector<VkAttachmentDescription>& attachments;
+            const std::vector<VkSubpassDescription>&    subpasses;
+            const std::vector<VkSubpassDependency>&     dependencies;
         };
 
         RenderPass() noexcept;

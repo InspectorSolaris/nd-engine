@@ -14,9 +14,7 @@ namespace nd::src::graphics::vulkan
                      std::vector<ShaderModule>&& shaderModules,
                      DescriptorPool&&            descriptorPool,
                      DescriptorSetLayout&&       descriptorSetLayout,
-                     DescriptorSet&&             descriptorSet,
-                     PipelineLayout&&            pipelineLayout,
-                     Pipeline&&                  pipeline)
+                     DescriptorSet&&             descriptorSet)
         : instance_(std::move(instance))
         , device_(std::move(device))
         , surface_(std::move(surface))
@@ -28,8 +26,6 @@ namespace nd::src::graphics::vulkan
         , descriptorPool_(std::move(descriptorPool))
         , descriptorSetLayout_(std::move(descriptorSetLayout))
         , descriptorSet_(std::move(descriptorSet))
-        , pipelineLayout_(std::move(pipelineLayout))
-        , pipeline_(std::move(pipeline))
     {
         ND_SET_SCOPE_LOW();
     }
@@ -149,20 +145,17 @@ namespace nd::src::graphics::vulkan
         const auto shadersEntryPoint = "main";
         const auto shadersDir        = "src/graphics/vulkan/shaders";
 
-        const auto shaderModuleConfigurations = std::vector<ShaderModule::Configuration> {
-            {fmt::format("{}/vert.spv", shadersDir), VK_SHADER_STAGE_VERTEX_BIT},
-            {fmt::format("{}/frag.spv", shadersDir), VK_SHADER_STAGE_FRAGMENT_BIT}};
-
         auto shaderModules = getMapped<ShaderModule::Configuration, ShaderModule>(
-            shaderModuleConfigurations,
-            [&device](const auto& shaderModuleConfiguration)
+            {{fmt::format("{}/vert.spv", shadersDir), VK_SHADER_STAGE_VERTEX_BIT},
+             {fmt::format("{}/frag.spv", shadersDir), VK_SHADER_STAGE_FRAGMENT_BIT}},
+            [&device](const auto& configuration)
             {
-                return getShaderModule(shaderModuleConfiguration, device.get());
+                return getShaderModule(configuration, device.get());
             });
 
         auto descriptorPool      = getDescriptorPool({{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1}, device.get());
         auto descriptorSetLayout = getDescriptorSetLayout({{}}, device.get());
-        auto descriptorSet       = getDescriptorSet({{}, descriptorPool.get()}, device.get());
+        auto descriptorSet       = getDescriptorSet({{descriptorSetLayout.get()}, descriptorPool.get()}, device.get());
 
         return Context(std::move(instance),
                        std::move(device),
@@ -175,8 +168,6 @@ namespace nd::src::graphics::vulkan
                        std::move(shaderModules),
                        std::move(descriptorPool),
                        std::move(descriptorSetLayout),
-                       std::move(descriptorSet),
-                       PipelineLayout {},
-                       Pipeline {});
+                       std::move(descriptorSet));
     }
 } // namespace nd::src::graphics::vulkan

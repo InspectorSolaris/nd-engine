@@ -10,15 +10,15 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::string& applicationName {};
-            const std::string& engineName {};
+            const std::string& applicationName;
+            const std::string& engineName;
 
-            const std::vector<std::string>& layers {};
-            const std::vector<std::string>& extensions {};
+            const std::vector<std::string>& layers;
+            const std::vector<std::string>& extensions;
 
-            const uint32_t applicationVersion {};
-            const uint32_t engineVersion {};
-            const uint32_t apiVersion {};
+            const uint32_t applicationVersion;
+            const uint32_t engineVersion;
+            const uint32_t apiVersion;
         };
 
         Instance() noexcept;
