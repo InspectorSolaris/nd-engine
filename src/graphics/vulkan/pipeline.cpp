@@ -322,6 +322,8 @@ namespace nd::src::graphics::vulkan
     Pipeline
     getGraphicsPipeline(const Pipeline::Configuration& configuration, const VkDevice device)
     {
+        ND_SET_SCOPE_LOW();
+
         const auto shaderStages = getMapped<Pipeline::ShaderInfo, VkPipelineShaderStageCreateInfo>(
             configuration.shaderInfos,
             [](const auto& shaderInfo)

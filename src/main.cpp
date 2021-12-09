@@ -4,34 +4,31 @@
 int
 main()
 {
+    using namespace spdlog;
+    using namespace spdlog::sinks;
+
     using namespace std::placeholders;
     using namespace nd::src::tools;
     using namespace nd::src::graphics;
 
-    using Log            = spdlog::logger;
-    using FileSink       = spdlog::sinks::rotating_file_sink_st;
-    using ConsoleSink    = spdlog::sinks::stdout_sink_st;
-    using LogPtr         = std::shared_ptr<Log>;
-    using FileSinkPtr    = std::shared_ptr<FileSink>;
-    using ConsoleSinkPtr = std::shared_ptr<ConsoleSink>;
-
     const auto maxSize  = 1024 * 1024 * 8;
     const auto maxFiles = 8;
 
-    auto fileSinkMainPtr    = FileSinkPtr(new FileSink("log/log.txt", maxSize, maxFiles));
-    auto consoleSinkMainPtr = ConsoleSinkPtr(new ConsoleSink());
-    auto logMain            = LogPtr(new Log(logMainName, {fileSinkMainPtr}));
+    auto fileSinkMainPtr =
+        std::shared_ptr<rotating_file_sink_st>(new rotating_file_sink_st("log/log.txt", maxSize, maxFiles));
 
-    auto fileSinkScopePtr    = FileSinkPtr(new FileSink("log/scope.txt", maxSize, maxFiles));
-    auto consoleSinkScopePtr = ConsoleSinkPtr(new ConsoleSink());
-    auto logScope            = Scope::LogPtr(new Scope::Log(logScopeName, {fileSinkScopePtr}));
+    auto fileSinkScopePtr =
+        std::shared_ptr<rotating_file_sink_st>(new rotating_file_sink_st("log/scope.txt", maxSize, maxFiles));
 
-    spdlog::register_logger(logMain);
-    spdlog::register_logger(logScope);
+    auto logMain  = std::shared_ptr<logger>(new logger(logMainName, {fileSinkMainPtr}));
+    auto logScope = std::shared_ptr<logger>(new logger(logScopeName, {fileSinkScopePtr}));
 
-    spdlog::set_level(spdlog::level::level_enum::trace);
-    logMain->set_level(spdlog::level::level_enum::trace);
-    logScope->set_level(spdlog::level::level_enum::trace);
+    register_logger(logMain);
+    register_logger(logScope);
+
+    spdlog::set_level(level::level_enum::trace);
+    logMain->set_level(level::level_enum::trace);
+    logScope->set_level(level::level_enum::trace);
 
     Scope::set(logScope);
 

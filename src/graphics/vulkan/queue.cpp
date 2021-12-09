@@ -8,17 +8,11 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE_LOW();
 
-        auto queueFamiliesIndices = std::vector<uint32_t>(queueFamilies.size());
-
-        std::transform(queueFamilies.begin(),
-                       queueFamilies.end(),
-                       queueFamiliesIndices.begin(),
-                       [](const auto& swapchainQueueFamily)
-                       {
-                           return swapchainQueueFamily->index;
-                       });
-
-        return queueFamiliesIndices;
+        return getMapped<const QueueFamily*, uint32_t>(queueFamilies,
+                                                       [](const auto& queueFamily)
+                                                       {
+                                                           return queueFamily->index;
+                                                       });
     }
 
 } // namespace nd::src::graphics::vulkan

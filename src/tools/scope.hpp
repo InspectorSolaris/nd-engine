@@ -7,21 +7,15 @@ namespace nd::src::tools
     class Scope final
     {
     public:
-        using Log    = spdlog::logger;
-        using LogPtr = std::shared_ptr<Log>;
+        using Event =
+            std::function<void(const std::shared_ptr<spdlog::logger> logPtr, const std::string name, const uint64_t depth)>;
 
-        using Name  = std::string_view;
-        using Depth = uint64_t;
-
-        using OnBegin = std::function<void(const LogPtr logPtr, const Name name, const Depth depth)>;
-        using OnEnd   = std::function<void(const LogPtr logPtr, const Name name, const Depth depth)>;
-
-        Scope(const Name name, const OnBegin& onBegin, const OnEnd& onEnd) noexcept;
+        Scope(const std::string& name, const Event& onBegin, const Event& onEnd) noexcept;
 
         ~Scope();
 
         static void
-        set(LogPtr logPtr) noexcept
+        set(const std::shared_ptr<spdlog::logger> logPtr) noexcept
         {
             assert(s_logPtr == nullptr);
 
@@ -29,16 +23,16 @@ namespace nd::src::tools
         }
 
     private:
-        static LogPtr s_logPtr;
-        static Depth  s_depth;
+        static std::shared_ptr<spdlog::logger> s_logPtr;
+        static uint64_t                        s_depth;
 
-        const Name   name_ {};
-        const OnEnd& onEnd_ {};
+        const Event&      onEnd_ {};
+        const std::string name_ {};
     };
 
     void
-    onScopeBegin(const Scope::LogPtr logPtr, const Scope::Name name, const Scope::Depth depth) noexcept;
+    onScopeBegin(const std::shared_ptr<spdlog::logger> logPtr, const std::string& name, const uint64_t depth) noexcept;
 
     void
-    onScopeEnd(const Scope::LogPtr logPtr, const Scope::Name name, const Scope::Depth depth) noexcept;
+    onScopeEnd(const std::shared_ptr<spdlog::logger> logPtr, const std::string& name, const uint64_t depth) noexcept;
 } // namespace nd::src::tools
