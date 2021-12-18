@@ -17,7 +17,7 @@ namespace nd::src::graphics::vulkan
     std::vector<std::string>
     getMerged(const std::vector<std::string>& strings1, const std::vector<std::string>& strings2) noexcept
     {
-        auto strings = std::vector<std::string>(strings1.begin(), strings1.end());
+        auto strings = strings1;
 
         for(const auto& s2: strings2)
         {
@@ -39,7 +39,7 @@ namespace nd::src::graphics::vulkan
     getRawStrings(const std::vector<std::string>& strings) noexcept
     {
         return getMapped<std::string, const char*>(strings,
-                                                   [](const auto& string)
+                                                   [](const auto& string, const auto index)
                                                    {
                                                        return string.c_str();
                                                    });

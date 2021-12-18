@@ -28,9 +28,9 @@ namespace nd::src::graphics::vulkan
 
         bs.reserve(as.size());
 
-        for(const auto& a: as)
+        for(size_t index = 0; index < as.size(); ++index)
         {
-            bs.push_back(map(a));
+            bs.push_back(map(as[index], index));
         }
 
         return bs;

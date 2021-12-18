@@ -3,53 +3,6 @@
 
 namespace nd::src::graphics::vulkan
 {
-    RenderPass::RenderPass() noexcept
-    {
-        ND_SET_SCOPE_LOW();
-    }
-
-    RenderPass::RenderPass(const VkDevice device, const VkRenderPassCreateInfo& createInfo)
-        : device_(device)
-    {
-        ND_SET_SCOPE_LOW();
-
-        ND_ASSERT(vkCreateRenderPass(device_, &createInfo, nullptr, &renderPass_) == VK_SUCCESS);
-    }
-
-    RenderPass::RenderPass(RenderPass&& renderPass) noexcept
-        : device_(std::move(renderPass.device_))
-        , renderPass_(std::move(renderPass.renderPass_))
-    {
-        ND_SET_SCOPE_LOW();
-
-        renderPass.renderPass_ = VK_NULL_HANDLE;
-    }
-
-    RenderPass&
-    RenderPass::operator=(RenderPass&& renderPass) noexcept
-    {
-        ND_SET_SCOPE_LOW();
-
-        if(&renderPass == this)
-        {
-            return *this;
-        }
-
-        device_     = std::move(renderPass.device_);
-        renderPass_ = std::move(renderPass.renderPass_);
-
-        renderPass.renderPass_ = VK_NULL_HANDLE;
-
-        return *this;
-    }
-
-    RenderPass::~RenderPass()
-    {
-        ND_SET_SCOPE_LOW();
-
-        vkDestroyRenderPass(device_, renderPass_, nullptr);
-    }
-
     VkAttachmentDescription
     getRenderPassAttachment(const VkFormat                     format,
                             const VkSampleCountFlagBits        samples,
@@ -61,7 +14,7 @@ namespace nd::src::graphics::vulkan
                             const VkImageLayout                finalLayout,
                             const VkAttachmentDescriptionFlags flags) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             flags,          // flags;
@@ -88,7 +41,7 @@ namespace nd::src::graphics::vulkan
                          const uint32_t*                 preserveAttachments,
                          const VkSubpassDescriptionFlags flags) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             flags,                    // flags;
@@ -113,7 +66,7 @@ namespace nd::src::graphics::vulkan
                             const VkAccessFlags        dstAccessMask,
                             const VkDependencyFlags    dependencyFlags) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             srcSubpass,     // srcSubpass;
@@ -136,7 +89,7 @@ namespace nd::src::graphics::vulkan
                             const VkRenderPassCreateFlags  flags,
                             const void*                    next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO, // sType;
@@ -151,10 +104,22 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    RenderPass
-    getRenderPass(const RenderPass::Configuration& configuration, const VkDevice device)
+    VkRenderPass
+    getRenderPass(const VkRenderPassCreateInfo& createInfo, const VkDevice device)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
+
+        VkRenderPass renderPass;
+
+        ND_ASSERT(vkCreateRenderPass(device, &createInfo, nullptr, &renderPass) == VK_SUCCESS);
+
+        return renderPass;
+    }
+
+    VkRenderPass
+    getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
 
         const auto createInfo = getRenderPassCreateInfo(configuration.attachments.size(),
                                                         configuration.subpasses.size(),
@@ -163,6 +128,6 @@ namespace nd::src::graphics::vulkan
                                                         configuration.subpasses.data(),
                                                         configuration.dependencies.data());
 
-        return RenderPass(device, createInfo);
+        return getRenderPass(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

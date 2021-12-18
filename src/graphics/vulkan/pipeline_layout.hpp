@@ -5,41 +5,11 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class PipelineLayout final
+    struct PipelineLayoutConfiguration final
     {
-    public:
-        struct Configuration final
-        {
-            const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts;
-            const std::vector<VkPushConstantRange>&   pushConstantRanges;
-        };
-
-        PipelineLayout() noexcept;
-        PipelineLayout(const VkDevice device, const VkPipelineLayoutCreateInfo& createInfo);
-
-        PipelineLayout(const PipelineLayout& pipelineLayout) = delete;
-        PipelineLayout(PipelineLayout&& pipelineLayout) noexcept;
-
-        PipelineLayout&
-        operator=(const PipelineLayout& pipelineLayout) = delete;
-        PipelineLayout&
-        operator=(PipelineLayout&& pipelineLayout) noexcept;
-
-        ~PipelineLayout();
-
-        constexpr VkPipelineLayout
-        get() const noexcept;
-
-    private:
-        VkDevice         device_ {VK_NULL_HANDLE};
-        VkPipelineLayout pipelineLayout_ {VK_NULL_HANDLE};
+        const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts;
+        const std::vector<VkPushConstantRange>&   pushConstantRanges;
     };
-
-    constexpr VkPipelineLayout
-    PipelineLayout::get() const noexcept
-    {
-        return pipelineLayout_;
-    }
 
     VkPipelineLayoutCreateInfo
     getPipelineLayoutCreateInfo(const uint32_t                    setLayoutsCount,
@@ -49,6 +19,9 @@ namespace nd::src::graphics::vulkan
                                 const VkPipelineLayoutCreateFlags flags = {},
                                 const void*                       next  = {}) noexcept;
 
-    PipelineLayout
-    getPipelineLayout(const PipelineLayout::Configuration& configuration, const VkDevice device);
+    VkPipelineLayout
+    getPipelineLayout(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device);
+
+    VkPipelineLayout
+    getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

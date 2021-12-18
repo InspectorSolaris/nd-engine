@@ -5,44 +5,14 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class ImageView final
+    struct ImageViewConfiguration final
     {
-    public:
-        struct Configuration final
-        {
-            const VkImageSubresourceRange& subresourceRange;
-            const VkComponentMapping&      components;
-            const VkImageViewType          viewType;
-            const VkFormat                 format;
-            const VkImage                  image;
-        };
-
-        ImageView() noexcept;
-        ImageView(const VkDevice device, const VkImageViewCreateInfo& createInfo);
-
-        ImageView(const ImageView& imageView) = delete;
-        ImageView(ImageView&& imageView) noexcept;
-
-        ImageView&
-        operator=(const ImageView& imageView) = delete;
-        ImageView&
-        operator=(ImageView&& imageView) noexcept;
-
-        ~ImageView();
-
-        constexpr VkImageView
-        get() const noexcept;
-
-    private:
-        VkDevice    device_ {VK_NULL_HANDLE};
-        VkImageView imageView_ {VK_NULL_HANDLE};
+        const VkImageSubresourceRange& subresourceRange;
+        const VkComponentMapping&      components;
+        const VkImageViewType          viewType;
+        const VkFormat                 format;
+        const VkImage                  image;
     };
-
-    constexpr VkImageView
-    ImageView::get() const noexcept
-    {
-        return imageView_;
-    }
 
     VkImageViewCreateInfo
     getImageViewCreateInfo(const VkImage                  image,
@@ -53,6 +23,9 @@ namespace nd::src::graphics::vulkan
                            const VkImageViewCreateFlags   flags = {},
                            const void*                    next  = {}) noexcept;
 
-    ImageView
-    getImageView(const ImageView::Configuration& configuration, const VkDevice device);
+    VkImageView
+    getImageView(const VkImageViewCreateInfo& createInfo, const VkDevice device);
+
+    VkImageView
+    getImageView(const ImageViewConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

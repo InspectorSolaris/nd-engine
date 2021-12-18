@@ -5,13 +5,13 @@ namespace nd::src::graphics::vulkan
 {
     Image::Image() noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
     }
 
     Image::Image(const VkDevice device, const VkImageCreateInfo& createInfo)
         : device_(device)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         ND_ASSERT(vkCreateImage(device_, &createInfo, nullptr, &image_) == VK_SUCCESS);
     }
@@ -20,7 +20,7 @@ namespace nd::src::graphics::vulkan
         : device_(std::move(image.device_))
         , image_(std::move(image.image_))
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         image.image_ = VK_NULL_HANDLE;
     }
@@ -28,7 +28,7 @@ namespace nd::src::graphics::vulkan
     Image&
     Image::operator=(Image&& image) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         if(&image == this)
         {
@@ -45,7 +45,7 @@ namespace nd::src::graphics::vulkan
 
     Image::~Image()
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         vkDestroyImage(device_, image_, nullptr);
     }
@@ -66,7 +66,7 @@ namespace nd::src::graphics::vulkan
                        const VkImageCreateFlags    flags,
                        const void*                 next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, // sType;

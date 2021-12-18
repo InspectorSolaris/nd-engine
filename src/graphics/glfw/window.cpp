@@ -5,14 +5,14 @@ namespace nd::src::graphics::glfw
 {
     Window::Window() noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
     }
 
     Window::Window(const int width, const int height, const std::string& title) noexcept
         : width_(width)
         , height_(height)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
@@ -24,7 +24,7 @@ namespace nd::src::graphics::glfw
         , width_(std::move(window.width_))
         , height_(std::move(window.height_))
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         window.window_ = nullptr;
         window.width_  = 0;
@@ -34,7 +34,7 @@ namespace nd::src::graphics::glfw
     Window&
     Window::operator=(Window&& window) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         if(&window == this)
         {
@@ -54,7 +54,7 @@ namespace nd::src::graphics::glfw
 
     Window::~Window()
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         if(window_ != nullptr)
         {
@@ -65,6 +65,8 @@ namespace nd::src::graphics::glfw
     Window
     getWindow(const Window::Configuration& configuration) noexcept
     {
+        ND_SET_SCOPE();
+
         return Window(configuration.width, configuration.height, configuration.title);
     }
 } // namespace nd::src::graphics::glfw

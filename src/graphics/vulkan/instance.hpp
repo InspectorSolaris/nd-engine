@@ -5,47 +5,18 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class Instance final
+    struct InstanceConfiguration final
     {
-    public:
-        struct Configuration final
-        {
-            const std::string& applicationName;
-            const std::string& engineName;
+        const std::string& applicationName;
+        const std::string& engineName;
 
-            const std::vector<std::string>& layers;
-            const std::vector<std::string>& extensions;
+        const std::vector<std::string>& layers;
+        const std::vector<std::string>& extensions;
 
-            const uint32_t applicationVersion;
-            const uint32_t engineVersion;
-            const uint32_t apiVersion;
-        };
-
-        Instance() noexcept;
-        Instance(const VkInstanceCreateInfo& createInfo);
-
-        Instance(const Instance& instance) = delete;
-        Instance(Instance&& instance) noexcept;
-
-        Instance&
-        operator=(const Instance& instance) = delete;
-        Instance&
-        operator=(Instance&& instance) noexcept;
-
-        ~Instance();
-
-        constexpr VkInstance
-        get() const noexcept;
-
-    private:
-        VkInstance instance_ {VK_NULL_HANDLE};
+        const uint32_t applicationVersion;
+        const uint32_t engineVersion;
+        const uint32_t apiVersion;
     };
-
-    constexpr VkInstance
-    Instance::get() const noexcept
-    {
-        return instance_;
-    }
 
     VkApplicationInfo
     getApplicationInfo(const char*    applicationName,
@@ -69,6 +40,9 @@ namespace nd::src::graphics::vulkan
     bool
     isInstanceExtensionsSupported(const std::vector<std::string>& extensions) noexcept;
 
-    Instance
-    getInstance(const Instance::Configuration& configuration);
+    VkInstance
+    getInstance(const VkInstanceCreateInfo& createInfo);
+
+    VkInstance
+    getInstance(const InstanceConfiguration& configuration);
 } // namespace nd::src::graphics::vulkan

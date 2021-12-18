@@ -3,53 +3,6 @@
 
 namespace nd::src::graphics::vulkan
 {
-    DescriptorPool::DescriptorPool() noexcept
-    {
-        ND_SET_SCOPE_LOW();
-    }
-
-    DescriptorPool::DescriptorPool(const VkDevice device, const VkDescriptorPoolCreateInfo& createInfo)
-        : device_(device)
-    {
-        ND_SET_SCOPE_LOW();
-
-        ND_ASSERT(vkCreateDescriptorPool(device_, &createInfo, nullptr, &descriptorPool_) == VK_SUCCESS);
-    }
-
-    DescriptorPool::DescriptorPool(DescriptorPool&& descriptorPool) noexcept
-        : device_(std::move(descriptorPool.device_))
-        , descriptorPool_(std::move(descriptorPool.descriptorPool_))
-    {
-        ND_SET_SCOPE_LOW();
-
-        descriptorPool.descriptorPool_ = VK_NULL_HANDLE;
-    }
-
-    DescriptorPool&
-    DescriptorPool::operator=(DescriptorPool&& descriptorPool) noexcept
-    {
-        ND_SET_SCOPE_LOW();
-
-        if(&descriptorPool == this)
-        {
-            return *this;
-        }
-
-        device_         = std::move(descriptorPool.device_);
-        descriptorPool_ = std::move(descriptorPool.descriptorPool_);
-
-        descriptorPool.descriptorPool_ = VK_NULL_HANDLE;
-
-        return *this;
-    }
-
-    DescriptorPool::~DescriptorPool()
-    {
-        ND_SET_SCOPE_LOW();
-
-        vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
-    }
-
     VkDescriptorPoolCreateInfo
     getDescriptorPoolCreateInfo(const uint32_t                    maxSets,
                                 const uint32_t                    poolSizesCount,
@@ -57,7 +10,7 @@ namespace nd::src::graphics::vulkan
                                 const VkDescriptorPoolCreateFlags flags,
                                 const void*                       next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, // sType;
@@ -69,16 +22,28 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    DescriptorPool
-    getDescriptorPool(const DescriptorPool::Configuration& configuration, const VkDevice device)
+    VkDescriptorPool
+    getDescriptorPool(const VkDescriptorPoolCreateInfo& createInfo, const VkDevice device)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
+
+        VkDescriptorPool descriptorPool;
+
+        ND_ASSERT(vkCreateDescriptorPool(device, &createInfo, nullptr, &descriptorPool) == VK_SUCCESS);
+
+        return descriptorPool;
+    }
+
+    VkDescriptorPool
+    getDescriptorPool(const DescriptorPoolConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
 
         const auto createInfo = getDescriptorPoolCreateInfo(configuration.maxSets,
                                                             configuration.descriptorPoolSizes.size(),
                                                             configuration.descriptorPoolSizes.data(),
                                                             configuration.flags);
 
-        return DescriptorPool(device, createInfo);
+        return getDescriptorPool(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

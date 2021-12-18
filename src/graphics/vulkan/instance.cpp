@@ -3,51 +3,6 @@
 
 namespace nd::src::graphics::vulkan
 {
-    Instance::Instance() noexcept
-    {
-        ND_SET_SCOPE_LOW();
-    }
-
-    Instance::Instance(const VkInstanceCreateInfo& createInfo)
-        : instance_(VK_NULL_HANDLE)
-    {
-        ND_SET_SCOPE_LOW();
-
-        ND_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance_) == VK_SUCCESS);
-    }
-
-    Instance::Instance(Instance&& instance) noexcept
-        : instance_(std::move(instance.instance_))
-    {
-        ND_SET_SCOPE_LOW();
-
-        instance.instance_ = VK_NULL_HANDLE;
-    }
-
-    Instance&
-    Instance::operator=(Instance&& instance) noexcept
-    {
-        ND_SET_SCOPE_LOW();
-
-        if(&instance == this)
-        {
-            return *this;
-        }
-
-        instance_ = std::move(instance.instance_);
-
-        instance.instance_ = VK_NULL_HANDLE;
-
-        return *this;
-    }
-
-    Instance::~Instance()
-    {
-        ND_SET_SCOPE_LOW();
-
-        vkDestroyInstance(instance_, nullptr);
-    }
-
     VkApplicationInfo
     getApplicationInfo(const char*    applicationName,
                        const char*    engineName,
@@ -55,7 +10,7 @@ namespace nd::src::graphics::vulkan
                        const uint32_t engineVersion,
                        const uint32_t apiVersion) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_APPLICATION_INFO, // sType;
@@ -77,7 +32,7 @@ namespace nd::src::graphics::vulkan
                           const VkInstanceCreateFlags flags,
                           const void*                 next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, // sType;
@@ -94,7 +49,7 @@ namespace nd::src::graphics::vulkan
     bool
     isInstanceLayersSupported(const std::vector<std::string>& layers) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         uint32_t layersCount;
 
@@ -123,7 +78,7 @@ namespace nd::src::graphics::vulkan
     bool
     isInstanceExtensionsSupported(const std::vector<std::string>& extensions) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         uint32_t extensionsCount;
 
@@ -149,10 +104,22 @@ namespace nd::src::graphics::vulkan
         return true;
     }
 
-    Instance
-    getInstance(const Instance::Configuration& configuration)
+    VkInstance
+    getInstance(const VkInstanceCreateInfo& createInfo)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
+
+        VkInstance instance;
+
+        ND_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance) == VK_SUCCESS);
+
+        return instance;
+    }
+
+    VkInstance
+    getInstance(const InstanceConfiguration& configuration)
+    {
+        ND_SET_SCOPE();
 
         const auto layersSupported     = isInstanceLayersSupported(configuration.layers);
         const auto extensionsSupported = isInstanceExtensionsSupported(configuration.extensions);
@@ -174,6 +141,6 @@ namespace nd::src::graphics::vulkan
                                                       clayers.data(),
                                                       cextensions.data());
 
-        return Instance(createInfo);
+        return getInstance(createInfo);
     }
 } // namespace nd::src::graphics::vulkan

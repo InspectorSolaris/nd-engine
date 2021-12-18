@@ -5,13 +5,13 @@ namespace nd::src::graphics::vulkan
 {
     BufferView::BufferView() noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
     }
 
     BufferView::BufferView(const VkDevice device, const VkBufferViewCreateInfo& createInfo)
         : device_(device)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         ND_ASSERT(vkCreateBufferView(device_, &createInfo, nullptr, &bufferView_) == VK_SUCCESS);
     }
@@ -20,7 +20,7 @@ namespace nd::src::graphics::vulkan
         : device_(std::move(bufferView.device_))
         , bufferView_(std::move(bufferView.bufferView_))
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         bufferView.bufferView_ = VK_NULL_HANDLE;
     }
@@ -28,7 +28,7 @@ namespace nd::src::graphics::vulkan
     BufferView&
     BufferView::operator=(BufferView&& bufferView) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         if(&bufferView == this)
         {
@@ -45,7 +45,7 @@ namespace nd::src::graphics::vulkan
 
     BufferView::~BufferView()
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         vkDestroyBufferView(device_, bufferView_, nullptr);
     }
@@ -58,7 +58,7 @@ namespace nd::src::graphics::vulkan
                             const VkBufferViewCreateFlags flags,
                             const void*                   next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO, // sType;
