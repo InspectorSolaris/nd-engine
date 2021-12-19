@@ -34,6 +34,7 @@ namespace nd::src::graphics::vulkan
         vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
 
         vkFreeDescriptorSets(device_, descriptorPool_, descriptorSets_.size(), descriptorSets_.data());
+
         vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
         vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
 
