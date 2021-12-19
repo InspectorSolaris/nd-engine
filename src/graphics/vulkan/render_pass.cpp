@@ -104,19 +104,6 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    VkRenderPassCreateInfo
-    getRenderPassCreateInfo(const RenderPassConfiguration& configuration)
-    {
-        ND_SET_SCOPE();
-
-        return getRenderPassCreateInfo(configuration.attachments.size(),
-                                       configuration.subpasses.size(),
-                                       configuration.dependencies.size(),
-                                       configuration.attachments.data(),
-                                       configuration.subpasses.data(),
-                                       configuration.dependencies.data());
-    }
-
     VkRenderPass
     getRenderPass(const VkRenderPassCreateInfo& createInfo, const VkDevice device)
     {
@@ -127,5 +114,20 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(vkCreateRenderPass(device, &createInfo, nullptr, &renderPass) == VK_SUCCESS);
 
         return renderPass;
+    }
+
+    VkRenderPass
+    getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto createInfo = getRenderPassCreateInfo(configuration.attachments.size(),
+                                                        configuration.subpasses.size(),
+                                                        configuration.dependencies.size(),
+                                                        configuration.attachments.data(),
+                                                        configuration.subpasses.data(),
+                                                        configuration.dependencies.data());
+
+        return getRenderPass(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

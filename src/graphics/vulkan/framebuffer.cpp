@@ -28,19 +28,6 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    VkFramebufferCreateInfo
-    getFramebufferCreateInfo(const FramebufferConfiguration& configuration)
-    {
-        ND_SET_SCOPE();
-
-        return getFramebufferCreateInfo(configuration.renderPass,
-                                        configuration.attachments.size(),
-                                        configuration.attachments.data(),
-                                        configuration.width,
-                                        configuration.height,
-                                        configuration.layers);
-    }
-
     VkFramebuffer
     getFramebuffer(const VkFramebufferCreateInfo& createInfo, const VkDevice device)
     {
@@ -51,5 +38,20 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(vkCreateFramebuffer(device, &createInfo, nullptr, &framebuffer) == VK_SUCCESS);
 
         return framebuffer;
+    }
+
+    VkFramebuffer
+    getFramebuffer(const FramebufferConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto createInfo = getFramebufferCreateInfo(configuration.renderPass,
+                                                         configuration.attachments.size(),
+                                                         configuration.attachments.data(),
+                                                         configuration.width,
+                                                         configuration.height,
+                                                         configuration.layers);
+
+        return getFramebuffer(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

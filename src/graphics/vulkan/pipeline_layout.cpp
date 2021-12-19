@@ -24,17 +24,6 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    VkPipelineLayoutCreateInfo
-    getPipelineLayoutCreateInfo(const PipelineLayoutConfiguration& configuration)
-    {
-        ND_SET_SCOPE();
-
-        return getPipelineLayoutCreateInfo(configuration.descriptorSetLayouts.size(),
-                                           configuration.pushConstantRanges.size(),
-                                           configuration.descriptorSetLayouts.data(),
-                                           configuration.pushConstantRanges.data());
-    }
-
     VkPipelineLayout
     getPipelineLayout(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device)
     {
@@ -45,5 +34,18 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(vkCreatePipelineLayout(device, &createInfo, nullptr, &pipelineLayout) == VK_SUCCESS);
 
         return pipelineLayout;
+    }
+
+    VkPipelineLayout
+    getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto createInfo = getPipelineLayoutCreateInfo(configuration.descriptorSetLayouts.size(),
+                                                            configuration.pushConstantRanges.size(),
+                                                            configuration.descriptorSetLayouts.data(),
+                                                            configuration.pushConstantRanges.data());
+
+        return getPipelineLayout(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

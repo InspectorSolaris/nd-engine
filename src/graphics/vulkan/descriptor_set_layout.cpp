@@ -20,14 +20,6 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    VkDescriptorSetLayoutCreateInfo
-    getDescriptorSetLayoutCreateInfo(const DescriptorSetLayoutConfiguration& configuration)
-    {
-        ND_SET_SCOPE();
-
-        return getDescriptorSetLayoutCreateInfo(configuration.bindings.size(), configuration.bindings.data());
-    }
-
     VkDescriptorSetLayout
     getDescriptorSetLayout(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device)
     {
@@ -38,5 +30,16 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(vkCreateDescriptorSetLayout(device, &createInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS);
 
         return descriptorSetLayout;
+    }
+
+    VkDescriptorSetLayout
+    getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto createInfo =
+            getDescriptorSetLayoutCreateInfo(configuration.bindings.size(), configuration.bindings.data());
+
+        return getDescriptorSetLayout(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

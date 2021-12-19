@@ -228,8 +228,20 @@ namespace nd::src::graphics::vulkan
         return physicalDeviceMax.value();
     }
 
-    DeviceCreateInfo
-    getDeviceCreateInfo(const DeviceConfiguration& configuration, const VkInstance instance)
+    VkDevice
+    getDevice(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice)
+    {
+        ND_SET_SCOPE();
+
+        VkDevice device;
+
+        ND_ASSERT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) == VK_SUCCESS);
+
+        return device;
+    }
+
+    DeviceInfo
+    getDevice(const DeviceConfiguration& configuration, const VkInstance instance)
     {
         ND_SET_SCOPE();
 
@@ -251,24 +263,12 @@ namespace nd::src::graphics::vulkan
             }
         }
 
-        return {getDeviceCreateInfo(queueCreateInfos.size(),
-                                    cextensions.size(),
-                                    queueCreateInfos.data(),
-                                    cextensions.data(),
-                                    &configuration.features),
-                std::move(queueFamilies),
-                physicalDevice};
-    }
+        const auto createInfo = getDeviceCreateInfo(queueCreateInfos.size(),
+                                                    cextensions.size(),
+                                                    queueCreateInfos.data(),
+                                                    cextensions.data(),
+                                                    &configuration.features);
 
-    VkDevice
-    getDevice(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice)
-    {
-        ND_SET_SCOPE();
-
-        VkDevice device;
-
-        ND_ASSERT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) == VK_SUCCESS);
-
-        return device;
+        return {std::move(queueFamilies), physicalDevice, getDevice(createInfo, physicalDevice)};
     }
 } // namespace nd::src::graphics::vulkan

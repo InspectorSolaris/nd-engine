@@ -19,9 +19,9 @@ namespace nd::src::graphics::vulkan
                               const VkShaderModuleCreateFlags flags = {},
                               const void*                     next  = {}) noexcept;
 
-    VkShaderModuleCreateInfo
-    getShaderModuleCreateInfo(const ShaderModuleConfiguration& configuration);
-
     VkShaderModule
     getShaderModule(const VkShaderModuleCreateInfo& createInfo, const VkDevice device);
+
+    VkShaderModule
+    getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

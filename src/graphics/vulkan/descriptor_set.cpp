@@ -20,16 +20,6 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    VkDescriptorSetAllocateInfo
-    getDescriptorSetAllocateInfo(const DescriptorSetConfiguration& configuration)
-    {
-        ND_SET_SCOPE();
-
-        return getDescriptorSetAllocateInfo(configuration.descriptorPool,
-                                            configuration.layouts.size(),
-                                            configuration.layouts.data());
-    }
-
     std::vector<VkDescriptorSet>
     getDescriptorSet(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device)
     {
@@ -40,5 +30,17 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(vkAllocateDescriptorSets(device, &allocateInfo, descriptorSets.data()) == VK_SUCCESS);
 
         return descriptorSets;
+    }
+
+    std::vector<VkDescriptorSet>
+    getDescriptorSet(const DescriptorSetConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto allocateInfo = getDescriptorSetAllocateInfo(configuration.descriptorPool,
+                                                               configuration.layouts.size(),
+                                                               configuration.layouts.data());
+
+        return getDescriptorSet(allocateInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

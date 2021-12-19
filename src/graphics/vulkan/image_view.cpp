@@ -26,18 +26,6 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    VkImageViewCreateInfo
-    getImageViewCreateInfo(const ImageViewConfiguration& configuration)
-    {
-        ND_SET_SCOPE();
-
-        return getImageViewCreateInfo(configuration.image,
-                                      configuration.viewType,
-                                      configuration.format,
-                                      configuration.components,
-                                      configuration.subresourceRange);
-    }
-
     VkImageView
     getImageView(const VkImageViewCreateInfo& createInfo, const VkDevice device)
     {
@@ -48,5 +36,19 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(vkCreateImageView(device, &createInfo, nullptr, &imageView) == VK_SUCCESS);
 
         return imageView;
+    }
+
+    VkImageView
+    getImageView(const ImageViewConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto createInfo = getImageViewCreateInfo(configuration.image,
+                                                       configuration.viewType,
+                                                       configuration.format,
+                                                       configuration.components,
+                                                       configuration.subresourceRange);
+
+        return getImageView(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

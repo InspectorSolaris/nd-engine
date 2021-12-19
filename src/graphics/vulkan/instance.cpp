@@ -104,8 +104,20 @@ namespace nd::src::graphics::vulkan
         return true;
     }
 
-    VkInstanceCreateInfo
-    getInstanceCreateInfo(const InstanceConfiguration& configuration)
+    VkInstance
+    getInstance(const VkInstanceCreateInfo& createInfo)
+    {
+        ND_SET_SCOPE();
+
+        VkInstance instance;
+
+        ND_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance) == VK_SUCCESS);
+
+        return instance;
+    }
+
+    VkInstance
+    getInstance(const InstanceConfiguration& configuration)
     {
         ND_SET_SCOPE();
 
@@ -123,22 +135,12 @@ namespace nd::src::graphics::vulkan
                                                         configuration.engineVersion,
                                                         configuration.apiVersion);
 
-        return getInstanceCreateInfo(&applicationInfo,
-                                     static_cast<uint32_t>(clayers.size()),
-                                     static_cast<uint32_t>(cextensions.size()),
-                                     clayers.data(),
-                                     cextensions.data());
-    }
+        const auto createInfo = getInstanceCreateInfo(&applicationInfo,
+                                                      static_cast<uint32_t>(clayers.size()),
+                                                      static_cast<uint32_t>(cextensions.size()),
+                                                      clayers.data(),
+                                                      cextensions.data());
 
-    VkInstance
-    getInstance(const VkInstanceCreateInfo& createInfo)
-    {
-        ND_SET_SCOPE();
-
-        VkInstance instance;
-
-        ND_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance) == VK_SUCCESS);
-
-        return instance;
+        return getInstance(createInfo);
     }
 } // namespace nd::src::graphics::vulkan

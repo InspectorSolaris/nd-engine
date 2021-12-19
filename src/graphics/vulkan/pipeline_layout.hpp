@@ -19,9 +19,9 @@ namespace nd::src::graphics::vulkan
                                 const VkPipelineLayoutCreateFlags flags = {},
                                 const void*                       next  = {}) noexcept;
 
-    VkPipelineLayoutCreateInfo
-    getPipelineLayoutCreateInfo(const PipelineLayoutConfiguration& configuration);
-
     VkPipelineLayout
     getPipelineLayout(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device);
+
+    VkPipelineLayout
+    getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

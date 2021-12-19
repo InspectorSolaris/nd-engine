@@ -40,16 +40,6 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    VkShaderModuleCreateInfo
-    getShaderModuleCreateInfo(const ShaderModuleConfiguration& configuration)
-    {
-        ND_SET_SCOPE();
-
-        const auto code = getShaderCode(configuration.path);
-
-        return getShaderModuleCreateInfo(code.size(), reinterpret_cast<const uint32_t*>(code.data()));
-    }
-
     VkShaderModule
     getShaderModule(const VkShaderModuleCreateInfo& createInfo, const VkDevice device)
     {
@@ -60,5 +50,17 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) == VK_SUCCESS);
 
         return shaderModule;
+    }
+
+    VkShaderModule
+    getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto code = getShaderCode(configuration.path);
+
+        const auto createInfo = getShaderModuleCreateInfo(code.size(), reinterpret_cast<const uint32_t*>(code.data()));
+
+        return getShaderModule(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

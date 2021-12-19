@@ -20,11 +20,11 @@ namespace nd::src::graphics::vulkan
         const VkQueueFlags queueFlags;
     };
 
-    struct DeviceCreateInfo
+    struct DeviceInfo
     {
-        const VkDeviceCreateInfo       createInfo;
         const std::vector<QueueFamily> queueFamilies;
         const VkPhysicalDevice         physicalDevice;
+        const VkDevice                 device;
     };
 
     VkDeviceQueueCreateInfo
@@ -66,9 +66,9 @@ namespace nd::src::graphics::vulkan
     VkPhysicalDevice
     getPhysicalDevice(const DeviceConfiguration& configuration, const VkInstance instance);
 
-    DeviceCreateInfo
-    getDeviceCreateInfo(const DeviceConfiguration& configuration, const VkInstance instance);
-
     VkDevice
     getDevice(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice);
+
+    DeviceInfo
+    getDevice(const DeviceConfiguration& configuration, const VkInstance instance);
 } // namespace nd::src::graphics::vulkan

@@ -40,9 +40,9 @@ namespace nd::src::graphics::vulkan
     bool
     isInstanceExtensionsSupported(const std::vector<std::string>& extensions) noexcept;
 
-    VkInstanceCreateInfo
-    getInstanceCreateInfo(const InstanceConfiguration& configuration);
-
     VkInstance
     getInstance(const VkInstanceCreateInfo& createInfo);
+
+    VkInstance
+    getInstance(const InstanceConfiguration& configuration);
 } // namespace nd::src::graphics::vulkan

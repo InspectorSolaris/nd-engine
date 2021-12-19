@@ -272,29 +272,6 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    VkGraphicsPipelineCreateInfo
-    getGraphicsPipelineCreateInfo(const PipelineConfiguration& configuration)
-    {
-        ND_SET_SCOPE();
-
-        return getGraphicsPipelineCreateInfo(configuration.stages.size(),
-                                             configuration.stages.data(),
-                                             configuration.vertexInputState,
-                                             configuration.inputAssemblyState,
-                                             configuration.tessellationState,
-                                             configuration.viewportState,
-                                             configuration.rasterizationState,
-                                             configuration.multisampleState,
-                                             configuration.depthStencilState,
-                                             configuration.colorBlendState,
-                                             configuration.dynamicState,
-                                             configuration.layout,
-                                             configuration.renderPass,
-                                             configuration.subpass,
-                                             VK_NULL_HANDLE,
-                                             0);
-    }
-
     std::vector<VkPipeline>
     getGraphicsPipeline(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device)
     {
@@ -307,5 +284,35 @@ namespace nd::src::graphics::vulkan
             VK_SUCCESS);
 
         return pipelines;
+    }
+
+    std::vector<VkPipeline>
+    getGraphicsPipeline(const std::vector<PipelineConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto createInfos = getMapped<PipelineConfiguration, VkGraphicsPipelineCreateInfo>(
+            configurations,
+            [](const auto& configuration, const auto index)
+            {
+                return getGraphicsPipelineCreateInfo(configuration.stages.size(),
+                                                     configuration.stages.data(),
+                                                     configuration.vertexInputState,
+                                                     configuration.inputAssemblyState,
+                                                     configuration.tessellationState,
+                                                     configuration.viewportState,
+                                                     configuration.rasterizationState,
+                                                     configuration.multisampleState,
+                                                     configuration.depthStencilState,
+                                                     configuration.colorBlendState,
+                                                     configuration.dynamicState,
+                                                     configuration.layout,
+                                                     configuration.renderPass,
+                                                     configuration.subpass,
+                                                     VK_NULL_HANDLE,
+                                                     0);
+            });
+
+        return getGraphicsPipeline(createInfos, device);
     }
 } // namespace nd::src::graphics::vulkan

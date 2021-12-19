@@ -54,9 +54,9 @@ namespace nd::src::graphics::vulkan
                             const VkRenderPassCreateFlags  flags = {},
                             const void*                    next  = {}) noexcept;
 
-    VkRenderPassCreateInfo
-    getRenderPassCreateInfo(const RenderPassConfiguration& configuration);
-
     VkRenderPass
     getRenderPass(const VkRenderPassCreateInfo& createInfo, const VkDevice device);
+
+    VkRenderPass
+    getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

@@ -23,9 +23,9 @@ namespace nd::src::graphics::vulkan
                            const VkImageViewCreateFlags   flags = {},
                            const void*                    next  = {}) noexcept;
 
-    VkImageViewCreateInfo
-    getImageViewCreateInfo(const ImageViewConfiguration& configuration);
-
     VkImageView
     getImageView(const VkImageViewCreateInfo& createInfo, const VkDevice device);
+
+    VkImageView
+    getImageView(const ImageViewConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

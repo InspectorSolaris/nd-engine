@@ -21,9 +21,9 @@ namespace nd::src::graphics::vulkan
                                 const VkDescriptorPoolCreateFlags flags = {},
                                 const void*                       next  = {}) noexcept;
 
-    VkDescriptorPoolCreateInfo
-    getDescriptorPoolCreateInfo(const DescriptorPoolConfiguration& configuration);
-
     VkDescriptorPool
     getDescriptorPool(const VkDescriptorPoolCreateInfo& createInfo, const VkDevice device);
+
+    VkDescriptorPool
+    getDescriptorPool(const DescriptorPoolConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

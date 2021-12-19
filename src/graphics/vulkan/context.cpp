@@ -73,16 +73,13 @@ namespace nd::src::graphics::vulkan
 
         const auto extensions = getMerged(configuration.extensions, {});
 
-        const auto instanceConfiguration = InstanceConfiguration {configuration.applicationName,
-                                                                  configuration.engineName,
-                                                                  layers,
-                                                                  extensions,
-                                                                  VK_MAKE_VERSION(0, 1, 0),
-                                                                  VK_MAKE_VERSION(0, 1, 0),
-                                                                  VK_API_VERSION_1_2};
-
-        const auto instanceCreateInfo = getInstanceCreateInfo(instanceConfiguration);
-        const auto instance           = getInstance(instanceCreateInfo);
+        const auto instance = getInstance(InstanceConfiguration {configuration.applicationName,
+                                                                 configuration.engineName,
+                                                                 layers,
+                                                                 extensions,
+                                                                 VK_MAKE_VERSION(0, 1, 0),
+                                                                 VK_MAKE_VERSION(0, 1, 0),
+                                                                 VK_API_VERSION_1_2});
 
         const auto physicalDevicePriority = [](const VkPhysicalDevice            physicalDevice,
                                                const VkPhysicalDeviceProperties& properties,
@@ -91,13 +88,8 @@ namespace nd::src::graphics::vulkan
             return 1;
         };
 
-        const auto deviceConfiguration =
-            DeviceConfiguration {{}, physicalDevicePriority, {"VK_KHR_swapchain"}, VK_QUEUE_GRAPHICS_BIT};
-
-        const auto [deviceCreateInfo, deviceQueueFamilies, physicalDevice] =
-            getDeviceCreateInfo(deviceConfiguration, instance);
-
-        const auto device = getDevice(deviceCreateInfo, physicalDevice);
+        const auto [deviceQueueFamilies, physicalDevice, device] =
+            getDevice({{}, physicalDevicePriority, {"VK_KHR_swapchain"}, VK_QUEUE_GRAPHICS_BIT}, instance);
 
         const auto surface             = configuration.getSurface(instance);
         const auto surfaceFormats      = getSurfaceFormats(physicalDevice, surface);
@@ -121,8 +113,7 @@ namespace nd::src::graphics::vulkan
                                                                     VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
                                                                     VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
 
-        const auto swapchainCreateInfo = getSwapchainCreateInfo(swapchainConfiguration);
-        const auto swapchain           = getSwapchain(swapchainCreateInfo, device);
+        const auto swapchain = getSwapchain(swapchainConfiguration, device);
 
         const auto colorAttachments = std::vector<VkAttachmentReference> {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
 
@@ -149,44 +140,34 @@ namespace nd::src::graphics::vulkan
 
         const auto renderPassDependencies = std::vector<VkSubpassDependency> {};
 
-        const auto renderPassConfiguration =
-            RenderPassConfiguration {renderPassAttachments, renderPassSubpasses, renderPassDependencies};
+        const auto renderPass = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device);
 
-        const auto renderPassCreateInfo = getRenderPassCreateInfo(renderPassConfiguration);
-        const auto renderPass           = getRenderPass(renderPassCreateInfo, device);
-
-        const auto swapchainImages     = getSwapchainImages(device, swapchain);
-        const auto swapchainImageViews = getMapped<VkImage, VkImageView>(
-            swapchainImages,
-            [device, &swapchainConfiguration](const auto image, const auto index)
-            {
-                const auto imageViewConfiguration = ImageViewConfiguration {{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
-                                                                            {VK_COMPONENT_SWIZZLE_IDENTITY,
-                                                                             VK_COMPONENT_SWIZZLE_IDENTITY,
-                                                                             VK_COMPONENT_SWIZZLE_IDENTITY,
-                                                                             VK_COMPONENT_SWIZZLE_IDENTITY},
-                                                                            VK_IMAGE_VIEW_TYPE_2D,
-                                                                            swapchainConfiguration.imageFormat,
-                                                                            image};
-
-                const auto imageViewCreateInfo = getImageViewCreateInfo(imageViewConfiguration);
-
-                return getImageView(imageViewCreateInfo, device);
-            });
+        const auto swapchainImages = getSwapchainImages(device, swapchain);
+        const auto swapchainImageViews =
+            getMapped<VkImage, VkImageView>(swapchainImages,
+                                            [device = device, &swapchainConfiguration](const auto image, const auto index)
+                                            {
+                                                return getImageView({{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
+                                                                     {VK_COMPONENT_SWIZZLE_IDENTITY,
+                                                                      VK_COMPONENT_SWIZZLE_IDENTITY,
+                                                                      VK_COMPONENT_SWIZZLE_IDENTITY,
+                                                                      VK_COMPONENT_SWIZZLE_IDENTITY},
+                                                                     VK_IMAGE_VIEW_TYPE_2D,
+                                                                     swapchainConfiguration.imageFormat,
+                                                                     image},
+                                                                    device);
+                                            });
 
         const auto swapchainFramebuffers = getMapped<VkImageView, VkFramebuffer>(
             swapchainImageViews,
-            [device, renderPass, &swapchainConfiguration](const auto imageView, const auto index)
+            [device = device, renderPass, &swapchainConfiguration](const auto imageView, const auto index)
             {
-                const auto framebufferConfiguration = FramebufferConfiguration {{imageView},
-                                                                                renderPass,
-                                                                                swapchainConfiguration.imageExtent.width,
-                                                                                swapchainConfiguration.imageExtent.height,
-                                                                                swapchainConfiguration.imageArrayLayers};
-
-                const auto framebufferCreateInfo = getFramebufferCreateInfo(framebufferConfiguration);
-
-                return getFramebuffer(framebufferCreateInfo, device);
+                return getFramebuffer({{imageView},
+                                       renderPass,
+                                       swapchainConfiguration.imageExtent.width,
+                                       swapchainConfiguration.imageExtent.height,
+                                       swapchainConfiguration.imageArrayLayers},
+                                      device);
             });
 
         const auto shaderPaths =
@@ -195,36 +176,21 @@ namespace nd::src::graphics::vulkan
         const auto shaderStages =
             std::vector<VkShaderStageFlagBits> {VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT};
 
-        const auto shaderModules = getMapped<std::string, VkShaderModule>(
-            shaderPaths,
-            [device](const auto& path, const auto index)
-            {
-                const auto shaderModuleConfiguration = ShaderModuleConfiguration {path};
+        const auto shaderModules =
+            getMapped<std::string, VkShaderModule>(shaderPaths,
+                                                   [device = device](const auto& path, const auto index)
+                                                   {
+                                                       return getShaderModule({path}, device);
+                                                   });
 
-                const auto shaderModuleCreateInfo = getShaderModuleCreateInfo(shaderModuleConfiguration);
+        const auto descriptorPool = getDescriptorPool(
+            {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
+            device);
 
-                return getShaderModule(shaderModuleCreateInfo, device);
-            });
+        const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device);
+        const auto descriptorSets      = getDescriptorSet({{descriptorSetLayout}, descriptorPool}, device);
 
-        const auto descriptorPoolConfiguration =
-            DescriptorPoolConfiguration {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}},
-                                         1,
-                                         VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT};
-
-        const auto descriptorPoolCreateInfo = getDescriptorPoolCreateInfo(descriptorPoolConfiguration);
-        const auto descriptorPool           = getDescriptorPool(descriptorPoolCreateInfo, device);
-
-        const auto descriptorSetLayoutConfiguration = DescriptorSetLayoutConfiguration {{}};
-        const auto descriptorSetLayoutCreateInfo    = getDescriptorSetLayoutCreateInfo(descriptorSetLayoutConfiguration);
-        const auto descriptorSetLayout              = getDescriptorSetLayout(descriptorSetLayoutCreateInfo, device);
-
-        const auto descriptorSetConfiguration = DescriptorSetConfiguration {{descriptorSetLayout}, descriptorPool};
-        const auto descriptorSetAllocateInfo  = getDescriptorSetAllocateInfo(descriptorSetConfiguration);
-        const auto descriptorSets             = getDescriptorSet(descriptorSetAllocateInfo, device);
-
-        const auto pipelineLayoutConfiguration = PipelineLayoutConfiguration {{descriptorSetLayout}, {}};
-        const auto pipelineLayoutCreateInfo    = getPipelineLayoutCreateInfo(pipelineLayoutConfiguration);
-        const auto pipelineLayout              = getPipelineLayout(pipelineLayoutCreateInfo, device);
+        const auto pipelineLayout = getPipelineLayout({{descriptorSetLayout}, {}}, device);
 
         const auto vertexInputStateCreateInfo = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
         const auto inputAssemblyStateCreateInfo =
@@ -275,28 +241,26 @@ namespace nd::src::graphics::vulkan
 
         const auto dynamicStateCreateInfo = getPipelineDynamicStateCreateInfo(0, nullptr);
 
-        const auto pipelineConfiguration = PipelineConfiguration {
-            getMapped<VkShaderModule, VkPipelineShaderStageCreateInfo>(
-                shaderModules,
-                [&shaderStages](const auto& shaderModule, const auto index)
-                {
-                    return getPipelineShaderStageCreateInfo(shaderStages[index], shaderModule, "main", nullptr);
-                }),
-            &vertexInputStateCreateInfo,
-            &inputAssemblyStateCreateInfo,
-            nullptr,
-            &viewportStateCreateInfo,
-            &rasterizationStateCreateInfo,
-            &multisampleStateCreateInfo,
-            nullptr,
-            &colorBlendStateCreateInfo,
-            &dynamicStateCreateInfo,
-            pipelineLayout,
-            renderPass,
-            0};
-
-        const auto pipelineCreateInfo = getGraphicsPipelineCreateInfo(pipelineConfiguration);
-        const auto pipelines          = getGraphicsPipeline({pipelineCreateInfo}, device);
+        const auto pipelines = getGraphicsPipeline(
+            {{getMapped<VkShaderModule, VkPipelineShaderStageCreateInfo>(
+                  shaderModules,
+                  [&shaderStages](const auto& shaderModule, const auto index)
+                  {
+                      return getPipelineShaderStageCreateInfo(shaderStages[index], shaderModule, "main", nullptr);
+                  }),
+              &vertexInputStateCreateInfo,
+              &inputAssemblyStateCreateInfo,
+              nullptr,
+              &viewportStateCreateInfo,
+              &rasterizationStateCreateInfo,
+              &multisampleStateCreateInfo,
+              nullptr,
+              &colorBlendStateCreateInfo,
+              &dynamicStateCreateInfo,
+              pipelineLayout,
+              renderPass,
+              0}},
+            device);
 
         return Context({std::move(swapchainImages),
                         std::move(swapchainImageViews),

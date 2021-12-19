@@ -156,8 +156,20 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    VkSwapchainCreateInfoKHR
-    getSwapchainCreateInfo(const SwapchainConfiguration& configuration)
+    VkSwapchainKHR
+    getSwapchain(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        VkSwapchainKHR swapchain;
+
+        ND_ASSERT(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain) == VK_SUCCESS);
+
+        return swapchain;
+    }
+
+    VkSwapchainKHR
+    getSwapchain(const SwapchainConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -177,33 +189,24 @@ namespace nd::src::graphics::vulkan
         const auto imageExtent      = getImageExtent(configuration, configuration.capabilities);
         const auto imageArrayLayers = getImageArrayLayers(configuration, configuration.capabilities);
 
-        return getSwapchainCreateInfo(configuration.surface,
-                                      minImagesCount,
-                                      configuration.imageFormat,
-                                      configuration.imageColorSpace,
-                                      imageExtent,
-                                      imageArrayLayers,
-                                      configuration.imageUsage,
-                                      queueFamilies.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
-                                      queueFamiliesIndices.size(),
-                                      queueFamiliesIndices.data(),
-                                      configuration.transform,
-                                      configuration.compositeAlpha,
-                                      configuration.presentMode,
-                                      configuration.clipped,
-                                      VK_NULL_HANDLE);
-    }
+        const auto createInfo =
+            getSwapchainCreateInfo(configuration.surface,
+                                   minImagesCount,
+                                   configuration.imageFormat,
+                                   configuration.imageColorSpace,
+                                   imageExtent,
+                                   imageArrayLayers,
+                                   configuration.imageUsage,
+                                   queueFamilies.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
+                                   queueFamiliesIndices.size(),
+                                   queueFamiliesIndices.data(),
+                                   configuration.transform,
+                                   configuration.compositeAlpha,
+                                   configuration.presentMode,
+                                   configuration.clipped,
+                                   VK_NULL_HANDLE);
 
-    VkSwapchainKHR
-    getSwapchain(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device)
-    {
-        ND_SET_SCOPE();
-
-        VkSwapchainKHR swapchain;
-
-        ND_ASSERT(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain) == VK_SUCCESS);
-
-        return swapchain;
+        return getSwapchain(createInfo, device);
     }
 
     std::vector<VkImage>

@@ -16,9 +16,9 @@ namespace nd::src::graphics::vulkan
                                      const VkDescriptorSetLayoutCreateFlags flags = {},
                                      const void*                            next  = {}) noexcept;
 
-    VkDescriptorSetLayoutCreateInfo
-    getDescriptorSetLayoutCreateInfo(const DescriptorSetLayoutConfiguration& configuration);
-
     VkDescriptorSetLayout
     getDescriptorSetLayout(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device);
+
+    VkDescriptorSetLayout
+    getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan
