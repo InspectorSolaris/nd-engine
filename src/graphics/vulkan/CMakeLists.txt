@@ -20,7 +20,8 @@ set(TARGET_SRC
     shader_module.cpp
     shared.cpp
     surface.cpp
-    swapchain.cpp)
+    swapchain.cpp
+    synchronization.cpp)
 
 set(SHADERS_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders)
 set(SHADERS_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders)

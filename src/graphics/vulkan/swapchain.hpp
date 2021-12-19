@@ -91,4 +91,11 @@ namespace nd::src::graphics::vulkan
 
     std::vector<VkImage>
     getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept;
+
+    uint32_t
+    getNextSwapchainImage(const VkDevice       device,
+                          const VkSwapchainKHR swapchain,
+                          const VkSemaphore    semaphore = VK_NULL_HANDLE,
+                          const VkFence        fence     = VK_NULL_HANDLE,
+                          const uint64_t       timeout   = UINT64_MAX);
 } // namespace nd::src::graphics::vulkan

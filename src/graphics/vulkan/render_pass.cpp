@@ -3,6 +3,27 @@
 
 namespace nd::src::graphics::vulkan
 {
+    VkRenderPassBeginInfo
+    getRenderPassBeginInfo(const VkRenderPass  renderPass,
+                           const VkFramebuffer framebuffer,
+                           const VkRect2D      renderArea,
+                           const uint32_t      clearValueCount,
+                           const VkClearValue* clearValues,
+                           const void*         next) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {
+            VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, // sType;
+            next,                                     // pNext;
+            renderPass,                               // renderPass;
+            framebuffer,                              // framebuffer;
+            renderArea,                               // renderArea;
+            clearValueCount,                          // clearValueCount;
+            clearValues                               // pClearValues;
+        };
+    }
+
     VkAttachmentDescription
     getRenderPassAttachment(const VkFormat                     format,
                             const VkSampleCountFlagBits        samples,

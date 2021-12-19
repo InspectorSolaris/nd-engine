@@ -21,6 +21,7 @@
 #include "buffer_view.hpp"
 #include "command_pool.hpp"
 #include "command_buffer.hpp"
+#include "synchronization.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -43,13 +44,20 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::vector<VkImage>&&         swapchainImages;
-            const std::vector<VkImageView>&&     swapchainImageViews;
-            const std::vector<VkFramebuffer>&&   swapchainFramebuffers;
-            const std::vector<VkShaderModule>&&  shaderModules;
-            const std::vector<VkDescriptorSet>&& descriptorSets;
-            const std::vector<VkPipeline>&&      pipelines;
-            const std::vector<VkCommandBuffer>&& commandBuffers;
+            std::vector<VkImage>&&         swapchainImages;
+            std::vector<VkImageView>&&     swapchainImageViews;
+            std::vector<VkFramebuffer>&&   swapchainFramebuffers;
+            std::vector<VkShaderModule>&&  shaderModules;
+            std::vector<VkDescriptorSet>&& descriptorSets;
+            std::vector<VkPipeline>&&      pipelines;
+            std::vector<VkCommandBuffer>&& commandBuffers;
+
+            std::vector<VkSemaphore>&& imageRenderedSemaphores;
+            std::vector<VkSemaphore>&& imageAcquiredSemaphores;
+            std::vector<VkFence>&&     imageRenderedFences;
+            std::vector<VkFence>&&     imageAcquiredFences;
+
+            const size_t framesCount;
 
             const VkInstance            instance;
             const VkDevice              device;
@@ -74,6 +82,9 @@ namespace nd::src::graphics::vulkan
 
         ~Context();
 
+        void
+        draw();
+
     private:
         std::vector<VkImage>         swapchainImages_ {};
         std::vector<VkImageView>     swapchainImageViews_ {};
@@ -82,6 +93,13 @@ namespace nd::src::graphics::vulkan
         std::vector<VkDescriptorSet> descriptorSets_ {};
         std::vector<VkPipeline>      pipelines_ {};
         std::vector<VkCommandBuffer> commandBuffers_ {};
+
+        std::vector<VkSemaphore> imageRenderedSemaphores_ {};
+        std::vector<VkSemaphore> imageAcquiredSemaphores_ {};
+        std::vector<VkFence>     imageRenderedFences_ {};
+        std::vector<VkFence>     imageAcquiredFences_ {};
+
+        size_t framesCount_ {};
 
         VkInstance            instance_ {};
         VkDevice              device_ {};

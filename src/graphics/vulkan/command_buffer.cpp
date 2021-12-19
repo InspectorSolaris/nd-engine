@@ -3,6 +3,21 @@
 
 namespace nd::src::graphics::vulkan
 {
+    VkCommandBufferBeginInfo
+    getCommandBufferBeginInfo(const VkCommandBufferInheritanceInfo* inheritanceInfo,
+                              const VkCommandBufferUsageFlags       flags,
+                              const void*                           next) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {
+            VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, // sType;
+            next,                                        // pNext;
+            flags,                                       // flags;
+            inheritanceInfo                              // pInheritanceInfo;
+        };
+    }
+
     VkCommandBufferAllocateInfo
     getCommandBufferAllocateInfo(const VkCommandPool        commandPool,
                                  const VkCommandBufferLevel level,

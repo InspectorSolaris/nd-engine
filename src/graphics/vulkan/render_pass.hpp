@@ -12,6 +12,14 @@ namespace nd::src::graphics::vulkan
         const std::vector<VkSubpassDependency>&     dependencies;
     };
 
+    VkRenderPassBeginInfo
+    getRenderPassBeginInfo(const VkRenderPass  renderPass,
+                           const VkFramebuffer framebuffer,
+                           const VkRect2D      renderArea,
+                           const uint32_t      clearValueCount,
+                           const VkClearValue* clearValues,
+                           const void*         next = {}) noexcept;
+
     VkAttachmentDescription
     getRenderPassAttachment(const VkFormat                     format,
                             const VkSampleCountFlagBits        samples,

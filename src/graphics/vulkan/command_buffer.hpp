@@ -12,6 +12,11 @@ namespace nd::src::graphics::vulkan
         const uint32_t             count;
     };
 
+    VkCommandBufferBeginInfo
+    getCommandBufferBeginInfo(const VkCommandBufferInheritanceInfo* inheritanceInfo,
+                              const VkCommandBufferUsageFlags       flags = {},
+                              const void*                           next  = {}) noexcept;
+
     VkCommandBufferAllocateInfo
     getCommandBufferAllocateInfo(const VkCommandPool        commandPool,
                                  const VkCommandBufferLevel level,

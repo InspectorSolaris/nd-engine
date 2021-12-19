@@ -224,4 +224,20 @@ namespace nd::src::graphics::vulkan
 
         return images;
     }
+
+    uint32_t
+    getNextSwapchainImage(const VkDevice       device,
+                          const VkSwapchainKHR swapchain,
+                          const VkSemaphore    semaphore,
+                          const VkFence        fence,
+                          const uint64_t       timeout)
+    {
+        ND_SET_SCOPE();
+
+        uint32_t imageIndex;
+
+        ND_ASSERT(vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, &imageIndex) == VK_SUCCESS);
+
+        return imageIndex;
+    }
 } // namespace nd::src::graphics::vulkan
