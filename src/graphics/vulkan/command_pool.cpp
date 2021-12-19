@@ -5,13 +5,13 @@ namespace nd::src::graphics::vulkan
 {
     CommandPool::CommandPool() noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
     }
 
     CommandPool::CommandPool(const VkDevice device, const VkCommandPoolCreateInfo& createInfo)
         : device_(device)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         ND_ASSERT(vkCreateCommandPool(device_, &createInfo, nullptr, &commandPool_) == VK_SUCCESS);
     }
@@ -20,7 +20,7 @@ namespace nd::src::graphics::vulkan
         : device_(std::move(commandPool.device_))
         , commandPool_(std::move(commandPool.commandPool_))
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         commandPool.commandPool_ = VK_NULL_HANDLE;
     }
@@ -28,7 +28,7 @@ namespace nd::src::graphics::vulkan
     CommandPool&
     CommandPool::operator=(CommandPool&& commandPool) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         if(&commandPool == this)
         {
@@ -45,7 +45,7 @@ namespace nd::src::graphics::vulkan
 
     CommandPool::~CommandPool()
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         vkDestroyCommandPool(device_, commandPool_, nullptr);
     }
@@ -55,7 +55,7 @@ namespace nd::src::graphics::vulkan
                              const VkCommandPoolCreateFlags flags,
                              const void*                    next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, // sType;

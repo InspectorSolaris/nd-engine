@@ -5,13 +5,13 @@ namespace nd::src::graphics::vulkan
 {
     Buffer::Buffer() noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
     }
 
     Buffer::Buffer(const VkDevice device, const VkBufferCreateInfo& createInfo)
         : device_(device)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         ND_ASSERT(vkCreateBuffer(device_, &createInfo, nullptr, &buffer_) == VK_SUCCESS);
     }
@@ -20,7 +20,7 @@ namespace nd::src::graphics::vulkan
         : device_(std::move(buffer.device_))
         , buffer_(std::move(buffer.buffer_))
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         buffer.buffer_ = VK_NULL_HANDLE;
     }
@@ -28,7 +28,7 @@ namespace nd::src::graphics::vulkan
     Buffer&
     Buffer::operator=(Buffer&& buffer) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         if(&buffer == this)
         {
@@ -45,7 +45,7 @@ namespace nd::src::graphics::vulkan
 
     Buffer::~Buffer()
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         vkDestroyBuffer(device_, buffer_, nullptr);
     }
@@ -59,7 +59,7 @@ namespace nd::src::graphics::vulkan
                         const VkBufferCreateFlags flags,
                         const void*               next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, // sType;

@@ -7,102 +7,57 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class Swapchain final
+    struct SwapchainConfiguration final
     {
-    public:
-        struct Configuration final
-        {
-            const std::vector<VkSurfaceFormatKHR>& formats;
-            const std::vector<VkPresentModeKHR>&   presentModes;
-            const VkSurfaceCapabilitiesKHR&        capabilities;
+        const std::vector<QueueFamily>&        queueFamiliesPool;
+        const std::vector<VkSurfaceFormatKHR>& formats;
+        const std::vector<VkPresentModeKHR>&   presentModes;
+        const VkSurfaceCapabilitiesKHR&        capabilities;
 
-            const VkPhysicalDevice physicalDevice;
-            const VkSurfaceKHR     surface;
+        const VkPhysicalDevice physicalDevice;
+        const VkSurfaceKHR     surface;
 
-            const VkExtent2D imageExtent;
+        const VkExtent2D imageExtent;
 
-            const uint32_t minImagesCount;
-            const uint32_t imageArrayLayers;
+        const uint32_t minImagesCount;
+        const uint32_t imageArrayLayers;
 
-            const VkBool32          clipped;
-            const VkFormat          imageFormat;
-            const VkColorSpaceKHR   imageColorSpace;
-            const VkImageUsageFlags imageUsage;
-            const VkPresentModeKHR  presentMode;
+        const VkBool32          clipped;
+        const VkFormat          imageFormat;
+        const VkColorSpaceKHR   imageColorSpace;
+        const VkImageUsageFlags imageUsage;
+        const VkPresentModeKHR  presentMode;
 
-            const VkSurfaceTransformFlagBitsKHR transform;
-            const VkCompositeAlphaFlagBitsKHR   compositeAlpha;
-        };
-
-        Swapchain() noexcept;
-        Swapchain(const VkDevice                         device,
-                  const std::vector<const QueueFamily*>& queueFamilies,
-                  const VkSwapchainCreateInfoKHR&        createInfo);
-
-        Swapchain(const Swapchain& swapchain) = delete;
-        Swapchain(Swapchain&& swapchain) noexcept;
-
-        Swapchain&
-        operator=(const Swapchain& swapchain) = delete;
-        Swapchain&
-        operator=(Swapchain&& swapchain) noexcept;
-
-        ~Swapchain();
-
-        constexpr VkSwapchainKHR
-        get() const noexcept;
-
-        constexpr const std::vector<const QueueFamily*>&
-        getQueueFamilies() const noexcept;
-
-    private:
-        std::vector<const QueueFamily*> queueFamilies_ {};
-
-        VkDevice       device_ {VK_NULL_HANDLE};
-        VkSwapchainKHR swapchain_ {VK_NULL_HANDLE};
+        const VkSurfaceTransformFlagBitsKHR transform;
+        const VkCompositeAlphaFlagBitsKHR   compositeAlpha;
     };
 
-    constexpr VkSwapchainKHR
-    Swapchain::get() const noexcept
-    {
-        return swapchain_;
-    }
-
-    constexpr const std::vector<const QueueFamily*>&
-    Swapchain::getQueueFamilies() const noexcept
-    {
-        return queueFamilies_;
-    }
+    bool
+    isFormatSupported(const SwapchainConfiguration& configuration, const std::vector<VkSurfaceFormatKHR>& formats) noexcept;
 
     bool
-    isFormatSupported(const Swapchain::Configuration&        configuration,
-                      const std::vector<VkSurfaceFormatKHR>& formats) noexcept;
-
-    bool
-    isPresentModeSupported(const Swapchain::Configuration&      configuration,
+    isPresentModeSupported(const SwapchainConfiguration&        configuration,
                            const std::vector<VkPresentModeKHR>& presentModes) noexcept;
 
     bool
-    isImageUsageSupported(const Swapchain::Configuration& configuration,
+    isImageUsageSupported(const SwapchainConfiguration&   configuration,
                           const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
     bool
-    isTransformSupported(const Swapchain::Configuration& configuration,
-                         const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
+    isTransformSupported(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
     bool
-    isCompositeAlphaSupported(const Swapchain::Configuration& configuration,
+    isCompositeAlphaSupported(const SwapchainConfiguration&   configuration,
                               const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
     uint32_t
-    getMinImagesCount(const Swapchain::Configuration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
+    getMinImagesCount(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
     VkExtent2D
-    getImageExtent(const Swapchain::Configuration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
+    getImageExtent(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
     uint32_t
-    getImageArrayLayers(const Swapchain::Configuration& configuration,
-                        const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
+    getImageArrayLayers(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
     std::vector<const QueueFamily*>
     getSwapchainQueueFamilies(const std::vector<QueueFamily>& queueFamilies,
@@ -128,10 +83,11 @@ namespace nd::src::graphics::vulkan
                            const VkSwapchainCreateFlagsKHR     flags = {},
                            const void*                         next  = {}) noexcept;
 
-    Swapchain
-    getSwapchain(const Swapchain::Configuration& configuration,
-                 const std::vector<QueueFamily>& queueFamiliesPool,
-                 const VkDevice                  device);
+    VkSwapchainCreateInfoKHR
+    getSwapchainCreateInfo(const SwapchainConfiguration& configuration);
+
+    VkSwapchainKHR
+    getSwapchain(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device);
 
     std::vector<VkImage>
     getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept;

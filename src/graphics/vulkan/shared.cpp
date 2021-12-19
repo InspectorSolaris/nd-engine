@@ -39,7 +39,7 @@ namespace nd::src::graphics::vulkan
     getRawStrings(const std::vector<std::string>& strings) noexcept
     {
         return getMapped<std::string, const char*>(strings,
-                                                   [](const auto& string)
+                                                   [](const auto& string, const auto index)
                                                    {
                                                        return string.c_str();
                                                    });

@@ -1,7 +1,6 @@
 set(TARGET_NAME nd-src-graphics-glfw)
 set(TARGET_SRC
     context.cpp
-    state.cpp
     window.cpp)
 
 add_library(${TARGET_NAME} STATIC ${TARGET_SRC})

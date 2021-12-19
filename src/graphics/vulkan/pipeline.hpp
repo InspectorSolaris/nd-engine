@@ -5,53 +5,23 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class Pipeline final
+    struct PipelineConfiguration final
     {
-    public:
-        struct ShaderInfo final
-        {
-            const VkShaderModule        shaderModule;
-            const VkShaderStageFlagBits shaderStage;
-        };
+        const std::vector<VkPipelineShaderStageCreateInfo>& stages;
 
-        struct Configuration final
-        {
-            const std::vector<ShaderInfo>& shaderInfos;
-
-            const VkPipelineLayout pipelineLayout;
-            const VkRenderPass     renderPass;
-            const uint32_t         subpass;
-
-            const uint32_t width;
-            const uint32_t height;
-        };
-
-        Pipeline() noexcept;
-        Pipeline(const VkDevice device, const VkGraphicsPipelineCreateInfo& createInfo);
-
-        Pipeline(const Pipeline& pipeline) = delete;
-        Pipeline(Pipeline&& pipeline) noexcept;
-
-        Pipeline&
-        operator=(const Pipeline& pipeline) = delete;
-        Pipeline&
-        operator=(Pipeline&& pipeline) noexcept;
-
-        ~Pipeline();
-
-        constexpr VkPipeline
-        get() const noexcept;
-
-    private:
-        VkDevice   device_ {VK_NULL_HANDLE};
-        VkPipeline pipeline_ {VK_NULL_HANDLE};
+        const VkPipelineVertexInputStateCreateInfo*   vertexInputState;
+        const VkPipelineInputAssemblyStateCreateInfo* inputAssemblyState;
+        const VkPipelineTessellationStateCreateInfo*  tessellationState;
+        const VkPipelineViewportStateCreateInfo*      viewportState;
+        const VkPipelineRasterizationStateCreateInfo* rasterizationState;
+        const VkPipelineMultisampleStateCreateInfo*   multisampleState;
+        const VkPipelineDepthStencilStateCreateInfo*  depthStencilState;
+        const VkPipelineColorBlendStateCreateInfo*    colorBlendState;
+        const VkPipelineDynamicStateCreateInfo*       dynamicState;
+        const VkPipelineLayout                        layout;
+        const VkRenderPass                            renderPass;
+        const uint32_t                                subpass;
     };
-
-    constexpr VkPipeline
-    Pipeline::get() const noexcept
-    {
-        return pipeline_;
-    }
 
     VkPipelineShaderStageCreateInfo
     getPipelineShaderStageCreateInfo(const VkShaderStageFlagBits            stage,
@@ -160,6 +130,9 @@ namespace nd::src::graphics::vulkan
                                   const VkPipelineCreateFlags                   flags = {},
                                   const void*                                   next  = {}) noexcept;
 
-    Pipeline
-    getGraphicsPipeline(const Pipeline::Configuration& configuration, const VkDevice device);
+    VkGraphicsPipelineCreateInfo
+    getGraphicsPipelineCreateInfo(const PipelineConfiguration& configuration);
+
+    std::vector<VkPipeline>
+    getGraphicsPipeline(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

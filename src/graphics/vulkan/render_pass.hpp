@@ -5,42 +5,12 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class RenderPass final
+    struct RenderPassConfiguration final
     {
-    public:
-        struct Configuration final
-        {
-            const std::vector<VkAttachmentDescription>& attachments;
-            const std::vector<VkSubpassDescription>&    subpasses;
-            const std::vector<VkSubpassDependency>&     dependencies;
-        };
-
-        RenderPass() noexcept;
-        RenderPass(const VkDevice device, const VkRenderPassCreateInfo& createInfo);
-
-        RenderPass(const RenderPass& renderPass) = delete;
-        RenderPass(RenderPass&& renderPass) noexcept;
-
-        RenderPass&
-        operator=(const RenderPass& renderPass) = delete;
-        RenderPass&
-        operator=(RenderPass&& renderPass) noexcept;
-
-        ~RenderPass();
-
-        constexpr VkRenderPass
-        get() const noexcept;
-
-    private:
-        VkDevice     device_ {VK_NULL_HANDLE};
-        VkRenderPass renderPass_ {VK_NULL_HANDLE};
+        const std::vector<VkAttachmentDescription>& attachments;
+        const std::vector<VkSubpassDescription>&    subpasses;
+        const std::vector<VkSubpassDependency>&     dependencies;
     };
-
-    constexpr VkRenderPass
-    RenderPass::get() const noexcept
-    {
-        return renderPass_;
-    }
 
     VkAttachmentDescription
     getRenderPassAttachment(const VkFormat                     format,
@@ -84,6 +54,9 @@ namespace nd::src::graphics::vulkan
                             const VkRenderPassCreateFlags  flags = {},
                             const void*                    next  = {}) noexcept;
 
-    RenderPass
-    getRenderPass(const RenderPass::Configuration& configuration, const VkDevice device);
+    VkRenderPassCreateInfo
+    getRenderPassCreateInfo(const RenderPassConfiguration& configuration);
+
+    VkRenderPass
+    getRenderPass(const VkRenderPassCreateInfo& createInfo, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

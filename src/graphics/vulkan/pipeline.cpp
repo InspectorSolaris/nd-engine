@@ -3,53 +3,6 @@
 
 namespace nd::src::graphics::vulkan
 {
-    Pipeline::Pipeline() noexcept
-    {
-        ND_SET_SCOPE_LOW();
-    }
-
-    Pipeline::Pipeline(const VkDevice device, const VkGraphicsPipelineCreateInfo& createInfo)
-        : device_(device)
-    {
-        ND_SET_SCOPE_LOW();
-
-        ND_ASSERT(vkCreateGraphicsPipelines(device_, nullptr, 1, &createInfo, nullptr, &pipeline_) == VK_SUCCESS);
-    }
-
-    Pipeline::Pipeline(Pipeline&& pipeline) noexcept
-        : device_(std::move(pipeline.device_))
-        , pipeline_(std::move(pipeline.pipeline_))
-    {
-        ND_SET_SCOPE_LOW();
-
-        pipeline.pipeline_ = VK_NULL_HANDLE;
-    }
-
-    Pipeline&
-    Pipeline::operator=(Pipeline&& pipeline) noexcept
-    {
-        ND_SET_SCOPE_LOW();
-
-        if(&pipeline == this)
-        {
-            return *this;
-        }
-
-        device_   = std::move(pipeline.device_);
-        pipeline_ = std::move(pipeline.pipeline_);
-
-        pipeline.pipeline_ = VK_NULL_HANDLE;
-
-        return *this;
-    }
-
-    Pipeline::~Pipeline()
-    {
-        ND_SET_SCOPE_LOW();
-
-        vkDestroyPipeline(device_, pipeline_, nullptr);
-    }
-
     VkPipelineShaderStageCreateInfo
     getPipelineShaderStageCreateInfo(const VkShaderStageFlagBits            stage,
                                      const VkShaderModule                   shaderModule,
@@ -58,7 +11,7 @@ namespace nd::src::graphics::vulkan
                                      const VkPipelineShaderStageCreateFlags flags,
                                      const void*                            next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, // sType;
@@ -79,7 +32,7 @@ namespace nd::src::graphics::vulkan
                                           const VkPipelineVertexInputStateCreateFlags flags,
                                           const void*                                 next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO, // sType;
@@ -98,7 +51,7 @@ namespace nd::src::graphics::vulkan
                                             const VkPipelineInputAssemblyStateCreateFlags flags,
                                             const void*                                   next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO, // sType;
@@ -114,7 +67,7 @@ namespace nd::src::graphics::vulkan
                                            const VkPipelineTessellationStateCreateFlags flags,
                                            const void*                                  next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO, // sType;
@@ -132,7 +85,7 @@ namespace nd::src::graphics::vulkan
                                        const VkPipelineViewportStateCreateFlags flags,
                                        const void*                              next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO, // sType;
@@ -159,7 +112,7 @@ namespace nd::src::graphics::vulkan
                                             const VkPipelineRasterizationStateCreateFlags flags,
                                             const void*                                   next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO, // sType;
@@ -188,7 +141,7 @@ namespace nd::src::graphics::vulkan
                                           const VkPipelineMultisampleStateCreateFlags flags,
                                           const void*                                 next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO, // sType;
@@ -216,7 +169,7 @@ namespace nd::src::graphics::vulkan
                                            const VkPipelineDepthStencilStateCreateFlags flags,
                                            const void*                                  next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO, // sType;
@@ -243,7 +196,7 @@ namespace nd::src::graphics::vulkan
                                          const VkPipelineColorBlendStateCreateFlags flags,
                                          const void*                                next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,                    // sType;
@@ -263,7 +216,7 @@ namespace nd::src::graphics::vulkan
                                       const VkPipelineDynamicStateCreateFlags flags,
                                       const void*                             next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO, // sType;
@@ -294,7 +247,7 @@ namespace nd::src::graphics::vulkan
                                   const VkPipelineCreateFlags                   flags,
                                   const void*                                   next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, // sType;
@@ -319,83 +272,40 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    Pipeline
-    getGraphicsPipeline(const Pipeline::Configuration& configuration, const VkDevice device)
+    VkGraphicsPipelineCreateInfo
+    getGraphicsPipelineCreateInfo(const PipelineConfiguration& configuration)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
-        const auto shaderStages = getMapped<Pipeline::ShaderInfo, VkPipelineShaderStageCreateInfo>(
-            configuration.shaderInfos,
-            [](const auto& shaderInfo)
-            {
-                return getPipelineShaderStageCreateInfo(shaderInfo.shaderStage, shaderInfo.shaderModule, "main", nullptr);
-            });
+        return getGraphicsPipelineCreateInfo(configuration.stages.size(),
+                                             configuration.stages.data(),
+                                             configuration.vertexInputState,
+                                             configuration.inputAssemblyState,
+                                             configuration.tessellationState,
+                                             configuration.viewportState,
+                                             configuration.rasterizationState,
+                                             configuration.multisampleState,
+                                             configuration.depthStencilState,
+                                             configuration.colorBlendState,
+                                             configuration.dynamicState,
+                                             configuration.layout,
+                                             configuration.renderPass,
+                                             configuration.subpass,
+                                             VK_NULL_HANDLE,
+                                             0);
+    }
 
-        const auto vertexInputState = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
-        const auto inputAssemblyState =
-            getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
+    std::vector<VkPipeline>
+    getGraphicsPipeline(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device)
+    {
+        ND_SET_SCOPE();
 
-        const auto tessellationState = VkPipelineTessellationStateCreateInfo {};
+        auto pipelines = std::vector<VkPipeline>(createInfos.size());
 
-        const auto scissors = VkRect2D {{0, 0}, {configuration.width, configuration.height}};
-        const auto viewport = VkViewport {0.0f,
-                                          0.0f,
-                                          static_cast<float>(configuration.width),
-                                          static_cast<float>(configuration.height),
-                                          0.0f,
-                                          0.1f};
+        ND_ASSERT(
+            vkCreateGraphicsPipelines(device, nullptr, pipelines.size(), createInfos.data(), nullptr, pipelines.data()) ==
+            VK_SUCCESS);
 
-        const auto viewportState = getPipelineViewportStateCreateInfo(1, 1, &viewport, &scissors);
-
-        const auto rasterizationState = getPipelineRasterizationStateCreateInfo(VK_FALSE,
-                                                                                VK_FALSE,
-                                                                                VK_POLYGON_MODE_FILL,
-                                                                                VK_CULL_MODE_NONE,
-                                                                                VK_FRONT_FACE_CLOCKWISE,
-                                                                                VK_FALSE,
-                                                                                0.0f,
-                                                                                0.0f,
-                                                                                0.0f,
-                                                                                1.0f);
-
-        const auto multisampleState =
-            getPipelineMultisampleStateCreateInfo(VK_SAMPLE_COUNT_1_BIT, VK_FALSE, 1.0f, nullptr, VK_FALSE, VK_FALSE);
-
-        const auto depthStencilState = VkPipelineDepthStencilStateCreateInfo {};
-
-        const auto blendConstants       = std::vector<float> {0.0f, 0.0f, 0.0f, 0.0f};
-        const auto colorBlendAttachment = VkPipelineColorBlendAttachmentState {
-            VK_TRUE,
-            VK_BLEND_FACTOR_SRC_ALPHA,
-            VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-            VK_BLEND_OP_ADD,
-            VK_BLEND_FACTOR_ONE,
-            VK_BLEND_FACTOR_ZERO,
-            VK_BLEND_OP_ADD,
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
-
-        const auto colorBlendState =
-            getPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_OR, 1, &colorBlendAttachment, blendConstants.data());
-
-        const auto dynamicState = getPipelineDynamicStateCreateInfo(0, nullptr);
-
-        const auto createInfo = getGraphicsPipelineCreateInfo(shaderStages.size(),
-                                                              shaderStages.data(),
-                                                              &vertexInputState,
-                                                              &inputAssemblyState,
-                                                              nullptr,
-                                                              &viewportState,
-                                                              &rasterizationState,
-                                                              &multisampleState,
-                                                              nullptr,
-                                                              &colorBlendState,
-                                                              &dynamicState,
-                                                              configuration.pipelineLayout,
-                                                              configuration.renderPass,
-                                                              configuration.subpass,
-                                                              VK_NULL_HANDLE,
-                                                              0);
-
-        return Pipeline(device, createInfo);
+        return pipelines;
     }
 } // namespace nd::src::graphics::vulkan

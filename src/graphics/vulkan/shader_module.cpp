@@ -3,62 +3,10 @@
 
 namespace nd::src::graphics::vulkan
 {
-    ShaderModule::ShaderModule() noexcept
-    {
-        ND_SET_SCOPE_LOW();
-    }
-
-    ShaderModule::ShaderModule(const VkDevice                  device,
-                               const VkShaderStageFlagBits     stage,
-                               const VkShaderModuleCreateInfo& createInfo)
-        : device_(device)
-        , stage_(stage)
-    {
-        ND_SET_SCOPE_LOW();
-
-        ND_ASSERT(vkCreateShaderModule(device_, &createInfo, nullptr, &shaderModule_) == VK_SUCCESS);
-    }
-
-    ShaderModule::ShaderModule(ShaderModule&& shaderModule) noexcept
-        : device_(std::move(shaderModule.device_))
-        , shaderModule_(std::move(shaderModule.shaderModule_))
-        , stage_(std::move(shaderModule.stage_))
-    {
-        ND_SET_SCOPE_LOW();
-
-        shaderModule.shaderModule_ = VK_NULL_HANDLE;
-    }
-
-    ShaderModule&
-    ShaderModule::operator=(ShaderModule&& shaderModule) noexcept
-    {
-        ND_SET_SCOPE_LOW();
-
-        if(&shaderModule == this)
-        {
-            return *this;
-        }
-
-        device_       = std::move(shaderModule.device_);
-        shaderModule_ = std::move(shaderModule.shaderModule_);
-        stage_        = std::move(shaderModule.stage_);
-
-        shaderModule.shaderModule_ = VK_NULL_HANDLE;
-
-        return *this;
-    }
-
-    ShaderModule::~ShaderModule()
-    {
-        ND_SET_SCOPE_LOW();
-
-        vkDestroyShaderModule(device_, shaderModule_, nullptr);
-    }
-
     std::vector<char>
     getShaderCode(const std::string& path)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         ND_ASSERT(std::filesystem::exists(path));
 
@@ -81,7 +29,7 @@ namespace nd::src::graphics::vulkan
                               const VkShaderModuleCreateFlags flags,
                               const void*                     next) noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO, // sType;
@@ -92,14 +40,25 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    ShaderModule
-    getShaderModule(const ShaderModule::Configuration& configuration, const VkDevice device)
+    VkShaderModuleCreateInfo
+    getShaderModuleCreateInfo(const ShaderModuleConfiguration& configuration)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
-        const auto code       = getShaderCode(configuration.path);
-        const auto createInfo = getShaderModuleCreateInfo(code.size(), reinterpret_cast<const uint32_t*>(code.data()));
+        const auto code = getShaderCode(configuration.path);
 
-        return ShaderModule(device, configuration.stage, createInfo);
+        return getShaderModuleCreateInfo(code.size(), reinterpret_cast<const uint32_t*>(code.data()));
+    }
+
+    VkShaderModule
+    getShaderModule(const VkShaderModuleCreateInfo& createInfo, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        VkShaderModule shaderModule;
+
+        ND_ASSERT(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) == VK_SUCCESS);
+
+        return shaderModule;
     }
 } // namespace nd::src::graphics::vulkan

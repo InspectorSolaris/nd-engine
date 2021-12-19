@@ -3,27 +3,38 @@
 
 namespace nd::src::graphics::glfw
 {
-    Context::Context(Window&& window) noexcept
-        : window_(std::move(window))
+    bool Context::s_initialized {};
+
+    Context::Context()
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
+
+        ND_ASSERT(!s_initialized);
+
+        glfwInit();
+
+        s_initialized = true;
     }
 
     Context::~Context()
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
+
+        glfwTerminate();
+
+        s_initialized = false;
     }
 
-    Context::Extensions
+    std::vector<std::string>
     getRequiredExtensions() noexcept
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         uint32_t count;
 
         const auto cextensions = glfwGetRequiredInstanceExtensions(&count);
 
-        auto extensions = Context::Extensions {};
+        auto extensions = std::vector<std::string> {};
 
         extensions.reserve(count);
 
@@ -41,7 +52,7 @@ namespace nd::src::graphics::glfw
     VkSurfaceKHR
     getSurface(const Window& window, const VkInstance instance)
     {
-        ND_SET_SCOPE_LOW();
+        ND_SET_SCOPE();
 
         VkSurfaceKHR surface;
 
@@ -51,10 +62,8 @@ namespace nd::src::graphics::glfw
     }
 
     Context
-    getContext(const Context::Configuration& configuration) noexcept
+    getContext() noexcept
     {
-        auto window = glfw::getWindow({configuration.title, configuration.width, configuration.height});
-
-        return Context(std::move(window));
+        return Context();
     }
 } // namespace nd::src::graphics::glfw

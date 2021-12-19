@@ -7,75 +7,25 @@
 
 namespace nd::src::graphics::vulkan
 {
-    struct PhysicalDevice final
+    struct DeviceConfiguration final
     {
-        VkPhysicalDevice           handle;
-        VkPhysicalDeviceProperties properties;
-        VkPhysicalDeviceFeatures   features;
+        const VkPhysicalDeviceFeatures& features;
+
+        const std::function<size_t(const VkPhysicalDevice,
+                                   const VkPhysicalDeviceProperties&,
+                                   const VkPhysicalDeviceFeatures&)>& physicalDevicePriority;
+
+        const std::vector<std::string>& extensions;
+
+        const VkQueueFlags queueFlags;
     };
 
-    class Device final
+    struct DeviceCreateInfo
     {
-    public:
-        struct Configuration final
-        {
-            const VkPhysicalDeviceFeatures& features;
-
-            const std::function<size_t(const PhysicalDevice&)>& physicalDevicePriority;
-
-            const std::vector<std::string>& extensions;
-
-            const VkQueueFlags queueFlags;
-        };
-
-        Device() noexcept;
-        Device(const VkPhysicalDevice          physicalDevice,
-               const std::vector<QueueFamily>& queueFamilies,
-               const VkDeviceCreateInfo&       createInfo);
-
-        Device(const Device& device) = delete;
-        Device(Device&& device) noexcept;
-
-        Device&
-        operator=(const Device& device) = delete;
-        Device&
-        operator=(Device&& device) noexcept;
-
-        ~Device();
-
-        constexpr VkPhysicalDevice
-        getPhysical() const noexcept;
-
-        constexpr VkDevice
-        get() const noexcept;
-
-        constexpr const std::vector<QueueFamily>&
-        getQueueFamilies() const noexcept;
-
-    private:
-        std::vector<QueueFamily> queueFamilies_ {};
-
-        VkPhysicalDevice physicalDevice_ {VK_NULL_HANDLE};
-        VkDevice         device_ {VK_NULL_HANDLE};
+        const VkDeviceCreateInfo       createInfo;
+        const std::vector<QueueFamily> queueFamilies;
+        const VkPhysicalDevice         physicalDevice;
     };
-
-    constexpr VkPhysicalDevice
-    Device::getPhysical() const noexcept
-    {
-        return physicalDevice_;
-    }
-
-    constexpr VkDevice
-    Device::get() const noexcept
-    {
-        return device_;
-    }
-
-    constexpr const std::vector<QueueFamily>&
-    Device::getQueueFamilies() const noexcept
-    {
-        return queueFamilies_;
-    }
 
     VkDeviceQueueCreateInfo
     getQueueCreateInfo(const uint32_t                 queueFamilyIndex,
@@ -99,6 +49,9 @@ namespace nd::src::graphics::vulkan
     std::vector<QueueFamily>
     getDeviceQueueFamilies(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;
 
+    std::vector<VkPhysicalDevice>
+    getPhysicalDevices(const VkInstance instance) noexcept;
+
     bool
     isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available,
                                       const VkPhysicalDeviceFeatures* required) noexcept;
@@ -110,9 +63,12 @@ namespace nd::src::graphics::vulkan
     bool
     isPhysicalDeviceQueuesSupported(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;
 
-    PhysicalDevice
-    getPhysicalDevice(const Device::Configuration& configuration, const VkInstance instance);
+    VkPhysicalDevice
+    getPhysicalDevice(const DeviceConfiguration& configuration, const VkInstance instance);
 
-    Device
-    getDevice(const Device::Configuration& configuration, const VkInstance instance);
+    DeviceCreateInfo
+    getDeviceCreateInfo(const DeviceConfiguration& configuration, const VkInstance instance);
+
+    VkDevice
+    getDevice(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice);
 } // namespace nd::src::graphics::vulkan

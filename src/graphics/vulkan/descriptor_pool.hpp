@@ -5,43 +5,14 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class DescriptorPool final
+    struct DescriptorPoolConfiguration final
     {
-    public:
-        struct Configuration final
-        {
-            const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes;
-            const uint32_t                           maxSets;
+        const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes;
+        const uint32_t                           maxSets;
 
-            const VkDescriptorPoolCreateFlags flags = {};
-        };
-
-        DescriptorPool() noexcept;
-        DescriptorPool(const VkDevice device, const VkDescriptorPoolCreateInfo& createInfo);
-
-        DescriptorPool(const DescriptorPool& descriptorPool) = delete;
-        DescriptorPool(DescriptorPool&& descriptorPool) noexcept;
-
-        DescriptorPool&
-        operator=(const DescriptorPool& descriptorPool) = delete;
-        DescriptorPool&
-        operator=(DescriptorPool&& descriptorPool) noexcept;
-
-        ~DescriptorPool();
-
-        constexpr VkDescriptorPool
-        get() const noexcept;
-
-    private:
-        VkDevice         device_ {VK_NULL_HANDLE};
-        VkDescriptorPool descriptorPool_ {VK_NULL_HANDLE};
+        const VkDescriptorPoolCreateFlags flags {};
     };
 
-    constexpr VkDescriptorPool
-    DescriptorPool::get() const noexcept
-    {
-        return descriptorPool_;
-    }
 
     VkDescriptorPoolCreateInfo
     getDescriptorPoolCreateInfo(const uint32_t                    maxSets,
@@ -50,6 +21,9 @@ namespace nd::src::graphics::vulkan
                                 const VkDescriptorPoolCreateFlags flags = {},
                                 const void*                       next  = {}) noexcept;
 
-    DescriptorPool
-    getDescriptorPool(const DescriptorPool::Configuration& configuration, const VkDevice device);
+    VkDescriptorPoolCreateInfo
+    getDescriptorPoolCreateInfo(const DescriptorPoolConfiguration& configuration);
+
+    VkDescriptorPool
+    getDescriptorPool(const VkDescriptorPoolCreateInfo& createInfo, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

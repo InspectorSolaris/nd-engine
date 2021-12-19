@@ -38,9 +38,8 @@ main()
 
         const auto name = std::string("nd-engine");
 
-        auto  glfwState   = glfw::getState();
-        auto  glfwContext = glfw::getContext({name, 800, 600});
-        auto& glfwWindow  = glfwContext.getWindow();
+        auto glfwContext = glfw::getContext();
+        auto glfwWindow  = glfw::getWindow({name, 800, 600});
 
         auto vulkanContext = vulkan::getContext({std::bind(glfw::getSurface, std::ref(glfwWindow), _1),
                                                  name,
