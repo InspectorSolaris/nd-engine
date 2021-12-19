@@ -52,10 +52,10 @@ namespace nd::src::graphics::vulkan
             std::vector<VkPipeline>&&      pipelines;
             std::vector<VkCommandBuffer>&& commandBuffers;
 
-            std::vector<VkSemaphore>&& imageRenderedSemaphores;
             std::vector<VkSemaphore>&& imageAcquiredSemaphores;
-            std::vector<VkFence>&&     imageRenderedFences;
+            std::vector<VkSemaphore>&& imageRenderedSemaphores;
             std::vector<VkFence>&&     imageAcquiredFences;
+            std::vector<VkFence>&&     imageRenderedFences;
 
             const size_t framesCount;
 
@@ -94,10 +94,10 @@ namespace nd::src::graphics::vulkan
         std::vector<VkPipeline>      pipelines_ {};
         std::vector<VkCommandBuffer> commandBuffers_ {};
 
-        std::vector<VkSemaphore> imageRenderedSemaphores_ {};
         std::vector<VkSemaphore> imageAcquiredSemaphores_ {};
-        std::vector<VkFence>     imageRenderedFences_ {};
+        std::vector<VkSemaphore> imageRenderedSemaphores_ {};
         std::vector<VkFence>     imageAcquiredFences_ {};
+        std::vector<VkFence>     imageRenderedFences_ {};
 
         size_t framesCount_ {};
 
