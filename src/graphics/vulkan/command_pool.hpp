@@ -3,40 +3,24 @@
 #include "pch.hpp"
 #include "shared.hpp"
 
+#include "queue.hpp"
+
 namespace nd::src::graphics::vulkan
 {
-    class CommandPool final
+    struct CommandPoolConfiguration final
     {
-    public:
-        CommandPool() noexcept;
-        CommandPool(const VkDevice device, const VkCommandPoolCreateInfo& createInfo);
-
-        CommandPool(const CommandPool& commandPool) = delete;
-        CommandPool(CommandPool&& commandPool) noexcept;
-
-        CommandPool&
-        operator=(const CommandPool& commandPool) = delete;
-        CommandPool&
-        operator=(CommandPool&& commandPool) noexcept;
-
-        ~CommandPool();
-
-        constexpr VkCommandPool
-        get() const noexcept;
-
-    private:
-        VkDevice      device_ {VK_NULL_HANDLE};
-        VkCommandPool commandPool_ {VK_NULL_HANDLE};
+        const std::vector<QueueFamily>& queueFamiliesPool;
+        const VkQueueFlags              queueFlags;
     };
-
-    constexpr VkCommandPool
-    CommandPool::get() const noexcept
-    {
-        return commandPool_;
-    }
 
     VkCommandPoolCreateInfo
     getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
                              const VkCommandPoolCreateFlags flags = {},
                              const void*                    next  = {}) noexcept;
+
+    VkCommandPool
+    getCommandPool(const VkCommandPoolCreateInfo& createInfo, const VkDevice device);
+
+    VkCommandPool
+    getCommandPool(const CommandPoolConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

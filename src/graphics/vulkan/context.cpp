@@ -18,6 +18,8 @@ namespace nd::src::graphics::vulkan
         , descriptorSets_(std::move(configuration.descriptorSets))
         , pipelineLayout_(std::move(configuration.pipelineLayout))
         , pipelines_(std::move(configuration.pipelines))
+        , commandPool_(std::move(configuration.commandPool))
+        , commandBuffers_(std::move(configuration.commandBuffers))
     {
         ND_SET_SCOPE();
     }
@@ -25,6 +27,9 @@ namespace nd::src::graphics::vulkan
     Context::~Context()
     {
         ND_SET_SCOPE();
+
+        vkFreeCommandBuffers(device_, commandPool_, commandBuffers_.size(), commandBuffers_.data());
+        vkDestroyCommandPool(device_, commandPool_, nullptr);
 
         for(const auto pipeline: pipelines_)
         {
@@ -74,13 +79,13 @@ namespace nd::src::graphics::vulkan
 
         const auto extensions = getMerged(configuration.extensions, {});
 
-        const auto instance = getInstance(InstanceConfiguration {configuration.applicationName,
-                                                                 configuration.engineName,
-                                                                 layers,
-                                                                 extensions,
-                                                                 VK_MAKE_VERSION(0, 1, 0),
-                                                                 VK_MAKE_VERSION(0, 1, 0),
-                                                                 VK_API_VERSION_1_2});
+        const auto instance = getInstance({configuration.applicationName,
+                                           configuration.engineName,
+                                           layers,
+                                           extensions,
+                                           VK_MAKE_VERSION(0, 1, 0),
+                                           VK_MAKE_VERSION(0, 1, 0),
+                                           VK_API_VERSION_1_2});
 
         const auto physicalDevicePriority = [](const VkPhysicalDevice            physicalDevice,
                                                const VkPhysicalDeviceProperties& properties,
@@ -263,12 +268,16 @@ namespace nd::src::graphics::vulkan
               0}},
             device);
 
+        const auto commandPool    = getCommandPool({deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT}, device);
+        const auto commandBuffers = getCommandBuffer({commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1}, device);
+
         return Context({std::move(swapchainImages),
                         std::move(swapchainImageViews),
                         std::move(swapchainFramebuffers),
                         std::move(shaderModules),
                         std::move(descriptorSets),
                         std::move(pipelines),
+                        std::move(commandBuffers),
                         instance,
                         device,
                         surface,
@@ -276,6 +285,7 @@ namespace nd::src::graphics::vulkan
                         renderPass,
                         descriptorPool,
                         descriptorSetLayout,
-                        pipelineLayout});
+                        pipelineLayout,
+                        commandPool});
     }
 } // namespace nd::src::graphics::vulkan

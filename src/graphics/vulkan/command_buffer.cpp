@@ -3,58 +3,6 @@
 
 namespace nd::src::graphics::vulkan
 {
-    CommandBuffer::CommandBuffer() noexcept
-    {
-        ND_SET_SCOPE();
-    }
-
-    CommandBuffer::CommandBuffer(const VkDevice                     device,
-                                 const VkCommandPool                commandPool,
-                                 const VkCommandBufferAllocateInfo& allocateInfo)
-        : device_(device)
-        , commandPool_(commandPool)
-    {
-        ND_SET_SCOPE();
-
-        ND_ASSERT(vkAllocateCommandBuffers(device_, &allocateInfo, &commandBuffer_) == VK_SUCCESS);
-    }
-
-    CommandBuffer::CommandBuffer(CommandBuffer&& commandBuffer) noexcept
-        : device_(std::move(commandBuffer.device_))
-        , commandPool_(std::move(commandBuffer.commandPool_))
-        , commandBuffer_(std::move(commandBuffer.commandBuffer_))
-    {
-        ND_SET_SCOPE();
-
-        commandBuffer.commandBuffer_ = VK_NULL_HANDLE;
-    }
-
-    CommandBuffer&
-    CommandBuffer::operator=(CommandBuffer&& commandBuffer) noexcept
-    {
-        ND_SET_SCOPE();
-
-        if(&commandBuffer == this)
-        {
-            return *this;
-        }
-
-        device_        = std::move(commandBuffer.device_);
-        commandPool_   = std::move(commandBuffer.commandPool_);
-        commandBuffer_ = std::move(commandBuffer.commandBuffer_);
-
-        commandBuffer.commandBuffer_ = VK_NULL_HANDLE;
-
-        return *this;
-    }
-
-    CommandBuffer::~CommandBuffer()
-    {
-        ND_SET_SCOPE();
-
-        vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer_);
-    }
-
     VkCommandBufferAllocateInfo
     getCommandBufferAllocateInfo(const VkCommandPool        commandPool,
                                  const VkCommandBufferLevel level,
@@ -70,5 +18,28 @@ namespace nd::src::graphics::vulkan
             level,                                          // level;
             commandBufferCount                              // commandBufferCount;
         };
+    }
+
+    std::vector<VkCommandBuffer>
+    getCommandBuffer(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        auto commandBuffers = std::vector<VkCommandBuffer>(allocateInfo.commandBufferCount);
+
+        ND_ASSERT(vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data()) == VK_SUCCESS);
+
+        return commandBuffers;
+    }
+
+    std::vector<VkCommandBuffer>
+    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto allocateInfo =
+            getCommandBufferAllocateInfo(configuration.commandPool, configuration.level, configuration.count);
+
+        return getCommandBuffer(allocateInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

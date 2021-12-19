@@ -5,42 +5,22 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class CommandBuffer final
+    struct CommandBufferConfiguration final
     {
-    public:
-        CommandBuffer() noexcept;
-        CommandBuffer(const VkDevice                     device,
-                      const VkCommandPool                commandPool,
-                      const VkCommandBufferAllocateInfo& allocateInfo);
-
-        CommandBuffer(const CommandBuffer& commandBuffer) = delete;
-        CommandBuffer(CommandBuffer&& commandBuffer) noexcept;
-
-        CommandBuffer&
-        operator=(const CommandBuffer& commandBuffer) = delete;
-        CommandBuffer&
-        operator=(CommandBuffer&& commandBuffer) noexcept;
-
-        ~CommandBuffer();
-
-        constexpr VkCommandBuffer
-        get() const noexcept;
-
-    private:
-        VkDevice        device_ {VK_NULL_HANDLE};
-        VkCommandPool   commandPool_ {VK_NULL_HANDLE};
-        VkCommandBuffer commandBuffer_ {VK_NULL_HANDLE};
+        const VkCommandPool        commandPool;
+        const VkCommandBufferLevel level;
+        const uint32_t             count;
     };
-
-    constexpr VkCommandBuffer
-    CommandBuffer::get() const noexcept
-    {
-        return commandBuffer_;
-    }
 
     VkCommandBufferAllocateInfo
     getCommandBufferAllocateInfo(const VkCommandPool        commandPool,
                                  const VkCommandBufferLevel level,
                                  const uint32_t             commandBufferCount,
                                  const void*                next = {}) noexcept;
+
+    std::vector<VkCommandBuffer>
+    getCommandBuffer(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device);
+
+    std::vector<VkCommandBuffer>
+    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

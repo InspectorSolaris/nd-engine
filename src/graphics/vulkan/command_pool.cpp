@@ -3,53 +3,6 @@
 
 namespace nd::src::graphics::vulkan
 {
-    CommandPool::CommandPool() noexcept
-    {
-        ND_SET_SCOPE();
-    }
-
-    CommandPool::CommandPool(const VkDevice device, const VkCommandPoolCreateInfo& createInfo)
-        : device_(device)
-    {
-        ND_SET_SCOPE();
-
-        ND_ASSERT(vkCreateCommandPool(device_, &createInfo, nullptr, &commandPool_) == VK_SUCCESS);
-    }
-
-    CommandPool::CommandPool(CommandPool&& commandPool) noexcept
-        : device_(std::move(commandPool.device_))
-        , commandPool_(std::move(commandPool.commandPool_))
-    {
-        ND_SET_SCOPE();
-
-        commandPool.commandPool_ = VK_NULL_HANDLE;
-    }
-
-    CommandPool&
-    CommandPool::operator=(CommandPool&& commandPool) noexcept
-    {
-        ND_SET_SCOPE();
-
-        if(&commandPool == this)
-        {
-            return *this;
-        }
-
-        device_      = std::move(commandPool.device_);
-        commandPool_ = std::move(commandPool.commandPool_);
-
-        commandPool.commandPool_ = VK_NULL_HANDLE;
-
-        return *this;
-    }
-
-    CommandPool::~CommandPool()
-    {
-        ND_SET_SCOPE();
-
-        vkDestroyCommandPool(device_, commandPool_, nullptr);
-    }
-
     VkCommandPoolCreateInfo
     getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
                              const VkCommandPoolCreateFlags flags,
@@ -63,5 +16,36 @@ namespace nd::src::graphics::vulkan
             flags,                                      // flags;
             queueFamilyIndex                            // queueFamilyIndex;
         };
+    }
+
+    VkCommandPool
+    getCommandPool(const VkCommandPoolCreateInfo& createInfo, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        VkCommandPool commandPool;
+
+        ND_ASSERT(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool) == VK_SUCCESS);
+
+        return commandPool;
+    }
+
+    VkCommandPool
+    getCommandPool(const CommandPoolConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto queueFamily = std::find_if(configuration.queueFamiliesPool.begin(),
+                                              configuration.queueFamiliesPool.end(),
+                                              [&configuration](const auto& queueFamily)
+                                              {
+                                                  return isSubmask(queueFamily.queueFlags, configuration.queueFlags);
+                                              });
+
+        ND_ASSERT(queueFamily != configuration.queueFamiliesPool.end());
+
+        const auto createInfo = getCommandPoolCreateInfo(queueFamily->index);
+
+        return getCommandPool(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

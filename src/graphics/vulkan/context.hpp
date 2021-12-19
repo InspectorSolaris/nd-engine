@@ -49,6 +49,7 @@ namespace nd::src::graphics::vulkan
             const std::vector<VkShaderModule>&&  shaderModules;
             const std::vector<VkDescriptorSet>&& descriptorSets;
             const std::vector<VkPipeline>&&      pipelines;
+            const std::vector<VkCommandBuffer>&& commandBuffers;
 
             const VkInstance            instance;
             const VkDevice              device;
@@ -58,6 +59,7 @@ namespace nd::src::graphics::vulkan
             const VkDescriptorPool      descriptorPool;
             const VkDescriptorSetLayout descriptorSetLayout;
             const VkPipelineLayout      pipelineLayout;
+            const VkCommandPool         commandPool;
         };
 
         Context(const Configuration& configuration);
@@ -79,6 +81,7 @@ namespace nd::src::graphics::vulkan
         std::vector<VkShaderModule>  shaderModules_ {};
         std::vector<VkDescriptorSet> descriptorSets_ {};
         std::vector<VkPipeline>      pipelines_ {};
+        std::vector<VkCommandBuffer> commandBuffers_ {};
 
         VkInstance            instance_ {};
         VkDevice              device_ {};
@@ -88,6 +91,7 @@ namespace nd::src::graphics::vulkan
         VkDescriptorPool      descriptorPool_ {};
         VkDescriptorSetLayout descriptorSetLayout_ {};
         VkPipelineLayout      pipelineLayout_ {};
+        VkCommandPool         commandPool_ {};
     };
 
     Context
