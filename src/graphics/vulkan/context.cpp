@@ -64,17 +64,19 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto layers = std::vector<std::string> {
+        const auto layers = getMerged(configuration.layers,
+                                      {
 #ifndef NDEBUG
-            "VK_LAYER_KHRONOS_validation"
+                                          "VK_LAYER_KHRONOS_validation"
 #endif
-        };
-        const auto extensions = std::vector<std::string> {};
+                                      });
+
+        const auto extensions = getMerged(configuration.extensions, {});
 
         const auto instanceConfiguration = InstanceConfiguration {configuration.applicationName,
                                                                   configuration.engineName,
-                                                                  getMerged(layers, configuration.layers),
-                                                                  getMerged(extensions, configuration.extensions),
+                                                                  layers,
+                                                                  extensions,
                                                                   VK_MAKE_VERSION(0, 1, 0),
                                                                   VK_MAKE_VERSION(0, 1, 0),
                                                                   VK_API_VERSION_1_2};

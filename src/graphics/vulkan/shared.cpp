@@ -17,7 +17,7 @@ namespace nd::src::graphics::vulkan
     std::vector<std::string>
     getMerged(const std::vector<std::string>& strings1, const std::vector<std::string>& strings2) noexcept
     {
-        auto strings = std::vector<std::string>(strings1.begin(), strings1.end());
+        auto strings = strings1;
 
         for(const auto& s2: strings2)
         {
