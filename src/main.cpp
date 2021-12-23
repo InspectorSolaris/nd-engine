@@ -52,6 +52,8 @@ main()
         while(!glfwWindowShouldClose(glfwWindow.get()))
         {
             glfwPollEvents();
+
+            vulkanContext.drawNextFrame();
         }
     }
     catch(std::runtime_error error)

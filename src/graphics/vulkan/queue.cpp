@@ -3,6 +3,52 @@
 
 namespace nd::src::graphics::vulkan
 {
+    VkQueue
+    getQueue(const VkDevice device, const uint32_t queueFamilyIndex, const uint32_t queueIndex) noexcept
+    {
+        VkQueue queue;
+
+        vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, &queue);
+
+        return queue;
+    }
+
+    std::optional<QueueFamily>
+    getQueueFamily(const std::vector<QueueFamily>& queueFamilies, const VkQueueFlags queueFlags) noexcept
+    {
+        const auto queueFamilyIterator = std::find_if(queueFamilies.begin(),
+                                                      queueFamilies.end(),
+                                                      [&queueFlags](const auto& queueFamily)
+                                                      {
+                                                          return isSubmask(queueFamily.queueFlags, queueFlags);
+                                                      });
+
+        return queueFamilyIterator != queueFamilies.end() ? std::optional<QueueFamily> {*queueFamilyIterator}
+                                                          : std::optional<QueueFamily> {};
+    }
+
+    std::optional<QueueFamily>
+    getPresentQueueFamily(const std::vector<QueueFamily>& queueFamilies,
+                          const VkPhysicalDevice          physicalDevice,
+                          const VkSurfaceKHR              surface)
+    {
+        const auto queueFamilyIterator = std::find_if(
+            queueFamilies.begin(),
+            queueFamilies.end(),
+            [physicalDevice, surface](const auto& queueFamily)
+            {
+                VkBool32 supported;
+
+                ND_ASSERT(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamily.index, surface, &supported) ==
+                          VK_SUCCESS);
+
+                return supported;
+            });
+
+        return queueFamilyIterator != queueFamilies.end() ? std::optional<QueueFamily> {*queueFamilyIterator}
+                                                          : std::optional<QueueFamily> {};
+    }
+
     std::vector<uint32_t>
     getQueueFamiliesIndices(const std::vector<const QueueFamily*>& queueFamilies) noexcept
     {

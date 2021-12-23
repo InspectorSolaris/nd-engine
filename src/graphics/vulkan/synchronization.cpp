@@ -28,11 +28,11 @@ namespace nd::src::graphics::vulkan
     }
 
     VkSemaphore
-    getSemaphore(const VkDevice device)
+    getSemaphore(const VkDevice device, const VkSemaphoreCreateFlags flags, const void* next)
     {
         ND_SET_SCOPE();
 
-        const auto createInfo = getSemaphoreCreateInfo();
+        const auto createInfo = getSemaphoreCreateInfo(flags, next);
 
         return getSemaphore(createInfo, device);
     }
@@ -62,11 +62,11 @@ namespace nd::src::graphics::vulkan
     }
 
     VkFence
-    getFence(const VkDevice device)
+    getFence(const VkDevice device, const VkSemaphoreCreateFlags flags, const void* next)
     {
         ND_SET_SCOPE();
 
-        const auto createInfo = getFenceCreateInfo();
+        const auto createInfo = getFenceCreateInfo(flags, next);
 
         return getFence(createInfo, device);
     }

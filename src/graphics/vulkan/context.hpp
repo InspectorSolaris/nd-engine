@@ -68,6 +68,9 @@ namespace nd::src::graphics::vulkan
             const VkDescriptorSetLayout descriptorSetLayout;
             const VkPipelineLayout      pipelineLayout;
             const VkCommandPool         commandPool;
+
+            const VkQueue graphicsQueue;
+            const VkQueue presentQueue;
         };
 
         Context(const Configuration& configuration);
@@ -83,7 +86,7 @@ namespace nd::src::graphics::vulkan
         ~Context();
 
         void
-        draw();
+        drawNextFrame();
 
     private:
         std::vector<VkImage>         swapchainImages_ {};
@@ -110,6 +113,9 @@ namespace nd::src::graphics::vulkan
         VkDescriptorSetLayout descriptorSetLayout_ {};
         VkPipelineLayout      pipelineLayout_ {};
         VkCommandPool         commandPool_ {};
+
+        VkQueue graphicsQueue_ {};
+        VkQueue presentQueue_ {};
     };
 
     Context

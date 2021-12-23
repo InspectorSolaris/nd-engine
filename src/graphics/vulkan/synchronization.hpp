@@ -12,7 +12,7 @@ namespace nd::src::graphics::vulkan
     getSemaphore(const VkSemaphoreCreateInfo& createInfo, const VkDevice device);
 
     VkSemaphore
-    getSemaphore(const VkDevice device);
+    getSemaphore(const VkDevice device, const VkSemaphoreCreateFlags flags = {}, const void* next = {});
 
     VkFenceCreateInfo
     getFenceCreateInfo(const VkFenceCreateFlags flags = {}, const void* next = {}) noexcept;
@@ -21,5 +21,5 @@ namespace nd::src::graphics::vulkan
     getFence(const VkFenceCreateInfo& createInfo, const VkDevice device);
 
     VkFence
-    getFence(const VkDevice device);
+    getFence(const VkDevice device, const VkFenceCreateFlags flags = {}, const void* next = {});
 } // namespace nd::src::graphics::vulkan

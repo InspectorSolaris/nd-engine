@@ -25,6 +25,8 @@ namespace nd::src::graphics::vulkan
         , imageRenderedSemaphores_(std::move(configuration.imageRenderedSemaphores))
         , imageAcquiredFences_(std::move(configuration.imageAcquiredFences))
         , imageRenderedFences_(std::move(configuration.imageRenderedFences))
+        , graphicsQueue_(configuration.graphicsQueue)
+        , presentQueue_(configuration.presentQueue)
     {
         ND_SET_SCOPE();
     }
@@ -80,6 +82,42 @@ namespace nd::src::graphics::vulkan
         vkDestroyInstance(instance_, nullptr);
     }
 
+    void
+    Context::drawNextFrame()
+    {
+        ND_SET_SCOPE();
+
+        static auto frameIndex = size_t {0};
+
+        const auto imageAcquiredSemaphore = imageAcquiredSemaphores_[frameIndex];
+        const auto imageRenderedSemaphore = imageRenderedSemaphores_[frameIndex];
+        const auto imageAcquiredFence     = imageAcquiredFences_[frameIndex];
+        const auto imageRenderedFence     = imageRenderedFences_[frameIndex];
+
+        vkWaitForFences(device_, 1u, &imageRenderedFence, VK_TRUE, UINT64_MAX);
+        vkResetFences(device_, 1u, &imageRenderedFence);
+
+        const auto imageIndex = getNextSwapchainImage(device_, swapchain_, imageAcquiredSemaphore, VK_NULL_HANDLE);
+
+        const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_[frameIndex]};
+        const auto waitDstStageMask = std::vector<VkPipelineStageFlags> {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        const auto waitSemaphores   = std::vector<VkSemaphore> {imageAcquiredSemaphore};
+        const auto signalSemaphores = std::vector<VkSemaphore> {imageRenderedSemaphore};
+
+        const auto submitInfo = getSubmitInfo({commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores});
+
+        ND_ASSERT(vkQueueSubmit(graphicsQueue_, 1, &submitInfo, imageRenderedFence) == VK_SUCCESS);
+
+        const auto swapchains   = std::vector<VkSwapchainKHR> {swapchain_};
+        const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(frameIndex)};
+
+        const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
+
+        ND_ASSERT(vkQueuePresentKHR(presentQueue_, &presentInfo) == VK_SUCCESS);
+
+        frameIndex = (frameIndex + 1) % framesCount_;
+    }
+
     Context
     getContext(const ContextConfiguration& configuration)
     {
@@ -116,6 +154,14 @@ namespace nd::src::graphics::vulkan
         const auto surfaceFormats      = getSurfaceFormats(physicalDevice, surface);
         const auto surfacePresentModes = getSurfacePresentModes(physicalDevice, surface);
         const auto surfaceCapabilities = getSurfaceCapabilities(physicalDevice, surface);
+
+        const auto graphicsQueueFamily = getQueueFamily(deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
+        const auto presentQueueFamily  = getPresentQueueFamily(deviceQueueFamilies, physicalDevice, surface);
+
+        ND_ASSERT(graphicsQueueFamily.has_value() && presentQueueFamily.has_value());
+
+        const auto graphicsQueue = getQueue(device, graphicsQueueFamily.value().index, 0);
+        const auto presentQueue  = getQueue(device, presentQueueFamily.value().index, 0);
 
         const auto swapchainConfiguration = SwapchainConfiguration {deviceQueueFamilies,
                                                                     surfaceFormats,
@@ -159,7 +205,14 @@ namespace nd::src::graphics::vulkan
                                                                     nullptr,
                                                                     nullptr)};
 
-        const auto renderPassDependencies = std::vector<VkSubpassDependency> {};
+        const auto renderPassDependencies =
+            std::vector<VkSubpassDependency> {getRenderPassDependency(VK_SUBPASS_EXTERNAL,
+                                                                      0,
+                                                                      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                                                      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                                                      0,
+                                                                      VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                                                      {})};
 
         const auto renderPass = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device);
 
@@ -323,7 +376,7 @@ namespace nd::src::graphics::vulkan
             imageAcquiredSemaphores[index] = getSemaphore(device);
             imageRenderedSemaphores[index] = getSemaphore(device);
             imageAcquiredFences[index]     = getFence(device);
-            imageRenderedFences[index]     = getFence(device);
+            imageRenderedFences[index]     = getFence(device, VK_FENCE_CREATE_SIGNALED_BIT);
         }
 
         return Context({std::move(swapchainImages),
@@ -346,23 +399,8 @@ namespace nd::src::graphics::vulkan
                         descriptorPool,
                         descriptorSetLayout,
                         pipelineLayout,
-                        commandPool});
-    }
-
-    void
-    Context::draw()
-    {
-        ND_SET_SCOPE();
-
-        static auto frameIndex = size_t {0};
-
-        const auto imageAcquiredSemaphore = imageAcquiredSemaphores_[frameIndex];
-        const auto imageAcquiredFence     = imageAcquiredFences_[frameIndex];
-
-        const auto imageIndex = getNextSwapchainImage(device_, swapchain_, imageAcquiredSemaphore, imageAcquiredFence);
-
-
-
-        frameIndex = (frameIndex + 1) % framesCount_;
+                        commandPool,
+                        graphicsQueue,
+                        presentQueue});
     }
 } // namespace nd::src::graphics::vulkan
