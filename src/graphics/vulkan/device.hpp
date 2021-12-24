@@ -7,7 +7,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    struct DeviceConfiguration final
+    struct PhysicalDeviceConfiguration final
     {
         const VkPhysicalDeviceFeatures& features;
 
@@ -20,11 +20,12 @@ namespace nd::src::graphics::vulkan
         const VkQueueFlags queueFlags;
     };
 
-    struct DeviceInfo
+    struct DeviceConfiguration final
     {
-        const std::vector<QueueFamily> queueFamilies;
-        const VkPhysicalDevice         physicalDevice;
-        const VkDevice                 device;
+        const VkPhysicalDeviceFeatures& features;
+
+        const std::vector<QueueFamily>& queueFamiliesPool;
+        const std::vector<std::string>& extensions;
     };
 
     VkDeviceQueueCreateInfo
@@ -47,7 +48,7 @@ namespace nd::src::graphics::vulkan
     getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept;
 
     std::vector<QueueFamily>
-    getDeviceQueueFamilies(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;
+    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;
 
     std::vector<VkPhysicalDevice>
     getPhysicalDevices(const VkInstance instance) noexcept;
@@ -64,11 +65,11 @@ namespace nd::src::graphics::vulkan
     isPhysicalDeviceQueuesSupported(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;
 
     VkPhysicalDevice
-    getPhysicalDevice(const DeviceConfiguration& configuration, const VkInstance instance);
+    getPhysicalDevice(const PhysicalDeviceConfiguration& configuration, const VkInstance instance);
 
     VkDevice
     getDevice(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice);
 
-    DeviceInfo
-    getDevice(const DeviceConfiguration& configuration, const VkInstance instance);
+    VkDevice
+    getDevice(const DeviceConfiguration& configuration, const VkPhysicalDevice physicalDevice);
 } // namespace nd::src::graphics::vulkan

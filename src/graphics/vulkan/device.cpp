@@ -64,7 +64,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<QueueFamily>
-    getDeviceQueueFamilies(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept
+    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept
     {
         ND_SET_SCOPE();
 
@@ -194,7 +194,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPhysicalDevice
-    getPhysicalDevice(const DeviceConfiguration& configuration, const VkInstance instance)
+    getPhysicalDevice(const PhysicalDeviceConfiguration& configuration, const VkInstance instance)
     {
         ND_SET_SCOPE();
 
@@ -240,27 +240,22 @@ namespace nd::src::graphics::vulkan
         return device;
     }
 
-    DeviceInfo
-    getDevice(const DeviceConfiguration& configuration, const VkInstance instance)
+    VkDevice
+    getDevice(const DeviceConfiguration& configuration, const VkPhysicalDevice physicalDevice)
     {
         ND_SET_SCOPE();
 
-        const auto physicalDevice = getPhysicalDevice(configuration, instance);
-
-        const auto cextensions   = getRawStrings(configuration.extensions);
-        const auto queueFamilies = getDeviceQueueFamilies(physicalDevice, configuration.queueFlags);
+        const auto cextensions = getRawStrings(configuration.extensions);
 
         auto queuePriorities  = std::vector<std::vector<float>> {};
         auto queueCreateInfos = std::vector<VkDeviceQueueCreateInfo> {};
 
-        for(const auto& queueFamily: queueFamilies)
+        for(const auto& queueFamily: configuration.queueFamiliesPool)
         {
-            if(queueFamily.queueFlags & configuration.queueFlags)
-            {
-                queuePriorities.emplace_back(queueFamily.queueCount, 1.0f);
-                queueCreateInfos.push_back(
-                    getQueueCreateInfo(queueFamily.index, queueFamily.queueCount, queuePriorities.back().data()));
-            }
+            queueCreateInfos.push_back(
+                getQueueCreateInfo(queueFamily.index,
+                                   queueFamily.queueCount,
+                                   queuePriorities.emplace_back(queueFamily.queueCount, 1.0f).data()));
         }
 
         const auto createInfo = getDeviceCreateInfo(queueCreateInfos.size(),
@@ -269,6 +264,6 @@ namespace nd::src::graphics::vulkan
                                                     cextensions.data(),
                                                     &configuration.features);
 
-        return {std::move(queueFamilies), physicalDevice, getDevice(createInfo, physicalDevice)};
+        return getDevice(createInfo, physicalDevice);
     }
 } // namespace nd::src::graphics::vulkan

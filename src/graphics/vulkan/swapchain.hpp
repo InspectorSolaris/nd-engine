@@ -9,10 +9,7 @@ namespace nd::src::graphics::vulkan
 {
     struct SwapchainConfiguration final
     {
-        const std::vector<QueueFamily>&        queueFamiliesPool;
-        const std::vector<VkSurfaceFormatKHR>& formats;
-        const std::vector<VkPresentModeKHR>&   presentModes;
-        const VkSurfaceCapabilitiesKHR&        capabilities;
+        const std::vector<const QueueFamily*>& queueFamiliesPool;
 
         const VkPhysicalDevice physicalDevice;
         const VkSurfaceKHR     surface;
@@ -31,6 +28,15 @@ namespace nd::src::graphics::vulkan
         const VkSurfaceTransformFlagBitsKHR transform;
         const VkCompositeAlphaFlagBitsKHR   compositeAlpha;
     };
+
+    std::vector<VkSurfaceFormatKHR>
+    getSurfaceFormats(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
+
+    std::vector<VkPresentModeKHR>
+    getSurfacePresentModes(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
+
+    VkSurfaceCapabilitiesKHR
+    getSurfaceCapabilities(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
 
     bool
     isFormatSupported(const SwapchainConfiguration& configuration, const std::vector<VkSurfaceFormatKHR>& formats) noexcept;

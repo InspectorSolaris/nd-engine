@@ -147,13 +147,17 @@ namespace nd::src::graphics::vulkan
             return 1;
         };
 
-        const auto [deviceQueueFamilies, physicalDevice, device] =
-            getDevice({{}, physicalDevicePriority, {"VK_KHR_swapchain"}, VK_QUEUE_GRAPHICS_BIT}, instance);
+        const auto deviceFeatures   = VkPhysicalDeviceFeatures {};
+        const auto deviceExtensions = std::vector<std::string> {"VK_KHR_swapchain"};
+        const auto deviceQueueFlags = VK_QUEUE_GRAPHICS_BIT;
 
-        const auto surface             = configuration.getSurface(instance);
-        const auto surfaceFormats      = getSurfaceFormats(physicalDevice, surface);
-        const auto surfacePresentModes = getSurfacePresentModes(physicalDevice, surface);
-        const auto surfaceCapabilities = getSurfaceCapabilities(physicalDevice, surface);
+        const auto physicalDevice =
+            getPhysicalDevice({deviceFeatures, physicalDevicePriority, deviceExtensions, deviceQueueFlags}, instance);
+
+        const auto deviceQueueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice, VK_QUEUE_GRAPHICS_BIT);
+        const auto device              = getDevice({deviceFeatures, deviceQueueFamilies, deviceExtensions}, physicalDevice);
+
+        const auto surface = configuration.getSurface(instance);
 
         const auto graphicsQueueFamily = getQueueFamily(deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
         const auto presentQueueFamily  = getPresentQueueFamily(deviceQueueFamilies, physicalDevice, surface);
@@ -163,10 +167,8 @@ namespace nd::src::graphics::vulkan
         const auto graphicsQueue = getQueue(device, graphicsQueueFamily.value().index, 0);
         const auto presentQueue  = getQueue(device, presentQueueFamily.value().index, 0);
 
-        const auto swapchainConfiguration = SwapchainConfiguration {deviceQueueFamilies,
-                                                                    surfaceFormats,
-                                                                    surfacePresentModes,
-                                                                    surfaceCapabilities,
+        const auto swapchainQueueFamilies = getSwapchainQueueFamilies(deviceQueueFamilies, physicalDevice, surface);
+        const auto swapchainConfiguration = SwapchainConfiguration {swapchainQueueFamilies,
                                                                     physicalDevice,
                                                                     surface,
                                                                     {configuration.width, configuration.height},

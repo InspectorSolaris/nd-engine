@@ -3,6 +3,50 @@
 
 namespace nd::src::graphics::vulkan
 {
+    std::vector<VkSurfaceFormatKHR>
+    getSurfaceFormats(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
+    {
+        ND_SET_SCOPE();
+
+        uint32_t count;
+
+        vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, nullptr);
+
+        auto formats = std::vector<VkSurfaceFormatKHR>(count);
+
+        vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, formats.data());
+
+        return formats;
+    }
+
+    std::vector<VkPresentModeKHR>
+    getSurfacePresentModes(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
+    {
+        ND_SET_SCOPE();
+
+        uint32_t count;
+
+        vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, nullptr);
+
+        auto presentModes = std::vector<VkPresentModeKHR>(count);
+
+        vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, presentModes.data());
+
+        return presentModes;
+    }
+
+    VkSurfaceCapabilitiesKHR
+    getSurfaceCapabilities(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
+    {
+        ND_SET_SCOPE();
+
+        VkSurfaceCapabilitiesKHR capabilities;
+
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &capabilities);
+
+        return capabilities;
+    }
+
     bool
     isFormatSupported(const SwapchainConfiguration& configuration, const std::vector<VkSurfaceFormatKHR>& formats) noexcept
     {
@@ -173,21 +217,22 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto queueFamilies =
-            getSwapchainQueueFamilies(configuration.queueFamiliesPool, configuration.physicalDevice, configuration.surface);
+        const auto formats      = getSurfaceFormats(configuration.physicalDevice, configuration.surface);
+        const auto presentModes = getSurfacePresentModes(configuration.physicalDevice, configuration.surface);
+        const auto capabilities = getSurfaceCapabilities(configuration.physicalDevice, configuration.surface);
 
-        const auto queueFamiliesIndices = getQueueFamiliesIndices(queueFamilies);
+        const auto queueFamiliesIndices = getQueueFamiliesIndices(configuration.queueFamiliesPool);
 
-        ND_ASSERT(queueFamilies.size());
-        ND_ASSERT(isFormatSupported(configuration, configuration.formats));
-        ND_ASSERT(isPresentModeSupported(configuration, configuration.presentModes));
-        ND_ASSERT(isImageUsageSupported(configuration, configuration.capabilities));
-        ND_ASSERT(isTransformSupported(configuration, configuration.capabilities));
-        ND_ASSERT(isCompositeAlphaSupported(configuration, configuration.capabilities));
+        ND_ASSERT(queueFamiliesIndices.size());
+        ND_ASSERT(isFormatSupported(configuration, formats));
+        ND_ASSERT(isPresentModeSupported(configuration, presentModes));
+        ND_ASSERT(isImageUsageSupported(configuration, capabilities));
+        ND_ASSERT(isTransformSupported(configuration, capabilities));
+        ND_ASSERT(isCompositeAlphaSupported(configuration, capabilities));
 
-        const auto minImagesCount   = getMinImagesCount(configuration, configuration.capabilities);
-        const auto imageExtent      = getImageExtent(configuration, configuration.capabilities);
-        const auto imageArrayLayers = getImageArrayLayers(configuration, configuration.capabilities);
+        const auto minImagesCount   = getMinImagesCount(configuration, capabilities);
+        const auto imageExtent      = getImageExtent(configuration, capabilities);
+        const auto imageArrayLayers = getImageArrayLayers(configuration, capabilities);
 
         const auto createInfo =
             getSwapchainCreateInfo(configuration.surface,
@@ -197,7 +242,7 @@ namespace nd::src::graphics::vulkan
                                    imageExtent,
                                    imageArrayLayers,
                                    configuration.imageUsage,
-                                   queueFamilies.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
+                                   queueFamiliesIndices.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
                                    queueFamiliesIndices.size(),
                                    queueFamiliesIndices.data(),
                                    configuration.transform,

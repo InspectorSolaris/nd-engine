@@ -36,6 +36,8 @@ namespace nd::src::graphics::vulkan
                           const VkPhysicalDevice          physicalDevice,
                           const VkSurfaceKHR              surface)
     {
+        ND_SET_SCOPE();
+
         const auto queueFamilyIterator = std::find_if(
             queueFamilies.begin(),
             queueFamilies.end(),
