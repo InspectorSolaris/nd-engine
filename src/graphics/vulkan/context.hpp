@@ -25,7 +25,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    struct ContextConfiguration final
+    struct VulkanContextConfiguration final
     {
         const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface;
 
@@ -39,7 +39,11 @@ namespace nd::src::graphics::vulkan
         const uint32_t height;
     };
 
-    class Context final
+    struct VulkanContextCreaters final
+    {
+    };
+
+    class VulkanContext final
     {
     public:
         struct Configuration final
@@ -73,17 +77,17 @@ namespace nd::src::graphics::vulkan
             const VkQueue presentQueue;
         };
 
-        Context(const Configuration& configuration);
+        VulkanContext(const Configuration& configuration);
 
-        Context(const Context& vulkanContext) = delete;
-        Context(Context&& vulkanContext)      = delete;
+        VulkanContext(const VulkanContext& vulkanContext) = delete;
+        VulkanContext(VulkanContext&& vulkanContext)      = delete;
 
-        Context&
-        operator=(const Context& vulkanContext) = delete;
-        Context&
-        operator=(Context&& vulkanContext) = delete;
+        VulkanContext&
+        operator=(const VulkanContext& vulkanContext) = delete;
+        VulkanContext&
+        operator=(VulkanContext&& vulkanContext) = delete;
 
-        ~Context();
+        ~VulkanContext();
 
         void
         drawNextFrame();
@@ -118,6 +122,6 @@ namespace nd::src::graphics::vulkan
         VkQueue presentQueue_ {};
     };
 
-    Context
-    getContext(const ContextConfiguration& configuration);
+    VulkanContext
+    getVulkanContext(const VulkanContextConfiguration& configuration);
 } // namespace nd::src::graphics::vulkan

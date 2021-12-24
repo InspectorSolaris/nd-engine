@@ -3,9 +3,9 @@
 
 namespace nd::src::graphics::glfw
 {
-    bool Context::s_initialized {};
+    bool GlfwContext::s_initialized {};
 
-    Context::Context()
+    GlfwContext::GlfwContext()
     {
         ND_SET_SCOPE();
 
@@ -16,7 +16,7 @@ namespace nd::src::graphics::glfw
         s_initialized = true;
     }
 
-    Context::~Context()
+    GlfwContext::~GlfwContext()
     {
         ND_SET_SCOPE();
 
@@ -50,20 +50,22 @@ namespace nd::src::graphics::glfw
     }
 
     VkSurfaceKHR
-    getSurface(const Window& window, const VkInstance instance)
+    getSurface(const GlfwWindow window, const VkInstance instance)
     {
         ND_SET_SCOPE();
 
         VkSurfaceKHR surface;
 
-        ND_ASSERT(glfwCreateWindowSurface(instance, window.get(), nullptr, &surface) == VK_SUCCESS);
+        ND_ASSERT(glfwCreateWindowSurface(instance, window, nullptr, &surface) == VK_SUCCESS);
 
         return surface;
     }
 
-    Context
-    getContext() noexcept
+    GlfwContext
+    getGlfwContext() noexcept
     {
-        return Context();
+        ND_SET_SCOPE();
+
+        return GlfwContext();
     }
 } // namespace nd::src::graphics::glfw

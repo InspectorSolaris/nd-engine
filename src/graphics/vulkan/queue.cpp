@@ -6,6 +6,8 @@ namespace nd::src::graphics::vulkan
     VkQueue
     getQueue(const VkDevice device, const uint32_t queueFamilyIndex, const uint32_t queueIndex) noexcept
     {
+        ND_SET_SCOPE();
+
         VkQueue queue;
 
         vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, &queue);
@@ -16,6 +18,8 @@ namespace nd::src::graphics::vulkan
     std::optional<QueueFamily>
     getQueueFamily(const std::vector<QueueFamily>& queueFamilies, const VkQueueFlags queueFlags) noexcept
     {
+        ND_SET_SCOPE();
+
         const auto queueFamilyIterator = std::find_if(queueFamilies.begin(),
                                                       queueFamilies.end(),
                                                       [&queueFlags](const auto& queueFamily)

@@ -3,7 +3,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    Context::Context(const Configuration& configuration)
+    VulkanContext::VulkanContext(const Configuration& configuration)
         : instance_(std::move(configuration.instance))
         , device_(std::move(configuration.device))
         , surface_(std::move(configuration.surface))
@@ -31,7 +31,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
     }
 
-    Context::~Context()
+    VulkanContext::~VulkanContext()
     {
         ND_SET_SCOPE();
 
@@ -83,7 +83,7 @@ namespace nd::src::graphics::vulkan
     }
 
     void
-    Context::drawNextFrame()
+    VulkanContext::drawNextFrame()
     {
         ND_SET_SCOPE();
 
@@ -118,8 +118,8 @@ namespace nd::src::graphics::vulkan
         frameIndex = (frameIndex + 1) % framesCount_;
     }
 
-    Context
-    getContext(const ContextConfiguration& configuration)
+    VulkanContext
+    getVulkanContext(const VulkanContextConfiguration& configuration)
     {
         ND_SET_SCOPE();
 
@@ -379,28 +379,28 @@ namespace nd::src::graphics::vulkan
             imageRenderedFences[index]     = getFence(device, VK_FENCE_CREATE_SIGNALED_BIT);
         }
 
-        return Context({std::move(swapchainImages),
-                        std::move(swapchainImageViews),
-                        std::move(swapchainFramebuffers),
-                        std::move(shaderModules),
-                        std::move(descriptorSets),
-                        std::move(pipelines),
-                        std::move(commandBuffers),
-                        std::move(imageAcquiredSemaphores),
-                        std::move(imageRenderedSemaphores),
-                        std::move(imageAcquiredFences),
-                        std::move(imageRenderedFences),
-                        framesCount,
-                        instance,
-                        device,
-                        surface,
-                        swapchain,
-                        renderPass,
-                        descriptorPool,
-                        descriptorSetLayout,
-                        pipelineLayout,
-                        commandPool,
-                        graphicsQueue,
-                        presentQueue});
+        return VulkanContext({std::move(swapchainImages),
+                              std::move(swapchainImageViews),
+                              std::move(swapchainFramebuffers),
+                              std::move(shaderModules),
+                              std::move(descriptorSets),
+                              std::move(pipelines),
+                              std::move(commandBuffers),
+                              std::move(imageAcquiredSemaphores),
+                              std::move(imageRenderedSemaphores),
+                              std::move(imageAcquiredFences),
+                              std::move(imageRenderedFences),
+                              framesCount,
+                              instance,
+                              device,
+                              surface,
+                              swapchain,
+                              renderPass,
+                              descriptorPool,
+                              descriptorSetLayout,
+                              pipelineLayout,
+                              commandPool,
+                              graphicsQueue,
+                              presentQueue});
     }
 } // namespace nd::src::graphics::vulkan
