@@ -3,53 +3,6 @@
 
 namespace nd::src::graphics::vulkan
 {
-    Image::Image() noexcept
-    {
-        ND_SET_SCOPE();
-    }
-
-    Image::Image(const VkDevice device, const VkImageCreateInfo& createInfo)
-        : device_(device)
-    {
-        ND_SET_SCOPE();
-
-        ND_ASSERT(vkCreateImage(device_, &createInfo, nullptr, &image_) == VK_SUCCESS);
-    }
-
-    Image::Image(Image&& image) noexcept
-        : device_(std::move(image.device_))
-        , image_(std::move(image.image_))
-    {
-        ND_SET_SCOPE();
-
-        image.image_ = VK_NULL_HANDLE;
-    }
-
-    Image&
-    Image::operator=(Image&& image) noexcept
-    {
-        ND_SET_SCOPE();
-
-        if(&image == this)
-        {
-            return *this;
-        }
-
-        device_ = std::move(image.device_);
-        image_  = std::move(image.image_);
-
-        image.image_ = VK_NULL_HANDLE;
-
-        return *this;
-    }
-
-    Image::~Image()
-    {
-        ND_SET_SCOPE();
-
-        vkDestroyImage(device_, image_, nullptr);
-    }
-
     VkImageCreateInfo
     getImageCreateInfo(const VkImageType           type,
                        const VkFormat              format,
@@ -85,5 +38,17 @@ namespace nd::src::graphics::vulkan
             queueFamilyIndices,                  // pQueueFamilyIndices;
             initialLayout                        // initialLayout;
         };
+    }
+
+    VkImage
+    getImage(const VkImageCreateInfo& createInfo, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        VkImage image;
+
+        ND_ASSERT(vkCreateImage(device, &createInfo, nullptr, &image) == VK_SUCCESS);
+
+        return image;
     }
 } // namespace nd::src::graphics::vulkan

@@ -5,7 +5,6 @@
 
 #include "instance.hpp"
 #include "device.hpp"
-#include "surface.hpp"
 #include "swapchain.hpp"
 #include "descriptor_pool.hpp"
 #include "descriptor_set_layout.hpp"

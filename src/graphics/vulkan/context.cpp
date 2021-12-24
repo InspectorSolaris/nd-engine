@@ -123,6 +123,9 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
+        using std::string;
+        using std::vector;
+
         const auto layers = getMerged(configuration.layers,
                                       {
 #ifndef NDEBUG
@@ -148,24 +151,16 @@ namespace nd::src::graphics::vulkan
         };
 
         const auto deviceFeatures   = VkPhysicalDeviceFeatures {};
-        const auto deviceExtensions = std::vector<std::string> {"VK_KHR_swapchain"};
+        const auto deviceExtensions = vector<string> {"VK_KHR_swapchain"};
         const auto deviceQueueFlags = VK_QUEUE_GRAPHICS_BIT;
 
         const auto physicalDevice =
             getPhysicalDevice({deviceFeatures, physicalDevicePriority, deviceExtensions, deviceQueueFlags}, instance);
 
-        const auto deviceQueueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice, VK_QUEUE_GRAPHICS_BIT);
+        const auto deviceQueueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice, deviceQueueFlags);
         const auto device              = getDevice({deviceFeatures, deviceQueueFamilies, deviceExtensions}, physicalDevice);
 
         const auto surface = configuration.getSurface(instance);
-
-        const auto graphicsQueueFamily = getQueueFamily(deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
-        const auto presentQueueFamily  = getPresentQueueFamily(deviceQueueFamilies, physicalDevice, surface);
-
-        ND_ASSERT(graphicsQueueFamily.has_value() && presentQueueFamily.has_value());
-
-        const auto graphicsQueue = getQueue(device, graphicsQueueFamily.value().index, 0);
-        const auto presentQueue  = getQueue(device, presentQueueFamily.value().index, 0);
 
         const auto swapchainQueueFamilies = getSwapchainQueueFamilies(deviceQueueFamilies, physicalDevice, surface);
         const auto swapchainConfiguration = SwapchainConfiguration {swapchainQueueFamilies,
@@ -184,37 +179,36 @@ namespace nd::src::graphics::vulkan
 
         const auto swapchain = getSwapchain(swapchainConfiguration, device);
 
-        const auto colorAttachments = std::vector<VkAttachmentReference> {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
+        const auto colorAttachments = vector<VkAttachmentReference> {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
 
         const auto renderPassAttachments =
-            std::vector<VkAttachmentDescription> {getRenderPassAttachment(swapchainConfiguration.imageFormat,
-                                                                          VK_SAMPLE_COUNT_1_BIT,
-                                                                          VK_ATTACHMENT_LOAD_OP_CLEAR,
-                                                                          VK_ATTACHMENT_STORE_OP_STORE,
-                                                                          VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-                                                                          VK_ATTACHMENT_STORE_OP_DONT_CARE,
-                                                                          VK_IMAGE_LAYOUT_UNDEFINED,
-                                                                          VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)};
+            vector<VkAttachmentDescription> {getRenderPassAttachment(swapchainConfiguration.imageFormat,
+                                                                     VK_SAMPLE_COUNT_1_BIT,
+                                                                     VK_ATTACHMENT_LOAD_OP_CLEAR,
+                                                                     VK_ATTACHMENT_STORE_OP_STORE,
+                                                                     VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                                                                     VK_ATTACHMENT_STORE_OP_DONT_CARE,
+                                                                     VK_IMAGE_LAYOUT_UNDEFINED,
+                                                                     VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)};
 
-        const auto renderPassSubpasses =
-            std::vector<VkSubpassDescription> {getRenderPassSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                                                    0,
-                                                                    colorAttachments.size(),
-                                                                    0,
-                                                                    nullptr,
-                                                                    colorAttachments.data(),
-                                                                    nullptr,
-                                                                    nullptr,
-                                                                    nullptr)};
+        const auto renderPassSubpasses = vector<VkSubpassDescription> {getRenderPassSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                                                                            0,
+                                                                                            colorAttachments.size(),
+                                                                                            0,
+                                                                                            nullptr,
+                                                                                            colorAttachments.data(),
+                                                                                            nullptr,
+                                                                                            nullptr,
+                                                                                            nullptr)};
 
         const auto renderPassDependencies =
-            std::vector<VkSubpassDependency> {getRenderPassDependency(VK_SUBPASS_EXTERNAL,
-                                                                      0,
-                                                                      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                                                      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                                                      0,
-                                                                      VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                                                      {})};
+            vector<VkSubpassDependency> {getRenderPassDependency(VK_SUBPASS_EXTERNAL,
+                                                                 0,
+                                                                 VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                                                 VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                                                 0,
+                                                                 VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                                                 {})};
 
         const auto renderPass = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device);
 
@@ -247,20 +241,19 @@ namespace nd::src::graphics::vulkan
             });
 
         const auto shaderPaths =
-            std::vector<std::string> {"src/graphics/vulkan/shaders/vert.spv", "src/graphics/vulkan/shaders/frag.spv"};
+            vector<string> {"src/graphics/vulkan/shaders/vert.spv", "src/graphics/vulkan/shaders/frag.spv"};
 
-        const auto shaderStages =
-            std::vector<VkShaderStageFlagBits> {VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT};
+        const auto shaderStages = vector<VkShaderStageFlagBits> {VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT};
 
-        auto shaderModules = getMapped<std::string, VkShaderModule>(shaderPaths,
-                                                                    [device = device](const auto& path, const auto index)
-                                                                    {
-                                                                        return getShaderModule({path}, device);
-                                                                    });
+        auto shaderModules = getMapped<string, VkShaderModule>(shaderPaths,
+                                                               [device = device](const auto& path, const auto index)
+                                                               {
+                                                                   return getShaderModule({path}, device);
+                                                               });
 
-        const auto descriptorPool = getDescriptorPool(
-            {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
-            device);
+        const auto descriptorPool = getDescriptorPool({{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1},
+                                                      device,
+                                                      VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
 
         const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device);
 
@@ -301,7 +294,7 @@ namespace nd::src::graphics::vulkan
 
         const auto depthStencilStateCreateInfo = VkPipelineDepthStencilStateCreateInfo {};
 
-        const auto blendConstants       = std::vector<float> {0.0f, 0.0f, 0.0f, 0.0f};
+        const auto blendConstants       = vector<float> {0.0f, 0.0f, 0.0f, 0.0f};
         const auto colorBlendAttachment = VkPipelineColorBlendAttachmentState {
             VK_TRUE,
             VK_BLEND_FACTOR_SRC_ALPHA,
@@ -353,7 +346,7 @@ namespace nd::src::graphics::vulkan
 
             ND_ASSERT(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo) == VK_SUCCESS);
 
-            const auto clearValues = std::vector<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
+            const auto clearValues = vector<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
             const auto renderPassBeginInfo =
                 getRenderPassBeginInfo(renderPass, framebuffer, scissors, clearValues.size(), clearValues.data());
 
@@ -366,12 +359,26 @@ namespace nd::src::graphics::vulkan
             ND_ASSERT(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS);
         }
 
+
+
+        // TODO: Use queue families from 'deviceQueueFamilies' and 'swapchainQueueFamilies'
+        // TODO: Remove getQueueFamily and getPresentQueueFamily
+        const auto graphicsQueueFamily = getQueueFamily(deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
+        const auto presentQueueFamily  = getPresentQueueFamily(deviceQueueFamilies, physicalDevice, surface);
+
+        ND_ASSERT(graphicsQueueFamily.has_value() && presentQueueFamily.has_value());
+
+        const auto graphicsQueue = getQueue(device, graphicsQueueFamily.value().index, 0);
+        const auto presentQueue  = getQueue(device, presentQueueFamily.value().index, 0);
+
+
+
         const auto framesCount = size_t {2};
 
-        auto imageAcquiredSemaphores = std::vector<VkSemaphore>(framesCount);
-        auto imageRenderedSemaphores = std::vector<VkSemaphore>(framesCount);
-        auto imageAcquiredFences     = std::vector<VkFence>(framesCount);
-        auto imageRenderedFences     = std::vector<VkFence>(framesCount);
+        auto imageAcquiredSemaphores = vector<VkSemaphore>(framesCount);
+        auto imageRenderedSemaphores = vector<VkSemaphore>(framesCount);
+        auto imageAcquiredFences     = vector<VkFence>(framesCount);
+        auto imageRenderedFences     = vector<VkFence>(framesCount);
 
         for(size_t index = 0; index < framesCount; ++index)
         {
@@ -381,17 +388,17 @@ namespace nd::src::graphics::vulkan
             imageRenderedFences[index]     = getFence(device, VK_FENCE_CREATE_SIGNALED_BIT);
         }
 
-        return VulkanContext({std::move(swapchainImages),
-                              std::move(swapchainImageViews),
-                              std::move(swapchainFramebuffers),
-                              std::move(shaderModules),
-                              std::move(descriptorSets),
-                              std::move(pipelines),
-                              std::move(commandBuffers),
-                              std::move(imageAcquiredSemaphores),
-                              std::move(imageRenderedSemaphores),
-                              std::move(imageAcquiredFences),
-                              std::move(imageRenderedFences),
+        return VulkanContext({move(swapchainImages),
+                              move(swapchainImageViews),
+                              move(swapchainFramebuffers),
+                              move(shaderModules),
+                              move(descriptorSets),
+                              move(pipelines),
+                              move(commandBuffers),
+                              move(imageAcquiredSemaphores),
+                              move(imageRenderedSemaphores),
+                              move(imageAcquiredFences),
+                              move(imageRenderedFences),
                               framesCount,
                               instance,
                               device,

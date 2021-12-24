@@ -9,8 +9,6 @@ namespace nd::src::graphics::vulkan
     {
         const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes;
         const uint32_t                           maxSets;
-
-        const VkDescriptorPoolCreateFlags flags {};
     };
 
 
@@ -25,5 +23,8 @@ namespace nd::src::graphics::vulkan
     getDescriptorPool(const VkDescriptorPoolCreateInfo& createInfo, const VkDevice device);
 
     VkDescriptorPool
-    getDescriptorPool(const DescriptorPoolConfiguration& configuration, const VkDevice device);
+    getDescriptorPool(const DescriptorPoolConfiguration& configuration,
+                      const VkDevice                     device,
+                      const VkDescriptorPoolCreateFlags  flags = {},
+                      const void*                        next  = {});
 } // namespace nd::src::graphics::vulkan

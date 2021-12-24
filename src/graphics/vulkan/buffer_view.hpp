@@ -5,36 +5,6 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class BufferView final
-    {
-    public:
-        BufferView() noexcept;
-        BufferView(const VkDevice device, const VkBufferViewCreateInfo& createInfo);
-
-        BufferView(const BufferView& bufferView) = delete;
-        BufferView(BufferView&& bufferView) noexcept;
-
-        BufferView&
-        operator=(const BufferView& bufferView) = delete;
-        BufferView&
-        operator=(BufferView&& bufferView) noexcept;
-
-        ~BufferView();
-
-        constexpr VkBufferView
-        get() const noexcept;
-
-    private:
-        VkDevice     device_ {VK_NULL_HANDLE};
-        VkBufferView bufferView_ {VK_NULL_HANDLE};
-    };
-
-    constexpr VkBufferView
-    BufferView::get() const noexcept
-    {
-        return bufferView_;
-    }
-
     VkBufferViewCreateInfo
     getBufferViewCreateInfo(const VkBuffer                buffer,
                             const VkFormat                format,
@@ -42,4 +12,7 @@ namespace nd::src::graphics::vulkan
                             const VkDeviceSize            range,
                             const VkBufferViewCreateFlags flags = {},
                             const void*                   next  = {}) noexcept;
+
+    VkBufferView
+    getBufferView(const VkBufferViewCreateInfo& createInfo, const VkDevice device);
 } // namespace nd::src::graphics::vulkan
