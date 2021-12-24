@@ -331,6 +331,16 @@ namespace nd::src::graphics::vulkan
               0}},
             device);
 
+        // TODO: Use queue families from 'deviceQueueFamilies' and 'swapchainQueueFamilies'
+        // TODO: Remove getQueueFamily and getPresentQueueFamily
+        const auto graphicsQueueFamily = getQueueFamily(deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
+        const auto presentQueueFamily  = getPresentQueueFamily(deviceQueueFamilies, physicalDevice, surface);
+
+        ND_ASSERT(graphicsQueueFamily.has_value() && presentQueueFamily.has_value());
+
+        const auto graphicsQueue = getQueue(device, graphicsQueueFamily.value().index, 0);
+        const auto presentQueue  = getQueue(device, presentQueueFamily.value().index, 0);
+
         // TODO: Extract receiving of queue for command pool
         const auto commandPool = getCommandPool({deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT}, device);
 
@@ -359,20 +369,6 @@ namespace nd::src::graphics::vulkan
 
             ND_ASSERT(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS);
         }
-
-
-
-        // TODO: Use queue families from 'deviceQueueFamilies' and 'swapchainQueueFamilies'
-        // TODO: Remove getQueueFamily and getPresentQueueFamily
-        const auto graphicsQueueFamily = getQueueFamily(deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
-        const auto presentQueueFamily  = getPresentQueueFamily(deviceQueueFamilies, physicalDevice, surface);
-
-        ND_ASSERT(graphicsQueueFamily.has_value() && presentQueueFamily.has_value());
-
-        const auto graphicsQueue = getQueue(device, graphicsQueueFamily.value().index, 0);
-        const auto presentQueue  = getQueue(device, presentQueueFamily.value().index, 0);
-
-
 
         const auto framesCount = size_t {2};
 
