@@ -48,12 +48,12 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkCommandBuffer>
-    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device)
+    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device, const void* next)
     {
         ND_SET_SCOPE();
 
         const auto allocateInfo =
-            getCommandBufferAllocateInfo(configuration.commandPool, configuration.level, configuration.count);
+            getCommandBufferAllocateInfo(configuration.commandPool, configuration.level, configuration.count, next);
 
         return getCommandBuffer(allocateInfo, device);
     }

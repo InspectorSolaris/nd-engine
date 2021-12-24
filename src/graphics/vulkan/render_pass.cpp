@@ -138,7 +138,10 @@ namespace nd::src::graphics::vulkan
     }
 
     VkRenderPass
-    getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device)
+    getRenderPass(const RenderPassConfiguration& configuration,
+                  const VkDevice                 device,
+                  const VkRenderPassCreateFlags  flags,
+                  const void*                    next)
     {
         ND_SET_SCOPE();
 
@@ -147,7 +150,9 @@ namespace nd::src::graphics::vulkan
                                                         configuration.dependencies.size(),
                                                         configuration.attachments.data(),
                                                         configuration.subpasses.data(),
-                                                        configuration.dependencies.data());
+                                                        configuration.dependencies.data(),
+                                                        flags,
+                                                        next);
 
         return getRenderPass(createInfo, device);
     }

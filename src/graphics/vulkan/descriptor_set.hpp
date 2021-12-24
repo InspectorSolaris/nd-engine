@@ -21,5 +21,5 @@ namespace nd::src::graphics::vulkan
     getDescriptorSet(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device);
 
     std::vector<VkDescriptorSet>
-    getDescriptorSet(const DescriptorSetConfiguration& configuration, const VkDevice device);
+    getDescriptorSet(const DescriptorSetConfiguration& configuration, const VkDevice device, const void* next = {});
 } // namespace nd::src::graphics::vulkan

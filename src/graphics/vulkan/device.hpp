@@ -71,5 +71,8 @@ namespace nd::src::graphics::vulkan
     getDevice(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice);
 
     VkDevice
-    getDevice(const DeviceConfiguration& configuration, const VkPhysicalDevice physicalDevice);
+    getDevice(const DeviceConfiguration& configuration,
+              const VkPhysicalDevice     physicalDevice,
+              const VkDeviceCreateFlags  flags = {},
+              const void*                next  = {});
 } // namespace nd::src::graphics::vulkan

@@ -331,6 +331,7 @@ namespace nd::src::graphics::vulkan
               0}},
             device);
 
+        // TODO: Extract receiving of queue for command pool
         const auto commandPool = getCommandPool({deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT}, device);
 
         auto commandBuffers = getCommandBuffer(

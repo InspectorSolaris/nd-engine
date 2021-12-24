@@ -22,5 +22,8 @@ namespace nd::src::graphics::vulkan
     getCommandPool(const VkCommandPoolCreateInfo& createInfo, const VkDevice device);
 
     VkCommandPool
-    getCommandPool(const CommandPoolConfiguration& configuration, const VkDevice device);
+    getCommandPool(const CommandPoolConfiguration& configuration,
+                   const VkDevice                  device,
+                   const VkCommandPoolCreateFlags  flags = {},
+                   const void*                     next  = {});
 } // namespace nd::src::graphics::vulkan

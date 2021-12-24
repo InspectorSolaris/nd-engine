@@ -23,5 +23,8 @@ namespace nd::src::graphics::vulkan
     getPipelineLayout(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device);
 
     VkPipelineLayout
-    getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device);
+    getPipelineLayout(const PipelineLayoutConfiguration& configuration,
+                      const VkDevice                     device,
+                      const VkPipelineLayoutCreateFlags  flags = {},
+                      const void*                        next  = {});
 } // namespace nd::src::graphics::vulkan

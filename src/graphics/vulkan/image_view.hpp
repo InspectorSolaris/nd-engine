@@ -27,5 +27,8 @@ namespace nd::src::graphics::vulkan
     getImageView(const VkImageViewCreateInfo& createInfo, const VkDevice device);
 
     VkImageView
-    getImageView(const ImageViewConfiguration& configuration, const VkDevice device);
+    getImageView(const ImageViewConfiguration& configuration,
+                 const VkDevice                device,
+                 const VkImageViewCreateFlags  flags = {},
+                 const void*                   next  = {});
 } // namespace nd::src::graphics::vulkan

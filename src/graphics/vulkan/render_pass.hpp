@@ -66,5 +66,8 @@ namespace nd::src::graphics::vulkan
     getRenderPass(const VkRenderPassCreateInfo& createInfo, const VkDevice device);
 
     VkRenderPass
-    getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device);
+    getRenderPass(const RenderPassConfiguration& configuration,
+                  const VkDevice                 device,
+                  const VkRenderPassCreateFlags  flags = {},
+                  const void*                    next  = {});
 } // namespace nd::src::graphics::vulkan

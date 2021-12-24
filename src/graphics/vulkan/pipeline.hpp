@@ -134,5 +134,8 @@ namespace nd::src::graphics::vulkan
     getGraphicsPipeline(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device);
 
     std::vector<VkPipeline>
-    getGraphicsPipeline(const std::vector<PipelineConfiguration>& configurations, const VkDevice device);
+    getGraphicsPipeline(const std::vector<PipelineConfiguration>& configurations,
+                        const VkDevice                            device,
+                        const std::vector<VkPipelineCreateFlags>  flags = {},
+                        const std::vector<void*>                  next  = {});
 } // namespace nd::src::graphics::vulkan

@@ -117,7 +117,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkInstance
-    getInstance(const InstanceConfiguration& configuration)
+    getInstance(const InstanceConfiguration& configuration, const VkInstanceCreateFlags flags, const void* next)
     {
         ND_SET_SCOPE();
 
@@ -139,7 +139,9 @@ namespace nd::src::graphics::vulkan
                                                       static_cast<uint32_t>(clayers.size()),
                                                       static_cast<uint32_t>(cextensions.size()),
                                                       clayers.data(),
-                                                      cextensions.data());
+                                                      cextensions.data(),
+                                                      flags,
+                                                      next);
 
         return getInstance(createInfo);
     }

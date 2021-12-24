@@ -30,5 +30,8 @@ namespace nd::src::graphics::vulkan
     getFramebuffer(const VkFramebufferCreateInfo& createInfo, const VkDevice device);
 
     VkFramebuffer
-    getFramebuffer(const FramebufferConfiguration& configuration, const VkDevice device);
+    getFramebuffer(const FramebufferConfiguration& configuration,
+                   const VkDevice                  device,
+                   const VkFramebufferCreateFlags  flags = {},
+                   const void*                     next  = {});
 } // namespace nd::src::graphics::vulkan

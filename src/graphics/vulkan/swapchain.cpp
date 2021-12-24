@@ -213,7 +213,10 @@ namespace nd::src::graphics::vulkan
     }
 
     VkSwapchainKHR
-    getSwapchain(const SwapchainConfiguration& configuration, const VkDevice device)
+    getSwapchain(const SwapchainConfiguration&   configuration,
+                 const VkDevice                  device,
+                 const VkSwapchainCreateFlagsKHR flags,
+                 const void*                     next)
     {
         ND_SET_SCOPE();
 
@@ -249,7 +252,9 @@ namespace nd::src::graphics::vulkan
                                    configuration.compositeAlpha,
                                    configuration.presentMode,
                                    configuration.clipped,
-                                   VK_NULL_HANDLE);
+                                   VK_NULL_HANDLE,
+                                   flags,
+                                   next);
 
         return getSwapchain(createInfo, device);
     }

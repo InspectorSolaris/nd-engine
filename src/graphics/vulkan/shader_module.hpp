@@ -23,5 +23,8 @@ namespace nd::src::graphics::vulkan
     getShaderModule(const VkShaderModuleCreateInfo& createInfo, const VkDevice device);
 
     VkShaderModule
-    getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device);
+    getShaderModule(const ShaderModuleConfiguration& configuration,
+                    const VkDevice                   device,
+                    const VkShaderModuleCreateFlags  flags = {},
+                    const void*                      next  = {});
 } // namespace nd::src::graphics::vulkan

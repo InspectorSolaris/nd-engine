@@ -20,5 +20,8 @@ namespace nd::src::graphics::vulkan
     getDescriptorSetLayout(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device);
 
     VkDescriptorSetLayout
-    getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration, const VkDevice device);
+    getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration,
+                           const VkDevice                          device,
+                           const VkDescriptorSetLayoutCreateFlags  flags = {},
+                           const void*                             next  = {});
 } // namespace nd::src::graphics::vulkan

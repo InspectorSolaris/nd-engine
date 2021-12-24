@@ -41,7 +41,10 @@ namespace nd::src::graphics::vulkan
     }
 
     VkFramebuffer
-    getFramebuffer(const FramebufferConfiguration& configuration, const VkDevice device)
+    getFramebuffer(const FramebufferConfiguration& configuration,
+                   const VkDevice                  device,
+                   const VkFramebufferCreateFlags  flags,
+                   const void*                     next)
     {
         ND_SET_SCOPE();
 
@@ -50,7 +53,9 @@ namespace nd::src::graphics::vulkan
                                                          configuration.attachments.data(),
                                                          configuration.width,
                                                          configuration.height,
-                                                         configuration.layers);
+                                                         configuration.layers,
+                                                         flags,
+                                                         next);
 
         return getFramebuffer(createInfo, device);
     }

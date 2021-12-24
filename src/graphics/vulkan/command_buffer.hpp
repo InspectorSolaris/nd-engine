@@ -27,5 +27,5 @@ namespace nd::src::graphics::vulkan
     getCommandBuffer(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device);
 
     std::vector<VkCommandBuffer>
-    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device);
+    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device, const void* next = {});
 } // namespace nd::src::graphics::vulkan

@@ -44,5 +44,5 @@ namespace nd::src::graphics::vulkan
     getInstance(const VkInstanceCreateInfo& createInfo);
 
     VkInstance
-    getInstance(const InstanceConfiguration& configuration);
+    getInstance(const InstanceConfiguration& configuration, const VkInstanceCreateFlags flags = {}, const void* next = {});
 } // namespace nd::src::graphics::vulkan

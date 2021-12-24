@@ -241,7 +241,10 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDevice
-    getDevice(const DeviceConfiguration& configuration, const VkPhysicalDevice physicalDevice)
+    getDevice(const DeviceConfiguration& configuration,
+              const VkPhysicalDevice     physicalDevice,
+              const VkDeviceCreateFlags  flags,
+              const void*                next)
     {
         ND_SET_SCOPE();
 
@@ -262,7 +265,9 @@ namespace nd::src::graphics::vulkan
                                                     cextensions.size(),
                                                     queueCreateInfos.data(),
                                                     cextensions.data(),
-                                                    &configuration.features);
+                                                    &configuration.features,
+                                                    flags,
+                                                    next);
 
         return getDevice(createInfo, physicalDevice);
     }
