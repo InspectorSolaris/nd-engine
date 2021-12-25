@@ -43,6 +43,11 @@ namespace nd::src::graphics::vulkan
         {
             vkDestroySemaphore(device_, imageAcquiredSemaphores_[index], nullptr);
             vkDestroySemaphore(device_, imageRenderedSemaphores_[index], nullptr);
+
+            const auto fences = std::vector<VkFence> {imageAcquiredFences_[index], imageRenderedFences_[index]};
+
+            vkWaitForFences(device_, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
+
             vkDestroyFence(device_, imageAcquiredFences_[index], nullptr);
             vkDestroyFence(device_, imageRenderedFences_[index], nullptr);
         }
