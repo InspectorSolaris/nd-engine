@@ -39,8 +39,8 @@ main()
 
         const auto windowsConfiguration = WindowConfiguration {"nd-engine", 800, 600};
 
-        auto glfwContext = getGlfwContext();
-        auto glfwWindow  = getWindow(windowsConfiguration);
+        const auto glfwContext = getGlfwContext();
+        const auto glfwWindow  = getWindow(windowsConfiguration);
 
         auto vulkanContext = getVulkanContext({bind(getSurface, ref(glfwWindow), _1),
                                                windowsConfiguration.title,

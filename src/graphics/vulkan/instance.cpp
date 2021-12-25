@@ -8,13 +8,14 @@ namespace nd::src::graphics::vulkan
                        const char*    engineName,
                        const uint32_t applicationVersion,
                        const uint32_t engineVersion,
-                       const uint32_t apiVersion) noexcept
+                       const uint32_t apiVersion,
+                       const void*    next) noexcept
     {
         ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_APPLICATION_INFO, // sType;
-            nullptr,                            // pNext;
+            next,                               // pNext;
             applicationName,                    // pApplicationName;
             applicationVersion,                 // applicationVersion;
             engineName,                         // pEngineName;

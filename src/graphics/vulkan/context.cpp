@@ -150,6 +150,7 @@ namespace nd::src::graphics::vulkan
                                            VK_MAKE_VERSION(0, 1, 0),
                                            VK_API_VERSION_1_2});
 
+        const auto physicalDeviceExtensions = vector<string> {"VK_KHR_swapchain"};
         const auto physicalDeviceConfiguration =
             PhysicalDeviceConfiguration {{},
                                          [](const VkPhysicalDevice            physicalDevice,
@@ -158,7 +159,7 @@ namespace nd::src::graphics::vulkan
                                          {
                                              return 1;
                                          },
-                                         {"VK_KHR_swapchain"},
+                                         physicalDeviceExtensions,
                                          VK_QUEUE_GRAPHICS_BIT};
 
         const auto physicalDevice = getPhysicalDevice(physicalDeviceConfiguration, instance);

@@ -23,7 +23,8 @@ namespace nd::src::graphics::vulkan
                        const char*    engineName,
                        const uint32_t applicationVersion,
                        const uint32_t engineVersion,
-                       const uint32_t apiVersion) noexcept;
+                       const uint32_t apiVersion,
+                       const void*    next = {}) noexcept;
 
     VkInstanceCreateInfo
     getInstanceCreateInfo(const VkApplicationInfo*    applicationInfo,

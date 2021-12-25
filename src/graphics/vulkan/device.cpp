@@ -68,8 +68,10 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
+        const auto queueFamiliesProperties = getPhysicalDeviceQueueFamiliesProperties(physicalDevice);
+
         return getMapped<VkQueueFamilyProperties, QueueFamily>(
-            getPhysicalDeviceQueueFamiliesProperties(physicalDevice),
+            queueFamiliesProperties,
             [](const auto& properties, const auto index)
             {
                 return QueueFamily {static_cast<uint32_t>(index), properties.queueCount, properties.queueFlags};
