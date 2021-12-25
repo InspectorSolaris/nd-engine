@@ -18,7 +18,7 @@ namespace nd::src::graphics::vulkan
                              const void*                    next  = {}) noexcept;
 
     VkCommandPool
-    getCommandPool(const VkCommandPoolCreateInfo& createInfo, const VkDevice device);
+    getCommandPoolHandle(const VkCommandPoolCreateInfo& createInfo, const VkDevice device);
 
     VkCommandPool
     getCommandPool(const CommandPoolConfiguration& configuration,

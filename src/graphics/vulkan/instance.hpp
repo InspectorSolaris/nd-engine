@@ -7,11 +7,11 @@ namespace nd::src::graphics::vulkan
 {
     struct InstanceConfiguration final
     {
-        const std::string& applicationName;
-        const std::string& engineName;
+        const std::string applicationName;
+        const std::string engineName;
 
-        const std::vector<std::string>& layers;
-        const std::vector<std::string>& extensions;
+        const std::vector<std::string> layers;
+        const std::vector<std::string> extensions;
 
         const uint32_t applicationVersion;
         const uint32_t engineVersion;
@@ -42,7 +42,7 @@ namespace nd::src::graphics::vulkan
     isInstanceExtensionsSupported(const std::vector<std::string>& extensions) noexcept;
 
     VkInstance
-    getInstance(const VkInstanceCreateInfo& createInfo);
+    getInstanceHandle(const VkInstanceCreateInfo& createInfo);
 
     VkInstance
     getInstance(const InstanceConfiguration& configuration, const VkInstanceCreateFlags flags = {}, const void* next = {});

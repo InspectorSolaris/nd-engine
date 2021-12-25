@@ -20,7 +20,7 @@ namespace nd::src::graphics::vulkan
                                 const void*                       next  = {}) noexcept;
 
     VkPipelineLayout
-    getPipelineLayout(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device);
+    getPipelineLayoutHandle(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device);
 
     VkPipelineLayout
     getPipelineLayout(const PipelineLayoutConfiguration& configuration,

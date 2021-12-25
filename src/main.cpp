@@ -48,8 +48,8 @@ main()
                                                getRequiredExtensions(),
                                                static_cast<uint32_t>(windowConfiguration.width),
                                                static_cast<uint32_t>(windowConfiguration.height)},
-                                              {bind(getSurface, ref(glfwWindow), _1)},
-                                              {});
+                                              {getInstance, bind(getSurface, ref(glfwWindow), _1)},
+                                              vulkanContextConfigurations);
 
         while(!glfwWindowShouldClose(glfwWindow))
         {

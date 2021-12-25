@@ -27,7 +27,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkBuffer
-    getBuffer(const VkBufferCreateInfo& createInfo, const VkDevice device)
+    getBufferHandle(const VkBufferCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 

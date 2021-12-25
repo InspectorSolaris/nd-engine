@@ -20,7 +20,7 @@ namespace nd::src::graphics::vulkan
                                 const void*                       next  = {}) noexcept;
 
     VkDescriptorPool
-    getDescriptorPool(const VkDescriptorPoolCreateInfo& createInfo, const VkDevice device);
+    getDescriptorPoolHandle(const VkDescriptorPoolCreateInfo& createInfo, const VkDevice device);
 
     VkDescriptorPool
     getDescriptorPool(const DescriptorPoolConfiguration& configuration,

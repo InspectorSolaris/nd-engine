@@ -18,7 +18,7 @@ namespace nd::src::graphics::vulkan
                                  const void*                  next = {}) noexcept;
 
     std::vector<VkDescriptorSet>
-    getDescriptorSet(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device);
+    getDescriptorSetHandle(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device);
 
     std::vector<VkDescriptorSet>
     getDescriptorSet(const DescriptorSetConfiguration& configuration, const VkDevice device, const void* next = {});

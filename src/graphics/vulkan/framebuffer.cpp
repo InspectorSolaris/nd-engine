@@ -29,7 +29,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkFramebuffer
-    getFramebuffer(const VkFramebufferCreateInfo& createInfo, const VkDevice device)
+    getFramebufferHandle(const VkFramebufferCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -57,6 +57,6 @@ namespace nd::src::graphics::vulkan
                                                          flags,
                                                          next);
 
-        return getFramebuffer(createInfo, device);
+        return getFramebufferHandle(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

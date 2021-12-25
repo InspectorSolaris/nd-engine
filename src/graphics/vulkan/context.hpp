@@ -3,48 +3,10 @@
 #include "pch.hpp"
 #include "shared.hpp"
 
-#include "instance.hpp"
-#include "device.hpp"
-#include "swapchain.hpp"
-#include "descriptor_pool.hpp"
-#include "descriptor_set_layout.hpp"
-#include "descriptor_set.hpp"
-#include "render_pass.hpp"
-#include "shader_module.hpp"
-#include "pipeline_layout.hpp"
-#include "pipeline.hpp"
-#include "image.hpp"
-#include "image_view.hpp"
-#include "framebuffer.hpp"
-#include "buffer.hpp"
-#include "buffer_view.hpp"
-#include "command_pool.hpp"
-#include "command_buffer.hpp"
-#include "synchronization.hpp"
+#include "context_configuration.hpp"
 
 namespace nd::src::graphics::vulkan
 {
-    struct VulkanContextConfigurationExternal final
-    {
-        const std::string& applicationName;
-        const std::string& engineName;
-
-        const std::vector<std::string>& layers;
-        const std::vector<std::string>& extensions;
-
-        const uint32_t width;
-        const uint32_t height;
-    };
-
-    struct VulkanContextInitializers final
-    {
-        const std::function<VkSurfaceKHR(const VkInstance)>& getSurface;
-    };
-
-    struct VulkanContextConfigurations final
-    {
-    };
-
     class VulkanContext final
     {
     public:

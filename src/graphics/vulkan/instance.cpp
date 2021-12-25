@@ -106,7 +106,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkInstance
-    getInstance(const VkInstanceCreateInfo& createInfo)
+    getInstanceHandle(const VkInstanceCreateInfo& createInfo)
     {
         ND_SET_SCOPE();
 
@@ -144,6 +144,6 @@ namespace nd::src::graphics::vulkan
                                                       flags,
                                                       next);
 
-        return getInstance(createInfo);
+        return getInstanceHandle(createInfo);
     }
 } // namespace nd::src::graphics::vulkan

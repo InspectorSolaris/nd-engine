@@ -27,7 +27,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkImageView
-    getImageView(const VkImageViewCreateInfo& createInfo, const VkDevice device)
+    getImageViewHandle(const VkImageViewCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -54,6 +54,6 @@ namespace nd::src::graphics::vulkan
                                                        flags,
                                                        next);
 
-        return getImageView(createInfo, device);
+        return getImageViewHandle(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

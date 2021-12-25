@@ -131,7 +131,7 @@ namespace nd::src::graphics::vulkan
                                   const void*                                   next  = {}) noexcept;
 
     std::vector<VkPipeline>
-    getGraphicsPipeline(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device);
+    getGraphicsPipelineHandle(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device);
 
     std::vector<VkPipeline>
     getGraphicsPipeline(const std::vector<PipelineConfiguration>& configurations,

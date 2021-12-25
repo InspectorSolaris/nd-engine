@@ -21,7 +21,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkDescriptorSet>
-    getDescriptorSet(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device)
+    getDescriptorSetHandle(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -42,6 +42,6 @@ namespace nd::src::graphics::vulkan
                                                                configuration.layouts.data(),
                                                                next);
 
-        return getDescriptorSet(allocateInfo, device);
+        return getDescriptorSetHandle(allocateInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

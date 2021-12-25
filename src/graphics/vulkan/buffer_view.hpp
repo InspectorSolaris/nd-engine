@@ -14,5 +14,5 @@ namespace nd::src::graphics::vulkan
                             const void*                   next  = {}) noexcept;
 
     VkBufferView
-    getBufferView(const VkBufferViewCreateInfo& createInfo, const VkDevice device);
+    getBufferViewHandle(const VkBufferViewCreateInfo& createInfo, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

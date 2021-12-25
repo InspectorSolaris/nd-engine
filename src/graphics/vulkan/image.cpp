@@ -41,7 +41,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkImage
-    getImage(const VkImageCreateInfo& createInfo, const VkDevice device)
+    getImageHandle(const VkImageCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 

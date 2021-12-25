@@ -22,5 +22,5 @@ namespace nd::src::graphics::vulkan
                        const void*                 next  = {}) noexcept;
 
     VkImage
-    getImage(const VkImageCreateInfo& createInfo, const VkDevice device);
+    getImageHandle(const VkImageCreateInfo& createInfo, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

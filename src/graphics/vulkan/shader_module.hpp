@@ -20,7 +20,7 @@ namespace nd::src::graphics::vulkan
                               const void*                     next  = {}) noexcept;
 
     VkShaderModule
-    getShaderModule(const VkShaderModuleCreateInfo& createInfo, const VkDevice device);
+    getShaderModuleHandle(const VkShaderModuleCreateInfo& createInfo, const VkDevice device);
 
     VkShaderModule
     getShaderModule(const ShaderModuleConfiguration& configuration,

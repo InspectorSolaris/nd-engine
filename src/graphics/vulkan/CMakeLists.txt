@@ -4,6 +4,7 @@ set(TARGET_SRC
     buffer_view.cpp
     command_buffer.cpp
     command_pool.cpp
+    context_configuration.cpp
     context.cpp
     descriptor_pool.cpp
     descriptor_set.cpp

@@ -27,7 +27,7 @@ namespace nd::src::graphics::vulkan
                              const void*                    next  = {}) noexcept;
 
     VkFramebuffer
-    getFramebuffer(const VkFramebufferCreateInfo& createInfo, const VkDevice device);
+    getFramebufferHandle(const VkFramebufferCreateInfo& createInfo, const VkDevice device);
 
     VkFramebuffer
     getFramebuffer(const FramebufferConfiguration& configuration,

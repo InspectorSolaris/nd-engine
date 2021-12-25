@@ -17,7 +17,7 @@ namespace nd::src::graphics::vulkan
                                      const void*                            next  = {}) noexcept;
 
     VkDescriptorSetLayout
-    getDescriptorSetLayout(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device);
+    getDescriptorSetLayoutHandle(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device);
 
     VkDescriptorSetLayout
     getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration,

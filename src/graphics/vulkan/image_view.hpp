@@ -24,7 +24,7 @@ namespace nd::src::graphics::vulkan
                            const void*                    next  = {}) noexcept;
 
     VkImageView
-    getImageView(const VkImageViewCreateInfo& createInfo, const VkDevice device);
+    getImageViewHandle(const VkImageViewCreateInfo& createInfo, const VkDevice device);
 
     VkImageView
     getImageView(const ImageViewConfiguration& configuration,

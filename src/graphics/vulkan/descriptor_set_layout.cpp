@@ -21,7 +21,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDescriptorSetLayout
-    getDescriptorSetLayout(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device)
+    getDescriptorSetLayoutHandle(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -43,6 +43,6 @@ namespace nd::src::graphics::vulkan
         const auto createInfo =
             getDescriptorSetLayoutCreateInfo(configuration.bindings.size(), configuration.bindings.data(), flags, next);
 
-        return getDescriptorSetLayout(createInfo, device);
+        return getDescriptorSetLayoutHandle(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

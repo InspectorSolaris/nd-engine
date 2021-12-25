@@ -90,7 +90,7 @@ namespace nd::src::graphics::vulkan
                            const void*                         next  = {}) noexcept;
 
     VkSwapchainKHR
-    getSwapchain(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device);
+    getSwapchainHandle(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device);
 
     VkSwapchainKHR
     getSwapchain(const SwapchainConfiguration&   configuration,

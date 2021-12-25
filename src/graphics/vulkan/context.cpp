@@ -140,22 +140,8 @@ namespace nd::src::graphics::vulkan
         using std::string;
         using std::vector;
 
-        const auto layers = getMerged(configurationExternal.layers,
-                                      {
-#ifndef NDEBUG
-                                          "VK_LAYER_KHRONOS_validation"
-#endif
-                                      });
-
-        const auto extensions = getMerged(configurationExternal.extensions, {});
-
-        const auto instance = getInstance({configurationExternal.applicationName,
-                                           configurationExternal.engineName,
-                                           layers,
-                                           extensions,
-                                           VK_MAKE_VERSION(0, 1, 0),
-                                           VK_MAKE_VERSION(0, 1, 0),
-                                           VK_API_VERSION_1_2});
+        const auto instance =
+            initializers.getInstance(configurations.getInstanceConfiguration(configurationExternal), {}, {});
 
         const auto physicalDeviceExtensions = vector<string> {"VK_KHR_swapchain"};
         const auto physicalDeviceConfiguration =

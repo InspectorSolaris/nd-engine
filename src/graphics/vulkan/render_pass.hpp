@@ -63,7 +63,7 @@ namespace nd::src::graphics::vulkan
                             const void*                    next  = {}) noexcept;
 
     VkRenderPass
-    getRenderPass(const VkRenderPassCreateInfo& createInfo, const VkDevice device);
+    getRenderPassHandle(const VkRenderPassCreateInfo& createInfo, const VkDevice device);
 
     VkRenderPass
     getRenderPass(const RenderPassConfiguration& configuration,

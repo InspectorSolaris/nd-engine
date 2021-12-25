@@ -25,7 +25,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkBufferView
-    getBufferView(const VkBufferViewCreateInfo& createInfo, const VkDevice device)
+    getBufferViewHandle(const VkBufferViewCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 

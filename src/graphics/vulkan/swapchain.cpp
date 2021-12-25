@@ -201,7 +201,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkSwapchainKHR
-    getSwapchain(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device)
+    getSwapchainHandle(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -260,7 +260,7 @@ namespace nd::src::graphics::vulkan
                                    flags,
                                    next);
 
-        return getSwapchain(createInfo, device);
+        return getSwapchainHandle(createInfo, device);
     }
 
     std::vector<VkImage>

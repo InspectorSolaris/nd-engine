@@ -126,7 +126,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkRenderPass
-    getRenderPass(const VkRenderPassCreateInfo& createInfo, const VkDevice device)
+    getRenderPassHandle(const VkRenderPassCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -154,6 +154,6 @@ namespace nd::src::graphics::vulkan
                                                         flags,
                                                         next);
 
-        return getRenderPass(createInfo, device);
+        return getRenderPassHandle(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

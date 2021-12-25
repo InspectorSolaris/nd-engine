@@ -67,7 +67,7 @@ namespace nd::src::graphics::vulkan
     getPhysicalDevice(const PhysicalDeviceConfiguration& configuration, const VkInstance instance);
 
     VkDevice
-    getDevice(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice);
+    getDeviceHandle(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice);
 
     VkDevice
     getDevice(const DeviceConfiguration& configuration,

@@ -221,7 +221,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDevice
-    getDevice(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice)
+    getDeviceHandle(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice)
     {
         ND_SET_SCOPE();
 
@@ -261,6 +261,6 @@ namespace nd::src::graphics::vulkan
                                                     flags,
                                                     next);
 
-        return getDevice(createInfo, physicalDevice);
+        return getDeviceHandle(createInfo, physicalDevice);
     }
 } // namespace nd::src::graphics::vulkan
