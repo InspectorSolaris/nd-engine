@@ -39,7 +39,7 @@ namespace nd::src::graphics::vulkan
                           const VkSurfaceKHR              surface);
 
     std::vector<uint32_t>
-    getQueueFamiliesIndices(const std::vector<const QueueFamily*>& queueFamilies) noexcept;
+    getQueueFamiliesIndices(const std::vector<QueueFamily>& queueFamilies) noexcept;
 
     VkSubmitInfo
     getSubmitInfo(const uint32_t              commandBuffersCount,

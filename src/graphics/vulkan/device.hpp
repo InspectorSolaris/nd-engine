@@ -13,7 +13,7 @@ namespace nd::src::graphics::vulkan
 
         const std::function<size_t(const VkPhysicalDevice,
                                    const VkPhysicalDeviceProperties&,
-                                   const VkPhysicalDeviceFeatures&)>& physicalDevicePriority;
+                                   const VkPhysicalDeviceFeatures&)>& priority;
 
         const std::vector<std::string>& extensions;
 

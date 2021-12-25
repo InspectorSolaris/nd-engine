@@ -9,7 +9,7 @@ namespace nd::src::graphics::vulkan
 {
     struct SwapchainConfiguration final
     {
-        const std::vector<const QueueFamily*>& queueFamiliesPool;
+        const std::vector<QueueFamily>& queueFamiliesPool;
 
         const VkPhysicalDevice physicalDevice;
         const VkSurfaceKHR     surface;
@@ -65,7 +65,7 @@ namespace nd::src::graphics::vulkan
     uint32_t
     getImageArrayLayers(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
-    std::vector<const QueueFamily*>
+    std::vector<QueueFamily>
     getSwapchainQueueFamilies(const std::vector<QueueFamily>& queueFamilies,
                               const VkPhysicalDevice          physicalDevice,
                               const VkSurfaceKHR              surface) noexcept;

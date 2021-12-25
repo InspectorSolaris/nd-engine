@@ -143,26 +143,28 @@ namespace nd::src::graphics::vulkan
                                            VK_MAKE_VERSION(0, 1, 0),
                                            VK_API_VERSION_1_2});
 
-        const auto physicalDevicePriority = [](const VkPhysicalDevice            physicalDevice,
+        const auto physicalDeviceFeatures   = VkPhysicalDeviceFeatures {};
+        const auto physicalDeviceExtensions = vector<string> {"VK_KHR_swapchain"};
+        const auto physicalDeviceQueueFlags = VK_QUEUE_GRAPHICS_BIT;
+        const auto physicalDevicePriority   = [](const VkPhysicalDevice            physicalDevice,
                                                const VkPhysicalDeviceProperties& properties,
                                                const VkPhysicalDeviceFeatures&   features)
         {
             return 1;
         };
 
-        const auto deviceFeatures   = VkPhysicalDeviceFeatures {};
-        const auto deviceExtensions = vector<string> {"VK_KHR_swapchain"};
-        const auto deviceQueueFlags = VK_QUEUE_GRAPHICS_BIT;
+        const auto physicalDevice = getPhysicalDevice(
+            {physicalDeviceFeatures, physicalDevicePriority, physicalDeviceExtensions, physicalDeviceQueueFlags},
+            instance);
 
-        const auto physicalDevice =
-            getPhysicalDevice({deviceFeatures, physicalDevicePriority, deviceExtensions, deviceQueueFlags}, instance);
+        const auto physicalDeviceQueueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice, physicalDeviceQueueFlags);
 
-        const auto deviceQueueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice, deviceQueueFlags);
-        const auto device              = getDevice({deviceFeatures, deviceQueueFamilies, deviceExtensions}, physicalDevice);
+        const auto device =
+            getDevice({physicalDeviceFeatures, physicalDeviceQueueFamilies, physicalDeviceExtensions}, physicalDevice);
 
         const auto surface = configuration.getSurface(instance);
 
-        const auto swapchainQueueFamilies = getSwapchainQueueFamilies(deviceQueueFamilies, physicalDevice, surface);
+        const auto swapchainQueueFamilies = getSwapchainQueueFamilies(physicalDeviceQueueFamilies, physicalDevice, surface);
         const auto swapchainConfiguration = SwapchainConfiguration {swapchainQueueFamilies,
                                                                     physicalDevice,
                                                                     surface,
@@ -333,8 +335,8 @@ namespace nd::src::graphics::vulkan
 
         // TODO: Use queue families from 'deviceQueueFamilies' and 'swapchainQueueFamilies'
         // TODO: Remove getQueueFamily and getPresentQueueFamily
-        const auto graphicsQueueFamily = getQueueFamily(deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
-        const auto presentQueueFamily  = getPresentQueueFamily(deviceQueueFamilies, physicalDevice, surface);
+        const auto graphicsQueueFamily = getQueueFamily(physicalDeviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
+        const auto presentQueueFamily  = getPresentQueueFamily(physicalDeviceQueueFamilies, physicalDevice, surface);
 
         ND_ASSERT(graphicsQueueFamily.has_value() && presentQueueFamily.has_value());
 
@@ -342,7 +344,7 @@ namespace nd::src::graphics::vulkan
         const auto presentQueue  = getQueue(device, presentQueueFamily.value().index, 0);
 
         // TODO: Extract receiving of queue for command pool
-        const auto commandPool = getCommandPool({deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT}, device);
+        const auto commandPool = getCommandPool({physicalDeviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT}, device);
 
         auto commandBuffers = getCommandBuffer(
             {commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, static_cast<uint32_t>(swapchainFramebuffers.size())},

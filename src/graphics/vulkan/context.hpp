@@ -26,7 +26,7 @@ namespace nd::src::graphics::vulkan
 {
     struct VulkanContextConfiguration final
     {
-        const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface;
+        const std::function<VkSurfaceKHR(const VkInstance)>& getSurface;
 
         const std::string& applicationName;
         const std::string& engineName;
@@ -38,7 +38,11 @@ namespace nd::src::graphics::vulkan
         const uint32_t height;
     };
 
-    struct VulkanContextCreaters final
+    struct VulkanContextInitializers final
+    {
+    };
+
+    struct VulkanContextInitializersConfigurations final
     {
     };
 

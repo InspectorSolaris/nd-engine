@@ -133,14 +133,14 @@ namespace nd::src::graphics::vulkan
         return std::clamp(configuration.imageArrayLayers, 1U, capabilities.maxImageArrayLayers);
     }
 
-    std::vector<const QueueFamily*>
+    std::vector<QueueFamily>
     getSwapchainQueueFamilies(const std::vector<QueueFamily>& queueFamiliesPool,
                               const VkPhysicalDevice          physicalDevice,
                               const VkSurfaceKHR              surface) noexcept
     {
         ND_SET_SCOPE();
 
-        auto swapchainQueueFamilies = std::vector<const QueueFamily*> {};
+        auto swapchainQueueFamilies = std::vector<QueueFamily> {};
 
         for(const auto queueFamily: queueFamiliesPool)
         {
@@ -150,7 +150,7 @@ namespace nd::src::graphics::vulkan
 
             if(isSupported)
             {
-                swapchainQueueFamilies.emplace_back(&queueFamily);
+                swapchainQueueFamilies.push_back(queueFamily);
             }
         }
 

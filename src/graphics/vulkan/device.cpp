@@ -211,7 +211,7 @@ namespace nd::src::graphics::vulkan
             vkGetPhysicalDeviceProperties(physicalDevice, &properties);
             vkGetPhysicalDeviceFeatures(physicalDevice, &features);
 
-            const auto priority = configuration.physicalDevicePriority(physicalDevice, properties, features);
+            const auto priority = configuration.priority(physicalDevice, properties, features);
 
             if(isPhysicalDeviceFeaturesSupported(&features, &configuration.features) &&
                isPhysicalDeviceExtensionsSupported(physicalDevice, configuration.extensions) &&
