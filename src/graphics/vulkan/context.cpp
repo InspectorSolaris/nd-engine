@@ -131,24 +131,26 @@ namespace nd::src::graphics::vulkan
     }
 
     VulkanContext
-    getVulkanContext(const VulkanContextConfiguration& configuration)
+    getVulkanContext(const VulkanContextConfigurationExternal& configurationExternal,
+                     const VulkanContextInitializers&          initializers,
+                     const VulkanContextConfigurations&        configurations)
     {
         ND_SET_SCOPE();
 
         using std::string;
         using std::vector;
 
-        const auto layers = getMerged(configuration.layers,
+        const auto layers = getMerged(configurationExternal.layers,
                                       {
 #ifndef NDEBUG
                                           "VK_LAYER_KHRONOS_validation"
 #endif
                                       });
 
-        const auto extensions = getMerged(configuration.extensions, {});
+        const auto extensions = getMerged(configurationExternal.extensions, {});
 
-        const auto instance = getInstance({configuration.applicationName,
-                                           configuration.engineName,
+        const auto instance = getInstance({configurationExternal.applicationName,
+                                           configurationExternal.engineName,
                                            layers,
                                            extensions,
                                            VK_MAKE_VERSION(0, 1, 0),
@@ -176,24 +178,25 @@ namespace nd::src::graphics::vulkan
 
         const auto deviceQueues = getQueues(device, deviceQueueFamilies);
 
-        const auto surface = configuration.getSurface(instance);
+        const auto surface = initializers.getSurface(instance);
 
         const auto swapchainQueueFamilies = getSwapchainQueueFamilies(deviceQueueFamilies, physicalDevice, surface);
         const auto swapchainQueues        = getQueues(device, swapchainQueueFamilies);
 
-        const auto swapchainConfiguration = SwapchainConfiguration {swapchainQueueFamilies,
-                                                                    physicalDevice,
-                                                                    surface,
-                                                                    {configuration.width, configuration.height},
-                                                                    1,
-                                                                    1,
-                                                                    true,
-                                                                    VK_FORMAT_B8G8R8A8_SRGB,
-                                                                    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-                                                                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                                                                    VK_PRESENT_MODE_IMMEDIATE_KHR,
-                                                                    VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
-                                                                    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
+        const auto swapchainConfiguration =
+            SwapchainConfiguration {swapchainQueueFamilies,
+                                    physicalDevice,
+                                    surface,
+                                    {configurationExternal.width, configurationExternal.height},
+                                    1,
+                                    1,
+                                    true,
+                                    VK_FORMAT_B8G8R8A8_SRGB,
+                                    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+                                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                                    VK_PRESENT_MODE_IMMEDIATE_KHR,
+                                    VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
+                                    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
 
         const auto swapchain = getSwapchain(swapchainConfiguration, device);
 
@@ -274,8 +277,7 @@ namespace nd::src::graphics::vulkan
                                                       VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
 
         const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device);
-
-        const auto descriptorSets = getDescriptorSet({{descriptorSetLayout}, descriptorPool}, device);
+        const auto descriptorSets      = getDescriptorSet({{descriptorSetLayout}, descriptorPool}, device);
 
         const auto pipelineLayout = getPipelineLayout({{descriptorSetLayout}, {}}, device);
 
@@ -349,9 +351,16 @@ namespace nd::src::graphics::vulkan
               0}},
             device);
 
-        // TODO: Extract receiving of queue for command pool
-        const auto commandPool = getCommandPool({deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT}, device);
+        const auto graphicsQueueFamily = std::find_if(deviceQueueFamilies.begin(),
+                                                      deviceQueueFamilies.end(),
+                                                      [](const auto& queueFamily)
+                                                      {
+                                                          return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
+                                                      });
 
+        ND_ASSERT(graphicsQueueFamily != deviceQueueFamilies.end());
+
+        const auto commandPool    = getCommandPool({graphicsQueueFamily->index}, device);
         const auto commandBuffers = getCommandBuffer(
             {commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, static_cast<uint32_t>(swapchainFramebuffers.size())},
             device);
@@ -385,10 +394,10 @@ namespace nd::src::graphics::vulkan
         const auto imageAcquiredFences     = getFence(device, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
         const auto imageRenderedFences     = getFence(device, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
 
-        return VulkanContext({deviceQueueFamilies,
-                              swapchainQueueFamilies,
-                              deviceQueues,
+        return VulkanContext({deviceQueues,
                               swapchainQueues,
+                              deviceQueueFamilies,
+                              swapchainQueueFamilies,
                               swapchainImages,
                               swapchainImageViews,
                               swapchainFramebuffers,

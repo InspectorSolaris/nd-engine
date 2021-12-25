@@ -37,18 +37,19 @@ main()
     {
         ND_SET_SCOPE();
 
-        const auto windowsConfiguration = WindowConfiguration {"nd-engine", 800, 600};
+        const auto windowConfiguration = nd::src::graphics::glfw::WindowConfiguration {"nd-engine", 800, 600};
 
         const auto glfwContext = getGlfwContext();
-        const auto glfwWindow  = getWindow(windowsConfiguration);
+        const auto glfwWindow  = getWindow(windowConfiguration);
 
-        auto vulkanContext = getVulkanContext({bind(getSurface, ref(glfwWindow), _1),
-                                               windowsConfiguration.title,
-                                               windowsConfiguration.title,
+        auto vulkanContext = getVulkanContext({windowConfiguration.title,
+                                               windowConfiguration.title,
                                                {},
                                                getRequiredExtensions(),
-                                               static_cast<uint32_t>(windowsConfiguration.width),
-                                               static_cast<uint32_t>(windowsConfiguration.height)});
+                                               static_cast<uint32_t>(windowConfiguration.width),
+                                               static_cast<uint32_t>(windowConfiguration.height)},
+                                              {bind(getSurface, ref(glfwWindow), _1)},
+                                              {});
 
         while(!glfwWindowShouldClose(glfwWindow))
         {

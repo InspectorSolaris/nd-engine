@@ -9,8 +9,7 @@ namespace nd::src::graphics::vulkan
 {
     struct CommandPoolConfiguration final
     {
-        const std::vector<QueueFamily>& queueFamiliesPool;
-        const VkQueueFlags              queueFlags;
+        const uint32_t queueFamilyIndex;
     };
 
     VkCommandPoolCreateInfo

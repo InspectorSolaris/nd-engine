@@ -38,16 +38,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto queueFamily = std::find_if(configuration.queueFamiliesPool.begin(),
-                                              configuration.queueFamiliesPool.end(),
-                                              [&configuration](const auto& queueFamily)
-                                              {
-                                                  return isSubmask(queueFamily.queueFlags, configuration.queueFlags);
-                                              });
-
-        ND_ASSERT(queueFamily != configuration.queueFamiliesPool.end());
-
-        const auto createInfo = getCommandPoolCreateInfo(queueFamily->index, flags, next);
+        const auto createInfo = getCommandPoolCreateInfo(configuration.queueFamilyIndex, flags, next);
 
         return getCommandPool(createInfo, device);
     }

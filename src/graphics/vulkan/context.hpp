@@ -24,10 +24,8 @@
 
 namespace nd::src::graphics::vulkan
 {
-    struct VulkanContextConfiguration final
+    struct VulkanContextConfigurationExternal final
     {
-        const std::function<VkSurfaceKHR(const VkInstance)>& getSurface;
-
         const std::string& applicationName;
         const std::string& engineName;
 
@@ -40,9 +38,10 @@ namespace nd::src::graphics::vulkan
 
     struct VulkanContextInitializers final
     {
+        const std::function<VkSurfaceKHR(const VkInstance)>& getSurface;
     };
 
-    struct VulkanContextInitializersConfigurations final
+    struct VulkanContextConfigurations final
     {
     };
 
@@ -51,11 +50,11 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::vector<QueueFamily>& deviceQueueFamilies;
-            const std::vector<QueueFamily>& swapchainQueueFamilies;
-
             const std::map<uint32_t, std::vector<VkQueue>>& deviceQueues;
             const std::map<uint32_t, std::vector<VkQueue>>& swapchainQueues;
+
+            const std::vector<QueueFamily>& deviceQueueFamilies;
+            const std::vector<QueueFamily>& swapchainQueueFamilies;
 
             const std::vector<VkImage>&         swapchainImages;
             const std::vector<VkImageView>&     swapchainImageViews;
@@ -99,11 +98,11 @@ namespace nd::src::graphics::vulkan
         drawNextFrame();
 
     private:
-        std::vector<QueueFamily> deviceQueueFamilies_ {};
-        std::vector<QueueFamily> swapchainQueueFamilies_ {};
-
         std::map<uint32_t, std::vector<VkQueue>> deviceQueues_ {};
         std::map<uint32_t, std::vector<VkQueue>> swapchainQueues_ {};
+
+        std::vector<QueueFamily> deviceQueueFamilies_ {};
+        std::vector<QueueFamily> swapchainQueueFamilies_ {};
 
         std::vector<VkImage>         swapchainImages_ {};
         std::vector<VkImageView>     swapchainImageViews_ {};
@@ -132,5 +131,7 @@ namespace nd::src::graphics::vulkan
     };
 
     VulkanContext
-    getVulkanContext(const VulkanContextConfiguration& configuration);
+    getVulkanContext(const VulkanContextConfigurationExternal& configurationExternal,
+                     const VulkanContextInitializers&          initializers,
+                     const VulkanContextConfigurations&        configurations);
 } // namespace nd::src::graphics::vulkan
