@@ -224,7 +224,11 @@ namespace nd::src::graphics::vulkan
         const auto presentModes = getSurfacePresentModes(configuration.physicalDevice, configuration.surface);
         const auto capabilities = getSurfaceCapabilities(configuration.physicalDevice, configuration.surface);
 
-        const auto queueFamiliesIndices = getQueueFamiliesIndices(configuration.queueFamiliesPool);
+        const auto queueFamiliesIndices = getMapped<QueueFamily, uint32_t>(configuration.queueFamiliesPool,
+                                                                           [](const auto& queueFamily, const auto index)
+                                                                           {
+                                                                               return queueFamily.index;
+                                                                           });
 
         ND_ASSERT(queueFamiliesIndices.size());
         ND_ASSERT(isFormatSupported(configuration, formats));

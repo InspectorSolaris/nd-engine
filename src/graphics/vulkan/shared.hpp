@@ -16,23 +16,60 @@ namespace nd::src::graphics::vulkan
     std::vector<const char*>
     getRawStrings(const std::vector<std::string>& strings) noexcept;
 
-    template<typename A,
-             typename B,
-             typename Map,
-             typename CollectionA = std::vector<A>,
-             typename CollectionB = std::vector<B>>
-    CollectionB
-    getMapped(const CollectionA& as, const Map& map) noexcept
+    template<typename Out, typename Map, typename CollectionOut = std::vector<Out>>
+    CollectionOut
+    getMapped(const size_t size, const Map& map) noexcept
     {
-        auto bs = CollectionB {};
+        auto outs = CollectionOut {};
 
-        bs.reserve(as.size());
+        outs.reserve(size);
 
-        for(size_t index = 0; index < as.size(); ++index)
+        for(size_t index = 0; index < size; ++index)
         {
-            bs.push_back(map(as[index], index));
+            outs.push_back(map(index));
         }
 
-        return bs;
+        return outs;
+    }
+
+    template<typename In,
+             typename Out,
+             typename Map,
+             typename CollectionIn  = std::vector<In>,
+             typename CollectionOut = std::vector<Out>>
+    CollectionOut
+    getMapped(const CollectionIn& ins, const Map& map) noexcept
+    {
+        auto outs = CollectionOut {};
+
+        outs.reserve(ins.size());
+
+        for(size_t index = 0; index < ins.size(); ++index)
+        {
+            outs.push_back(map(ins[index], index));
+        }
+
+        return outs;
+    }
+
+    template<typename In,
+             typename Key,
+             typename Value,
+             typename KeyMap,
+             typename ValueMap,
+             typename CollectionIn = std::vector<In>>
+    std::map<Key, Value>
+    getMap(const CollectionIn& ins, const KeyMap& keyMap, const ValueMap& valueMap) noexcept
+    {
+        auto map = std::map<Key, Value> {};
+
+        for(size_t index = 0; index < ins.size(); ++index)
+        {
+            const auto& in = ins[index];
+
+            map[keyMap(in, index)] = valueMap(in, index);
+        }
+
+        return map;
     }
 } // namespace nd::src::graphics::vulkan

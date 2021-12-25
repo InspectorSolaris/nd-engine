@@ -11,9 +11,8 @@ namespace nd::src::graphics::vulkan
     {
         const VkPhysicalDeviceFeatures& features;
 
-        const std::function<size_t(const VkPhysicalDevice,
-                                   const VkPhysicalDeviceProperties&,
-                                   const VkPhysicalDeviceFeatures&)>& priority;
+        const std::function<
+            size_t(const VkPhysicalDevice, const VkPhysicalDeviceProperties&, const VkPhysicalDeviceFeatures&)>& priority;
 
         const std::vector<std::string>& extensions;
 
@@ -45,10 +44,10 @@ namespace nd::src::graphics::vulkan
                         const void*                     next  = {}) noexcept;
 
     std::vector<VkQueueFamilyProperties>
-    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept;
+    getPhysicalDeviceQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept;
 
     std::vector<QueueFamily>
-    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;
+    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept;
 
     std::vector<VkPhysicalDevice>
     getPhysicalDevices(const VkInstance instance) noexcept;

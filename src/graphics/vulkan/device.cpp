@@ -48,7 +48,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkQueueFamilyProperties>
-    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept
+    getPhysicalDeviceQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept
     {
         ND_SET_SCOPE();
 
@@ -64,26 +64,16 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<QueueFamily>
-    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept
+    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept
     {
         ND_SET_SCOPE();
 
-        const auto queueFamiliesRaw = getPhysicalDeviceQueueFamilies(physicalDevice);
-
-        auto queueFamilies = std::vector<QueueFamily> {};
-
-        for(size_t i = 0; i < queueFamiliesRaw.size(); ++i)
-        {
-            const auto queueFamilyRaw = queueFamiliesRaw[i];
-
-            if(isSubmask(queueFamilyRaw.queueFlags, queueFlags))
+        return getMapped<VkQueueFamilyProperties, QueueFamily>(
+            getPhysicalDeviceQueueFamiliesProperties(physicalDevice),
+            [](const auto& properties, const auto index)
             {
-                queueFamilies.push_back(
-                    QueueFamily {static_cast<uint32_t>(i), queueFamilyRaw.queueCount, queueFamilyRaw.queueFlags});
-            }
-        }
-
-        return queueFamilies;
+                return QueueFamily {static_cast<uint32_t>(index), properties.queueCount, properties.queueFlags};
+            });
     }
 
     std::vector<VkPhysicalDevice>
@@ -167,7 +157,7 @@ namespace nd::src::graphics::vulkan
         auto queueFlagsPool      = queueFlags;
         auto queueFlagsSupported = VkQueueFlags {};
 
-        const auto queueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice);
+        const auto queueFamilies = getPhysicalDeviceQueueFamiliesProperties(physicalDevice);
 
         while(queueFlagsPool)
         {

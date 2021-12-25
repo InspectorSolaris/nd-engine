@@ -37,6 +37,16 @@ namespace nd::src::graphics::vulkan
         return getSemaphore(createInfo, device);
     }
 
+    std::vector<VkSemaphore>
+    getSemaphore(const VkDevice device, const size_t count, const VkSemaphoreCreateFlags flags, const void* next)
+    {
+        return getMapped<VkSemaphore>(count,
+                                      [device, flags, next](const auto index)
+                                      {
+                                          return getSemaphore(device, flags, next);
+                                      });
+    }
+
     VkFenceCreateInfo
     getFenceCreateInfo(const VkFenceCreateFlags flags, const void* next) noexcept
     {
@@ -69,5 +79,15 @@ namespace nd::src::graphics::vulkan
         const auto createInfo = getFenceCreateInfo(flags, next);
 
         return getFence(createInfo, device);
+    }
+
+    std::vector<VkFence>
+    getFence(const VkDevice device, const size_t count, const VkFenceCreateFlags flags, const void* next)
+    {
+        return getMapped<VkFence>(count,
+                                  [device, flags, next](const auto index)
+                                  {
+                                      return getFence(device, flags, next);
+                                  });
     }
 } // namespace nd::src::graphics::vulkan

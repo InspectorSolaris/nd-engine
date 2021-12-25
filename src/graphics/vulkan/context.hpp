@@ -51,18 +51,24 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            std::vector<VkImage>&&         swapchainImages;
-            std::vector<VkImageView>&&     swapchainImageViews;
-            std::vector<VkFramebuffer>&&   swapchainFramebuffers;
-            std::vector<VkShaderModule>&&  shaderModules;
-            std::vector<VkDescriptorSet>&& descriptorSets;
-            std::vector<VkPipeline>&&      pipelines;
-            std::vector<VkCommandBuffer>&& commandBuffers;
+            const std::vector<QueueFamily>& deviceQueueFamilies;
+            const std::vector<QueueFamily>& swapchainQueueFamilies;
 
-            std::vector<VkSemaphore>&& imageAcquiredSemaphores;
-            std::vector<VkSemaphore>&& imageRenderedSemaphores;
-            std::vector<VkFence>&&     imageAcquiredFences;
-            std::vector<VkFence>&&     imageRenderedFences;
+            const std::map<uint32_t, std::vector<VkQueue>>& deviceQueues;
+            const std::map<uint32_t, std::vector<VkQueue>>& swapchainQueues;
+
+            const std::vector<VkImage>&         swapchainImages;
+            const std::vector<VkImageView>&     swapchainImageViews;
+            const std::vector<VkFramebuffer>&   swapchainFramebuffers;
+            const std::vector<VkShaderModule>&  shaderModules;
+            const std::vector<VkDescriptorSet>& descriptorSets;
+            const std::vector<VkPipeline>&      pipelines;
+            const std::vector<VkCommandBuffer>& commandBuffers;
+
+            const std::vector<VkSemaphore>& imageAcquiredSemaphores;
+            const std::vector<VkSemaphore>& imageRenderedSemaphores;
+            const std::vector<VkFence>&     imageAcquiredFences;
+            const std::vector<VkFence>&     imageRenderedFences;
 
             const size_t framesCount;
 
@@ -75,9 +81,6 @@ namespace nd::src::graphics::vulkan
             const VkDescriptorSetLayout descriptorSetLayout;
             const VkPipelineLayout      pipelineLayout;
             const VkCommandPool         commandPool;
-
-            const VkQueue graphicsQueue;
-            const VkQueue presentQueue;
         };
 
         VulkanContext(const Configuration& configuration);
@@ -96,6 +99,12 @@ namespace nd::src::graphics::vulkan
         drawNextFrame();
 
     private:
+        std::vector<QueueFamily> deviceQueueFamilies_ {};
+        std::vector<QueueFamily> swapchainQueueFamilies_ {};
+
+        std::map<uint32_t, std::vector<VkQueue>> deviceQueues_ {};
+        std::map<uint32_t, std::vector<VkQueue>> swapchainQueues_ {};
+
         std::vector<VkImage>         swapchainImages_ {};
         std::vector<VkImageView>     swapchainImageViews_ {};
         std::vector<VkFramebuffer>   swapchainFramebuffers_ {};
@@ -120,9 +129,6 @@ namespace nd::src::graphics::vulkan
         VkDescriptorSetLayout descriptorSetLayout_ {};
         VkPipelineLayout      pipelineLayout_ {};
         VkCommandPool         commandPool_ {};
-
-        VkQueue graphicsQueue_ {};
-        VkQueue presentQueue_ {};
     };
 
     VulkanContext

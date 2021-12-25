@@ -4,29 +4,31 @@
 namespace nd::src::graphics::vulkan
 {
     VulkanContext::VulkanContext(const Configuration& configuration)
-        : instance_(std::move(configuration.instance))
-        , device_(std::move(configuration.device))
-        , surface_(std::move(configuration.surface))
-        , swapchain_(std::move(configuration.swapchain))
-        , renderPass_(std::move(configuration.renderPass))
-        , swapchainImages_(std::move(configuration.swapchainImages))
-        , swapchainImageViews_(std::move(configuration.swapchainImageViews))
-        , swapchainFramebuffers_(std::move(configuration.swapchainFramebuffers))
-        , shaderModules_(std::move(configuration.shaderModules))
-        , descriptorPool_(std::move(configuration.descriptorPool))
-        , descriptorSetLayout_(std::move(configuration.descriptorSetLayout))
-        , descriptorSets_(std::move(configuration.descriptorSets))
-        , pipelineLayout_(std::move(configuration.pipelineLayout))
-        , pipelines_(std::move(configuration.pipelines))
-        , commandPool_(std::move(configuration.commandPool))
-        , commandBuffers_(std::move(configuration.commandBuffers))
-        , framesCount_(std::move(configuration.framesCount))
-        , imageAcquiredSemaphores_(std::move(configuration.imageAcquiredSemaphores))
-        , imageRenderedSemaphores_(std::move(configuration.imageRenderedSemaphores))
-        , imageAcquiredFences_(std::move(configuration.imageAcquiredFences))
-        , imageRenderedFences_(std::move(configuration.imageRenderedFences))
-        , graphicsQueue_(configuration.graphicsQueue)
-        , presentQueue_(configuration.presentQueue)
+        : instance_(configuration.instance)
+        , device_(configuration.device)
+        , deviceQueueFamilies_(configuration.deviceQueueFamilies)
+        , deviceQueues_(configuration.deviceQueues)
+        , surface_(configuration.surface)
+        , swapchain_(configuration.swapchain)
+        , swapchainQueueFamilies_(configuration.swapchainQueueFamilies)
+        , swapchainQueues_(configuration.swapchainQueues)
+        , renderPass_(configuration.renderPass)
+        , swapchainImages_(configuration.swapchainImages)
+        , swapchainImageViews_(configuration.swapchainImageViews)
+        , swapchainFramebuffers_(configuration.swapchainFramebuffers)
+        , shaderModules_(configuration.shaderModules)
+        , descriptorPool_(configuration.descriptorPool)
+        , descriptorSetLayout_(configuration.descriptorSetLayout)
+        , descriptorSets_(configuration.descriptorSets)
+        , pipelineLayout_(configuration.pipelineLayout)
+        , pipelines_(configuration.pipelines)
+        , commandPool_(configuration.commandPool)
+        , commandBuffers_(configuration.commandBuffers)
+        , framesCount_(configuration.framesCount)
+        , imageAcquiredSemaphores_(configuration.imageAcquiredSemaphores)
+        , imageRenderedSemaphores_(configuration.imageRenderedSemaphores)
+        , imageAcquiredFences_(configuration.imageAcquiredFences)
+        , imageRenderedFences_(configuration.imageRenderedFences)
     {
         ND_SET_SCOPE();
     }
@@ -89,15 +91,20 @@ namespace nd::src::graphics::vulkan
 
         static auto frameIndex = size_t {0};
 
+        const auto deviceQueue    = deviceQueues_.begin()->second[0];
+        const auto swapchainQueue = swapchainQueues_.begin()->second[0];
+
         const auto imageAcquiredSemaphore = imageAcquiredSemaphores_[frameIndex];
         const auto imageRenderedSemaphore = imageRenderedSemaphores_[frameIndex];
         const auto imageAcquiredFence     = imageAcquiredFences_[frameIndex];
         const auto imageRenderedFence     = imageRenderedFences_[frameIndex];
 
-        vkWaitForFences(device_, 1u, &imageRenderedFence, VK_TRUE, UINT64_MAX);
-        vkResetFences(device_, 1u, &imageRenderedFence);
+        const auto fences = std::vector<VkFence> {imageAcquiredFence, imageRenderedFence};
 
-        const auto imageIndex = getNextSwapchainImage(device_, swapchain_, imageAcquiredSemaphore, VK_NULL_HANDLE);
+        vkWaitForFences(device_, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
+        vkResetFences(device_, fences.size(), fences.data());
+
+        const auto imageIndex = getNextSwapchainImage(device_, swapchain_, imageAcquiredSemaphore, imageAcquiredFence);
 
         const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_[frameIndex]};
         const auto waitDstStageMask = std::vector<VkPipelineStageFlags> {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
@@ -106,14 +113,14 @@ namespace nd::src::graphics::vulkan
 
         const auto submitInfo = getSubmitInfo({commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores});
 
-        ND_ASSERT(vkQueueSubmit(graphicsQueue_, 1, &submitInfo, imageRenderedFence) == VK_SUCCESS);
+        ND_ASSERT(vkQueueSubmit(deviceQueue, 1, &submitInfo, imageRenderedFence) == VK_SUCCESS);
 
         const auto swapchains   = std::vector<VkSwapchainKHR> {swapchain_};
         const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(frameIndex)};
 
         const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
 
-        ND_ASSERT(vkQueuePresentKHR(presentQueue_, &presentInfo) == VK_SUCCESS);
+        ND_ASSERT(vkQueuePresentKHR(swapchainQueue, &presentInfo) == VK_SUCCESS);
 
         frameIndex = (frameIndex + 1) % framesCount_;
     }
@@ -143,28 +150,31 @@ namespace nd::src::graphics::vulkan
                                            VK_MAKE_VERSION(0, 1, 0),
                                            VK_API_VERSION_1_2});
 
-        const auto physicalDeviceFeatures   = VkPhysicalDeviceFeatures {};
-        const auto physicalDeviceExtensions = vector<string> {"VK_KHR_swapchain"};
-        const auto physicalDeviceQueueFlags = VK_QUEUE_GRAPHICS_BIT;
-        const auto physicalDevicePriority   = [](const VkPhysicalDevice            physicalDevice,
-                                               const VkPhysicalDeviceProperties& properties,
-                                               const VkPhysicalDeviceFeatures&   features)
-        {
-            return 1;
-        };
+        const auto physicalDeviceConfiguration =
+            PhysicalDeviceConfiguration {{},
+                                         [](const VkPhysicalDevice            physicalDevice,
+                                            const VkPhysicalDeviceProperties& properties,
+                                            const VkPhysicalDeviceFeatures&   features)
+                                         {
+                                             return 1;
+                                         },
+                                         {"VK_KHR_swapchain"},
+                                         VK_QUEUE_GRAPHICS_BIT};
 
-        const auto physicalDevice = getPhysicalDevice(
-            {physicalDeviceFeatures, physicalDevicePriority, physicalDeviceExtensions, physicalDeviceQueueFlags},
-            instance);
+        const auto physicalDevice = getPhysicalDevice(physicalDeviceConfiguration, instance);
 
-        const auto physicalDeviceQueueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice, physicalDeviceQueueFlags);
-
+        const auto deviceQueueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice);
         const auto device =
-            getDevice({physicalDeviceFeatures, physicalDeviceQueueFamilies, physicalDeviceExtensions}, physicalDevice);
+            getDevice({physicalDeviceConfiguration.features, deviceQueueFamilies, physicalDeviceConfiguration.extensions},
+                      physicalDevice);
+
+        const auto deviceQueues = getQueues(device, deviceQueueFamilies);
 
         const auto surface = configuration.getSurface(instance);
 
-        const auto swapchainQueueFamilies = getSwapchainQueueFamilies(physicalDeviceQueueFamilies, physicalDevice, surface);
+        const auto swapchainQueueFamilies = getSwapchainQueueFamilies(deviceQueueFamilies, physicalDevice, surface);
+        const auto swapchainQueues        = getQueues(device, swapchainQueueFamilies);
+
         const auto swapchainConfiguration = SwapchainConfiguration {swapchainQueueFamilies,
                                                                     physicalDevice,
                                                                     surface,
@@ -214,8 +224,8 @@ namespace nd::src::graphics::vulkan
 
         const auto renderPass = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device);
 
-        auto swapchainImages = getSwapchainImages(device, swapchain);
-        auto swapchainImageViews =
+        const auto swapchainImages = getSwapchainImages(device, swapchain);
+        const auto swapchainImageViews =
             getMapped<VkImage, VkImageView>(swapchainImages,
                                             [device = device, &swapchainConfiguration](const auto image, const auto index)
                                             {
@@ -230,7 +240,7 @@ namespace nd::src::graphics::vulkan
                                                                     device);
                                             });
 
-        auto swapchainFramebuffers = getMapped<VkImageView, VkFramebuffer>(
+        const auto swapchainFramebuffers = getMapped<VkImageView, VkFramebuffer>(
             swapchainImageViews,
             [device = device, renderPass, &swapchainConfiguration](const auto imageView, const auto index)
             {
@@ -247,11 +257,11 @@ namespace nd::src::graphics::vulkan
 
         const auto shaderStages = vector<VkShaderStageFlagBits> {VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT};
 
-        auto shaderModules = getMapped<string, VkShaderModule>(shaderPaths,
-                                                               [device = device](const auto& path, const auto index)
-                                                               {
-                                                                   return getShaderModule({path}, device);
-                                                               });
+        const auto shaderModules = getMapped<string, VkShaderModule>(shaderPaths,
+                                                                     [device = device](const auto& path, const auto index)
+                                                                     {
+                                                                         return getShaderModule({path}, device);
+                                                                     });
 
         const auto descriptorPool = getDescriptorPool({{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1},
                                                       device,
@@ -259,7 +269,7 @@ namespace nd::src::graphics::vulkan
 
         const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device);
 
-        auto descriptorSets = getDescriptorSet({{descriptorSetLayout}, descriptorPool}, device);
+        const auto descriptorSets = getDescriptorSet({{descriptorSetLayout}, descriptorPool}, device);
 
         const auto pipelineLayout = getPipelineLayout({{descriptorSetLayout}, {}}, device);
 
@@ -312,7 +322,7 @@ namespace nd::src::graphics::vulkan
 
         const auto dynamicStateCreateInfo = getPipelineDynamicStateCreateInfo(0, nullptr);
 
-        auto pipelines = getGraphicsPipeline(
+        const auto pipelines = getGraphicsPipeline(
             {{getMapped<VkShaderModule, VkPipelineShaderStageCreateInfo>(
                   shaderModules,
                   [&shaderStages](const auto& shaderModule, const auto index)
@@ -333,20 +343,10 @@ namespace nd::src::graphics::vulkan
               0}},
             device);
 
-        // TODO: Use queue families from 'deviceQueueFamilies' and 'swapchainQueueFamilies'
-        // TODO: Remove getQueueFamily and getPresentQueueFamily
-        const auto graphicsQueueFamily = getQueueFamily(physicalDeviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
-        const auto presentQueueFamily  = getPresentQueueFamily(physicalDeviceQueueFamilies, physicalDevice, surface);
-
-        ND_ASSERT(graphicsQueueFamily.has_value() && presentQueueFamily.has_value());
-
-        const auto graphicsQueue = getQueue(device, graphicsQueueFamily.value().index, 0);
-        const auto presentQueue  = getQueue(device, presentQueueFamily.value().index, 0);
-
         // TODO: Extract receiving of queue for command pool
-        const auto commandPool = getCommandPool({physicalDeviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT}, device);
+        const auto commandPool = getCommandPool({deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT}, device);
 
-        auto commandBuffers = getCommandBuffer(
+        const auto commandBuffers = getCommandBuffer(
             {commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, static_cast<uint32_t>(swapchainFramebuffers.size())},
             device);
 
@@ -374,30 +374,26 @@ namespace nd::src::graphics::vulkan
 
         const auto framesCount = size_t {2};
 
-        auto imageAcquiredSemaphores = vector<VkSemaphore>(framesCount);
-        auto imageRenderedSemaphores = vector<VkSemaphore>(framesCount);
-        auto imageAcquiredFences     = vector<VkFence>(framesCount);
-        auto imageRenderedFences     = vector<VkFence>(framesCount);
+        const auto imageAcquiredSemaphores = getSemaphore(device, framesCount);
+        const auto imageRenderedSemaphores = getSemaphore(device, framesCount);
+        const auto imageAcquiredFences     = getFence(device, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
+        const auto imageRenderedFences     = getFence(device, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
 
-        for(size_t index = 0; index < framesCount; ++index)
-        {
-            imageAcquiredSemaphores[index] = getSemaphore(device);
-            imageRenderedSemaphores[index] = getSemaphore(device);
-            imageAcquiredFences[index]     = getFence(device);
-            imageRenderedFences[index]     = getFence(device, VK_FENCE_CREATE_SIGNALED_BIT);
-        }
-
-        return VulkanContext({move(swapchainImages),
-                              move(swapchainImageViews),
-                              move(swapchainFramebuffers),
-                              move(shaderModules),
-                              move(descriptorSets),
-                              move(pipelines),
-                              move(commandBuffers),
-                              move(imageAcquiredSemaphores),
-                              move(imageRenderedSemaphores),
-                              move(imageAcquiredFences),
-                              move(imageRenderedFences),
+        return VulkanContext({deviceQueueFamilies,
+                              swapchainQueueFamilies,
+                              deviceQueues,
+                              swapchainQueues,
+                              swapchainImages,
+                              swapchainImageViews,
+                              swapchainFramebuffers,
+                              shaderModules,
+                              descriptorSets,
+                              pipelines,
+                              commandBuffers,
+                              imageAcquiredSemaphores,
+                              imageRenderedSemaphores,
+                              imageAcquiredFences,
+                              imageRenderedFences,
                               framesCount,
                               instance,
                               device,
@@ -407,8 +403,6 @@ namespace nd::src::graphics::vulkan
                               descriptorPool,
                               descriptorSetLayout,
                               pipelineLayout,
-                              commandPool,
-                              graphicsQueue,
-                              presentQueue});
+                              commandPool});
     }
 } // namespace nd::src::graphics::vulkan

@@ -15,56 +15,22 @@ namespace nd::src::graphics::vulkan
         return queue;
     }
 
-    std::optional<QueueFamily>
-    getQueueFamily(const std::vector<QueueFamily>& queueFamilies, const VkQueueFlags queueFlags) noexcept
+    std::map<uint32_t, std::vector<VkQueue>>
+    getQueues(const VkDevice device, const std::vector<QueueFamily>& queueFamilies) noexcept
     {
         ND_SET_SCOPE();
 
-        const auto queueFamilyIterator = std::find_if(queueFamilies.begin(),
-                                                      queueFamilies.end(),
-                                                      [&queueFlags](const auto& queueFamily)
-                                                      {
-                                                          return isSubmask(queueFamily.queueFlags, queueFlags);
-                                                      });
-
-        return queueFamilyIterator != queueFamilies.end() ? std::optional<QueueFamily> {*queueFamilyIterator}
-                                                          : std::optional<QueueFamily> {};
-    }
-
-    std::optional<QueueFamily>
-    getPresentQueueFamily(const std::vector<QueueFamily>& queueFamilies,
-                          const VkPhysicalDevice          physicalDevice,
-                          const VkSurfaceKHR              surface)
-    {
-        ND_SET_SCOPE();
-
-        const auto queueFamilyIterator = std::find_if(
-            queueFamilies.begin(),
-            queueFamilies.end(),
-            [physicalDevice, surface](const auto& queueFamily)
+        return getMap<QueueFamily, uint32_t, std::vector<VkQueue>>(
+            queueFamilies,
+            [device](const auto queueFamily, const auto index)
             {
-                VkBool32 supported;
-
-                ND_ASSERT(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamily.index, surface, &supported) ==
-                          VK_SUCCESS);
-
-                return supported;
+                return queueFamily.index;
+            },
+            [device](const auto queueFamily, const auto index)
+            {
+                return getMapped<VkQueue>(queueFamily.queueCount,
+                                          std::bind(getQueue, device, queueFamily.index, std::placeholders::_1));
             });
-
-        return queueFamilyIterator != queueFamilies.end() ? std::optional<QueueFamily> {*queueFamilyIterator}
-                                                          : std::optional<QueueFamily> {};
-    }
-
-    std::vector<uint32_t>
-    getQueueFamiliesIndices(const std::vector<QueueFamily>& queueFamilies) noexcept
-    {
-        ND_SET_SCOPE();
-
-        return getMapped<QueueFamily, uint32_t>(queueFamilies,
-                                                [](const auto& queueFamily, const auto index)
-                                                {
-                                                    return queueFamily.index;
-                                                });
     }
 
     VkSubmitInfo
