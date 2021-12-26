@@ -49,7 +49,7 @@ main()
              getRequiredExtensions(),
              static_cast<uint32_t>(windowConfiguration.width),
              static_cast<uint32_t>(windowConfiguration.height)},
-            {getInstance, getPhysicalDevice, getDevice, bind(getSurface, cref(glfwWindow), _1), getSwapchain},
+            {getInstance, getPhysicalDevice, getDevice, bind(getSurface, cref(glfwWindow), _1), getSwapchain, getRenderPass},
             vulkanContextConfigurations);
 
         while(!glfwWindowShouldClose(glfwWindow))

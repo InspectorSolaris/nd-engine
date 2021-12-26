@@ -51,11 +51,17 @@ namespace nd::src::graphics::vulkan
                                     const VkSwapchainCreateFlagsKHR,
                                     const void*);
 
+        using RenderPass = VkRenderPass(const RenderPassConfiguration&,
+                                        const VkDevice,
+                                        const VkRenderPassCreateFlags,
+                                        const void*);
+
         const std::function<Instance>       getInstance;
         const std::function<PhysicalDevice> getPhysicalDevice;
         const std::function<Device>         getDevice;
         const std::function<Surface>        getSurface;
         const std::function<Swapchain>      getSwapchain;
+        const std::function<RenderPass>     getRenderPass;
     };
 
     struct VulkanContextConfigurations final
@@ -71,10 +77,13 @@ namespace nd::src::graphics::vulkan
                                                  const uint32_t         width,
                                                  const uint32_t         height);
 
+        using RenderPass = RenderPassConfiguration(const SwapchainConfiguration&);
+
         const std::function<Instance>       getInstanceConfiguration;
         const std::function<PhysicalDevice> getPhysicalDeviceConfiguration;
         const std::function<Device>         getDeviceConfiguration;
         const std::function<Swapchain>      getSwapchainConfiguration;
+        const std::function<RenderPass>     getRenderPassConfiguration;
     };
 
     InstanceConfiguration
@@ -91,6 +100,9 @@ namespace nd::src::graphics::vulkan
                               const VkSurfaceKHR     surface,
                               const uint32_t         width,
                               const uint32_t         height) noexcept;
+
+    RenderPassConfiguration
+    getRenderPassConfiguration(const SwapchainConfiguration& swapchainConfiguration) noexcept;
 
     extern VulkanContextInitializers   vulkanContextInitializers;
     extern VulkanContextConfigurations vulkanContextConfigurations;

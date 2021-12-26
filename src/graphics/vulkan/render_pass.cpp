@@ -58,7 +58,7 @@ namespace nd::src::graphics::vulkan
                          const VkAttachmentReference*    inputAttachments,
                          const VkAttachmentReference*    colorAttachments,
                          const VkAttachmentReference*    resolveAttachments,
-                         const VkAttachmentReference*    depthStencilAttachments,
+                         const VkAttachmentReference*    depthStencilAttachment,
                          const uint32_t*                 preserveAttachments,
                          const VkSubpassDescriptionFlags flags) noexcept
     {
@@ -72,7 +72,7 @@ namespace nd::src::graphics::vulkan
             colorAttachmentsCount,    // colorAttachmentCount;
             colorAttachments,         // pColorAttachments;
             resolveAttachments,       // pResolveAttachments;
-            depthStencilAttachments,  // pDepthStencilAttachment;
+            depthStencilAttachment,   // pDepthStencilAttachment;
             preserveAttachmentsCount, // preserveAttachmentCount;
             preserveAttachments       // pPreserveAttachments;
         };
@@ -145,11 +145,30 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
+        const auto subpasses = getMapped<SubpassDescription, VkSubpassDescription>(
+            configuration.subpasses,
+            [](const auto& subpass, const auto index)
+            {
+                ND_ASSERT(!subpass.resolveAttachments.size() ||
+                          subpass.colorAttachments.size() == subpass.resolveAttachments.size());
+
+                return getRenderPassSubpass(
+                    subpass.pipelineBindPoint,
+                    subpass.inputAttachments.size(),
+                    subpass.colorAttachments.size(),
+                    subpass.preserveAttachments.size(),
+                    subpass.inputAttachments.data(),
+                    subpass.colorAttachments.data(),
+                    subpass.resolveAttachments.data(),
+                    subpass.depthStencilAttachment.has_value() ? &subpass.depthStencilAttachment.value() : nullptr,
+                    subpass.preserveAttachments.data());
+            });
+
         const auto createInfo = getRenderPassCreateInfo(configuration.attachments.size(),
-                                                        configuration.subpasses.size(),
+                                                        subpasses.size(),
                                                         configuration.dependencies.size(),
                                                         configuration.attachments.data(),
-                                                        configuration.subpasses.data(),
+                                                        subpasses.data(),
                                                         configuration.dependencies.data(),
                                                         flags,
                                                         next);

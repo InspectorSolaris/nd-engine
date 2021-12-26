@@ -7,7 +7,8 @@ namespace nd::src::graphics::vulkan
     VulkanContextConfigurations vulkanContextConfigurations = {getInstanceConfiguration,
                                                                getPhysicalDeviceConfiguration,
                                                                getDeviceConfiguration,
-                                                               getSwapchainConfiguration};
+                                                               getSwapchainConfiguration,
+                                                               getRenderPassConfiguration};
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -76,5 +77,37 @@ namespace nd::src::graphics::vulkan
                 VK_PRESENT_MODE_IMMEDIATE_KHR,
                 VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
                 VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
+    }
+
+    RenderPassConfiguration
+    getRenderPassConfiguration(const SwapchainConfiguration& swapchainConfiguration) noexcept
+    {
+        ND_SET_SCOPE();
+
+        using Attachments  = std::vector<AttachmentDescription>;
+        using Subpasses    = std::vector<SubpassDescription>;
+        using Dependencies = std::vector<SubpassDependency>;
+
+        const auto attachments = Attachments {getRenderPassAttachment(swapchainConfiguration.imageFormat,
+                                                                      VK_SAMPLE_COUNT_1_BIT,
+                                                                      VK_ATTACHMENT_LOAD_OP_CLEAR,
+                                                                      VK_ATTACHMENT_STORE_OP_STORE,
+                                                                      VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                                                                      VK_ATTACHMENT_STORE_OP_DONT_CARE,
+                                                                      VK_IMAGE_LAYOUT_UNDEFINED,
+                                                                      VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)};
+
+        const auto subpasses =
+            Subpasses {{{}, {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}}, {}, {}, {}, VK_PIPELINE_BIND_POINT_GRAPHICS}};
+
+        const auto dependencies = Dependencies {{VK_SUBPASS_EXTERNAL,
+                                                 0,
+                                                 VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                                 VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                                 0,
+                                                 VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                                 {}}};
+
+        return {attachments, subpasses, dependencies};
     }
 } // namespace nd::src::graphics::vulkan

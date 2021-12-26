@@ -5,11 +5,26 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using AttachmentDescription = VkAttachmentDescription;
+    using SubpassDependency     = VkSubpassDependency;
+
+    struct SubpassDescription final
+    {
+        const std::vector<VkAttachmentReference> inputAttachments;
+        const std::vector<VkAttachmentReference> colorAttachments;
+        const std::vector<VkAttachmentReference> resolveAttachments;
+        const std::vector<uint32_t>              preserveAttachments;
+
+        const std::optional<VkAttachmentReference> depthStencilAttachment;
+
+        const VkPipelineBindPoint pipelineBindPoint;
+    };
+
     struct RenderPassConfiguration final
     {
-        const std::vector<VkAttachmentDescription>& attachments;
-        const std::vector<VkSubpassDescription>&    subpasses;
-        const std::vector<VkSubpassDependency>&     dependencies;
+        const std::vector<AttachmentDescription> attachments;
+        const std::vector<SubpassDescription>    subpasses;
+        const std::vector<SubpassDependency>     dependencies;
     };
 
     VkRenderPassBeginInfo

@@ -160,38 +160,8 @@ namespace nd::src::graphics::vulkan
         const auto [swapchainQueueFamilies, swapchain] = initializers.getSwapchain(swapchainConfiguration, device, {}, {});
         const auto swapchainQueues                     = getQueues(device, swapchainQueueFamilies);
 
-        const auto colorAttachments = vector<VkAttachmentReference> {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
-
-        const auto renderPassAttachments =
-            vector<VkAttachmentDescription> {getRenderPassAttachment(swapchainConfiguration.imageFormat,
-                                                                     VK_SAMPLE_COUNT_1_BIT,
-                                                                     VK_ATTACHMENT_LOAD_OP_CLEAR,
-                                                                     VK_ATTACHMENT_STORE_OP_STORE,
-                                                                     VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-                                                                     VK_ATTACHMENT_STORE_OP_DONT_CARE,
-                                                                     VK_IMAGE_LAYOUT_UNDEFINED,
-                                                                     VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)};
-
-        const auto renderPassSubpasses = vector<VkSubpassDescription> {getRenderPassSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                                                                            0,
-                                                                                            colorAttachments.size(),
-                                                                                            0,
-                                                                                            nullptr,
-                                                                                            colorAttachments.data(),
-                                                                                            nullptr,
-                                                                                            nullptr,
-                                                                                            nullptr)};
-
-        const auto renderPassDependencies =
-            vector<VkSubpassDependency> {getRenderPassDependency(VK_SUBPASS_EXTERNAL,
-                                                                 0,
-                                                                 VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                                                 VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                                                 0,
-                                                                 VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                                                 {})};
-
-        const auto renderPass = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device);
+        const auto renderPassConfiguration = configurations.getRenderPassConfiguration(swapchainConfiguration);
+        const auto renderPass              = initializers.getRenderPass(renderPassConfiguration, device, {}, {});
 
         const auto swapchainImages = getSwapchainImages(device, swapchain);
         const auto swapchainImageViews =
