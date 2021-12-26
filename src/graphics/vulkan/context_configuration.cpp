@@ -3,14 +3,23 @@
 
 namespace nd::src::graphics::vulkan
 {
-    VulkanContextInitializers   vulkanContextInitializers   = {getInstance, getPhysicalDevice, getDevice};
-    VulkanContextConfigurations vulkanContextConfigurations = {getInstanceConfiguration,
-                                                               getPhysicalDeviceConfiguration,
-                                                               getDeviceConfiguration,
-                                                               getSwapchainConfiguration,
-                                                               getRenderPassConfiguration,
-                                                               getSwapchainImageViewConfiguration,
-                                                               getSwapchainFramebufferConfiguration};
+    auto initializersBuilder = VulkanContextInitializersBuilder() //
+        << getInstance                                            //
+        << getPhysicalDevice                                      //
+        << getDevice                                              //
+        << getSwapchain                                           //
+        << getRenderPass                                          //
+        << getImageView                                           //
+        << getFramebuffer;                                        //
+
+    auto configurationsBuilder = VulkanContextConfigurationsBuilder() //
+        << getInstanceConfiguration                                   //
+        << getPhysicalDeviceConfiguration                             //
+        << getDeviceConfiguration                                     //
+        << getSwapchainConfiguration                                  //
+        << getRenderPassConfiguration                                 //
+        << getSwapchainImageViewConfiguration                         //
+        << getSwapchainFramebufferConfiguration;                      //
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -98,6 +107,8 @@ namespace nd::src::graphics::vulkan
                                                                       VK_ATTACHMENT_STORE_OP_DONT_CARE,
                                                                       VK_IMAGE_LAYOUT_UNDEFINED,
                                                                       VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)};
+
+        attachments.size();
 
         const auto subpasses =
             Subpasses {{{}, {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}}, {}, {}, {}, VK_PIPELINE_BIND_POINT_GRAPHICS}};
