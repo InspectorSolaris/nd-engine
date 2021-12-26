@@ -12,16 +12,13 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
-            const std::map<uint32_t, std::vector<VkQueue>>& deviceQueues;
-            const std::map<uint32_t, std::vector<VkQueue>>& swapchainQueues;
-
-            const std::vector<QueueFamily>& deviceQueueFamilies;
-            const std::vector<QueueFamily>& swapchainQueueFamilies;
+            const Device    device;
+            const Swapchain swapchain;
 
             const std::vector<VkImage>&         swapchainImages;
             const std::vector<VkImageView>&     swapchainImageViews;
             const std::vector<VkFramebuffer>&   swapchainFramebuffers;
-            const std::vector<VkShaderModule>&  shaderModules;
+            const std::vector<ShaderModule>&    shaderModules;
             const std::vector<VkDescriptorSet>& descriptorSets;
             const std::vector<VkPipeline>&      pipelines;
             const std::vector<VkCommandBuffer>& commandBuffers;
@@ -34,9 +31,7 @@ namespace nd::src::graphics::vulkan
             const size_t framesCount;
 
             const VkInstance            instance;
-            const VkDevice              device;
             const VkSurfaceKHR          surface;
-            const VkSwapchainKHR        swapchain;
             const VkRenderPass          renderPass;
             const VkDescriptorPool      descriptorPool;
             const VkDescriptorSetLayout descriptorSetLayout;
@@ -60,16 +55,13 @@ namespace nd::src::graphics::vulkan
         drawNextFrame();
 
     private:
-        std::map<uint32_t, std::vector<VkQueue>> deviceQueues_ {};
-        std::map<uint32_t, std::vector<VkQueue>> swapchainQueues_ {};
-
-        std::vector<QueueFamily> deviceQueueFamilies_ {};
-        std::vector<QueueFamily> swapchainQueueFamilies_ {};
+        Device    device_ {};
+        Swapchain swapchain_ {};
 
         std::vector<VkImage>         swapchainImages_ {};
         std::vector<VkImageView>     swapchainImageViews_ {};
         std::vector<VkFramebuffer>   swapchainFramebuffers_ {};
-        std::vector<VkShaderModule>  shaderModules_ {};
+        std::vector<ShaderModule>    shaderModules_ {};
         std::vector<VkDescriptorSet> descriptorSets_ {};
         std::vector<VkPipeline>      pipelines_ {};
         std::vector<VkCommandBuffer> commandBuffers_ {};
@@ -82,9 +74,7 @@ namespace nd::src::graphics::vulkan
         size_t framesCount_ {};
 
         VkInstance            instance_ {};
-        VkDevice              device_ {};
         VkSurfaceKHR          surface_ {};
-        VkSwapchainKHR        swapchain_ {};
         VkRenderPass          renderPass_ {};
         VkDescriptorPool      descriptorPool_ {};
         VkDescriptorSetLayout descriptorSetLayout_ {};

@@ -52,7 +52,7 @@ namespace nd::src::graphics::vulkan
         return shaderModule;
     }
 
-    VkShaderModule
+    ShaderModule
     getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
@@ -64,6 +64,6 @@ namespace nd::src::graphics::vulkan
                                                           configuration.flags,
                                                           configuration.next);
 
-        return getShaderModuleHandle(createInfo, device);
+        return {configuration.stage, getShaderModuleHandle(createInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

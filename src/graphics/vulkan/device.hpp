@@ -34,7 +34,8 @@ namespace nd::src::graphics::vulkan
 
     struct Device final
     {
-        const std::vector<QueueFamily> queueFamilies;
+        const std::map<uint32_t, std::vector<VkQueue>> queues;
+        const std::vector<QueueFamily>                 queueFamilies;
 
         const VkDevice handle;
     };

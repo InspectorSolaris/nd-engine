@@ -7,10 +7,17 @@ namespace nd::src::graphics::vulkan
 {
     struct ShaderModuleConfiguration final
     {
-        const std::string& path;
+        const std::string           path;
+        const VkShaderStageFlagBits stage;
 
         const VkShaderModuleCreateFlags flags = {};
         const void*                     next  = {};
+    };
+
+    struct ShaderModule final
+    {
+        const VkShaderStageFlagBits stage;
+        const VkShaderModule        handle;
     };
 
     std::vector<char>
@@ -25,6 +32,6 @@ namespace nd::src::graphics::vulkan
     VkShaderModule
     getShaderModuleHandle(const VkShaderModuleCreateInfo& createInfo, const VkDevice device);
 
-    VkShaderModule
+    ShaderModule
     getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

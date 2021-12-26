@@ -197,7 +197,8 @@ namespace nd::src::graphics::vulkan
         const auto presentModes = getSurfacePresentModes(configuration.physicalDevice, configuration.surface);
         const auto capabilities = getSurfaceCapabilities(configuration.physicalDevice, configuration.surface);
 
-        const auto queueFamilies        = getQueueFamilies(configuration.physicalDevice, configuration.surface);
+        auto queueFamilies = getQueueFamilies(configuration.physicalDevice, configuration.surface);
+
         const auto queueFamiliesIndices = getMapped<QueueFamily, uint32_t>(queueFamilies,
                                                                            [](const auto& queueFamily, const auto index)
                                                                            {
@@ -234,7 +235,7 @@ namespace nd::src::graphics::vulkan
                                    configuration.flags,
                                    configuration.next);
 
-        return {queueFamilies, getSwapchainHandle(createInfo, device)};
+        return {getQueues(device, queueFamilies), std::move(queueFamilies), getSwapchainHandle(createInfo, device)};
     }
 
     std::vector<VkImage>

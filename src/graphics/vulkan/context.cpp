@@ -6,12 +6,8 @@ namespace nd::src::graphics::vulkan
     VulkanContext::VulkanContext(const Configuration& configuration)
         : instance_(configuration.instance)
         , device_(configuration.device)
-        , deviceQueueFamilies_(configuration.deviceQueueFamilies)
-        , deviceQueues_(configuration.deviceQueues)
         , surface_(configuration.surface)
         , swapchain_(configuration.swapchain)
-        , swapchainQueueFamilies_(configuration.swapchainQueueFamilies)
-        , swapchainQueues_(configuration.swapchainQueues)
         , renderPass_(configuration.renderPass)
         , swapchainImages_(configuration.swapchainImages)
         , swapchainImageViews_(configuration.swapchainImageViews)
@@ -37,55 +33,55 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        vkDeviceWaitIdle(device_);
+        vkDeviceWaitIdle(device_.handle);
 
         for(size_t index = 0; index < framesCount_; ++index)
         {
-            vkDestroySemaphore(device_, imageAcquiredSemaphores_[index], nullptr);
-            vkDestroySemaphore(device_, imageRenderedSemaphores_[index], nullptr);
+            vkDestroySemaphore(device_.handle, imageAcquiredSemaphores_[index], nullptr);
+            vkDestroySemaphore(device_.handle, imageRenderedSemaphores_[index], nullptr);
 
             const auto fences = std::vector<VkFence> {imageAcquiredFences_[index], imageRenderedFences_[index]};
 
-            vkWaitForFences(device_, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
+            vkWaitForFences(device_.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
 
-            vkDestroyFence(device_, imageAcquiredFences_[index], nullptr);
-            vkDestroyFence(device_, imageRenderedFences_[index], nullptr);
+            vkDestroyFence(device_.handle, imageAcquiredFences_[index], nullptr);
+            vkDestroyFence(device_.handle, imageRenderedFences_[index], nullptr);
         }
 
-        vkFreeCommandBuffers(device_, commandPool_, commandBuffers_.size(), commandBuffers_.data());
-        vkDestroyCommandPool(device_, commandPool_, nullptr);
+        vkFreeCommandBuffers(device_.handle, commandPool_, commandBuffers_.size(), commandBuffers_.data());
+        vkDestroyCommandPool(device_.handle, commandPool_, nullptr);
 
         for(const auto pipeline: pipelines_)
         {
-            vkDestroyPipeline(device_, pipeline, nullptr);
+            vkDestroyPipeline(device_.handle, pipeline, nullptr);
         }
 
-        vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
+        vkDestroyPipelineLayout(device_.handle, pipelineLayout_, nullptr);
 
-        vkFreeDescriptorSets(device_, descriptorPool_, descriptorSets_.size(), descriptorSets_.data());
+        vkFreeDescriptorSets(device_.handle, descriptorPool_, descriptorSets_.size(), descriptorSets_.data());
 
-        vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
-        vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
+        vkDestroyDescriptorSetLayout(device_.handle, descriptorSetLayout_, nullptr);
+        vkDestroyDescriptorPool(device_.handle, descriptorPool_, nullptr);
 
         for(const auto shaderModule: shaderModules_)
         {
-            vkDestroyShaderModule(device_, shaderModule, nullptr);
+            vkDestroyShaderModule(device_.handle, shaderModule.handle, nullptr);
         }
 
         for(const auto swapchainFramebuffer: swapchainFramebuffers_)
         {
-            vkDestroyFramebuffer(device_, swapchainFramebuffer, nullptr);
+            vkDestroyFramebuffer(device_.handle, swapchainFramebuffer, nullptr);
         }
 
         for(const auto swapchainImageView: swapchainImageViews_)
         {
-            vkDestroyImageView(device_, swapchainImageView, nullptr);
+            vkDestroyImageView(device_.handle, swapchainImageView, nullptr);
         }
 
-        vkDestroyRenderPass(device_, renderPass_, nullptr);
-        vkDestroySwapchainKHR(device_, swapchain_, nullptr);
+        vkDestroyRenderPass(device_.handle, renderPass_, nullptr);
+        vkDestroySwapchainKHR(device_.handle, swapchain_.handle, nullptr);
         vkDestroySurfaceKHR(instance_, surface_, nullptr);
-        vkDestroyDevice(device_, nullptr);
+        vkDestroyDevice(device_.handle, nullptr);
         vkDestroyInstance(instance_, nullptr);
     }
 
@@ -96,8 +92,8 @@ namespace nd::src::graphics::vulkan
 
         static auto frameIndex = size_t {0};
 
-        const auto deviceQueue    = deviceQueues_.begin()->second[0];
-        const auto swapchainQueue = swapchainQueues_.begin()->second[0];
+        const auto deviceQueue    = device_.queues.begin()->second[0];
+        const auto swapchainQueue = swapchain_.queues.begin()->second[0];
 
         const auto imageAcquiredSemaphore = imageAcquiredSemaphores_[frameIndex];
         const auto imageRenderedSemaphore = imageRenderedSemaphores_[frameIndex];
@@ -106,10 +102,11 @@ namespace nd::src::graphics::vulkan
 
         const auto fences = std::vector<VkFence> {imageAcquiredFence, imageRenderedFence};
 
-        vkWaitForFences(device_, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
-        vkResetFences(device_, fences.size(), fences.data());
+        vkWaitForFences(device_.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
+        vkResetFences(device_.handle, fences.size(), fences.data());
 
-        const auto imageIndex = getNextSwapchainImage(device_, swapchain_, imageAcquiredSemaphore, imageAcquiredFence);
+        const auto imageIndex =
+            getNextSwapchainImage(device_.handle, swapchain_.handle, imageAcquiredSemaphore, imageAcquiredFence);
 
         const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_[imageIndex]};
         const auto waitDstStageMask = std::vector<VkPipelineStageFlags> {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
@@ -120,7 +117,7 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, 1, &submitInfo, imageRenderedFence) == VK_SUCCESS);
 
-        const auto swapchains   = std::vector<VkSwapchainKHR> {swapchain_};
+        const auto swapchains   = std::vector<VkSwapchainKHR> {swapchain_.handle};
         const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(imageIndex)};
 
         const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
@@ -137,18 +134,14 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        using std::string;
-        using std::vector;
-
         const auto instanceConfiguration = configurations.getInstanceConfiguration(configurationExternal);
         const auto instance              = initializers.getInstance(instanceConfiguration);
 
         const auto physicalDeviceConfiguration = configurations.getPhysicalDeviceConfiguration();
         const auto physicalDevice              = initializers.getPhysicalDevice(physicalDeviceConfiguration, instance);
 
-        const auto deviceConfiguration           = configurations.getDeviceConfiguration(physicalDeviceConfiguration);
-        const auto [deviceQueueFamilies, device] = initializers.getDevice(deviceConfiguration, physicalDevice);
-        const auto deviceQueues                  = getQueues(device, deviceQueueFamilies);
+        const auto deviceConfiguration = configurations.getDeviceConfiguration(physicalDeviceConfiguration);
+        const auto device              = initializers.getDevice(deviceConfiguration, physicalDevice);
 
         const auto surface = initializers.getSurface(instance);
 
@@ -157,16 +150,16 @@ namespace nd::src::graphics::vulkan
                                                                                      configurationExternal.width,
                                                                                      configurationExternal.height);
 
-        const auto [swapchainQueueFamilies, swapchain] = initializers.getSwapchain(swapchainConfiguration, device);
-        const auto swapchainQueues                     = getQueues(device, swapchainQueueFamilies);
+        const auto swapchain = initializers.getSwapchain(swapchainConfiguration, device.handle);
 
         const auto renderPassConfiguration = configurations.getRenderPassConfiguration(swapchainConfiguration);
-        const auto renderPass              = initializers.getRenderPass(renderPassConfiguration, device);
+        const auto renderPass              = initializers.getRenderPass(renderPassConfiguration, device.handle);
 
-        const auto swapchainImages     = getSwapchainImages(device, swapchain);
+        const auto swapchainImages     = getSwapchainImages(device.handle, swapchain.handle);
         const auto swapchainImageViews = getMapped<VkImage, VkImageView>(
             swapchainImages,
-            [device = device, &swapchainConfiguration, &initializers, &configurations](const auto image, const auto index)
+            [device = device.handle, &swapchainConfiguration, &initializers, &configurations](const auto image,
+                                                                                              const auto index)
             {
                 const auto imageViewConfiguration =
                     configurations.getSwapchainImageViewConfiguration(swapchainConfiguration, image);
@@ -176,8 +169,9 @@ namespace nd::src::graphics::vulkan
 
         const auto swapchainFramebuffers = getMapped<VkImageView, VkFramebuffer>(
             swapchainImageViews,
-            [device = device, renderPass, &swapchainConfiguration, &initializers, &configurations](const auto imageView,
-                                                                                                   const auto index)
+            [device = device.handle, renderPass, &swapchainConfiguration, &initializers, &configurations](
+                const auto imageView,
+                const auto index)
             {
                 const auto framebufferConfiguration =
                     configurations.getSwapchainFramebufferConfiguration(swapchainConfiguration, imageView, renderPass);
@@ -185,25 +179,25 @@ namespace nd::src::graphics::vulkan
                 return initializers.getSwapchainFramebuffer(framebufferConfiguration, device);
             });
 
-        const auto shaderPaths =
-            vector<string> {"src/graphics/vulkan/shaders/vert.spv", "src/graphics/vulkan/shaders/frag.spv"};
+        const auto shaderModulesConfigurations =
+            std::vector<ShaderModuleConfiguration> {{"src/graphics/vulkan/shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT},
+                                                    {"src/graphics/vulkan/shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT}};
 
-        const auto shaderStages = vector<VkShaderStageFlagBits> {VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT};
-
-        const auto shaderModules = getMapped<string, VkShaderModule>(shaderPaths,
-                                                                     [device = device](const auto& path, const auto index)
-                                                                     {
-                                                                         return getShaderModule({path}, device);
-                                                                     });
+        const auto shaderModules = getMapped<ShaderModuleConfiguration, ShaderModule>(
+            shaderModulesConfigurations,
+            [device = device.handle](const auto& shaderModuleConfiguration, const auto index)
+            {
+                return getShaderModule(shaderModuleConfiguration, device);
+            });
 
         const auto descriptorPool = getDescriptorPool(
             {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
-            device);
+            device.handle);
 
-        const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device);
-        const auto descriptorSets      = getDescriptorSet({{descriptorSetLayout}, descriptorPool}, device);
+        const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device.handle);
+        const auto descriptorSets      = getDescriptorSet({{descriptorSetLayout}, descriptorPool}, device.handle);
 
-        const auto pipelineLayout = getPipelineLayout({{descriptorSetLayout}, {}}, device);
+        const auto pipelineLayout = getPipelineLayout({{descriptorSetLayout}, {}}, device.handle);
 
         const auto vertexInputStateCreateInfo = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
         const auto inputAssemblyStateCreateInfo =
@@ -238,7 +232,7 @@ namespace nd::src::graphics::vulkan
 
         const auto depthStencilStateCreateInfo = VkPipelineDepthStencilStateCreateInfo {};
 
-        const auto blendConstants       = vector<float> {0.0f, 0.0f, 0.0f, 0.0f};
+        const auto blendConstants       = std::vector<float> {0.0f, 0.0f, 0.0f, 0.0f};
         const auto colorBlendAttachment = VkPipelineColorBlendAttachmentState {
             VK_TRUE,
             VK_BLEND_FACTOR_SRC_ALPHA,
@@ -257,9 +251,9 @@ namespace nd::src::graphics::vulkan
         const auto pipelines = getGraphicsPipeline(
             {{getMapped<VkShaderModule, VkPipelineShaderStageCreateInfo>(
                   shaderModules,
-                  [&shaderStages](const auto& shaderModule, const auto index)
+                  [](const auto& shaderModule, const auto index)
                   {
-                      return getPipelineShaderStageCreateInfo(shaderStages[index], shaderModule, "main", nullptr);
+                      return getPipelineShaderStageCreateInfo(shaderModule.stage, shaderModule.handle, "main", nullptr);
                   }),
               &vertexInputStateCreateInfo,
               &inputAssemblyStateCreateInfo,
@@ -273,21 +267,21 @@ namespace nd::src::graphics::vulkan
               pipelineLayout,
               renderPass,
               0}},
-            device);
+            device.handle);
 
-        const auto graphicsQueueFamily = std::find_if(deviceQueueFamilies.begin(),
-                                                      deviceQueueFamilies.end(),
+        const auto graphicsQueueFamily = std::find_if(device.queueFamilies.begin(),
+                                                      device.queueFamilies.end(),
                                                       [](const auto& queueFamily)
                                                       {
                                                           return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
                                                       });
 
-        ND_ASSERT(graphicsQueueFamily != deviceQueueFamilies.end());
+        ND_ASSERT(graphicsQueueFamily != device.queueFamilies.end());
 
-        const auto commandPool    = getCommandPool({graphicsQueueFamily->index}, device);
+        const auto commandPool    = getCommandPool({graphicsQueueFamily->index}, device.handle);
         const auto commandBuffers = getCommandBuffer(
             {commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, static_cast<uint32_t>(swapchainFramebuffers.size())},
-            device);
+            device.handle);
 
         for(size_t i = 0; i < commandBuffers.size(); ++i)
         {
@@ -298,7 +292,7 @@ namespace nd::src::graphics::vulkan
 
             ND_ASSERT_EXEC(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo) == VK_SUCCESS);
 
-            const auto clearValues = vector<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
+            const auto clearValues = std::vector<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
             const auto renderPassBeginInfo =
                 getRenderPassBeginInfo(renderPass, framebuffer, scissors, clearValues.size(), clearValues.data());
 
@@ -313,15 +307,13 @@ namespace nd::src::graphics::vulkan
 
         const auto framesCount = size_t {2};
 
-        const auto imageAcquiredSemaphores = getSemaphore(device, framesCount);
-        const auto imageRenderedSemaphores = getSemaphore(device, framesCount);
-        const auto imageAcquiredFences     = getFence(device, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
-        const auto imageRenderedFences     = getFence(device, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
+        const auto imageAcquiredSemaphores = getSemaphore(device.handle, framesCount);
+        const auto imageRenderedSemaphores = getSemaphore(device.handle, framesCount);
+        const auto imageAcquiredFences     = getFence(device.handle, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
+        const auto imageRenderedFences     = getFence(device.handle, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
 
-        return VulkanContext({deviceQueues,
-                              swapchainQueues,
-                              deviceQueueFamilies,
-                              swapchainQueueFamilies,
+        return VulkanContext({device,
+                              swapchain,
                               swapchainImages,
                               swapchainImageViews,
                               swapchainFramebuffers,
@@ -335,9 +327,7 @@ namespace nd::src::graphics::vulkan
                               imageRenderedFences,
                               framesCount,
                               instance,
-                              device,
                               surface,
-                              swapchain,
                               renderPass,
                               descriptorPool,
                               descriptorSetLayout,

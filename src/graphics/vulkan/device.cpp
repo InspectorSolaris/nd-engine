@@ -228,6 +228,8 @@ namespace nd::src::graphics::vulkan
                                                     configuration.flags,
                                                     configuration.next);
 
-        return {std::move(queueFamilies), getDeviceHandle(createInfo, physicalDevice)};
+        const auto handle = getDeviceHandle(createInfo, physicalDevice);
+
+        return {getQueues(handle, queueFamilies), std::move(queueFamilies), handle};
     }
 } // namespace nd::src::graphics::vulkan
