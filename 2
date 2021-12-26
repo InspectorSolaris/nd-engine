@@ -16,23 +16,27 @@ namespace nd::src::graphics::vulkan
     std::vector<const char*>
     getRawStrings(const std::vector<std::string>& strings) noexcept;
 
-    template<typename T, typename Filter, typename Collection = std::vector<T>>
-    Collection
-    getFiltered(const Collection& ts, const Filter& filter) noexcept
+    template<typename T,
+             typename Out,
+             typename Filter,
+             typename Collection  = std::vector<T>,
+             typename CollectionOut = std::vector<Out>>
+    CollectionOut
+    getFiltered(const Collection& ins, const Filter& filter) noexcept
     {
-        auto filtered = Collection {};
+        auto outs = CollectionOut {};
 
-        for(size_t index = 0; index < ts.size(); ++index)
+        for(size_t index = 0; index < ins.size(); ++index)
         {
-            const auto t = ts[index];
+            const auto in = ins[index];
 
-            if(filter(t, index))
+            if(filter(in, index))
             {
-                filtered.push_back(t);
+                outs.push_back(in);
             }
         }
 
-        return filtered;
+        return outs;
     }
 
     template<typename Out, typename Map, typename CollectionOut = std::vector<Out>>

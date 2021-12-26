@@ -3,6 +3,44 @@
 
 namespace nd::src::graphics::vulkan
 {
+    std::vector<VkQueueFamilyProperties>
+    getQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept
+    {
+        ND_SET_SCOPE();
+
+        uint32_t count;
+
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, nullptr);
+
+        auto queueFamilies = std::vector<VkQueueFamilyProperties>(count);
+
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, queueFamilies.data());
+
+        return queueFamilies;
+    }
+
+    std::vector<QueueFamily>
+    getQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept
+    {
+        ND_SET_SCOPE();
+
+        const auto queueFamiliesProperties = getQueueFamiliesProperties(physicalDevice);
+
+        return getMapped<VkQueueFamilyProperties, QueueFamily>(
+            queueFamiliesProperties,
+            [](const auto& properties, const auto index)
+            {
+                return QueueFamily {static_cast<uint32_t>(index), properties.queueCount, properties.queueFlags};
+            });
+    }
+
+    std::vector<QueueFamily>
+    getQueueFamilies(const std::vector<QueueFamily>&                            queueFamilies,
+                     const std::function<bool(const QueueFamily, const size_t)> filter) noexcept
+    {
+        return getFiltered<QueueFamily>(queueFamilies, filter);
+    }
+
     VkQueue
     getQueue(const VkDevice device, const uint32_t queueFamilyIndex, const uint32_t queueIndex) noexcept
     {

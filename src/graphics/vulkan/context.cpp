@@ -140,27 +140,14 @@ namespace nd::src::graphics::vulkan
         using std::string;
         using std::vector;
 
-        const auto instance =
-            initializers.getInstance(configurations.getInstanceConfiguration(configurationExternal), {}, {});
+        const auto instanceConfiguration = configurations.getInstanceConfiguration(configurationExternal);
+        const auto instance              = initializers.getInstance(instanceConfiguration, {}, {});
 
-        const auto physicalDeviceExtensions = vector<string> {"VK_KHR_swapchain"};
-        const auto physicalDeviceConfiguration =
-            PhysicalDeviceConfiguration {{},
-                                         [](const VkPhysicalDevice            physicalDevice,
-                                            const VkPhysicalDeviceProperties& properties,
-                                            const VkPhysicalDeviceFeatures&   features)
-                                         {
-                                             return 1;
-                                         },
-                                         physicalDeviceExtensions,
-                                         VK_QUEUE_GRAPHICS_BIT};
+        const auto physicalDeviceConfiguration = configurations.getPhysicalDeviceConfiguration();
+        const auto physicalDevice              = initializers.getPhysicalDevice(physicalDeviceConfiguration, instance);
 
-        const auto physicalDevice = getPhysicalDevice(physicalDeviceConfiguration, instance);
-
-        const auto deviceQueueFamilies = getPhysicalDeviceQueueFamilies(physicalDevice);
-        const auto device =
-            getDevice({physicalDeviceConfiguration.features, deviceQueueFamilies, physicalDeviceConfiguration.extensions},
-                      physicalDevice);
+        const auto [deviceQueueFamilies, device] =
+            getDevice({physicalDeviceConfiguration.features, physicalDeviceConfiguration.extensions}, physicalDevice);
 
         const auto deviceQueues = getQueues(device, deviceQueueFamilies);
 

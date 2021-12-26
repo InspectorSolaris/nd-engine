@@ -27,6 +27,16 @@ namespace nd::src::graphics::vulkan
         const std::vector<uint32_t>&       imageIndices;
     };
 
+    std::vector<VkQueueFamilyProperties>
+    getQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept;
+
+    std::vector<QueueFamily>
+    getQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept;
+
+    std::vector<QueueFamily>
+    getQueueFamilies(const std::vector<QueueFamily>&                            queueFamilies,
+                     const std::function<bool(const QueueFamily, const size_t)> filter) noexcept;
+
     VkQueue
     getQueue(const VkDevice device, const uint32_t queueFamilyIndex, const uint32_t queueIndex) noexcept;
 

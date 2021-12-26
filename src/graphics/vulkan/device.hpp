@@ -9,22 +9,31 @@ namespace nd::src::graphics::vulkan
 {
     struct PhysicalDeviceConfiguration final
     {
-        const VkPhysicalDeviceFeatures& features;
+        using PhysicalDevicePriority = size_t(const VkPhysicalDevice,
+                                              const VkPhysicalDeviceProperties&,
+                                              const VkPhysicalDeviceFeatures&);
 
-        const std::function<
-            size_t(const VkPhysicalDevice, const VkPhysicalDeviceProperties&, const VkPhysicalDeviceFeatures&)>& priority;
+        const VkPhysicalDeviceFeatures features;
 
-        const std::vector<std::string>& extensions;
+        const std::function<PhysicalDevicePriority> priority;
+
+        const std::vector<std::string> extensions;
 
         const VkQueueFlags queueFlags;
     };
 
     struct DeviceConfiguration final
     {
-        const VkPhysicalDeviceFeatures& features;
+        const VkPhysicalDeviceFeatures features;
 
-        const std::vector<QueueFamily>& queueFamiliesPool;
-        const std::vector<std::string>& extensions;
+        const std::vector<std::string> extensions;
+    };
+
+    struct Device final
+    {
+        const std::vector<QueueFamily> queueFamilies;
+
+        const VkDevice handle;
     };
 
     VkDeviceQueueCreateInfo
@@ -42,12 +51,6 @@ namespace nd::src::graphics::vulkan
                         const VkPhysicalDeviceFeatures* enabledFeatures,
                         const VkDeviceCreateFlags       flags = {},
                         const void*                     next  = {}) noexcept;
-
-    std::vector<VkQueueFamilyProperties>
-    getPhysicalDeviceQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept;
-
-    std::vector<QueueFamily>
-    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept;
 
     std::vector<VkPhysicalDevice>
     getPhysicalDevices(const VkInstance instance) noexcept;
@@ -69,7 +72,7 @@ namespace nd::src::graphics::vulkan
     VkDevice
     getDeviceHandle(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice);
 
-    VkDevice
+    Device
     getDevice(const DeviceConfiguration& configuration,
               const VkPhysicalDevice     physicalDevice,
               const VkDeviceCreateFlags  flags = {},

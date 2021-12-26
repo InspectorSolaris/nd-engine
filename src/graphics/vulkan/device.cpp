@@ -47,37 +47,6 @@ namespace nd::src::graphics::vulkan
         };
     }
 
-    std::vector<VkQueueFamilyProperties>
-    getPhysicalDeviceQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept
-    {
-        ND_SET_SCOPE();
-
-        uint32_t count;
-
-        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, nullptr);
-
-        auto queueFamilies = std::vector<VkQueueFamilyProperties>(count);
-
-        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, queueFamilies.data());
-
-        return queueFamilies;
-    }
-
-    std::vector<QueueFamily>
-    getPhysicalDeviceQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept
-    {
-        ND_SET_SCOPE();
-
-        const auto queueFamiliesProperties = getPhysicalDeviceQueueFamiliesProperties(physicalDevice);
-
-        return getMapped<VkQueueFamilyProperties, QueueFamily>(
-            queueFamiliesProperties,
-            [](const auto& properties, const auto index)
-            {
-                return QueueFamily {static_cast<uint32_t>(index), properties.queueCount, properties.queueFlags};
-            });
-    }
-
     std::vector<VkPhysicalDevice>
     getPhysicalDevices(const VkInstance instance) noexcept
     {
@@ -159,7 +128,7 @@ namespace nd::src::graphics::vulkan
         auto queueFlagsPool      = queueFlags;
         auto queueFlagsSupported = VkQueueFlags {};
 
-        const auto queueFamilies = getPhysicalDeviceQueueFamiliesProperties(physicalDevice);
+        const auto queueFamilies = getQueueFamiliesProperties(physicalDevice);
 
         while(queueFlagsPool)
         {
@@ -232,7 +201,7 @@ namespace nd::src::graphics::vulkan
         return device;
     }
 
-    VkDevice
+    Device
     getDevice(const DeviceConfiguration& configuration,
               const VkPhysicalDevice     physicalDevice,
               const VkDeviceCreateFlags  flags,
@@ -242,10 +211,11 @@ namespace nd::src::graphics::vulkan
 
         const auto cextensions = getRawStrings(configuration.extensions);
 
+        auto queueFamilies    = getQueueFamilies(physicalDevice);
         auto queuePriorities  = std::vector<std::vector<float>> {};
         auto queueCreateInfos = std::vector<VkDeviceQueueCreateInfo> {};
 
-        for(const auto& queueFamily: configuration.queueFamiliesPool)
+        for(const auto& queueFamily: queueFamilies)
         {
             queueCreateInfos.push_back(
                 getQueueCreateInfo(queueFamily.index,
@@ -261,6 +231,6 @@ namespace nd::src::graphics::vulkan
                                                     flags,
                                                     next);
 
-        return getDeviceHandle(createInfo, physicalDevice);
+        return {std::move(queueFamilies), getDeviceHandle(createInfo, physicalDevice)};
     }
 } // namespace nd::src::graphics::vulkan

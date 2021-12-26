@@ -3,8 +3,9 @@
 
 namespace nd::src::graphics::vulkan
 {
-    VulkanContextInitializers   vulkanContextInitializers   = {getInstance};
-    VulkanContextConfigurations vulkanContextConfigurations = {getInstanceConfiguration};
+    VulkanContextInitializers   vulkanContextInitializers   = {getInstance, getPhysicalDevice};
+    VulkanContextConfigurations vulkanContextConfigurations = {getInstanceConfiguration, getPhysicalDeviceConfiguration};
+    VulkanContextFilters        vulkanContextFilters        = {};
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -27,5 +28,21 @@ namespace nd::src::graphics::vulkan
                 VK_MAKE_VERSION(0, 1, 0),
                 VK_MAKE_VERSION(0, 1, 0),
                 VK_API_VERSION_1_2};
+    }
+
+    PhysicalDeviceConfiguration
+    getPhysicalDeviceConfiguration() noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {{},
+                [](const VkPhysicalDevice            physicalDevice,
+                   const VkPhysicalDeviceProperties& properties,
+                   const VkPhysicalDeviceFeatures&   features)
+                {
+                    return 1;
+                },
+                {"VK_KHR_swapchain"},
+                VK_QUEUE_GRAPHICS_BIT};
     }
 } // namespace nd::src::graphics::vulkan

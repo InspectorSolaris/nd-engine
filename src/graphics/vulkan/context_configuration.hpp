@@ -38,23 +38,46 @@ namespace nd::src::graphics::vulkan
 
     struct VulkanContextInitializers final
     {
-        using Instance = VkInstance(const InstanceConfiguration&, const VkInstanceCreateFlags, const void* next);
-        using Surface  = VkSurfaceKHR(const VkInstance);
+        using Instance = VkInstance(const InstanceConfiguration&, const VkInstanceCreateFlags, const void*);
 
-        const std::function<Instance> getInstance;
-        const std::function<Surface>  getSurface;
+        using PhysicalDevice = VkPhysicalDevice(const PhysicalDeviceConfiguration&, const VkInstance);
+
+        using Device = Device(const DeviceConfiguration&, const VkPhysicalDevice, const VkDeviceCreateFlags, const void*);
+
+        using Surface = VkSurfaceKHR(const VkInstance);
+
+        const std::function<Instance>       getInstance;
+        const std::function<PhysicalDevice> getPhysicalDevice;
+        const std::function<Device>         getDevice;
+        const std::function<Surface>        getSurface;
     };
 
     struct VulkanContextConfigurations final
     {
-        using Instance = InstanceConfiguration(const VulkanContextConfigurationExternal&);
+        using Instance       = InstanceConfiguration(const VulkanContextConfigurationExternal&);
+        using PhysicalDevice = PhysicalDeviceConfiguration();
+        using Device         = DeviceConfiguration(const PhysicalDeviceConfiguration&);
 
-        const std::function<Instance> getInstanceConfiguration;
+        const std::function<Instance>       getInstanceConfiguration;
+        const std::function<PhysicalDevice> getPhysicalDeviceConfiguration;
+        const std::function<Device>         getDeviceConfiguration;
+    };
+
+    struct VulkanContextFilters final
+    {
+        using QueueFamily = bool(const QueueFamily, const size_t);
+
+        const std::function<QueueFamily> deviceQueueFamilyFilter;
+        const std::function<QueueFamily> swapchainQueueFamilyFilter;
     };
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept;
 
+    PhysicalDeviceConfiguration
+    getPhysicalDeviceConfiguration() noexcept;
+
     extern VulkanContextInitializers   vulkanContextInitializers;
     extern VulkanContextConfigurations vulkanContextConfigurations;
+    extern VulkanContextFilters        vulkanContextFilters;
 } // namespace nd::src::graphics::vulkan
