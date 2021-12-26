@@ -31,7 +31,7 @@ namespace nd::src::graphics::vulkan
 
         VkPipelineLayout pipelineLayout;
 
-        ND_ASSERT(vkCreatePipelineLayout(device, &createInfo, nullptr, &pipelineLayout) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreatePipelineLayout(device, &createInfo, nullptr, &pipelineLayout) == VK_SUCCESS);
 
         return pipelineLayout;
     }

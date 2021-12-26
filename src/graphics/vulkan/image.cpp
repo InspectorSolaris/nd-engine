@@ -47,7 +47,7 @@ namespace nd::src::graphics::vulkan
 
         VkImage image;
 
-        ND_ASSERT(vkCreateImage(device, &createInfo, nullptr, &image) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateImage(device, &createInfo, nullptr, &image) == VK_SUCCESS);
 
         return image;
     }

@@ -207,7 +207,7 @@ namespace nd::src::graphics::vulkan
 
         VkSwapchainKHR swapchain;
 
-        ND_ASSERT(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain) == VK_SUCCESS);
 
         return swapchain;
     }
@@ -291,7 +291,7 @@ namespace nd::src::graphics::vulkan
 
         uint32_t imageIndex;
 
-        ND_ASSERT(vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, &imageIndex) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, &imageIndex) == VK_SUCCESS);
 
         return imageIndex;
     }

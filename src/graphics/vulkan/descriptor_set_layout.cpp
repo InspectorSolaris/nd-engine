@@ -27,7 +27,7 @@ namespace nd::src::graphics::vulkan
 
         VkDescriptorSetLayout descriptorSetLayout;
 
-        ND_ASSERT(vkCreateDescriptorSetLayout(device, &createInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateDescriptorSetLayout(device, &createInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS);
 
         return descriptorSetLayout;
     }

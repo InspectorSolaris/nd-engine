@@ -35,7 +35,7 @@ namespace nd::src::graphics::vulkan
 
         VkFramebuffer framebuffer;
 
-        ND_ASSERT(vkCreateFramebuffer(device, &createInfo, nullptr, &framebuffer) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateFramebuffer(device, &createInfo, nullptr, &framebuffer) == VK_SUCCESS);
 
         return framebuffer;
     }

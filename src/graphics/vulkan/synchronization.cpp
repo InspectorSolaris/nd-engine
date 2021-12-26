@@ -22,7 +22,7 @@ namespace nd::src::graphics::vulkan
 
         VkSemaphore semaphore;
 
-        ND_ASSERT(vkCreateSemaphore(device, &createInfo, nullptr, &semaphore) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateSemaphore(device, &createInfo, nullptr, &semaphore) == VK_SUCCESS);
 
         return semaphore;
     }
@@ -66,7 +66,7 @@ namespace nd::src::graphics::vulkan
 
         VkFence fence;
 
-        ND_ASSERT(vkCreateFence(device, &createInfo, nullptr, &fence) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateFence(device, &createInfo, nullptr, &fence) == VK_SUCCESS);
 
         return fence;
     }

@@ -118,14 +118,14 @@ namespace nd::src::graphics::vulkan
 
         const auto submitInfo = getSubmitInfo({commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores});
 
-        ND_ASSERT(vkQueueSubmit(deviceQueue, 1, &submitInfo, imageRenderedFence) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, 1, &submitInfo, imageRenderedFence) == VK_SUCCESS);
 
         const auto swapchains   = std::vector<VkSwapchainKHR> {swapchain_};
         const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(frameIndex)};
 
         const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
 
-        ND_ASSERT(vkQueuePresentKHR(swapchainQueue, &presentInfo) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkQueuePresentKHR(swapchainQueue, &presentInfo) == VK_SUCCESS);
 
         frameIndex = (frameIndex + 1) % framesCount_;
     }
@@ -332,7 +332,7 @@ namespace nd::src::graphics::vulkan
 
             const auto commandBufferBeginInfo = getCommandBufferBeginInfo(nullptr);
 
-            ND_ASSERT(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo) == VK_SUCCESS);
+            ND_ASSERT_EXEC(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo) == VK_SUCCESS);
 
             const auto clearValues = vector<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
             const auto renderPassBeginInfo =
@@ -344,7 +344,7 @@ namespace nd::src::graphics::vulkan
 
             vkCmdEndRenderPass(commandBuffer);
 
-            ND_ASSERT(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS);
+            ND_ASSERT_EXEC(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS);
         }
 
         const auto framesCount = size_t {2};

@@ -42,7 +42,7 @@ namespace nd::src::graphics::vulkan
 
         auto commandBuffers = std::vector<VkCommandBuffer>(allocateInfo.commandBufferCount);
 
-        ND_ASSERT(vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data()) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data()) == VK_SUCCESS);
 
         return commandBuffers;
     }

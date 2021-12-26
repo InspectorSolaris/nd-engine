@@ -33,7 +33,7 @@ namespace nd::src::graphics::vulkan
 
         VkImageView imageView;
 
-        ND_ASSERT(vkCreateImageView(device, &createInfo, nullptr, &imageView) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateImageView(device, &createInfo, nullptr, &imageView) == VK_SUCCESS);
 
         return imageView;
     }

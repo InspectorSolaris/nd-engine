@@ -31,7 +31,7 @@ namespace nd::src::graphics::vulkan
 
         VkBufferView bufferView;
 
-        ND_ASSERT(vkCreateBufferView(device, &createInfo, nullptr, &bufferView) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateBufferView(device, &createInfo, nullptr, &bufferView) == VK_SUCCESS);
 
         return bufferView;
     }

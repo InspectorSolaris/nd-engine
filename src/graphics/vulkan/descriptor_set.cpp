@@ -27,7 +27,7 @@ namespace nd::src::graphics::vulkan
 
         auto descriptorSets = std::vector<VkDescriptorSet>(allocateInfo.descriptorSetCount);
 
-        ND_ASSERT(vkAllocateDescriptorSets(device, &allocateInfo, descriptorSets.data()) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkAllocateDescriptorSets(device, &allocateInfo, descriptorSets.data()) == VK_SUCCESS);
 
         return descriptorSets;
     }

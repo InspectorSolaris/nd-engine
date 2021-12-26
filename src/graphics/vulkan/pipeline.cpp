@@ -279,7 +279,7 @@ namespace nd::src::graphics::vulkan
 
         auto pipelines = std::vector<VkPipeline>(createInfos.size());
 
-        ND_ASSERT(
+        ND_ASSERT_EXEC(
             vkCreateGraphicsPipelines(device, nullptr, pipelines.size(), createInfos.data(), nullptr, pipelines.data()) ==
             VK_SUCCESS);
 

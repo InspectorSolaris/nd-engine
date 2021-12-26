@@ -25,7 +25,7 @@ namespace nd::src::graphics::vulkan
 
         VkCommandPool commandPool;
 
-        ND_ASSERT(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool) == VK_SUCCESS);
 
         return commandPool;
     }

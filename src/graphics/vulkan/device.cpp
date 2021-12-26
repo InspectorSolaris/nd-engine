@@ -196,7 +196,7 @@ namespace nd::src::graphics::vulkan
 
         VkDevice device;
 
-        ND_ASSERT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) == VK_SUCCESS);
 
         return device;
     }

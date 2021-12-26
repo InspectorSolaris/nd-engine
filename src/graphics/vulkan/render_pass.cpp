@@ -132,7 +132,7 @@ namespace nd::src::graphics::vulkan
 
         VkRenderPass renderPass;
 
-        ND_ASSERT(vkCreateRenderPass(device, &createInfo, nullptr, &renderPass) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateRenderPass(device, &createInfo, nullptr, &renderPass) == VK_SUCCESS);
 
         return renderPass;
     }

@@ -29,7 +29,7 @@ namespace nd::src::graphics::vulkan
 
         VkDescriptorPool descriptorPool;
 
-        ND_ASSERT(vkCreateDescriptorPool(device, &createInfo, nullptr, &descriptorPool) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateDescriptorPool(device, &createInfo, nullptr, &descriptorPool) == VK_SUCCESS);
 
         return descriptorPool;
     }

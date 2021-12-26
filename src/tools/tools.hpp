@@ -48,13 +48,15 @@
 #define ND_GET_RUNTIME_ERROR(reason) nd::src::tools::getRuntimeError(__FILE__, ND_FUNCTION, #reason, __LINE__)
 
 #if defined(NDEBUG)
-    #define ND_ASSERT(code) (code)
+    #define ND_ASSERT_EXEC(code) (code)
+    #define ND_ASSERT(code)
 #else
-    #define ND_ASSERT(code)                   \
+    #define ND_ASSERT_EXEC(code)              \
         if(!(code))                           \
         {                                     \
             throw ND_GET_RUNTIME_ERROR(code); \
         }
+    #define ND_ASSERT(code) ND_ASSERT_EXEC(code)
 #endif
 
 namespace nd::src::tools

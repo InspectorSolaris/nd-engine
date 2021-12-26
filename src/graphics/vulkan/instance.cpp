@@ -112,7 +112,7 @@ namespace nd::src::graphics::vulkan
 
         VkInstance instance;
 
-        ND_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateInstance(&createInfo, nullptr, &instance) == VK_SUCCESS);
 
         return instance;
     }

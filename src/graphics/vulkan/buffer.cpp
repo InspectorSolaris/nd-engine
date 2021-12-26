@@ -33,7 +33,7 @@ namespace nd::src::graphics::vulkan
 
         VkBuffer buffer;
 
-        ND_ASSERT(vkCreateBuffer(device, &createInfo, nullptr, &buffer) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateBuffer(device, &createInfo, nullptr, &buffer) == VK_SUCCESS);
 
         return buffer;
     }

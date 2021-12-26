@@ -47,7 +47,7 @@ namespace nd::src::graphics::vulkan
 
         VkShaderModule shaderModule;
 
-        ND_ASSERT(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) == VK_SUCCESS);
 
         return shaderModule;
     }
