@@ -50,12 +50,18 @@ namespace nd::src::graphics::vulkan
 
         using RenderPass = VkRenderPass(const RenderPassConfiguration&, const VkDevice);
 
+        using ImageView = VkImageView(const ImageViewConfiguration&, const VkDevice);
+
+        using Framebuffer = VkFramebuffer(const FramebufferConfiguration&, const VkDevice);
+
         const std::function<Instance>       getInstance;
         const std::function<PhysicalDevice> getPhysicalDevice;
         const std::function<Device>         getDevice;
         const std::function<Surface>        getSurface;
         const std::function<Swapchain>      getSwapchain;
         const std::function<RenderPass>     getRenderPass;
+        const std::function<ImageView>      getSwapchainImageView;
+        const std::function<Framebuffer>    getSwapchainFramebuffer;
     };
 
     struct VulkanContextConfigurations final
@@ -73,11 +79,19 @@ namespace nd::src::graphics::vulkan
 
         using RenderPass = RenderPassConfiguration(const SwapchainConfiguration&);
 
-        const std::function<Instance>       getInstanceConfiguration;
-        const std::function<PhysicalDevice> getPhysicalDeviceConfiguration;
-        const std::function<Device>         getDeviceConfiguration;
-        const std::function<Swapchain>      getSwapchainConfiguration;
-        const std::function<RenderPass>     getRenderPassConfiguration;
+        using SwapchainImageView = ImageViewConfiguration(const SwapchainConfiguration&, const VkImage image);
+
+        using SwapchainFramebuffer = FramebufferConfiguration(const SwapchainConfiguration&,
+                                                              const VkImageView,
+                                                              const VkRenderPass);
+
+        const std::function<Instance>             getInstanceConfiguration;
+        const std::function<PhysicalDevice>       getPhysicalDeviceConfiguration;
+        const std::function<Device>               getDeviceConfiguration;
+        const std::function<Swapchain>            getSwapchainConfiguration;
+        const std::function<RenderPass>           getRenderPassConfiguration;
+        const std::function<SwapchainImageView>   getSwapchainImageViewConfiguration;
+        const std::function<SwapchainFramebuffer> getSwapchainFramebufferConfiguration;
     };
 
     InstanceConfiguration
@@ -97,6 +111,14 @@ namespace nd::src::graphics::vulkan
 
     RenderPassConfiguration
     getRenderPassConfiguration(const SwapchainConfiguration& swapchainConfiguration) noexcept;
+
+    ImageViewConfiguration
+    getSwapchainImageViewConfiguration(const SwapchainConfiguration& swapchainConfiguration, const VkImage image) noexcept;
+
+    FramebufferConfiguration
+    getSwapchainFramebufferConfiguration(const SwapchainConfiguration& swapchainConfiguration,
+                                         const VkImageView             imageView,
+                                         const VkRenderPass            renderPass) noexcept;
 
     extern VulkanContextInitializers   vulkanContextInitializers;
     extern VulkanContextConfigurations vulkanContextConfigurations;

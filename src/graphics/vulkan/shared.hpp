@@ -71,22 +71,22 @@ namespace nd::src::graphics::vulkan
         return outs;
     }
 
-    template<typename In,
+    template<typename T,
              typename Key,
              typename Value,
              typename KeyMap,
              typename ValueMap,
-             typename CollectionIn = std::vector<In>>
+             typename Collection = std::vector<T>>
     std::map<Key, Value>
-    getMap(const CollectionIn& ins, const KeyMap& keyMap, const ValueMap& valueMap) noexcept
+    getMap(const Collection& ts, const KeyMap& keyMap, const ValueMap& valueMap) noexcept
     {
         auto map = std::map<Key, Value> {};
 
-        for(size_t index = 0; index < ins.size(); ++index)
+        for(size_t index = 0; index < ts.size(); ++index)
         {
-            const auto& in = ins[index];
+            const auto& t = ts[index];
 
-            map[keyMap(in, index)] = valueMap(in, index);
+            map[keyMap(t, index)] = valueMap(t, index);
         }
 
         return map;

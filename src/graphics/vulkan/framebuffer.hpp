@@ -7,7 +7,7 @@ namespace nd::src::graphics::vulkan
 {
     struct FramebufferConfiguration final
     {
-        const std::vector<VkImageView>& attachments;
+        const std::vector<VkImageView> attachments;
 
         const VkRenderPass renderPass;
 

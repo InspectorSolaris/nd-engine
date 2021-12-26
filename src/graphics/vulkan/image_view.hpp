@@ -7,11 +7,11 @@ namespace nd::src::graphics::vulkan
 {
     struct ImageViewConfiguration final
     {
-        const VkImageSubresourceRange& subresourceRange;
-        const VkComponentMapping&      components;
-        const VkImageViewType          viewType;
-        const VkFormat                 format;
-        const VkImage                  image;
+        const VkImageSubresourceRange subresourceRange;
+        const VkComponentMapping      components;
+        const VkImageViewType         viewType;
+        const VkFormat                format;
+        const VkImage                 image;
 
         const VkImageViewCreateFlags flags = {};
         const void*                  next  = {};

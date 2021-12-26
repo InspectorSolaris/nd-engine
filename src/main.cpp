@@ -42,15 +42,21 @@ main()
         const auto glfwContext = getGlfwContext();
         const auto glfwWindow  = getWindow(windowConfiguration);
 
-        auto vulkanContext = getVulkanContext(
-            {windowConfiguration.title,
-             windowConfiguration.title,
-             {},
-             getRequiredExtensions(),
-             static_cast<uint32_t>(windowConfiguration.width),
-             static_cast<uint32_t>(windowConfiguration.height)},
-            {getInstance, getPhysicalDevice, getDevice, bind(getSurface, cref(glfwWindow), _1), getSwapchain, getRenderPass},
-            vulkanContextConfigurations);
+        auto vulkanContext = getVulkanContext({windowConfiguration.title,
+                                               windowConfiguration.title,
+                                               {},
+                                               getRequiredExtensions(),
+                                               static_cast<uint32_t>(windowConfiguration.width),
+                                               static_cast<uint32_t>(windowConfiguration.height)},
+                                              {getInstance,
+                                               getPhysicalDevice,
+                                               getDevice,
+                                               bind(getSurface, cref(glfwWindow), _1),
+                                               getSwapchain,
+                                               getRenderPass,
+                                               getImageView,
+                                               getFramebuffer},
+                                              vulkanContextConfigurations);
 
         while(!glfwWindowShouldClose(glfwWindow))
         {

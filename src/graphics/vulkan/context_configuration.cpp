@@ -8,7 +8,9 @@ namespace nd::src::graphics::vulkan
                                                                getPhysicalDeviceConfiguration,
                                                                getDeviceConfiguration,
                                                                getSwapchainConfiguration,
-                                                               getRenderPassConfiguration};
+                                                               getRenderPassConfiguration,
+                                                               getSwapchainImageViewConfiguration,
+                                                               getSwapchainFramebufferConfiguration};
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -109,5 +111,34 @@ namespace nd::src::graphics::vulkan
                                                  {}}};
 
         return {attachments, subpasses, dependencies};
+    }
+
+    ImageViewConfiguration
+    getSwapchainImageViewConfiguration(const SwapchainConfiguration& swapchainConfiguration, const VkImage image) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
+                {VK_COMPONENT_SWIZZLE_IDENTITY,
+                 VK_COMPONENT_SWIZZLE_IDENTITY,
+                 VK_COMPONENT_SWIZZLE_IDENTITY,
+                 VK_COMPONENT_SWIZZLE_IDENTITY},
+                VK_IMAGE_VIEW_TYPE_2D,
+                swapchainConfiguration.imageFormat,
+                image};
+    }
+
+    FramebufferConfiguration
+    getSwapchainFramebufferConfiguration(const SwapchainConfiguration& swapchainConfiguration,
+                                         const VkImageView             imageView,
+                                         const VkRenderPass            renderPass) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {{imageView},
+                renderPass,
+                swapchainConfiguration.imageExtent.width,
+                swapchainConfiguration.imageExtent.height,
+                swapchainConfiguration.imageArrayLayers};
     }
 } // namespace nd::src::graphics::vulkan

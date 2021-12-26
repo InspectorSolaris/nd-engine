@@ -163,32 +163,26 @@ namespace nd::src::graphics::vulkan
         const auto renderPassConfiguration = configurations.getRenderPassConfiguration(swapchainConfiguration);
         const auto renderPass              = initializers.getRenderPass(renderPassConfiguration, device);
 
-        const auto swapchainImages = getSwapchainImages(device, swapchain);
-        const auto swapchainImageViews =
-            getMapped<VkImage, VkImageView>(swapchainImages,
-                                            [device = device, &swapchainConfiguration](const auto image, const auto index)
-                                            {
-                                                return getImageView({{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
-                                                                     {VK_COMPONENT_SWIZZLE_IDENTITY,
-                                                                      VK_COMPONENT_SWIZZLE_IDENTITY,
-                                                                      VK_COMPONENT_SWIZZLE_IDENTITY,
-                                                                      VK_COMPONENT_SWIZZLE_IDENTITY},
-                                                                     VK_IMAGE_VIEW_TYPE_2D,
-                                                                     swapchainConfiguration.imageFormat,
-                                                                     image},
-                                                                    device);
-                                            });
+        const auto swapchainImages     = getSwapchainImages(device, swapchain);
+        const auto swapchainImageViews = getMapped<VkImage, VkImageView>(
+            swapchainImages,
+            [device = device, &swapchainConfiguration, &initializers, &configurations](const auto image, const auto index)
+            {
+                const auto imageViewConfiguration =
+                    configurations.getSwapchainImageViewConfiguration(swapchainConfiguration, image);
+
+                return initializers.getSwapchainImageView(imageViewConfiguration, device);
+            });
 
         const auto swapchainFramebuffers = getMapped<VkImageView, VkFramebuffer>(
             swapchainImageViews,
-            [device = device, renderPass, &swapchainConfiguration](const auto imageView, const auto index)
+            [device = device, renderPass, &swapchainConfiguration, &initializers, &configurations](const auto imageView,
+                                                                                                   const auto index)
             {
-                return getFramebuffer({{imageView},
-                                       renderPass,
-                                       swapchainConfiguration.imageExtent.width,
-                                       swapchainConfiguration.imageExtent.height,
-                                       swapchainConfiguration.imageArrayLayers},
-                                      device);
+                const auto framebufferConfiguration =
+                    configurations.getSwapchainFramebufferConfiguration(swapchainConfiguration, imageView, renderPass);
+
+                return initializers.getSwapchainFramebuffer(framebufferConfiguration, device);
             });
 
         const auto shaderPaths =
