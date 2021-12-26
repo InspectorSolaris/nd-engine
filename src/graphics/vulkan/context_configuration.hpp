@@ -54,21 +54,15 @@ namespace nd::src::graphics::vulkan
 
     struct VulkanContextConfigurations final
     {
-        using Instance       = InstanceConfiguration(const VulkanContextConfigurationExternal&);
+        using Instance = InstanceConfiguration(const VulkanContextConfigurationExternal&);
+
         using PhysicalDevice = PhysicalDeviceConfiguration();
-        using Device         = DeviceConfiguration(const PhysicalDeviceConfiguration&);
+
+        using Device = DeviceConfiguration(const PhysicalDeviceConfiguration&);
 
         const std::function<Instance>       getInstanceConfiguration;
         const std::function<PhysicalDevice> getPhysicalDeviceConfiguration;
         const std::function<Device>         getDeviceConfiguration;
-    };
-
-    struct VulkanContextFilters final
-    {
-        using QueueFamily = bool(const QueueFamily, const size_t);
-
-        const std::function<QueueFamily> deviceQueueFamilyFilter;
-        const std::function<QueueFamily> swapchainQueueFamilyFilter;
     };
 
     InstanceConfiguration
@@ -77,7 +71,9 @@ namespace nd::src::graphics::vulkan
     PhysicalDeviceConfiguration
     getPhysicalDeviceConfiguration() noexcept;
 
+    DeviceConfiguration
+    getDeviceConfiguration(const PhysicalDeviceConfiguration& physicalDeviceConfiguration) noexcept;
+
     extern VulkanContextInitializers   vulkanContextInitializers;
     extern VulkanContextConfigurations vulkanContextConfigurations;
-    extern VulkanContextFilters        vulkanContextFilters;
 } // namespace nd::src::graphics::vulkan

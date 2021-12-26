@@ -146,8 +146,8 @@ namespace nd::src::graphics::vulkan
         const auto physicalDeviceConfiguration = configurations.getPhysicalDeviceConfiguration();
         const auto physicalDevice              = initializers.getPhysicalDevice(physicalDeviceConfiguration, instance);
 
-        const auto [deviceQueueFamilies, device] =
-            getDevice({physicalDeviceConfiguration.features, physicalDeviceConfiguration.extensions}, physicalDevice);
+        const auto deviceConfiguration           = configurations.getDeviceConfiguration(physicalDeviceConfiguration);
+        const auto [deviceQueueFamilies, device] = initializers.getDevice(deviceConfiguration, physicalDevice, {}, {});
 
         const auto deviceQueues = getQueues(device, deviceQueueFamilies);
 
