@@ -37,10 +37,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineLayout
-    getPipelineLayout(const PipelineLayoutConfiguration& configuration,
-                      const VkDevice                     device,
-                      const VkPipelineLayoutCreateFlags  flags,
-                      const void*                        next)
+    getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -48,8 +45,8 @@ namespace nd::src::graphics::vulkan
                                                             configuration.pushConstantRanges.size(),
                                                             configuration.descriptorSetLayouts.data(),
                                                             configuration.pushConstantRanges.data(),
-                                                            flags,
-                                                            next);
+                                                            configuration.flags,
+                                                            configuration.next);
 
         return getPipelineLayoutHandle(createInfo, device);
     }

@@ -53,17 +53,16 @@ namespace nd::src::graphics::vulkan
     }
 
     VkShaderModule
-    getShaderModule(const ShaderModuleConfiguration& configuration,
-                    const VkDevice                   device,
-                    const VkShaderModuleCreateFlags  flags,
-                    const void*                      next)
+    getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         const auto code = getShaderCode(configuration.path);
 
-        const auto createInfo =
-            getShaderModuleCreateInfo(code.size(), reinterpret_cast<const uint32_t*>(code.data()), flags, next);
+        const auto createInfo = getShaderModuleCreateInfo(code.size(),
+                                                          reinterpret_cast<const uint32_t*>(code.data()),
+                                                          configuration.flags,
+                                                          configuration.next);
 
         return getShaderModuleHandle(createInfo, device);
     }

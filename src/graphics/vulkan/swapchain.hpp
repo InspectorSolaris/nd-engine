@@ -25,6 +25,9 @@ namespace nd::src::graphics::vulkan
 
         const VkSurfaceTransformFlagBitsKHR transform;
         const VkCompositeAlphaFlagBitsKHR   compositeAlpha;
+
+        const VkSwapchainCreateFlagsKHR flags = {};
+        const void*                     next  = {};
     };
 
     struct Swapchain final
@@ -93,10 +96,7 @@ namespace nd::src::graphics::vulkan
     getSwapchainHandle(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device);
 
     Swapchain
-    getSwapchain(const SwapchainConfiguration&   configuration,
-                 const VkDevice                  device,
-                 const VkSwapchainCreateFlagsKHR flags = {},
-                 const void*                     next  = {});
+    getSwapchain(const SwapchainConfiguration& configuration, const VkDevice device);
 
     std::vector<VkImage>
     getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept;

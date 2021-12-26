@@ -38,23 +38,17 @@ namespace nd::src::graphics::vulkan
 
     struct VulkanContextInitializers final
     {
-        using Instance = VkInstance(const InstanceConfiguration&, const VkInstanceCreateFlags, const void*);
+        using Instance = VkInstance(const InstanceConfiguration&);
 
         using PhysicalDevice = VkPhysicalDevice(const PhysicalDeviceConfiguration&, const VkInstance);
 
-        using Device = Device(const DeviceConfiguration&, const VkPhysicalDevice, const VkDeviceCreateFlags, const void*);
+        using Device = Device(const DeviceConfiguration&, const VkPhysicalDevice);
 
         using Surface = VkSurfaceKHR(const VkInstance);
 
-        using Swapchain = Swapchain(const SwapchainConfiguration&,
-                                    const VkDevice,
-                                    const VkSwapchainCreateFlagsKHR,
-                                    const void*);
+        using Swapchain = Swapchain(const SwapchainConfiguration&, const VkDevice);
 
-        using RenderPass = VkRenderPass(const RenderPassConfiguration&,
-                                        const VkDevice,
-                                        const VkRenderPassCreateFlags,
-                                        const void*);
+        using RenderPass = VkRenderPass(const RenderPassConfiguration&, const VkDevice);
 
         const std::function<Instance>       getInstance;
         const std::function<PhysicalDevice> getPhysicalDevice;

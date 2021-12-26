@@ -10,6 +10,8 @@ namespace nd::src::graphics::vulkan
         const VkCommandPool        commandPool;
         const VkCommandBufferLevel level;
         const uint32_t             count;
+
+        const void* next = {};
     };
 
     VkCommandBufferBeginInfo
@@ -27,5 +29,5 @@ namespace nd::src::graphics::vulkan
     getCommandBufferHandle(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device);
 
     std::vector<VkCommandBuffer>
-    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device, const void* next = {});
+    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

@@ -31,14 +31,12 @@ namespace nd::src::graphics::vulkan
     }
 
     VkCommandPool
-    getCommandPool(const CommandPoolConfiguration& configuration,
-                   const VkDevice                  device,
-                   const VkCommandPoolCreateFlags  flags,
-                   const void*                     next)
+    getCommandPool(const CommandPoolConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
-        const auto createInfo = getCommandPoolCreateInfo(configuration.queueFamilyIndex, flags, next);
+        const auto createInfo =
+            getCommandPoolCreateInfo(configuration.queueFamilyIndex, configuration.flags, configuration.next);
 
         return getCommandPoolHandle(createInfo, device);
     }

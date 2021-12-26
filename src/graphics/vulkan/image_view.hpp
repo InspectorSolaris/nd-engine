@@ -12,6 +12,9 @@ namespace nd::src::graphics::vulkan
         const VkImageViewType          viewType;
         const VkFormat                 format;
         const VkImage                  image;
+
+        const VkImageViewCreateFlags flags = {};
+        const void*                  next  = {};
     };
 
     VkImageViewCreateInfo
@@ -27,8 +30,5 @@ namespace nd::src::graphics::vulkan
     getImageViewHandle(const VkImageViewCreateInfo& createInfo, const VkDevice device);
 
     VkImageView
-    getImageView(const ImageViewConfiguration& configuration,
-                 const VkDevice                device,
-                 const VkImageViewCreateFlags  flags = {},
-                 const void*                   next  = {});
+    getImageView(const ImageViewConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

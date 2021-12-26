@@ -202,10 +202,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Device
-    getDevice(const DeviceConfiguration& configuration,
-              const VkPhysicalDevice     physicalDevice,
-              const VkDeviceCreateFlags  flags,
-              const void*                next)
+    getDevice(const DeviceConfiguration& configuration, const VkPhysicalDevice physicalDevice)
     {
         ND_SET_SCOPE();
 
@@ -228,8 +225,8 @@ namespace nd::src::graphics::vulkan
                                                     queueCreateInfos.data(),
                                                     cextensions.data(),
                                                     &configuration.features,
-                                                    flags,
-                                                    next);
+                                                    configuration.flags,
+                                                    configuration.next);
 
         return {std::move(queueFamilies), getDeviceHandle(createInfo, physicalDevice)};
     }

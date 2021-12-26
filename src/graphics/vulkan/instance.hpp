@@ -16,6 +16,9 @@ namespace nd::src::graphics::vulkan
         const uint32_t applicationVersion;
         const uint32_t engineVersion;
         const uint32_t apiVersion;
+
+        const VkInstanceCreateFlags flags = {};
+        const void*                 next  = {};
     };
 
     VkApplicationInfo
@@ -45,5 +48,5 @@ namespace nd::src::graphics::vulkan
     getInstanceHandle(const VkInstanceCreateInfo& createInfo);
 
     VkInstance
-    getInstance(const InstanceConfiguration& configuration, const VkInstanceCreateFlags flags = {}, const void* next = {});
+    getInstance(const InstanceConfiguration& configuration);
 } // namespace nd::src::graphics::vulkan

@@ -18,6 +18,8 @@ namespace nd::src::graphics::vulkan
         const std::optional<VkAttachmentReference> depthStencilAttachment;
 
         const VkPipelineBindPoint pipelineBindPoint;
+
+        const VkSubpassDescriptionFlags flags = {};
     };
 
     struct RenderPassConfiguration final
@@ -25,6 +27,9 @@ namespace nd::src::graphics::vulkan
         const std::vector<AttachmentDescription> attachments;
         const std::vector<SubpassDescription>    subpasses;
         const std::vector<SubpassDependency>     dependencies;
+
+        const VkRenderPassCreateFlags flags = {};
+        const void*                   next  = {};
     };
 
     VkRenderPassBeginInfo
@@ -81,8 +86,5 @@ namespace nd::src::graphics::vulkan
     getRenderPassHandle(const VkRenderPassCreateInfo& createInfo, const VkDevice device);
 
     VkRenderPass
-    getRenderPass(const RenderPassConfiguration& configuration,
-                  const VkDevice                 device,
-                  const VkRenderPassCreateFlags  flags = {},
-                  const void*                    next  = {});
+    getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

@@ -14,6 +14,9 @@ namespace nd::src::graphics::vulkan
         const uint32_t width;
         const uint32_t height;
         const uint32_t layers;
+
+        const VkFramebufferCreateFlags flags = {};
+        const void*                    next  = {};
     };
 
     VkFramebufferCreateInfo
@@ -30,8 +33,5 @@ namespace nd::src::graphics::vulkan
     getFramebufferHandle(const VkFramebufferCreateInfo& createInfo, const VkDevice device);
 
     VkFramebuffer
-    getFramebuffer(const FramebufferConfiguration& configuration,
-                   const VkDevice                  device,
-                   const VkFramebufferCreateFlags  flags = {},
-                   const void*                     next  = {});
+    getFramebuffer(const FramebufferConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

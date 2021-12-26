@@ -9,6 +9,8 @@ namespace nd::src::graphics::vulkan
     {
         const std::vector<VkDescriptorSetLayout>& layouts;
         const VkDescriptorPool                    descriptorPool;
+
+        const void* next = {};
     };
 
     VkDescriptorSetAllocateInfo
@@ -21,5 +23,5 @@ namespace nd::src::graphics::vulkan
     getDescriptorSetHandle(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device);
 
     std::vector<VkDescriptorSet>
-    getDescriptorSet(const DescriptorSetConfiguration& configuration, const VkDevice device, const void* next = {});
+    getDescriptorSet(const DescriptorSetConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

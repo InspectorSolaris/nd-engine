@@ -27,6 +27,9 @@ namespace nd::src::graphics::vulkan
         const VkPhysicalDeviceFeatures features;
 
         const std::vector<std::string> extensions;
+
+        const VkDeviceCreateFlags flags = {};
+        const void*               next  = {};
     };
 
     struct Device final
@@ -73,8 +76,5 @@ namespace nd::src::graphics::vulkan
     getDeviceHandle(const VkDeviceCreateInfo& createInfo, const VkPhysicalDevice physicalDevice);
 
     Device
-    getDevice(const DeviceConfiguration& configuration,
-              const VkPhysicalDevice     physicalDevice,
-              const VkDeviceCreateFlags  flags = {},
-              const void*                next  = {});
+    getDevice(const DeviceConfiguration& configuration, const VkPhysicalDevice physicalDevice);
 } // namespace nd::src::graphics::vulkan

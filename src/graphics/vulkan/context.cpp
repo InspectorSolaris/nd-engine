@@ -111,7 +111,7 @@ namespace nd::src::graphics::vulkan
 
         const auto imageIndex = getNextSwapchainImage(device_, swapchain_, imageAcquiredSemaphore, imageAcquiredFence);
 
-        const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_[frameIndex]};
+        const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_[imageIndex]};
         const auto waitDstStageMask = std::vector<VkPipelineStageFlags> {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
         const auto waitSemaphores   = std::vector<VkSemaphore> {imageAcquiredSemaphore};
         const auto signalSemaphores = std::vector<VkSemaphore> {imageRenderedSemaphore};
@@ -121,7 +121,7 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, 1, &submitInfo, imageRenderedFence) == VK_SUCCESS);
 
         const auto swapchains   = std::vector<VkSwapchainKHR> {swapchain_};
-        const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(frameIndex)};
+        const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(imageIndex)};
 
         const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
 
@@ -141,13 +141,13 @@ namespace nd::src::graphics::vulkan
         using std::vector;
 
         const auto instanceConfiguration = configurations.getInstanceConfiguration(configurationExternal);
-        const auto instance              = initializers.getInstance(instanceConfiguration, {}, {});
+        const auto instance              = initializers.getInstance(instanceConfiguration);
 
         const auto physicalDeviceConfiguration = configurations.getPhysicalDeviceConfiguration();
         const auto physicalDevice              = initializers.getPhysicalDevice(physicalDeviceConfiguration, instance);
 
         const auto deviceConfiguration           = configurations.getDeviceConfiguration(physicalDeviceConfiguration);
-        const auto [deviceQueueFamilies, device] = initializers.getDevice(deviceConfiguration, physicalDevice, {}, {});
+        const auto [deviceQueueFamilies, device] = initializers.getDevice(deviceConfiguration, physicalDevice);
         const auto deviceQueues                  = getQueues(device, deviceQueueFamilies);
 
         const auto surface = initializers.getSurface(instance);
@@ -157,11 +157,11 @@ namespace nd::src::graphics::vulkan
                                                                                      configurationExternal.width,
                                                                                      configurationExternal.height);
 
-        const auto [swapchainQueueFamilies, swapchain] = initializers.getSwapchain(swapchainConfiguration, device, {}, {});
+        const auto [swapchainQueueFamilies, swapchain] = initializers.getSwapchain(swapchainConfiguration, device);
         const auto swapchainQueues                     = getQueues(device, swapchainQueueFamilies);
 
         const auto renderPassConfiguration = configurations.getRenderPassConfiguration(swapchainConfiguration);
-        const auto renderPass              = initializers.getRenderPass(renderPassConfiguration, device, {}, {});
+        const auto renderPass              = initializers.getRenderPass(renderPassConfiguration, device);
 
         const auto swapchainImages = getSwapchainImages(device, swapchain);
         const auto swapchainImageViews =
@@ -202,9 +202,9 @@ namespace nd::src::graphics::vulkan
                                                                          return getShaderModule({path}, device);
                                                                      });
 
-        const auto descriptorPool = getDescriptorPool({{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1},
-                                                      device,
-                                                      VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
+        const auto descriptorPool = getDescriptorPool(
+            {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
+            device);
 
         const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device);
         const auto descriptorSets      = getDescriptorSet({{descriptorSetLayout}, descriptorPool}, device);

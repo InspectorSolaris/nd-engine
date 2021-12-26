@@ -21,6 +21,9 @@ namespace nd::src::graphics::vulkan
         const VkPipelineLayout                        layout;
         const VkRenderPass                            renderPass;
         const uint32_t                                subpass;
+
+        const VkPipelineCreateFlags flags = {};
+        const void*                 next  = {};
     };
 
     VkPipelineShaderStageCreateInfo
@@ -134,8 +137,5 @@ namespace nd::src::graphics::vulkan
     getGraphicsPipelineHandle(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device);
 
     std::vector<VkPipeline>
-    getGraphicsPipeline(const std::vector<PipelineConfiguration>& configurations,
-                        const VkDevice                            device,
-                        const std::vector<VkPipelineCreateFlags>  flags = {},
-                        const std::vector<void*>                  next  = {});
+    getGraphicsPipeline(const std::vector<PipelineConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

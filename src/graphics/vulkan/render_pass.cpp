@@ -138,10 +138,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkRenderPass
-    getRenderPass(const RenderPassConfiguration& configuration,
-                  const VkDevice                 device,
-                  const VkRenderPassCreateFlags  flags,
-                  const void*                    next)
+    getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -161,7 +158,8 @@ namespace nd::src::graphics::vulkan
                     subpass.colorAttachments.data(),
                     subpass.resolveAttachments.data(),
                     subpass.depthStencilAttachment.has_value() ? &subpass.depthStencilAttachment.value() : nullptr,
-                    subpass.preserveAttachments.data());
+                    subpass.preserveAttachments.data(),
+                    subpass.flags);
             });
 
         const auto createInfo = getRenderPassCreateInfo(configuration.attachments.size(),
@@ -170,8 +168,8 @@ namespace nd::src::graphics::vulkan
                                                         configuration.attachments.data(),
                                                         subpasses.data(),
                                                         configuration.dependencies.data(),
-                                                        flags,
-                                                        next);
+                                                        configuration.flags,
+                                                        configuration.next);
 
         return getRenderPassHandle(createInfo, device);
     }

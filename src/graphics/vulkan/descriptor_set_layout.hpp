@@ -8,6 +8,9 @@ namespace nd::src::graphics::vulkan
     struct DescriptorSetLayoutConfiguration final
     {
         const std::vector<VkDescriptorSetLayoutBinding>& bindings;
+
+        const VkDescriptorSetLayoutCreateFlags flags = {};
+        const void*                            next  = {};
     };
 
     VkDescriptorSetLayoutCreateInfo
@@ -20,8 +23,5 @@ namespace nd::src::graphics::vulkan
     getDescriptorSetLayoutHandle(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device);
 
     VkDescriptorSetLayout
-    getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration,
-                           const VkDevice                          device,
-                           const VkDescriptorSetLayoutCreateFlags  flags = {},
-                           const void*                             next  = {});
+    getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

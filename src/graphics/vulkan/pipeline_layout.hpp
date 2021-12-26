@@ -9,6 +9,9 @@ namespace nd::src::graphics::vulkan
     {
         const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts;
         const std::vector<VkPushConstantRange>&   pushConstantRanges;
+
+        const VkPipelineLayoutCreateFlags flags = {};
+        const void*                       next  = {};
     };
 
     VkPipelineLayoutCreateInfo
@@ -23,8 +26,5 @@ namespace nd::src::graphics::vulkan
     getPipelineLayoutHandle(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device);
 
     VkPipelineLayout
-    getPipelineLayout(const PipelineLayoutConfiguration& configuration,
-                      const VkDevice                     device,
-                      const VkPipelineLayoutCreateFlags  flags = {},
-                      const void*                        next  = {});
+    getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

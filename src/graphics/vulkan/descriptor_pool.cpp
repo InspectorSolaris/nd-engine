@@ -35,18 +35,15 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDescriptorPool
-    getDescriptorPool(const DescriptorPoolConfiguration& configuration,
-                      const VkDevice                     device,
-                      const VkDescriptorPoolCreateFlags  flags,
-                      const void*                        next)
+    getDescriptorPool(const DescriptorPoolConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         const auto createInfo = getDescriptorPoolCreateInfo(configuration.maxSets,
                                                             configuration.descriptorPoolSizes.size(),
                                                             configuration.descriptorPoolSizes.data(),
-                                                            flags,
-                                                            next);
+                                                            configuration.flags,
+                                                            configuration.next);
 
         return getDescriptorPoolHandle(createInfo, device);
     }

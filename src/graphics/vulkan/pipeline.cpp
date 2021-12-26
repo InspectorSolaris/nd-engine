@@ -287,20 +287,14 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkPipeline>
-    getGraphicsPipeline(const std::vector<PipelineConfiguration>& configurations,
-                        const VkDevice                            device,
-                        const std::vector<VkPipelineCreateFlags>  flags,
-                        const std::vector<void*>                  next)
+    getGraphicsPipeline(const std::vector<PipelineConfiguration>& configurations, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         const auto createInfos = getMapped<PipelineConfiguration, VkGraphicsPipelineCreateInfo>(
             configurations,
-            [&flags, &next](const auto& configuration, const auto index)
+            [](const auto& configuration, const auto index)
             {
-                const auto createInfoFlags = flags.size() != 0 ? flags[index] : VkPipelineCreateFlags {};
-                const auto createInfoNext  = next.size() != 0 ? next[index] : nullptr;
-
                 return getGraphicsPipelineCreateInfo(configuration.stages.size(),
                                                      configuration.stages.data(),
                                                      configuration.vertexInputState,
@@ -317,8 +311,8 @@ namespace nd::src::graphics::vulkan
                                                      configuration.subpass,
                                                      VK_NULL_HANDLE,
                                                      0,
-                                                     createInfoFlags,
-                                                     createInfoNext);
+                                                     configuration.flags,
+                                                     configuration.next);
             });
 
         return getGraphicsPipelineHandle(createInfos, device);
