@@ -133,30 +133,6 @@ namespace nd::src::graphics::vulkan
         return std::clamp(configuration.imageArrayLayers, 1U, capabilities.maxImageArrayLayers);
     }
 
-    std::vector<QueueFamily>
-    getSwapchainQueueFamilies(const std::vector<QueueFamily>& queueFamiliesPool,
-                              const VkPhysicalDevice          physicalDevice,
-                              const VkSurfaceKHR              surface) noexcept
-    {
-        ND_SET_SCOPE();
-
-        auto swapchainQueueFamilies = std::vector<QueueFamily> {};
-
-        for(const auto queueFamily: queueFamiliesPool)
-        {
-            VkBool32 isSupported;
-
-            vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamily.index, surface, &isSupported);
-
-            if(isSupported)
-            {
-                swapchainQueueFamilies.push_back(queueFamily);
-            }
-        }
-
-        return swapchainQueueFamilies;
-    }
-
     VkSwapchainCreateInfoKHR
     getSwapchainCreateInfo(const VkSurfaceKHR                  surface,
                            const uint32_t                      minImagesCount,
@@ -224,7 +200,7 @@ namespace nd::src::graphics::vulkan
         const auto presentModes = getSurfacePresentModes(configuration.physicalDevice, configuration.surface);
         const auto capabilities = getSurfaceCapabilities(configuration.physicalDevice, configuration.surface);
 
-        const auto queueFamilies        = getQueueFamilies(configuration.physicalDevice);
+        const auto queueFamilies        = getQueueFamilies(configuration.physicalDevice, configuration.surface);
         const auto queueFamiliesIndices = getMapped<QueueFamily, uint32_t>(queueFamilies,
                                                                            [](const auto& queueFamily, const auto index)
                                                                            {

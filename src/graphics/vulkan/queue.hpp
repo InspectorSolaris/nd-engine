@@ -31,7 +31,13 @@ namespace nd::src::graphics::vulkan
     getQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept;
 
     std::vector<QueueFamily>
+    getQueueFamilies(const std::vector<VkQueueFamilyProperties>& queueFamiliesProperties) noexcept;
+
+    std::vector<QueueFamily>
     getQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept;
+
+    std::vector<QueueFamily>
+    getQueueFamilies(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
 
     std::vector<QueueFamily>
     getQueueFamilies(const std::vector<QueueFamily>&                            queueFamilies,
