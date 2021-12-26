@@ -212,7 +212,7 @@ namespace nd::src::graphics::vulkan
         return swapchain;
     }
 
-    VkSwapchainKHR
+    Swapchain
     getSwapchain(const SwapchainConfiguration&   configuration,
                  const VkDevice                  device,
                  const VkSwapchainCreateFlagsKHR flags,
@@ -224,7 +224,8 @@ namespace nd::src::graphics::vulkan
         const auto presentModes = getSurfacePresentModes(configuration.physicalDevice, configuration.surface);
         const auto capabilities = getSurfaceCapabilities(configuration.physicalDevice, configuration.surface);
 
-        const auto queueFamiliesIndices = getMapped<QueueFamily, uint32_t>(configuration.queueFamiliesPool,
+        const auto queueFamilies        = getQueueFamilies(configuration.physicalDevice);
+        const auto queueFamiliesIndices = getMapped<QueueFamily, uint32_t>(queueFamilies,
                                                                            [](const auto& queueFamily, const auto index)
                                                                            {
                                                                                return queueFamily.index;
@@ -260,7 +261,7 @@ namespace nd::src::graphics::vulkan
                                    flags,
                                    next);
 
-        return getSwapchainHandle(createInfo, device);
+        return {queueFamilies, getSwapchainHandle(createInfo, device)};
     }
 
     std::vector<VkImage>

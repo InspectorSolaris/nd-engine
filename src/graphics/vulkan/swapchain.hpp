@@ -9,8 +9,6 @@ namespace nd::src::graphics::vulkan
 {
     struct SwapchainConfiguration final
     {
-        const std::vector<QueueFamily>& queueFamiliesPool;
-
         const VkPhysicalDevice physicalDevice;
         const VkSurfaceKHR     surface;
 
@@ -27,6 +25,13 @@ namespace nd::src::graphics::vulkan
 
         const VkSurfaceTransformFlagBitsKHR transform;
         const VkCompositeAlphaFlagBitsKHR   compositeAlpha;
+    };
+
+    struct Swapchain final
+    {
+        const std::vector<QueueFamily> queueFamilies;
+
+        const VkSwapchainKHR handler;
     };
 
     std::vector<VkSurfaceFormatKHR>
@@ -92,7 +97,7 @@ namespace nd::src::graphics::vulkan
     VkSwapchainKHR
     getSwapchainHandle(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device);
 
-    VkSwapchainKHR
+    Swapchain
     getSwapchain(const SwapchainConfiguration&   configuration,
                  const VkDevice                  device,
                  const VkSwapchainCreateFlagsKHR flags = {},

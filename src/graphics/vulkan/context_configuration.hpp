@@ -46,10 +46,16 @@ namespace nd::src::graphics::vulkan
 
         using Surface = VkSurfaceKHR(const VkInstance);
 
+        using Swapchain = Swapchain(const SwapchainConfiguration&,
+                                    const VkDevice,
+                                    const VkSwapchainCreateFlagsKHR,
+                                    const void*);
+
         const std::function<Instance>       getInstance;
         const std::function<PhysicalDevice> getPhysicalDevice;
         const std::function<Device>         getDevice;
         const std::function<Surface>        getSurface;
+        const std::function<Swapchain>      getSwapchain;
     };
 
     struct VulkanContextConfigurations final
@@ -60,9 +66,15 @@ namespace nd::src::graphics::vulkan
 
         using Device = DeviceConfiguration(const PhysicalDeviceConfiguration&);
 
+        using Swapchain = SwapchainConfiguration(const VkPhysicalDevice physicalDevice,
+                                                 const VkSurfaceKHR     surface,
+                                                 const uint32_t         width,
+                                                 const uint32_t         height);
+
         const std::function<Instance>       getInstanceConfiguration;
         const std::function<PhysicalDevice> getPhysicalDeviceConfiguration;
         const std::function<Device>         getDeviceConfiguration;
+        const std::function<Swapchain>      getSwapchainConfiguration;
     };
 
     InstanceConfiguration
@@ -73,6 +85,12 @@ namespace nd::src::graphics::vulkan
 
     DeviceConfiguration
     getDeviceConfiguration(const PhysicalDeviceConfiguration& physicalDeviceConfiguration) noexcept;
+
+    SwapchainConfiguration
+    getSwapchainConfiguration(const VkPhysicalDevice physicalDevice,
+                              const VkSurfaceKHR     surface,
+                              const uint32_t         width,
+                              const uint32_t         height) noexcept;
 
     extern VulkanContextInitializers   vulkanContextInitializers;
     extern VulkanContextConfigurations vulkanContextConfigurations;

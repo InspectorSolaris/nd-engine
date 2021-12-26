@@ -45,15 +45,15 @@
     #define ND_SET_SCOPE_LOW()
 #endif
 
-#define ND_GET_RUNTIME_ERROR(condition) nd::src::tools::getRuntimeError(__FILE__, ND_FUNCTION, #condition, __LINE__)
+#define ND_GET_RUNTIME_ERROR(reason) nd::src::tools::getRuntimeError(__FILE__, ND_FUNCTION, #reason, __LINE__)
 
 #if defined(NDEBUG)
-    #define ND_ASSERT(condition) (condition)
+    #define ND_ASSERT(code) (code)
 #else
-    #define ND_ASSERT(condition)                   \
-        if(!(condition))                           \
-        {                                          \
-            throw ND_GET_RUNTIME_ERROR(condition); \
+    #define ND_ASSERT(code)                   \
+        if(!(code))                           \
+        {                                     \
+            throw ND_GET_RUNTIME_ERROR(code); \
         }
 #endif
 
@@ -65,6 +65,6 @@ namespace nd::src::tools
     std::runtime_error
     getRuntimeError(const std::string_view file,
                     const std::string_view function,
-                    const std::string_view condition,
+                    const std::string_view reason,
                     const size_t           line) noexcept;
 } // namespace nd::src::tools

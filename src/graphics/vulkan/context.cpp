@@ -148,30 +148,17 @@ namespace nd::src::graphics::vulkan
 
         const auto deviceConfiguration           = configurations.getDeviceConfiguration(physicalDeviceConfiguration);
         const auto [deviceQueueFamilies, device] = initializers.getDevice(deviceConfiguration, physicalDevice, {}, {});
-
-        const auto deviceQueues = getQueues(device, deviceQueueFamilies);
+        const auto deviceQueues                  = getQueues(device, deviceQueueFamilies);
 
         const auto surface = initializers.getSurface(instance);
 
-        const auto swapchainQueueFamilies = getSwapchainQueueFamilies(deviceQueueFamilies, physicalDevice, surface);
-        const auto swapchainQueues        = getQueues(device, swapchainQueueFamilies);
+        const auto swapchainConfiguration = configurations.getSwapchainConfiguration(physicalDevice,
+                                                                                     surface,
+                                                                                     configurationExternal.width,
+                                                                                     configurationExternal.height);
 
-        const auto swapchainConfiguration =
-            SwapchainConfiguration {swapchainQueueFamilies,
-                                    physicalDevice,
-                                    surface,
-                                    {configurationExternal.width, configurationExternal.height},
-                                    1,
-                                    1,
-                                    true,
-                                    VK_FORMAT_B8G8R8A8_SRGB,
-                                    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-                                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                                    VK_PRESENT_MODE_IMMEDIATE_KHR,
-                                    VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
-                                    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
-
-        const auto swapchain = getSwapchain(swapchainConfiguration, device);
+        const auto [swapchainQueueFamilies, swapchain] = initializers.getSwapchain(swapchainConfiguration, device, {}, {});
+        const auto swapchainQueues                     = getQueues(device, swapchainQueueFamilies);
 
         const auto colorAttachments = vector<VkAttachmentReference> {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
 

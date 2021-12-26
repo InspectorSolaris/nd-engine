@@ -6,7 +6,8 @@ namespace nd::src::graphics::vulkan
     VulkanContextInitializers   vulkanContextInitializers   = {getInstance, getPhysicalDevice, getDevice};
     VulkanContextConfigurations vulkanContextConfigurations = {getInstanceConfiguration,
                                                                getPhysicalDeviceConfiguration,
-                                                               getDeviceConfiguration};
+                                                               getDeviceConfiguration,
+                                                               getSwapchainConfiguration};
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -53,5 +54,27 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         return {physicalDeviceConfiguration.features, physicalDeviceConfiguration.extensions};
+    }
+
+    SwapchainConfiguration
+    getSwapchainConfiguration(const VkPhysicalDevice physicalDevice,
+                              const VkSurfaceKHR     surface,
+                              const uint32_t         width,
+                              const uint32_t         height) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {physicalDevice,
+                surface,
+                {width, height},
+                1,
+                1,
+                true,
+                VK_FORMAT_B8G8R8A8_SRGB,
+                VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+                VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                VK_PRESENT_MODE_IMMEDIATE_KHR,
+                VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
+                VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
     }
 } // namespace nd::src::graphics::vulkan
