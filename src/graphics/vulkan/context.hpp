@@ -15,13 +15,14 @@ namespace nd::src::graphics::vulkan
             const Device    device;
             const Swapchain swapchain;
 
-            const std::vector<VkImage>&         swapchainImages;
-            const std::vector<VkImageView>&     swapchainImageViews;
-            const std::vector<VkFramebuffer>&   swapchainFramebuffers;
-            const std::vector<ShaderModule>&    shaderModules;
-            const std::vector<VkDescriptorSet>& descriptorSets;
-            const std::vector<VkPipeline>&      pipelines;
-            const std::vector<VkCommandBuffer>& commandBuffers;
+            const std::vector<VkImage>&      swapchainImages;
+            const std::vector<ImageView>&    swapchainImageViews;
+            const std::vector<Framebuffer>&  swapchainFramebuffers;
+            const std::vector<ShaderModule>& shaderModules;
+
+            const Pipelines&      pipelines;
+            const DescriptorSets& descriptorSets;
+            const CommandBuffers& commandBuffers;
 
             const std::vector<VkSemaphore>& imageAcquiredSemaphores;
             const std::vector<VkSemaphore>& imageRenderedSemaphores;
@@ -30,13 +31,13 @@ namespace nd::src::graphics::vulkan
 
             const size_t framesCount;
 
-            const VkInstance            instance;
-            const VkSurfaceKHR          surface;
-            const VkRenderPass          renderPass;
-            const VkDescriptorPool      descriptorPool;
-            const VkDescriptorSetLayout descriptorSetLayout;
-            const VkPipelineLayout      pipelineLayout;
-            const VkCommandPool         commandPool;
+            const Instance            instance;
+            const Surface             surface;
+            const RenderPass          renderPass;
+            const DescriptorPool      descriptorPool;
+            const DescriptorSetLayout descriptorSetLayout;
+            const PipelineLayout      pipelineLayout;
+            const CommandPool         commandPool;
         };
 
         VulkanContext(const Configuration& configuration);
@@ -58,13 +59,14 @@ namespace nd::src::graphics::vulkan
         Device    device_ {};
         Swapchain swapchain_ {};
 
-        std::vector<VkImage>         swapchainImages_ {};
-        std::vector<VkImageView>     swapchainImageViews_ {};
-        std::vector<VkFramebuffer>   swapchainFramebuffers_ {};
-        std::vector<ShaderModule>    shaderModules_ {};
-        std::vector<VkDescriptorSet> descriptorSets_ {};
-        std::vector<VkPipeline>      pipelines_ {};
-        std::vector<VkCommandBuffer> commandBuffers_ {};
+        std::vector<VkImage>      swapchainImages_ {};
+        std::vector<ImageView>    swapchainImageViews_ {};
+        std::vector<Framebuffer>  swapchainFramebuffers_ {};
+        std::vector<ShaderModule> shaderModules_ {};
+
+        Pipelines      pipelines_ {};
+        DescriptorSets descriptorSets_ {};
+        CommandBuffers commandBuffers_ {};
 
         std::vector<VkSemaphore> imageAcquiredSemaphores_ {};
         std::vector<VkSemaphore> imageRenderedSemaphores_ {};
@@ -73,13 +75,13 @@ namespace nd::src::graphics::vulkan
 
         size_t framesCount_ {};
 
-        VkInstance            instance_ {};
-        VkSurfaceKHR          surface_ {};
-        VkRenderPass          renderPass_ {};
-        VkDescriptorPool      descriptorPool_ {};
-        VkDescriptorSetLayout descriptorSetLayout_ {};
-        VkPipelineLayout      pipelineLayout_ {};
-        VkCommandPool         commandPool_ {};
+        Instance            instance_ {};
+        Surface             surface_ {};
+        RenderPass          renderPass_ {};
+        DescriptorPool      descriptorPool_ {};
+        DescriptorSetLayout descriptorSetLayout_ {};
+        PipelineLayout      pipelineLayout_ {};
+        CommandPool         commandPool_ {};
     };
 
     VulkanContext

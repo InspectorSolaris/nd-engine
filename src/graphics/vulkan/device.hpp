@@ -22,6 +22,11 @@ namespace nd::src::graphics::vulkan
         const VkQueueFlags queueFlags;
     };
 
+    struct PhysicalDevice final
+    {
+        const VkPhysicalDevice handle;
+    };
+
     struct DeviceConfiguration final
     {
         const VkPhysicalDeviceFeatures features;
@@ -70,7 +75,7 @@ namespace nd::src::graphics::vulkan
     bool
     isPhysicalDeviceQueuesSupported(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;
 
-    VkPhysicalDevice
+    PhysicalDevice
     getPhysicalDevice(const PhysicalDeviceConfiguration& configuration, const VkInstance instance);
 
     VkDevice

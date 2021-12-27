@@ -20,6 +20,7 @@ set(TARGET_SRC
     render_pass.cpp
     shader_module.cpp
     shared.cpp
+    surface.cpp
     swapchain.cpp
     synchronization.cpp)
 

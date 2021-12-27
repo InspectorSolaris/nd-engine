@@ -14,6 +14,10 @@ namespace nd::src::graphics::vulkan
         const void*                       next  = {};
     };
 
+    struct DescriptorPool final
+    {
+        const VkDescriptorPool handle;
+    };
 
     VkDescriptorPoolCreateInfo
     getDescriptorPoolCreateInfo(const uint32_t                    maxSets,
@@ -25,7 +29,6 @@ namespace nd::src::graphics::vulkan
     VkDescriptorPool
     getDescriptorPoolHandle(const VkDescriptorPoolCreateInfo& createInfo, const VkDevice device);
 
-    VkDescriptorPool
-    getDescriptorPool(const DescriptorPoolConfiguration& configuration,
-                      const VkDevice                     device);
+    DescriptorPool
+    getDescriptorPool(const DescriptorPoolConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

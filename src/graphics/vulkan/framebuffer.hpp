@@ -19,6 +19,11 @@ namespace nd::src::graphics::vulkan
         const void*                    next  = {};
     };
 
+    struct Framebuffer final
+    {
+        const VkFramebuffer handle;
+    };
+
     VkFramebufferCreateInfo
     getFramebufferCreateInfo(const VkRenderPass             renderPass,
                              const uint32_t                 attachmentsCount,
@@ -32,6 +37,6 @@ namespace nd::src::graphics::vulkan
     VkFramebuffer
     getFramebufferHandle(const VkFramebufferCreateInfo& createInfo, const VkDevice device);
 
-    VkFramebuffer
+    Framebuffer
     getFramebuffer(const FramebufferConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

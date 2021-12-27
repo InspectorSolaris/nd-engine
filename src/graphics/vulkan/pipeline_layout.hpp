@@ -14,6 +14,11 @@ namespace nd::src::graphics::vulkan
         const void*                       next  = {};
     };
 
+    struct PipelineLayout final
+    {
+        const VkPipelineLayout handle;
+    };
+
     VkPipelineLayoutCreateInfo
     getPipelineLayoutCreateInfo(const uint32_t                    setLayoutsCount,
                                 const uint32_t                    pushConstantRangesCount,
@@ -25,6 +30,6 @@ namespace nd::src::graphics::vulkan
     VkPipelineLayout
     getPipelineLayoutHandle(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device);
 
-    VkPipelineLayout
+    PipelineLayout
     getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

@@ -21,6 +21,11 @@ namespace nd::src::graphics::vulkan
         const void*                 next  = {};
     };
 
+    struct Instance final
+    {
+        const VkInstance handle;
+    };
+
     VkApplicationInfo
     getApplicationInfo(const char*    applicationName,
                        const char*    engineName,
@@ -47,6 +52,6 @@ namespace nd::src::graphics::vulkan
     VkInstance
     getInstanceHandle(const VkInstanceCreateInfo& createInfo);
 
-    VkInstance
+    Instance
     getInstance(const InstanceConfiguration& configuration);
 } // namespace nd::src::graphics::vulkan

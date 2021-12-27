@@ -286,8 +286,8 @@ namespace nd::src::graphics::vulkan
         return pipelines;
     }
 
-    std::vector<VkPipeline>
-    getGraphicsPipeline(const std::vector<PipelineConfiguration>& configurations, const VkDevice device)
+    Pipelines
+    getGraphicsPipelines(const std::vector<PipelineConfiguration>& configurations, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -315,6 +315,6 @@ namespace nd::src::graphics::vulkan
                                                      configuration.next);
             });
 
-        return getGraphicsPipelineHandle(createInfos, device);
+        return {getGraphicsPipelineHandle(createInfos, device)};
     }
 } // namespace nd::src::graphics::vulkan

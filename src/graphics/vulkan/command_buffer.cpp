@@ -36,7 +36,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkCommandBuffer>
-    getCommandBufferHandle(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device)
+    getCommandBuffersHandles(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -47,8 +47,8 @@ namespace nd::src::graphics::vulkan
         return commandBuffers;
     }
 
-    std::vector<VkCommandBuffer>
-    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device)
+    CommandBuffers
+    getCommandBuffers(const CommandBufferConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -57,6 +57,6 @@ namespace nd::src::graphics::vulkan
                                                                configuration.count,
                                                                configuration.next);
 
-        return getCommandBufferHandle(allocateInfo, device);
+        return {getCommandBuffersHandles(allocateInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

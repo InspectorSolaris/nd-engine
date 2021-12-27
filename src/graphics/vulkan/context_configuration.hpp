@@ -5,6 +5,7 @@
 
 #include "instance.hpp"
 #include "device.hpp"
+#include "surface.hpp"
 #include "swapchain.hpp"
 #include "descriptor_pool.hpp"
 #include "descriptor_set_layout.hpp"
@@ -38,21 +39,21 @@ namespace nd::src::graphics::vulkan
 
     struct VulkanContextInitializers final
     {
-        using Instance = VkInstance(const InstanceConfiguration&);
+        using Instance = Instance(const InstanceConfiguration&);
 
-        using PhysicalDevice = VkPhysicalDevice(const PhysicalDeviceConfiguration&, const VkInstance);
+        using PhysicalDevice = PhysicalDevice(const PhysicalDeviceConfiguration&, const VkInstance);
 
         using Device = Device(const DeviceConfiguration&, const VkPhysicalDevice);
 
-        using Surface = VkSurfaceKHR(const VkInstance);
+        using Surface = Surface(const VkInstance);
 
         using Swapchain = Swapchain(const SwapchainConfiguration&, const VkDevice);
 
-        using RenderPass = VkRenderPass(const RenderPassConfiguration&, const VkDevice);
+        using RenderPass = RenderPass(const RenderPassConfiguration&, const VkDevice);
 
-        using ImageView = VkImageView(const ImageViewConfiguration&, const VkDevice);
+        using ImageView = ImageView(const ImageViewConfiguration&, const VkDevice);
 
-        using Framebuffer = VkFramebuffer(const FramebufferConfiguration&, const VkDevice);
+        using Framebuffer = Framebuffer(const FramebufferConfiguration&, const VkDevice);
 
         const std::function<Instance>       getInstance;
         const std::function<PhysicalDevice> getPhysicalDevice;

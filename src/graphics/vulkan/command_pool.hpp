@@ -15,6 +15,11 @@ namespace nd::src::graphics::vulkan
         const void*                    next  = {};
     };
 
+    struct CommandPool final
+    {
+        const VkCommandPool handle;
+    };
+
     VkCommandPoolCreateInfo
     getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
                              const VkCommandPoolCreateFlags flags = {},
@@ -23,6 +28,6 @@ namespace nd::src::graphics::vulkan
     VkCommandPool
     getCommandPoolHandle(const VkCommandPoolCreateInfo& createInfo, const VkDevice device);
 
-    VkCommandPool
+    CommandPool
     getCommandPool(const CommandPoolConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

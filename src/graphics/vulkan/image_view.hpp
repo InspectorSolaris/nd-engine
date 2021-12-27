@@ -17,6 +17,11 @@ namespace nd::src::graphics::vulkan
         const void*                  next  = {};
     };
 
+    struct ImageView final
+    {
+        const VkImageView handle;
+    };
+
     VkImageViewCreateInfo
     getImageViewCreateInfo(const VkImage                  image,
                            const VkImageViewType          viewType,
@@ -29,6 +34,6 @@ namespace nd::src::graphics::vulkan
     VkImageView
     getImageViewHandle(const VkImageViewCreateInfo& createInfo, const VkDevice device);
 
-    VkImageView
+    ImageView
     getImageView(const ImageViewConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

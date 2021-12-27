@@ -13,6 +13,11 @@ namespace nd::src::graphics::vulkan
         const void*                            next  = {};
     };
 
+    struct DescriptorSetLayout final
+    {
+        const VkDescriptorSetLayout handle;
+    };
+
     VkDescriptorSetLayoutCreateInfo
     getDescriptorSetLayoutCreateInfo(const uint32_t                         bindingsCount,
                                      const VkDescriptorSetLayoutBinding*    bindings,
@@ -22,6 +27,6 @@ namespace nd::src::graphics::vulkan
     VkDescriptorSetLayout
     getDescriptorSetLayoutHandle(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device);
 
-    VkDescriptorSetLayout
+    DescriptorSetLayout
     getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

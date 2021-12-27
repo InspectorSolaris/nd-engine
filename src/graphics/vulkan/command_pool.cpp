@@ -30,7 +30,7 @@ namespace nd::src::graphics::vulkan
         return commandPool;
     }
 
-    VkCommandPool
+    CommandPool
     getCommandPool(const CommandPoolConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
@@ -38,6 +38,6 @@ namespace nd::src::graphics::vulkan
         const auto createInfo =
             getCommandPoolCreateInfo(configuration.queueFamilyIndex, configuration.flags, configuration.next);
 
-        return getCommandPoolHandle(createInfo, device);
+        return {getCommandPoolHandle(createInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

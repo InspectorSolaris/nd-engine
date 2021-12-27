@@ -154,7 +154,7 @@ namespace nd::src::graphics::vulkan
         return queueFlags == queueFlagsSupported;
     }
 
-    VkPhysicalDevice
+    PhysicalDevice
     getPhysicalDevice(const PhysicalDeviceConfiguration& configuration, const VkInstance instance)
     {
         ND_SET_SCOPE();
@@ -186,7 +186,7 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT(physicalDeviceMax.has_value());
 
-        return physicalDeviceMax.value();
+        return {physicalDeviceMax.value()};
     }
 
     VkDevice

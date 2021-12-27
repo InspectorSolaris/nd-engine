@@ -14,6 +14,11 @@ namespace nd::src::graphics::vulkan
         const void* next = {};
     };
 
+    struct CommandBuffers final
+    {
+        const std::vector<VkCommandBuffer> handles;
+    };
+
     VkCommandBufferBeginInfo
     getCommandBufferBeginInfo(const VkCommandBufferInheritanceInfo* inheritanceInfo,
                               const VkCommandBufferUsageFlags       flags = {},
@@ -26,8 +31,8 @@ namespace nd::src::graphics::vulkan
                                  const void*                next = {}) noexcept;
 
     std::vector<VkCommandBuffer>
-    getCommandBufferHandle(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device);
+    getCommandBuffersHandles(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device);
 
-    std::vector<VkCommandBuffer>
-    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device);
+    CommandBuffers
+    getCommandBuffers(const CommandBufferConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

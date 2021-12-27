@@ -32,6 +32,11 @@ namespace nd::src::graphics::vulkan
         const void*                   next  = {};
     };
 
+    struct RenderPass final
+    {
+        const VkRenderPass handle;
+    };
+
     VkRenderPassBeginInfo
     getRenderPassBeginInfo(const VkRenderPass  renderPass,
                            const VkFramebuffer framebuffer,
@@ -85,6 +90,6 @@ namespace nd::src::graphics::vulkan
     VkRenderPass
     getRenderPassHandle(const VkRenderPassCreateInfo& createInfo, const VkDevice device);
 
-    VkRenderPass
+    RenderPass
     getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

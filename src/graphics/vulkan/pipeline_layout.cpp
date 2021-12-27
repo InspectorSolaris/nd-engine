@@ -36,7 +36,7 @@ namespace nd::src::graphics::vulkan
         return pipelineLayout;
     }
 
-    VkPipelineLayout
+    PipelineLayout
     getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
@@ -48,6 +48,6 @@ namespace nd::src::graphics::vulkan
                                                             configuration.flags,
                                                             configuration.next);
 
-        return getPipelineLayoutHandle(createInfo, device);
+        return {getPipelineLayoutHandle(createInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan
