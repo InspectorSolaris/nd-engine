@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkDescriptorSetAllocateInfo
     getDescriptorSetAllocateInfo(const VkDescriptorPool       descriptorPool,
                                  const uint32_t               setLayoutsCount,
@@ -21,26 +23,27 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkDescriptorSet>
-    getDescriptorSet(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device)
+    getDescriptorSetsHandles(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         auto descriptorSets = std::vector<VkDescriptorSet>(allocateInfo.descriptorSetCount);
 
-        ND_ASSERT(vkAllocateDescriptorSets(device, &allocateInfo, descriptorSets.data()) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkAllocateDescriptorSets(device, &allocateInfo, descriptorSets.data()) == VK_SUCCESS);
 
         return descriptorSets;
     }
 
-    std::vector<VkDescriptorSet>
-    getDescriptorSet(const DescriptorSetConfiguration& configuration, const VkDevice device)
+    DescriptorSets
+    getDescriptorSets(const DescriptorSetsConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         const auto allocateInfo = getDescriptorSetAllocateInfo(configuration.descriptorPool,
                                                                configuration.layouts.size(),
-                                                               configuration.layouts.data());
+                                                               configuration.layouts.data(),
+                                                               configuration.next);
 
-        return getDescriptorSet(allocateInfo, device);
+        return {getDescriptorSetsHandles(allocateInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

@@ -3,6 +3,52 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
+    std::vector<VkSurfaceFormatKHR>
+    getSurfaceFormats(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
+    {
+        ND_SET_SCOPE();
+
+        uint32_t count;
+
+        vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, nullptr);
+
+        auto formats = std::vector<VkSurfaceFormatKHR>(count);
+
+        vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, formats.data());
+
+        return formats;
+    }
+
+    std::vector<VkPresentModeKHR>
+    getSurfacePresentModes(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
+    {
+        ND_SET_SCOPE();
+
+        uint32_t count;
+
+        vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, nullptr);
+
+        auto presentModes = std::vector<VkPresentModeKHR>(count);
+
+        vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, presentModes.data());
+
+        return presentModes;
+    }
+
+    VkSurfaceCapabilitiesKHR
+    getSurfaceCapabilities(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
+    {
+        ND_SET_SCOPE();
+
+        VkSurfaceCapabilitiesKHR capabilities;
+
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &capabilities);
+
+        return capabilities;
+    }
+
     bool
     isFormatSupported(const SwapchainConfiguration& configuration, const std::vector<VkSurfaceFormatKHR>& formats) noexcept
     {
@@ -12,14 +58,12 @@ namespace nd::src::graphics::vulkan
                            formats.end(),
                            [&configuration](const auto& format)
                            {
-                               return configuration.imageFormat == format.format &&
-                                   configuration.imageColorSpace == format.colorSpace;
+                               return configuration.imageFormat == format.format && configuration.imageColorSpace == format.colorSpace;
                            });
     }
 
     bool
-    isPresentModeSupported(const SwapchainConfiguration&        configuration,
-                           const std::vector<VkPresentModeKHR>& presentModes) noexcept
+    isPresentModeSupported(const SwapchainConfiguration& configuration, const std::vector<VkPresentModeKHR>& presentModes) noexcept
     {
         ND_SET_SCOPE();
 
@@ -48,8 +92,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isCompositeAlphaSupported(const SwapchainConfiguration&   configuration,
-                              const VkSurfaceCapabilitiesKHR& capabilities) noexcept
+    isCompositeAlphaSupported(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept
     {
         ND_SET_SCOPE();
 
@@ -61,9 +104,8 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return capabilities.maxImageCount
-            ? std::clamp(configuration.minImagesCount, capabilities.minImageCount, capabilities.maxImageCount)
-            : std::max(capabilities.minImageCount, configuration.minImagesCount);
+        return capabilities.maxImageCount ? std::clamp(configuration.minImagesCount, capabilities.minImageCount, capabilities.maxImageCount)
+                                          : std::max(capabilities.minImageCount, configuration.minImagesCount);
     }
 
     VkExtent2D
@@ -73,12 +115,8 @@ namespace nd::src::graphics::vulkan
 
         return capabilities.currentExtent.width != 0xFFFFFFFF || capabilities.currentExtent.height != 0xFFFFFFFF
             ? capabilities.currentExtent
-            : VkExtent2D {std::clamp(configuration.imageExtent.width,
-                                     capabilities.minImageExtent.width,
-                                     capabilities.maxImageExtent.width),
-                          std::clamp(configuration.imageExtent.height,
-                                     capabilities.minImageExtent.height,
-                                     capabilities.maxImageExtent.height)};
+            : VkExtent2D {std::clamp(configuration.imageExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width),
+                          std::clamp(configuration.imageExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height)};
     }
 
     uint32_t
@@ -87,30 +125,6 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         return std::clamp(configuration.imageArrayLayers, 1U, capabilities.maxImageArrayLayers);
-    }
-
-    std::vector<const QueueFamily*>
-    getSwapchainQueueFamilies(const std::vector<QueueFamily>& queueFamiliesPool,
-                              const VkPhysicalDevice          physicalDevice,
-                              const VkSurfaceKHR              surface) noexcept
-    {
-        ND_SET_SCOPE();
-
-        auto swapchainQueueFamilies = std::vector<const QueueFamily*> {};
-
-        for(const auto queueFamily: queueFamiliesPool)
-        {
-            VkBool32 isSupported;
-
-            vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamily.index, surface, &isSupported);
-
-            if(isSupported)
-            {
-                swapchainQueueFamilies.emplace_back(&queueFamily);
-            }
-        }
-
-        return swapchainQueueFamilies;
     }
 
     VkSwapchainCreateInfoKHR
@@ -157,72 +171,64 @@ namespace nd::src::graphics::vulkan
     }
 
     VkSwapchainKHR
-    getSwapchain(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device)
+    getSwapchainHandle(const VkSwapchainCreateInfoKHR& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         VkSwapchainKHR swapchain;
 
-        ND_ASSERT(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain) == VK_SUCCESS);
 
         return swapchain;
     }
 
-    VkSwapchainKHR
+    Swapchain
     getSwapchain(const SwapchainConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
-        const auto queueFamilies =
-            getSwapchainQueueFamilies(configuration.queueFamiliesPool, configuration.physicalDevice, configuration.surface);
+        const auto formats      = getSurfaceFormats(configuration.physicalDevice, configuration.surface);
+        const auto presentModes = getSurfacePresentModes(configuration.physicalDevice, configuration.surface);
+        const auto capabilities = getSurfaceCapabilities(configuration.physicalDevice, configuration.surface);
 
-        const auto queueFamiliesIndices = getQueueFamiliesIndices(queueFamilies);
+        auto queueFamilies = getQueueFamilies(configuration.physicalDevice, configuration.surface);
 
-        ND_ASSERT(queueFamilies.size());
-        ND_ASSERT(isFormatSupported(configuration, configuration.formats));
-        ND_ASSERT(isPresentModeSupported(configuration, configuration.presentModes));
-        ND_ASSERT(isImageUsageSupported(configuration, configuration.capabilities));
-        ND_ASSERT(isTransformSupported(configuration, configuration.capabilities));
-        ND_ASSERT(isCompositeAlphaSupported(configuration, configuration.capabilities));
+        const auto queueFamiliesIndices = getMapped<QueueFamily, uint32_t>(queueFamilies,
+                                                                           [](const auto& queueFamily, const auto index)
+                                                                           {
+                                                                               return queueFamily.index;
+                                                                           });
 
-        const auto minImagesCount   = getMinImagesCount(configuration, configuration.capabilities);
-        const auto imageExtent      = getImageExtent(configuration, configuration.capabilities);
-        const auto imageArrayLayers = getImageArrayLayers(configuration, configuration.capabilities);
+        ND_ASSERT(queueFamiliesIndices.size());
+        ND_ASSERT(isFormatSupported(configuration, formats));
+        ND_ASSERT(isPresentModeSupported(configuration, presentModes));
+        ND_ASSERT(isImageUsageSupported(configuration, capabilities));
+        ND_ASSERT(isTransformSupported(configuration, capabilities));
+        ND_ASSERT(isCompositeAlphaSupported(configuration, capabilities));
 
-        const auto createInfo =
-            getSwapchainCreateInfo(configuration.surface,
-                                   minImagesCount,
-                                   configuration.imageFormat,
-                                   configuration.imageColorSpace,
-                                   imageExtent,
-                                   imageArrayLayers,
-                                   configuration.imageUsage,
-                                   queueFamilies.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
-                                   queueFamiliesIndices.size(),
-                                   queueFamiliesIndices.data(),
-                                   configuration.transform,
-                                   configuration.compositeAlpha,
-                                   configuration.presentMode,
-                                   configuration.clipped,
-                                   VK_NULL_HANDLE);
+        const auto minImagesCount   = getMinImagesCount(configuration, capabilities);
+        const auto imageExtent      = getImageExtent(configuration, capabilities);
+        const auto imageArrayLayers = getImageArrayLayers(configuration, capabilities);
 
-        return getSwapchain(createInfo, device);
-    }
+        const auto createInfo = getSwapchainCreateInfo(configuration.surface,
+                                                       minImagesCount,
+                                                       configuration.imageFormat,
+                                                       configuration.imageColorSpace,
+                                                       imageExtent,
+                                                       imageArrayLayers,
+                                                       configuration.imageUsage,
+                                                       queueFamiliesIndices.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
+                                                       queueFamiliesIndices.size(),
+                                                       queueFamiliesIndices.data(),
+                                                       configuration.transform,
+                                                       configuration.compositeAlpha,
+                                                       configuration.presentMode,
+                                                       configuration.clipped,
+                                                       VK_NULL_HANDLE,
+                                                       configuration.flags,
+                                                       configuration.next);
 
-    std::vector<VkImage>
-    getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept
-    {
-        ND_SET_SCOPE();
-
-        uint32_t count;
-
-        vkGetSwapchainImagesKHR(device, swapchain, &count, nullptr);
-
-        auto images = std::vector<VkImage>(count);
-
-        vkGetSwapchainImagesKHR(device, swapchain, &count, images.data());
-
-        return images;
+        return {getQueues(device, queueFamilies), std::move(queueFamilies), getSwapchainHandle(createInfo, device)};
     }
 
     uint32_t
@@ -236,7 +242,7 @@ namespace nd::src::graphics::vulkan
 
         uint32_t imageIndex;
 
-        ND_ASSERT(vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, &imageIndex) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, &imageIndex) == VK_SUCCESS);
 
         return imageIndex;
     }

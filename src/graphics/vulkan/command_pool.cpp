@@ -3,10 +3,10 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkCommandPoolCreateInfo
-    getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
-                             const VkCommandPoolCreateFlags flags,
-                             const void*                    next) noexcept
+    getCommandPoolCreateInfo(const uint32_t queueFamilyIndex, const VkCommandPoolCreateFlags flags, const void* next) noexcept
     {
         ND_SET_SCOPE();
 
@@ -19,33 +19,24 @@ namespace nd::src::graphics::vulkan
     }
 
     VkCommandPool
-    getCommandPool(const VkCommandPoolCreateInfo& createInfo, const VkDevice device)
+    getCommandPoolHandle(const VkCommandPoolCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         VkCommandPool commandPool;
 
-        ND_ASSERT(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool) == VK_SUCCESS);
 
         return commandPool;
     }
 
-    VkCommandPool
+    CommandPool
     getCommandPool(const CommandPoolConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
-        const auto queueFamily = std::find_if(configuration.queueFamiliesPool.begin(),
-                                              configuration.queueFamiliesPool.end(),
-                                              [&configuration](const auto& queueFamily)
-                                              {
-                                                  return isSubmask(queueFamily.queueFlags, configuration.queueFlags);
-                                              });
+        const auto createInfo = getCommandPoolCreateInfo(configuration.queueFamilyIndex, configuration.flags, configuration.next);
 
-        ND_ASSERT(queueFamily != configuration.queueFamiliesPool.end());
-
-        const auto createInfo = getCommandPoolCreateInfo(queueFamily->index);
-
-        return getCommandPool(createInfo, device);
+        return {getCommandPoolHandle(createInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

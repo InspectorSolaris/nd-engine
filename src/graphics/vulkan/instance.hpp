@@ -1,21 +1,28 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
     struct InstanceConfiguration final
     {
-        const std::string& applicationName;
-        const std::string& engineName;
+        const std::string applicationName;
+        const std::string engineName;
 
-        const std::vector<std::string>& layers;
-        const std::vector<std::string>& extensions;
+        const std::vector<std::string> layers;
+        const std::vector<std::string> extensions;
 
         const uint32_t applicationVersion;
         const uint32_t engineVersion;
         const uint32_t apiVersion;
+
+        const VkInstanceCreateFlags flags = {};
+        const void*                 next  = {};
+    };
+
+    struct Instance final
+    {
+        const VkInstance handle;
     };
 
     VkApplicationInfo
@@ -23,7 +30,8 @@ namespace nd::src::graphics::vulkan
                        const char*    engineName,
                        const uint32_t applicationVersion,
                        const uint32_t engineVersion,
-                       const uint32_t apiVersion) noexcept;
+                       const uint32_t apiVersion,
+                       const void*    next = {}) noexcept;
 
     VkInstanceCreateInfo
     getInstanceCreateInfo(const VkApplicationInfo*    applicationInfo,
@@ -41,8 +49,8 @@ namespace nd::src::graphics::vulkan
     isInstanceExtensionsSupported(const std::vector<std::string>& extensions) noexcept;
 
     VkInstance
-    getInstance(const VkInstanceCreateInfo& createInfo);
+    getInstanceHandle(const VkInstanceCreateInfo& createInfo);
 
-    VkInstance
+    Instance
     getInstance(const InstanceConfiguration& configuration);
 } // namespace nd::src::graphics::vulkan

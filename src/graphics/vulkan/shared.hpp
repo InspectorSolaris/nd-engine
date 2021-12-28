@@ -2,37 +2,26 @@
 
 #include "pch.hpp"
 
+#include "instance.hpp"
+#include "device.hpp"
+#include "surface.hpp"
+#include "swapchain.hpp"
+#include "descriptor_pool.hpp"
+#include "descriptor_set_layout.hpp"
+#include "descriptor_set.hpp"
+#include "render_pass.hpp"
+#include "shader_module.hpp"
+#include "pipeline_layout.hpp"
+#include "pipeline.hpp"
+#include "image.hpp"
+#include "image_view.hpp"
+#include "framebuffer.hpp"
+#include "buffer.hpp"
+#include "buffer_view.hpp"
+#include "command_pool.hpp"
+#include "command_buffer.hpp"
+#include "synchronization.hpp"
+
 namespace nd::src::graphics::vulkan
 {
-    bool
-    isSubmask(const uint32_t mask, const uint32_t submask) noexcept;
-
-    uint32_t
-    getNextBit(const uint32_t bits) noexcept;
-
-    std::vector<std::string>
-    getMerged(const std::vector<std::string>& strings1, const std::vector<std::string>& strings2) noexcept;
-
-    std::vector<const char*>
-    getRawStrings(const std::vector<std::string>& strings) noexcept;
-
-    template<typename A,
-             typename B,
-             typename Map,
-             typename CollectionA = std::vector<A>,
-             typename CollectionB = std::vector<B>>
-    CollectionB
-    getMapped(const CollectionA& as, const Map& map) noexcept
-    {
-        auto bs = CollectionB {};
-
-        bs.reserve(as.size());
-
-        for(size_t index = 0; index < as.size(); ++index)
-        {
-            bs.push_back(map(as[index], index));
-        }
-
-        return bs;
-    }
 } // namespace nd::src::graphics::vulkan

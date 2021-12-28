@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkImageViewCreateInfo
     getImageViewCreateInfo(const VkImage                  image,
                            const VkImageViewType          viewType,
@@ -27,18 +29,18 @@ namespace nd::src::graphics::vulkan
     }
 
     VkImageView
-    getImageView(const VkImageViewCreateInfo& createInfo, const VkDevice device)
+    getImageViewHandle(const VkImageViewCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         VkImageView imageView;
 
-        ND_ASSERT(vkCreateImageView(device, &createInfo, nullptr, &imageView) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateImageView(device, &createInfo, nullptr, &imageView) == VK_SUCCESS);
 
         return imageView;
     }
 
-    VkImageView
+    ImageView
     getImageView(const ImageViewConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
@@ -47,8 +49,22 @@ namespace nd::src::graphics::vulkan
                                                        configuration.viewType,
                                                        configuration.format,
                                                        configuration.components,
-                                                       configuration.subresourceRange);
+                                                       configuration.subresourceRange,
+                                                       configuration.flags,
+                                                       configuration.next);
 
-        return getImageView(createInfo, device);
+        return {getImageViewHandle(createInfo, device)};
+    }
+
+    std::vector<ImageView>
+    getImageViews(const std::vector<ImageViewConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<ImageViewConfiguration, ImageView>(configurations,
+                                                            [device](const auto& configuration, const auto index)
+                                                            {
+                                                                return getImageView(configuration, device);
+                                                            });
     }
 } // namespace nd::src::graphics::vulkan

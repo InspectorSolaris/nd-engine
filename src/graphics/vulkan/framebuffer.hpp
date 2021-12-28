@@ -1,19 +1,26 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
     struct FramebufferConfiguration final
     {
-        const std::vector<VkImageView>& attachments;
+        const std::vector<VkImageView> attachments;
 
         const VkRenderPass renderPass;
 
         const uint32_t width;
         const uint32_t height;
         const uint32_t layers;
+
+        const VkFramebufferCreateFlags flags = {};
+        const void*                    next  = {};
+    };
+
+    struct Framebuffer final
+    {
+        const VkFramebuffer handle;
     };
 
     VkFramebufferCreateInfo
@@ -27,8 +34,11 @@ namespace nd::src::graphics::vulkan
                              const void*                    next  = {}) noexcept;
 
     VkFramebuffer
-    getFramebuffer(const VkFramebufferCreateInfo& createInfo, const VkDevice device);
+    getFramebufferHandle(const VkFramebufferCreateInfo& createInfo, const VkDevice device);
 
-    VkFramebuffer
+    Framebuffer
     getFramebuffer(const FramebufferConfiguration& configuration, const VkDevice device);
+
+    std::vector<Framebuffer>
+    getFramebuffers(const std::vector<FramebufferConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

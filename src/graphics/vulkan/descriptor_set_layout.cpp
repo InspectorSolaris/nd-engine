@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkDescriptorSetLayoutCreateInfo
     getDescriptorSetLayoutCreateInfo(const uint32_t                         bindingsCount,
                                      const VkDescriptorSetLayoutBinding*    bindings,
@@ -21,25 +23,27 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDescriptorSetLayout
-    getDescriptorSetLayout(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device)
+    getDescriptorSetLayoutHandle(const VkDescriptorSetLayoutCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         VkDescriptorSetLayout descriptorSetLayout;
 
-        ND_ASSERT(vkCreateDescriptorSetLayout(device, &createInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateDescriptorSetLayout(device, &createInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS);
 
         return descriptorSetLayout;
     }
 
-    VkDescriptorSetLayout
+    DescriptorSetLayout
     getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
-        const auto createInfo =
-            getDescriptorSetLayoutCreateInfo(configuration.bindings.size(), configuration.bindings.data());
+        const auto createInfo = getDescriptorSetLayoutCreateInfo(configuration.bindings.size(),
+                                                                 configuration.bindings.data(),
+                                                                 configuration.flags,
+                                                                 configuration.next);
 
-        return getDescriptorSetLayout(createInfo, device);
+        return {getDescriptorSetLayoutHandle(createInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

@@ -23,18 +23,18 @@ namespace nd::src::graphics::vulkan
     }
 
     VkDescriptorPool
-    getDescriptorPool(const VkDescriptorPoolCreateInfo& createInfo, const VkDevice device)
+    getDescriptorPoolHandle(const VkDescriptorPoolCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         VkDescriptorPool descriptorPool;
 
-        ND_ASSERT(vkCreateDescriptorPool(device, &createInfo, nullptr, &descriptorPool) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateDescriptorPool(device, &createInfo, nullptr, &descriptorPool) == VK_SUCCESS);
 
         return descriptorPool;
     }
 
-    VkDescriptorPool
+    DescriptorPool
     getDescriptorPool(const DescriptorPoolConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
@@ -42,8 +42,9 @@ namespace nd::src::graphics::vulkan
         const auto createInfo = getDescriptorPoolCreateInfo(configuration.maxSets,
                                                             configuration.descriptorPoolSizes.size(),
                                                             configuration.descriptorPoolSizes.data(),
-                                                            configuration.flags);
+                                                            configuration.flags,
+                                                            configuration.next);
 
-        return getDescriptorPool(createInfo, device);
+        return {getDescriptorPoolHandle(createInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

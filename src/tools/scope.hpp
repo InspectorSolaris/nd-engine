@@ -7,8 +7,7 @@ namespace nd::src::tools
     class Scope final
     {
     public:
-        using Event =
-            std::function<void(const std::shared_ptr<spdlog::logger> logPtr, const std::string name, const uint64_t depth)>;
+        using Event = std::function<void(const std::shared_ptr<spdlog::logger> logPtr, const std::string name, const uint64_t depth)>;
 
         Scope(const std::string& name, const Event& onBegin, const Event& onEnd) noexcept;
 

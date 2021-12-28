@@ -1,13 +1,22 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
     struct ShaderModuleConfiguration final
     {
-        const std::string& path;
+        const std::string           path;
+        const VkShaderStageFlagBits stage;
+
+        const VkShaderModuleCreateFlags flags = {};
+        const void*                     next  = {};
+    };
+
+    struct ShaderModule final
+    {
+        const VkShaderStageFlagBits stage;
+        const VkShaderModule        handle;
     };
 
     std::vector<char>
@@ -20,8 +29,11 @@ namespace nd::src::graphics::vulkan
                               const void*                     next  = {}) noexcept;
 
     VkShaderModule
-    getShaderModule(const VkShaderModuleCreateInfo& createInfo, const VkDevice device);
+    getShaderModuleHandle(const VkShaderModuleCreateInfo& createInfo, const VkDevice device);
 
-    VkShaderModule
+    ShaderModule
     getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device);
+
+    std::vector<ShaderModule>
+    getShaderModules(const std::vector<ShaderModuleConfiguration> configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

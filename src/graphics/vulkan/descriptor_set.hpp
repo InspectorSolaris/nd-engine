@@ -1,14 +1,20 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
-    struct DescriptorSetConfiguration final
+    struct DescriptorSetsConfiguration final
     {
-        const std::vector<VkDescriptorSetLayout>& layouts;
-        const VkDescriptorPool                    descriptorPool;
+        const std::vector<VkDescriptorSetLayout> layouts;
+        const VkDescriptorPool                   descriptorPool;
+
+        const void* next = {};
+    };
+
+    struct DescriptorSets final
+    {
+        const std::vector<VkDescriptorSet> handles;
     };
 
     VkDescriptorSetAllocateInfo
@@ -18,8 +24,8 @@ namespace nd::src::graphics::vulkan
                                  const void*                  next = {}) noexcept;
 
     std::vector<VkDescriptorSet>
-    getDescriptorSet(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device);
+    getDescriptorSetsHandles(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device);
 
-    std::vector<VkDescriptorSet>
-    getDescriptorSet(const DescriptorSetConfiguration& configuration, const VkDevice device);
+    DescriptorSets
+    getDescriptorSets(const DescriptorSetsConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkFramebufferCreateInfo
     getFramebufferCreateInfo(const VkRenderPass             renderPass,
                              const uint32_t                 attachmentsCount,
@@ -29,18 +31,18 @@ namespace nd::src::graphics::vulkan
     }
 
     VkFramebuffer
-    getFramebuffer(const VkFramebufferCreateInfo& createInfo, const VkDevice device)
+    getFramebufferHandle(const VkFramebufferCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         VkFramebuffer framebuffer;
 
-        ND_ASSERT(vkCreateFramebuffer(device, &createInfo, nullptr, &framebuffer) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateFramebuffer(device, &createInfo, nullptr, &framebuffer) == VK_SUCCESS);
 
         return framebuffer;
     }
 
-    VkFramebuffer
+    Framebuffer
     getFramebuffer(const FramebufferConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
@@ -50,8 +52,22 @@ namespace nd::src::graphics::vulkan
                                                          configuration.attachments.data(),
                                                          configuration.width,
                                                          configuration.height,
-                                                         configuration.layers);
+                                                         configuration.layers,
+                                                         configuration.flags,
+                                                         configuration.next);
 
-        return getFramebuffer(createInfo, device);
+        return {getFramebufferHandle(createInfo, device)};
+    }
+
+    std::vector<Framebuffer>
+    getFramebuffers(const std::vector<FramebufferConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<FramebufferConfiguration, Framebuffer>(configurations,
+                                                                [device](const auto& configuration, const auto index)
+                                                                {
+                                                                    return getFramebuffer(configuration, device);
+                                                                });
     }
 } // namespace nd::src::graphics::vulkan

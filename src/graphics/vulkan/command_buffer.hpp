@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -10,6 +9,13 @@ namespace nd::src::graphics::vulkan
         const VkCommandPool        commandPool;
         const VkCommandBufferLevel level;
         const uint32_t             count;
+
+        const void* next = {};
+    };
+
+    struct CommandBuffers final
+    {
+        const std::vector<VkCommandBuffer> handles;
     };
 
     VkCommandBufferBeginInfo
@@ -24,8 +30,8 @@ namespace nd::src::graphics::vulkan
                                  const void*                next = {}) noexcept;
 
     std::vector<VkCommandBuffer>
-    getCommandBuffer(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device);
+    getCommandBuffersHandles(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device);
 
-    std::vector<VkCommandBuffer>
-    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device);
+    CommandBuffers
+    getCommandBuffers(const CommandBufferConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

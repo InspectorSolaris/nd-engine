@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkPipelineLayoutCreateInfo
     getPipelineLayoutCreateInfo(const uint32_t                    setLayoutsCount,
                                 const uint32_t                    pushConstantRangesCount,
@@ -25,18 +27,18 @@ namespace nd::src::graphics::vulkan
     }
 
     VkPipelineLayout
-    getPipelineLayout(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device)
+    getPipelineLayoutHandle(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         VkPipelineLayout pipelineLayout;
 
-        ND_ASSERT(vkCreatePipelineLayout(device, &createInfo, nullptr, &pipelineLayout) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreatePipelineLayout(device, &createInfo, nullptr, &pipelineLayout) == VK_SUCCESS);
 
         return pipelineLayout;
     }
 
-    VkPipelineLayout
+    PipelineLayout
     getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
@@ -44,8 +46,10 @@ namespace nd::src::graphics::vulkan
         const auto createInfo = getPipelineLayoutCreateInfo(configuration.descriptorSetLayouts.size(),
                                                             configuration.pushConstantRanges.size(),
                                                             configuration.descriptorSetLayouts.data(),
-                                                            configuration.pushConstantRanges.data());
+                                                            configuration.pushConstantRanges.data(),
+                                                            configuration.flags,
+                                                            configuration.next);
 
-        return getPipelineLayout(createInfo, device);
+        return {getPipelineLayoutHandle(createInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

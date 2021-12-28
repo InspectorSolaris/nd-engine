@@ -1,26 +1,28 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
-
-#include "queue.hpp"
 
 namespace nd::src::graphics::vulkan
 {
     struct CommandPoolConfiguration final
     {
-        const std::vector<QueueFamily>& queueFamiliesPool;
-        const VkQueueFlags              queueFlags;
+        const uint32_t queueFamilyIndex;
+
+        const VkCommandPoolCreateFlags flags = {};
+        const void*                    next  = {};
+    };
+
+    struct CommandPool final
+    {
+        const VkCommandPool handle;
     };
 
     VkCommandPoolCreateInfo
-    getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
-                             const VkCommandPoolCreateFlags flags = {},
-                             const void*                    next  = {}) noexcept;
+    getCommandPoolCreateInfo(const uint32_t queueFamilyIndex, const VkCommandPoolCreateFlags flags = {}, const void* next = {}) noexcept;
 
     VkCommandPool
-    getCommandPool(const VkCommandPoolCreateInfo& createInfo, const VkDevice device);
+    getCommandPoolHandle(const VkCommandPoolCreateInfo& createInfo, const VkDevice device);
 
-    VkCommandPool
+    CommandPool
     getCommandPool(const CommandPoolConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

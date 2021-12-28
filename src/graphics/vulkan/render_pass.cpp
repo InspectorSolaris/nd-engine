@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkRenderPassBeginInfo
     getRenderPassBeginInfo(const VkRenderPass  renderPass,
                            const VkFramebuffer framebuffer,
@@ -58,7 +60,7 @@ namespace nd::src::graphics::vulkan
                          const VkAttachmentReference*    inputAttachments,
                          const VkAttachmentReference*    colorAttachments,
                          const VkAttachmentReference*    resolveAttachments,
-                         const VkAttachmentReference*    depthStencilAttachments,
+                         const VkAttachmentReference*    depthStencilAttachment,
                          const uint32_t*                 preserveAttachments,
                          const VkSubpassDescriptionFlags flags) noexcept
     {
@@ -72,7 +74,7 @@ namespace nd::src::graphics::vulkan
             colorAttachmentsCount,    // colorAttachmentCount;
             colorAttachments,         // pColorAttachments;
             resolveAttachments,       // pResolveAttachments;
-            depthStencilAttachments,  // pDepthStencilAttachment;
+            depthStencilAttachment,   // pDepthStencilAttachment;
             preserveAttachmentsCount, // preserveAttachmentCount;
             preserveAttachments       // pPreserveAttachments;
         };
@@ -126,29 +128,49 @@ namespace nd::src::graphics::vulkan
     }
 
     VkRenderPass
-    getRenderPass(const VkRenderPassCreateInfo& createInfo, const VkDevice device)
+    getRenderPassHandle(const VkRenderPassCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         VkRenderPass renderPass;
 
-        ND_ASSERT(vkCreateRenderPass(device, &createInfo, nullptr, &renderPass) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateRenderPass(device, &createInfo, nullptr, &renderPass) == VK_SUCCESS);
 
         return renderPass;
     }
 
-    VkRenderPass
+    RenderPass
     getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
+        const auto subpasses = getMapped<SubpassDescription, VkSubpassDescription>(
+            configuration.subpasses,
+            [](const auto& subpass, const auto index)
+            {
+                ND_ASSERT(!subpass.resolveAttachments.size() || subpass.colorAttachments.size() == subpass.resolveAttachments.size());
+
+                return getRenderPassSubpass(subpass.pipelineBindPoint,
+                                            subpass.inputAttachments.size(),
+                                            subpass.colorAttachments.size(),
+                                            subpass.preserveAttachments.size(),
+                                            subpass.inputAttachments.data(),
+                                            subpass.colorAttachments.data(),
+                                            subpass.resolveAttachments.data(),
+                                            subpass.depthStencilAttachment.has_value() ? &subpass.depthStencilAttachment.value() : nullptr,
+                                            subpass.preserveAttachments.data(),
+                                            subpass.flags);
+            });
+
         const auto createInfo = getRenderPassCreateInfo(configuration.attachments.size(),
-                                                        configuration.subpasses.size(),
+                                                        subpasses.size(),
                                                         configuration.dependencies.size(),
                                                         configuration.attachments.data(),
-                                                        configuration.subpasses.data(),
-                                                        configuration.dependencies.data());
+                                                        subpasses.data(),
+                                                        configuration.dependencies.data(),
+                                                        configuration.flags,
+                                                        configuration.next);
 
-        return getRenderPass(createInfo, device);
+        return {getRenderPassHandle(createInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

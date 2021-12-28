@@ -5,20 +5,20 @@
 
 namespace nd::src::graphics::glfw
 {
-    class Context
+    class GlfwContext
     {
     public:
-        Context();
+        GlfwContext();
 
-        Context(const Context& context) = delete;
-        Context(Context&& context)      = delete;
+        GlfwContext(const GlfwContext& context) = delete;
+        GlfwContext(GlfwContext&& context)      = delete;
 
-        Context&
-        operator=(const Context& context) = delete;
-        Context&
-        operator=(Context&& context) = delete;
+        GlfwContext&
+        operator=(const GlfwContext& context) = delete;
+        GlfwContext&
+        operator=(GlfwContext&& context) = delete;
 
-        ~Context();
+        ~GlfwContext();
 
     private:
         static bool s_initialized;
@@ -28,8 +28,8 @@ namespace nd::src::graphics::glfw
     getRequiredExtensions() noexcept;
 
     VkSurfaceKHR
-    getSurface(const Window& window, const VkInstance instance);
+    getSurface(const GlfwWindow window, const VkInstance instance);
 
-    Context
-    getContext() noexcept;
+    GlfwContext
+    getGlfwContext() noexcept;
 } // namespace nd::src::graphics::glfw

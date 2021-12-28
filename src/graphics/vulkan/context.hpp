@@ -1,101 +1,71 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
-#include "instance.hpp"
-#include "device.hpp"
-#include "surface.hpp"
-#include "swapchain.hpp"
-#include "descriptor_pool.hpp"
-#include "descriptor_set_layout.hpp"
-#include "descriptor_set.hpp"
-#include "render_pass.hpp"
-#include "shader_module.hpp"
-#include "pipeline_layout.hpp"
-#include "pipeline.hpp"
-#include "image.hpp"
-#include "image_view.hpp"
-#include "framebuffer.hpp"
-#include "buffer.hpp"
-#include "buffer_view.hpp"
-#include "command_pool.hpp"
-#include "command_buffer.hpp"
-#include "synchronization.hpp"
+#include "context_configuration.hpp"
 
 namespace nd::src::graphics::vulkan
 {
-    struct ContextConfiguration final
-    {
-        const std::function<VkSurfaceKHR(const VkInstance instance)>& getSurface;
-
-        const std::string& applicationName;
-        const std::string& engineName;
-
-        const std::vector<std::string>& layers;
-        const std::vector<std::string>& extensions;
-
-        const uint32_t width;
-        const uint32_t height;
-    };
-
-    class Context final
+    class VulkanContext final
     {
     public:
         struct Configuration final
         {
-            std::vector<VkImage>&&         swapchainImages;
-            std::vector<VkImageView>&&     swapchainImageViews;
-            std::vector<VkFramebuffer>&&   swapchainFramebuffers;
-            std::vector<VkShaderModule>&&  shaderModules;
-            std::vector<VkDescriptorSet>&& descriptorSets;
-            std::vector<VkPipeline>&&      pipelines;
-            std::vector<VkCommandBuffer>&& commandBuffers;
+            const Device    device;
+            const Swapchain swapchain;
 
-            std::vector<VkSemaphore>&& imageAcquiredSemaphores;
-            std::vector<VkSemaphore>&& imageRenderedSemaphores;
-            std::vector<VkFence>&&     imageAcquiredFences;
-            std::vector<VkFence>&&     imageRenderedFences;
+            const std::vector<Image>&        swapchainImages;
+            const std::vector<ImageView>&    swapchainImageViews;
+            const std::vector<Framebuffer>&  swapchainFramebuffers;
+            const std::vector<ShaderModule>& shaderModules;
+
+            const Pipelines&      pipelines;
+            const DescriptorSets& descriptorSets;
+            const CommandBuffers& commandBuffers;
+
+            const std::vector<VkSemaphore>& imageAcquiredSemaphores;
+            const std::vector<VkSemaphore>& imageRenderedSemaphores;
+            const std::vector<VkFence>&     imageAcquiredFences;
+            const std::vector<VkFence>&     imageRenderedFences;
 
             const size_t framesCount;
 
-            const VkInstance            instance;
-            const VkDevice              device;
-            const VkSurfaceKHR          surface;
-            const VkSwapchainKHR        swapchain;
-            const VkRenderPass          renderPass;
-            const VkDescriptorPool      descriptorPool;
-            const VkDescriptorSetLayout descriptorSetLayout;
-            const VkPipelineLayout      pipelineLayout;
-            const VkCommandPool         commandPool;
-
-            const VkQueue graphicsQueue;
-            const VkQueue presentQueue;
+            const Instance            instance;
+            const Surface             surface;
+            const RenderPass          renderPass;
+            const DescriptorPool      descriptorPool;
+            const DescriptorSetLayout descriptorSetLayout;
+            const PipelineLayout      pipelineLayout;
+            const CommandPool         commandPool;
         };
 
-        Context(const Configuration& configuration);
+        VulkanContext(const Configuration& configuration);
 
-        Context(const Context& vulkanContext) = delete;
-        Context(Context&& vulkanContext)      = delete;
+        VulkanContext(const VulkanContext& vulkanContext) = delete;
+        VulkanContext(VulkanContext&& vulkanContext)      = delete;
 
-        Context&
-        operator=(const Context& vulkanContext) = delete;
-        Context&
-        operator=(Context&& vulkanContext) = delete;
+        VulkanContext&
+        operator=(const VulkanContext& vulkanContext) = delete;
+        VulkanContext&
+        operator=(VulkanContext&& vulkanContext) = delete;
 
-        ~Context();
+        ~VulkanContext();
 
         void
         drawNextFrame();
 
     private:
-        std::vector<VkImage>         swapchainImages_ {};
-        std::vector<VkImageView>     swapchainImageViews_ {};
-        std::vector<VkFramebuffer>   swapchainFramebuffers_ {};
-        std::vector<VkShaderModule>  shaderModules_ {};
-        std::vector<VkDescriptorSet> descriptorSets_ {};
-        std::vector<VkPipeline>      pipelines_ {};
-        std::vector<VkCommandBuffer> commandBuffers_ {};
+        Device    device_ {};
+        Swapchain swapchain_ {};
+
+        std::vector<Image>        swapchainImages_ {};
+        std::vector<ImageView>    swapchainImageViews_ {};
+        std::vector<Framebuffer>  swapchainFramebuffers_ {};
+        std::vector<ShaderModule> shaderModules_ {};
+
+        Pipelines      pipelines_ {};
+        DescriptorSets descriptorSets_ {};
+        CommandBuffers commandBuffers_ {};
 
         std::vector<VkSemaphore> imageAcquiredSemaphores_ {};
         std::vector<VkSemaphore> imageRenderedSemaphores_ {};
@@ -104,20 +74,17 @@ namespace nd::src::graphics::vulkan
 
         size_t framesCount_ {};
 
-        VkInstance            instance_ {};
-        VkDevice              device_ {};
-        VkSurfaceKHR          surface_ {};
-        VkSwapchainKHR        swapchain_ {};
-        VkRenderPass          renderPass_ {};
-        VkDescriptorPool      descriptorPool_ {};
-        VkDescriptorSetLayout descriptorSetLayout_ {};
-        VkPipelineLayout      pipelineLayout_ {};
-        VkCommandPool         commandPool_ {};
-
-        VkQueue graphicsQueue_ {};
-        VkQueue presentQueue_ {};
+        Instance            instance_ {};
+        Surface             surface_ {};
+        RenderPass          renderPass_ {};
+        DescriptorPool      descriptorPool_ {};
+        DescriptorSetLayout descriptorSetLayout_ {};
+        PipelineLayout      pipelineLayout_ {};
+        CommandPool         commandPool_ {};
     };
 
-    Context
-    getContext(const ContextConfiguration& configuration);
+    VulkanContext
+    getVulkanContext(const VulkanContextConfigurationExternal& configurationExternal,
+                     const VulkanContextInitializers&          initializers,
+                     const VulkanContextConfigurations&        configurations);
 } // namespace nd::src::graphics::vulkan

@@ -3,404 +3,260 @@
 
 namespace nd::src::graphics::vulkan
 {
-    Context::Context(const Configuration& configuration)
-        : instance_(std::move(configuration.instance))
-        , device_(std::move(configuration.device))
-        , surface_(std::move(configuration.surface))
-        , swapchain_(std::move(configuration.swapchain))
-        , renderPass_(std::move(configuration.renderPass))
-        , swapchainImages_(std::move(configuration.swapchainImages))
-        , swapchainImageViews_(std::move(configuration.swapchainImageViews))
-        , swapchainFramebuffers_(std::move(configuration.swapchainFramebuffers))
-        , shaderModules_(std::move(configuration.shaderModules))
-        , descriptorPool_(std::move(configuration.descriptorPool))
-        , descriptorSetLayout_(std::move(configuration.descriptorSetLayout))
-        , descriptorSets_(std::move(configuration.descriptorSets))
-        , pipelineLayout_(std::move(configuration.pipelineLayout))
-        , pipelines_(std::move(configuration.pipelines))
-        , commandPool_(std::move(configuration.commandPool))
-        , commandBuffers_(std::move(configuration.commandBuffers))
-        , framesCount_(std::move(configuration.framesCount))
-        , imageAcquiredSemaphores_(std::move(configuration.imageAcquiredSemaphores))
-        , imageRenderedSemaphores_(std::move(configuration.imageRenderedSemaphores))
-        , imageAcquiredFences_(std::move(configuration.imageAcquiredFences))
-        , imageRenderedFences_(std::move(configuration.imageRenderedFences))
-        , graphicsQueue_(configuration.graphicsQueue)
-        , presentQueue_(configuration.presentQueue)
+    using namespace nd::src::tools;
+
+    VulkanContext::VulkanContext(const Configuration& configuration)
+        : instance_(configuration.instance)
+        , device_(configuration.device)
+        , surface_(configuration.surface)
+        , swapchain_(configuration.swapchain)
+        , renderPass_(configuration.renderPass)
+        , swapchainImages_(configuration.swapchainImages)
+        , swapchainImageViews_(configuration.swapchainImageViews)
+        , swapchainFramebuffers_(configuration.swapchainFramebuffers)
+        , shaderModules_(configuration.shaderModules)
+        , descriptorPool_(configuration.descriptorPool)
+        , descriptorSetLayout_(configuration.descriptorSetLayout)
+        , descriptorSets_(configuration.descriptorSets)
+        , pipelineLayout_(configuration.pipelineLayout)
+        , pipelines_(configuration.pipelines)
+        , commandPool_(configuration.commandPool)
+        , commandBuffers_(configuration.commandBuffers)
+        , framesCount_(configuration.framesCount)
+        , imageAcquiredSemaphores_(configuration.imageAcquiredSemaphores)
+        , imageRenderedSemaphores_(configuration.imageRenderedSemaphores)
+        , imageAcquiredFences_(configuration.imageAcquiredFences)
+        , imageRenderedFences_(configuration.imageRenderedFences)
     {
         ND_SET_SCOPE();
     }
 
-    Context::~Context()
+    VulkanContext::~VulkanContext()
     {
         ND_SET_SCOPE();
 
-        vkDeviceWaitIdle(device_);
+        vkDeviceWaitIdle(device_.handle);
 
         for(size_t index = 0; index < framesCount_; ++index)
         {
-            vkDestroySemaphore(device_, imageAcquiredSemaphores_[index], nullptr);
-            vkDestroySemaphore(device_, imageRenderedSemaphores_[index], nullptr);
-            vkDestroyFence(device_, imageAcquiredFences_[index], nullptr);
-            vkDestroyFence(device_, imageRenderedFences_[index], nullptr);
+            vkDestroySemaphore(device_.handle, imageAcquiredSemaphores_[index], nullptr);
+            vkDestroySemaphore(device_.handle, imageRenderedSemaphores_[index], nullptr);
+
+            const auto fences = std::vector<VkFence> {imageAcquiredFences_[index], imageRenderedFences_[index]};
+
+            vkWaitForFences(device_.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
+
+            vkDestroyFence(device_.handle, imageAcquiredFences_[index], nullptr);
+            vkDestroyFence(device_.handle, imageRenderedFences_[index], nullptr);
         }
 
-        vkFreeCommandBuffers(device_, commandPool_, commandBuffers_.size(), commandBuffers_.data());
-        vkDestroyCommandPool(device_, commandPool_, nullptr);
+        vkFreeCommandBuffers(device_.handle, commandPool_.handle, commandBuffers_.handles.size(), commandBuffers_.handles.data());
 
-        for(const auto pipeline: pipelines_)
+        vkDestroyCommandPool(device_.handle, commandPool_.handle, nullptr);
+
+        for(const auto pipeline: pipelines_.handles)
         {
-            vkDestroyPipeline(device_, pipeline, nullptr);
+            vkDestroyPipeline(device_.handle, pipeline, nullptr);
         }
 
-        vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
+        vkDestroyPipelineLayout(device_.handle, pipelineLayout_.handle, nullptr);
 
-        vkFreeDescriptorSets(device_, descriptorPool_, descriptorSets_.size(), descriptorSets_.data());
+        vkFreeDescriptorSets(device_.handle, descriptorPool_.handle, descriptorSets_.handles.size(), descriptorSets_.handles.data());
 
-        vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
-        vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
+        vkDestroyDescriptorSetLayout(device_.handle, descriptorSetLayout_.handle, nullptr);
+        vkDestroyDescriptorPool(device_.handle, descriptorPool_.handle, nullptr);
 
         for(const auto shaderModule: shaderModules_)
         {
-            vkDestroyShaderModule(device_, shaderModule, nullptr);
+            vkDestroyShaderModule(device_.handle, shaderModule.handle, nullptr);
         }
 
         for(const auto swapchainFramebuffer: swapchainFramebuffers_)
         {
-            vkDestroyFramebuffer(device_, swapchainFramebuffer, nullptr);
+            vkDestroyFramebuffer(device_.handle, swapchainFramebuffer.handle, nullptr);
         }
 
         for(const auto swapchainImageView: swapchainImageViews_)
         {
-            vkDestroyImageView(device_, swapchainImageView, nullptr);
+            vkDestroyImageView(device_.handle, swapchainImageView.handle, nullptr);
         }
 
-        vkDestroyRenderPass(device_, renderPass_, nullptr);
-        vkDestroySwapchainKHR(device_, swapchain_, nullptr);
-        vkDestroySurfaceKHR(instance_, surface_, nullptr);
-        vkDestroyDevice(device_, nullptr);
-        vkDestroyInstance(instance_, nullptr);
+        vkDestroyRenderPass(device_.handle, renderPass_.handle, nullptr);
+        vkDestroySwapchainKHR(device_.handle, swapchain_.handle, nullptr);
+        vkDestroySurfaceKHR(instance_.handle, surface_.handle, nullptr);
+        vkDestroyDevice(device_.handle, nullptr);
+        vkDestroyInstance(instance_.handle, nullptr);
     }
 
     void
-    Context::drawNextFrame()
+    VulkanContext::drawNextFrame()
     {
         ND_SET_SCOPE();
 
         static auto frameIndex = size_t {0};
+
+        static auto deviceQueue    = device_.queues.begin()->second[0];
+        static auto swapchainQueue = swapchain_.queues.begin()->second[0];
 
         const auto imageAcquiredSemaphore = imageAcquiredSemaphores_[frameIndex];
         const auto imageRenderedSemaphore = imageRenderedSemaphores_[frameIndex];
         const auto imageAcquiredFence     = imageAcquiredFences_[frameIndex];
         const auto imageRenderedFence     = imageRenderedFences_[frameIndex];
 
-        vkWaitForFences(device_, 1u, &imageRenderedFence, VK_TRUE, UINT64_MAX);
-        vkResetFences(device_, 1u, &imageRenderedFence);
+        const auto fences = std::vector<VkFence> {imageAcquiredFence, imageRenderedFence};
 
-        const auto imageIndex = getNextSwapchainImage(device_, swapchain_, imageAcquiredSemaphore, VK_NULL_HANDLE);
+        vkWaitForFences(device_.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
+        vkResetFences(device_.handle, fences.size(), fences.data());
 
-        const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_[frameIndex]};
+        const auto imageIndex = getNextSwapchainImage(device_.handle, swapchain_.handle, imageAcquiredSemaphore, imageAcquiredFence);
+
+        const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_.handles[imageIndex]};
         const auto waitDstStageMask = std::vector<VkPipelineStageFlags> {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
         const auto waitSemaphores   = std::vector<VkSemaphore> {imageAcquiredSemaphore};
         const auto signalSemaphores = std::vector<VkSemaphore> {imageRenderedSemaphore};
 
         const auto submitInfo = getSubmitInfo({commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores});
 
-        ND_ASSERT(vkQueueSubmit(graphicsQueue_, 1, &submitInfo, imageRenderedFence) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, 1, &submitInfo, imageRenderedFence) == VK_SUCCESS);
 
-        const auto swapchains   = std::vector<VkSwapchainKHR> {swapchain_};
-        const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(frameIndex)};
+        const auto swapchains   = std::vector<VkSwapchainKHR> {swapchain_.handle};
+        const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(imageIndex)};
 
         const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
 
-        ND_ASSERT(vkQueuePresentKHR(presentQueue_, &presentInfo) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkQueuePresentKHR(swapchainQueue, &presentInfo) == VK_SUCCESS);
 
         frameIndex = (frameIndex + 1) % framesCount_;
     }
 
-    Context
-    getContext(const ContextConfiguration& configuration)
+    VulkanContext
+    getVulkanContext(const VulkanContextConfigurationExternal& configurationExternal,
+                     const VulkanContextInitializers&          initializers,
+                     const VulkanContextConfigurations&        configurations)
     {
         ND_SET_SCOPE();
 
-        const auto layers = getMerged(configuration.layers,
-                                      {
-#ifndef NDEBUG
-                                          "VK_LAYER_KHRONOS_validation"
-#endif
-                                      });
+        const auto instanceConfiguration = configurations.getInstance(configurationExternal);
+        const auto instance              = initializers.getInstance(instanceConfiguration);
 
-        const auto extensions = getMerged(configuration.extensions, {});
+        const auto physicalDeviceConfiguration = configurations.getPhysicalDevice();
+        const auto physicalDevice              = initializers.getPhysicalDevice(physicalDeviceConfiguration, instance.handle);
 
-        const auto instance = getInstance({configuration.applicationName,
-                                           configuration.engineName,
-                                           layers,
-                                           extensions,
-                                           VK_MAKE_VERSION(0, 1, 0),
-                                           VK_MAKE_VERSION(0, 1, 0),
-                                           VK_API_VERSION_1_2});
+        const auto deviceConfiguration = configurations.getDevice(physicalDeviceConfiguration);
+        const auto device              = initializers.getDevice(deviceConfiguration, physicalDevice.handle);
 
-        const auto physicalDevicePriority = [](const VkPhysicalDevice            physicalDevice,
-                                               const VkPhysicalDeviceProperties& properties,
-                                               const VkPhysicalDeviceFeatures&   features)
-        {
-            return 1;
-        };
+        const auto surface = initializers.getSurface(instance.handle);
 
-        const auto [deviceQueueFamilies, physicalDevice, device] =
-            getDevice({{}, physicalDevicePriority, {"VK_KHR_swapchain"}, VK_QUEUE_GRAPHICS_BIT}, instance);
+        const auto swapchainConfiguration = configurations.getSwapchain(physicalDevice.handle,
+                                                                        surface.handle,
+                                                                        configurationExternal.width,
+                                                                        configurationExternal.height);
 
-        const auto surface             = configuration.getSurface(instance);
-        const auto surfaceFormats      = getSurfaceFormats(physicalDevice, surface);
-        const auto surfacePresentModes = getSurfacePresentModes(physicalDevice, surface);
-        const auto surfaceCapabilities = getSurfaceCapabilities(physicalDevice, surface);
+        const auto swapchain = initializers.getSwapchain(swapchainConfiguration, device.handle);
 
-        const auto graphicsQueueFamily = getQueueFamily(deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT);
-        const auto presentQueueFamily  = getPresentQueueFamily(deviceQueueFamilies, physicalDevice, surface);
+        const auto renderPassConfiguration = configurations.getRenderPass(swapchainConfiguration);
+        const auto renderPass              = initializers.getRenderPass(renderPassConfiguration, device.handle);
 
-        ND_ASSERT(graphicsQueueFamily.has_value() && presentQueueFamily.has_value());
+        const auto swapchainImages = initializers.getSwapchainImages(swapchain.handle, device.handle);
 
-        const auto graphicsQueue = getQueue(device, graphicsQueueFamily.value().index, 0);
-        const auto presentQueue  = getQueue(device, presentQueueFamily.value().index, 0);
+        const auto swapchainImageViewConfigurations = configurations.getSwapchainImageViews(swapchainConfiguration, swapchainImages);
+        const auto swapchainImageViews              = initializers.getSwapchainImageViews(swapchainImageViewConfigurations, device.handle);
 
-        const auto swapchainConfiguration = SwapchainConfiguration {deviceQueueFamilies,
-                                                                    surfaceFormats,
-                                                                    surfacePresentModes,
-                                                                    surfaceCapabilities,
-                                                                    physicalDevice,
-                                                                    surface,
-                                                                    {configuration.width, configuration.height},
-                                                                    1,
-                                                                    1,
-                                                                    true,
-                                                                    VK_FORMAT_B8G8R8A8_SRGB,
-                                                                    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-                                                                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                                                                    VK_PRESENT_MODE_IMMEDIATE_KHR,
-                                                                    VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
-                                                                    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR};
+        const auto swapchainFramebufferConfigurations = configurations.getSwapchainFramebuffers(swapchainConfiguration,
+                                                                                                swapchainImageViews,
+                                                                                                renderPass.handle);
 
-        const auto swapchain = getSwapchain(swapchainConfiguration, device);
+        const auto swapchainFramebuffers = initializers.getSwapchainFramebuffers(swapchainFramebufferConfigurations, device.handle);
 
-        const auto colorAttachments = std::vector<VkAttachmentReference> {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
+        const auto shaderModuleConfigurations = configurations.getShaderModules();
+        const auto shaderModules              = initializers.getShaderModules(shaderModuleConfigurations, device.handle);
 
-        const auto renderPassAttachments =
-            std::vector<VkAttachmentDescription> {getRenderPassAttachment(swapchainConfiguration.imageFormat,
-                                                                          VK_SAMPLE_COUNT_1_BIT,
-                                                                          VK_ATTACHMENT_LOAD_OP_CLEAR,
-                                                                          VK_ATTACHMENT_STORE_OP_STORE,
-                                                                          VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-                                                                          VK_ATTACHMENT_STORE_OP_DONT_CARE,
-                                                                          VK_IMAGE_LAYOUT_UNDEFINED,
-                                                                          VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)};
+        const auto descriptorPoolConfigurations = configurations.getDescriptorPool();
+        const auto descriptorPool               = initializers.getDescriptorPool(descriptorPoolConfigurations, device.handle);
 
-        const auto renderPassSubpasses =
-            std::vector<VkSubpassDescription> {getRenderPassSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                                                    0,
-                                                                    colorAttachments.size(),
-                                                                    0,
-                                                                    nullptr,
-                                                                    colorAttachments.data(),
-                                                                    nullptr,
-                                                                    nullptr,
-                                                                    nullptr)};
+        const auto descriptorSetLayoutConfiguration = configurations.getDescriptorSetLayout();
+        const auto descriptorSetLayout              = initializers.getDescriptorSetLayout(descriptorSetLayoutConfiguration, device.handle);
 
-        const auto renderPassDependencies =
-            std::vector<VkSubpassDependency> {getRenderPassDependency(VK_SUBPASS_EXTERNAL,
-                                                                      0,
-                                                                      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                                                      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                                                      0,
-                                                                      VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                                                      {})};
+        const auto descriptorSetsConfiguration = configurations.getDescriptorSets(descriptorSetLayout.handle, descriptorPool.handle);
+        const auto descriptorSets              = initializers.getDescriptorSets(descriptorSetsConfiguration, device.handle);
 
-        const auto renderPass = getRenderPass({renderPassAttachments, renderPassSubpasses, renderPassDependencies}, device);
+        const auto pipelineLayoutConfiguration = configurations.getPipelineLayout(descriptorSetLayout.handle);
+        const auto pipelineLayout              = initializers.getPipelineLayout(pipelineLayoutConfiguration, device.handle);
 
-        auto swapchainImages = getSwapchainImages(device, swapchain);
-        auto swapchainImageViews =
-            getMapped<VkImage, VkImageView>(swapchainImages,
-                                            [device = device, &swapchainConfiguration](const auto image, const auto index)
-                                            {
-                                                return getImageView({{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
-                                                                     {VK_COMPONENT_SWIZZLE_IDENTITY,
-                                                                      VK_COMPONENT_SWIZZLE_IDENTITY,
-                                                                      VK_COMPONENT_SWIZZLE_IDENTITY,
-                                                                      VK_COMPONENT_SWIZZLE_IDENTITY},
-                                                                     VK_IMAGE_VIEW_TYPE_2D,
-                                                                     swapchainConfiguration.imageFormat,
-                                                                     image},
-                                                                    device);
-                                            });
+        const auto pipelineConfigurations = configurations.getPipelines(shaderModules,
+                                                                        pipelineLayout.handle,
+                                                                        renderPass.handle,
+                                                                        configurationExternal.width,
+                                                                        configurationExternal.height);
 
-        auto swapchainFramebuffers = getMapped<VkImageView, VkFramebuffer>(
-            swapchainImageViews,
-            [device = device, renderPass, &swapchainConfiguration](const auto imageView, const auto index)
-            {
-                return getFramebuffer({{imageView},
-                                       renderPass,
-                                       swapchainConfiguration.imageExtent.width,
-                                       swapchainConfiguration.imageExtent.height,
-                                       swapchainConfiguration.imageArrayLayers},
-                                      device);
-            });
+        const auto pipelines = initializers.getPipelines(pipelineConfigurations, device.handle);
 
-        const auto shaderPaths =
-            std::vector<std::string> {"src/graphics/vulkan/shaders/vert.spv", "src/graphics/vulkan/shaders/frag.spv"};
+        const auto graphicsQueueFamily = std::find_if(device.queueFamilies.begin(),
+                                                      device.queueFamilies.end(),
+                                                      [](const auto& queueFamily)
+                                                      {
+                                                          return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
+                                                      });
 
-        const auto shaderStages =
-            std::vector<VkShaderStageFlagBits> {VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT};
+        ND_ASSERT(graphicsQueueFamily != device.queueFamilies.end());
 
-        auto shaderModules = getMapped<std::string, VkShaderModule>(shaderPaths,
-                                                                    [device = device](const auto& path, const auto index)
-                                                                    {
-                                                                        return getShaderModule({path}, device);
-                                                                    });
+        const auto commandPool    = getCommandPool({graphicsQueueFamily->index}, device.handle);
+        const auto commandBuffers = getCommandBuffers(
+            {commandPool.handle, VK_COMMAND_BUFFER_LEVEL_PRIMARY, static_cast<uint32_t>(swapchainFramebuffers.size())},
+            device.handle);
 
-        const auto descriptorPool = getDescriptorPool(
-            {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
-            device);
-
-        const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device);
-
-        auto descriptorSets = getDescriptorSet({{descriptorSetLayout}, descriptorPool}, device);
-
-        const auto pipelineLayout = getPipelineLayout({{descriptorSetLayout}, {}}, device);
-
-        const auto vertexInputStateCreateInfo = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
-        const auto inputAssemblyStateCreateInfo =
-            getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
-
-        const auto tessellationStateCreateInfo = VkPipelineTessellationStateCreateInfo {};
-
-        const auto scissors =
-            VkRect2D {{0, 0}, {swapchainConfiguration.imageExtent.width, swapchainConfiguration.imageExtent.height}};
-        const auto viewport = VkViewport {0.0f,
-                                          0.0f,
-                                          static_cast<float>(swapchainConfiguration.imageExtent.width),
-                                          static_cast<float>(swapchainConfiguration.imageExtent.height),
-                                          0.0f,
-                                          0.1f};
-
-        const auto viewportStateCreateInfo = getPipelineViewportStateCreateInfo(1, 1, &viewport, &scissors);
-
-        const auto rasterizationStateCreateInfo = getPipelineRasterizationStateCreateInfo(VK_FALSE,
-                                                                                          VK_FALSE,
-                                                                                          VK_POLYGON_MODE_FILL,
-                                                                                          VK_CULL_MODE_NONE,
-                                                                                          VK_FRONT_FACE_CLOCKWISE,
-                                                                                          VK_FALSE,
-                                                                                          0.0f,
-                                                                                          0.0f,
-                                                                                          0.0f,
-                                                                                          1.0f);
-
-        const auto multisampleStateCreateInfo =
-            getPipelineMultisampleStateCreateInfo(VK_SAMPLE_COUNT_1_BIT, VK_FALSE, 1.0f, nullptr, VK_FALSE, VK_FALSE);
-
-        const auto depthStencilStateCreateInfo = VkPipelineDepthStencilStateCreateInfo {};
-
-        const auto blendConstants       = std::vector<float> {0.0f, 0.0f, 0.0f, 0.0f};
-        const auto colorBlendAttachment = VkPipelineColorBlendAttachmentState {
-            VK_TRUE,
-            VK_BLEND_FACTOR_SRC_ALPHA,
-            VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-            VK_BLEND_OP_ADD,
-            VK_BLEND_FACTOR_ONE,
-            VK_BLEND_FACTOR_ZERO,
-            VK_BLEND_OP_ADD,
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
-
-        const auto colorBlendStateCreateInfo =
-            getPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_OR, 1, &colorBlendAttachment, blendConstants.data());
-
-        const auto dynamicStateCreateInfo = getPipelineDynamicStateCreateInfo(0, nullptr);
-
-        auto pipelines = getGraphicsPipeline(
-            {{getMapped<VkShaderModule, VkPipelineShaderStageCreateInfo>(
-                  shaderModules,
-                  [&shaderStages](const auto& shaderModule, const auto index)
-                  {
-                      return getPipelineShaderStageCreateInfo(shaderStages[index], shaderModule, "main", nullptr);
-                  }),
-              &vertexInputStateCreateInfo,
-              &inputAssemblyStateCreateInfo,
-              nullptr,
-              &viewportStateCreateInfo,
-              &rasterizationStateCreateInfo,
-              &multisampleStateCreateInfo,
-              nullptr,
-              &colorBlendStateCreateInfo,
-              &dynamicStateCreateInfo,
-              pipelineLayout,
-              renderPass,
-              0}},
-            device);
-
-        const auto commandPool = getCommandPool({deviceQueueFamilies, VK_QUEUE_GRAPHICS_BIT}, device);
-
-        auto commandBuffers = getCommandBuffer(
-            {commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, static_cast<uint32_t>(swapchainFramebuffers.size())},
-            device);
-
-        for(size_t i = 0; i < commandBuffers.size(); ++i)
+        for(size_t i = 0; i < commandBuffers.handles.size(); ++i)
         {
             const auto framebuffer   = swapchainFramebuffers[i];
-            const auto commandBuffer = commandBuffers[i];
+            const auto commandBuffer = commandBuffers.handles[i];
 
             const auto commandBufferBeginInfo = getCommandBufferBeginInfo(nullptr);
 
-            ND_ASSERT(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo) == VK_SUCCESS);
+            ND_ASSERT_EXEC(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo) == VK_SUCCESS);
 
-            const auto clearValues = std::vector<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
-            const auto renderPassBeginInfo =
-                getRenderPassBeginInfo(renderPass, framebuffer, scissors, clearValues.size(), clearValues.data());
+            const auto clearValues         = std::vector<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
+            const auto renderPassBeginInfo = getRenderPassBeginInfo(renderPass.handle,
+                                                                    framebuffer.handle,
+                                                                    {{0u, 0u}, {configurationExternal.width, configurationExternal.height}},
+                                                                    clearValues.size(),
+                                                                    clearValues.data());
 
             vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[0]);
+            vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines.handles[0]);
             vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
             vkCmdEndRenderPass(commandBuffer);
 
-            ND_ASSERT(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS);
+            ND_ASSERT_EXEC(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS);
         }
 
         const auto framesCount = size_t {2};
 
-        auto imageAcquiredSemaphores = std::vector<VkSemaphore>(framesCount);
-        auto imageRenderedSemaphores = std::vector<VkSemaphore>(framesCount);
-        auto imageAcquiredFences     = std::vector<VkFence>(framesCount);
-        auto imageRenderedFences     = std::vector<VkFence>(framesCount);
+        const auto imageAcquiredSemaphores = getSemaphore(device.handle, framesCount);
+        const auto imageRenderedSemaphores = getSemaphore(device.handle, framesCount);
+        const auto imageAcquiredFences     = getFence(device.handle, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
+        const auto imageRenderedFences     = getFence(device.handle, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
 
-        for(size_t index = 0; index < framesCount; ++index)
-        {
-            imageAcquiredSemaphores[index] = getSemaphore(device);
-            imageRenderedSemaphores[index] = getSemaphore(device);
-            imageAcquiredFences[index]     = getFence(device);
-            imageRenderedFences[index]     = getFence(device, VK_FENCE_CREATE_SIGNALED_BIT);
-        }
-
-        return Context({std::move(swapchainImages),
-                        std::move(swapchainImageViews),
-                        std::move(swapchainFramebuffers),
-                        std::move(shaderModules),
-                        std::move(descriptorSets),
-                        std::move(pipelines),
-                        std::move(commandBuffers),
-                        std::move(imageAcquiredSemaphores),
-                        std::move(imageRenderedSemaphores),
-                        std::move(imageAcquiredFences),
-                        std::move(imageRenderedFences),
-                        framesCount,
-                        instance,
-                        device,
-                        surface,
-                        swapchain,
-                        renderPass,
-                        descriptorPool,
-                        descriptorSetLayout,
-                        pipelineLayout,
-                        commandPool,
-                        graphicsQueue,
-                        presentQueue});
+        return VulkanContext({device,
+                              swapchain,
+                              swapchainImages,
+                              swapchainImageViews,
+                              swapchainFramebuffers,
+                              shaderModules,
+                              pipelines,
+                              descriptorSets,
+                              commandBuffers,
+                              imageAcquiredSemaphores,
+                              imageRenderedSemaphores,
+                              imageAcquiredFences,
+                              imageRenderedFences,
+                              framesCount,
+                              instance,
+                              surface,
+                              renderPass,
+                              descriptorPool,
+                              descriptorSetLayout,
+                              pipelineLayout,
+                              commandPool});
     }
 } // namespace nd::src::graphics::vulkan

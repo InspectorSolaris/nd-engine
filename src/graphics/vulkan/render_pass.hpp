@@ -1,15 +1,39 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
+    using AttachmentDescription = VkAttachmentDescription;
+    using SubpassDependency     = VkSubpassDependency;
+
+    struct SubpassDescription final
+    {
+        const std::vector<VkAttachmentReference> inputAttachments;
+        const std::vector<VkAttachmentReference> colorAttachments;
+        const std::vector<VkAttachmentReference> resolveAttachments;
+        const std::vector<uint32_t>              preserveAttachments;
+
+        const std::optional<VkAttachmentReference> depthStencilAttachment;
+
+        const VkPipelineBindPoint pipelineBindPoint;
+
+        const VkSubpassDescriptionFlags flags = {};
+    };
+
     struct RenderPassConfiguration final
     {
-        const std::vector<VkAttachmentDescription>& attachments;
-        const std::vector<VkSubpassDescription>&    subpasses;
-        const std::vector<VkSubpassDependency>&     dependencies;
+        const std::vector<AttachmentDescription> attachments;
+        const std::vector<SubpassDescription>    subpasses;
+        const std::vector<SubpassDependency>     dependencies;
+
+        const VkRenderPassCreateFlags flags = {};
+        const void*                   next  = {};
+    };
+
+    struct RenderPass final
+    {
+        const VkRenderPass handle;
     };
 
     VkRenderPassBeginInfo
@@ -63,8 +87,8 @@ namespace nd::src::graphics::vulkan
                             const void*                    next  = {}) noexcept;
 
     VkRenderPass
-    getRenderPass(const VkRenderPassCreateInfo& createInfo, const VkDevice device);
+    getRenderPassHandle(const VkRenderPassCreateInfo& createInfo, const VkDevice device);
 
-    VkRenderPass
+    RenderPass
     getRenderPass(const RenderPassConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

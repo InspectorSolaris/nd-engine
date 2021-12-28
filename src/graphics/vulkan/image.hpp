@@ -1,39 +1,13 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
-    class Image final
+    struct Image final
     {
-    public:
-        Image() noexcept;
-        Image(const VkDevice device, const VkImageCreateInfo& createInfo);
-
-        Image(const Image& image) = delete;
-        Image(Image&& image) noexcept;
-
-        Image&
-        operator=(const Image& image) = delete;
-        Image&
-        operator=(Image&& image) noexcept;
-
-        ~Image();
-
-        constexpr VkImage
-        get() const noexcept;
-
-    private:
-        VkDevice device_ {VK_NULL_HANDLE};
-        VkImage  image_ {VK_NULL_HANDLE};
+        const VkImage handle;
     };
-
-    constexpr VkImage
-    Image::get() const noexcept
-    {
-        return image_;
-    }
 
     VkImageCreateInfo
     getImageCreateInfo(const VkImageType           type,
@@ -50,4 +24,10 @@ namespace nd::src::graphics::vulkan
                        const VkImageLayout         initialLayout,
                        const VkImageCreateFlags    flags = {},
                        const void*                 next  = {}) noexcept;
+
+    VkImage
+    getImageHandle(const VkImageCreateInfo& createInfo, const VkDevice device);
+
+    std::vector<Image>
+    getSwapchainImages(const VkSwapchainKHR swapchain, const VkDevice device) noexcept;
 } // namespace nd::src::graphics::vulkan

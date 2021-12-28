@@ -1,14 +1,21 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
     struct PipelineLayoutConfiguration final
     {
-        const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts;
-        const std::vector<VkPushConstantRange>&   pushConstantRanges;
+        const std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+        const std::vector<VkPushConstantRange>   pushConstantRanges;
+
+        const VkPipelineLayoutCreateFlags flags = {};
+        const void*                       next  = {};
+    };
+
+    struct PipelineLayout final
+    {
+        const VkPipelineLayout handle;
     };
 
     VkPipelineLayoutCreateInfo
@@ -20,8 +27,8 @@ namespace nd::src::graphics::vulkan
                                 const void*                       next  = {}) noexcept;
 
     VkPipelineLayout
-    getPipelineLayout(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device);
+    getPipelineLayoutHandle(const VkPipelineLayoutCreateInfo& createInfo, const VkDevice device);
 
-    VkPipelineLayout
+    PipelineLayout
     getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

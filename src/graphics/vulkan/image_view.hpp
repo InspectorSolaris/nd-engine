@@ -1,17 +1,24 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
     struct ImageViewConfiguration final
     {
-        const VkImageSubresourceRange& subresourceRange;
-        const VkComponentMapping&      components;
-        const VkImageViewType          viewType;
-        const VkFormat                 format;
-        const VkImage                  image;
+        const VkImageSubresourceRange subresourceRange;
+        const VkComponentMapping      components;
+        const VkImageViewType         viewType;
+        const VkFormat                format;
+        const VkImage                 image;
+
+        const VkImageViewCreateFlags flags = {};
+        const void*                  next  = {};
+    };
+
+    struct ImageView final
+    {
+        const VkImageView handle;
     };
 
     VkImageViewCreateInfo
@@ -24,8 +31,11 @@ namespace nd::src::graphics::vulkan
                            const void*                    next  = {}) noexcept;
 
     VkImageView
-    getImageView(const VkImageViewCreateInfo& createInfo, const VkDevice device);
+    getImageViewHandle(const VkImageViewCreateInfo& createInfo, const VkDevice device);
 
-    VkImageView
+    ImageView
     getImageView(const ImageViewConfiguration& configuration, const VkDevice device);
+
+    std::vector<ImageView>
+    getImageViews(const std::vector<ImageViewConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

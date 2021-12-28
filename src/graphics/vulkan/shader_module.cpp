@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     std::vector<char>
     getShaderCode(const std::string& path)
     {
@@ -24,10 +26,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkShaderModuleCreateInfo
-    getShaderModuleCreateInfo(const size_t                    codeSize,
-                              const uint32_t*                 code,
-                              const VkShaderModuleCreateFlags flags,
-                              const void*                     next) noexcept
+    getShaderModuleCreateInfo(const size_t codeSize, const uint32_t* code, const VkShaderModuleCreateFlags flags, const void* next) noexcept
     {
         ND_SET_SCOPE();
 
@@ -41,26 +40,41 @@ namespace nd::src::graphics::vulkan
     }
 
     VkShaderModule
-    getShaderModule(const VkShaderModuleCreateInfo& createInfo, const VkDevice device)
+    getShaderModuleHandle(const VkShaderModuleCreateInfo& createInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         VkShaderModule shaderModule;
 
-        ND_ASSERT(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) == VK_SUCCESS);
 
         return shaderModule;
     }
 
-    VkShaderModule
+    ShaderModule
     getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         const auto code = getShaderCode(configuration.path);
 
-        const auto createInfo = getShaderModuleCreateInfo(code.size(), reinterpret_cast<const uint32_t*>(code.data()));
+        const auto createInfo = getShaderModuleCreateInfo(code.size(),
+                                                          reinterpret_cast<const uint32_t*>(code.data()),
+                                                          configuration.flags,
+                                                          configuration.next);
 
-        return getShaderModule(createInfo, device);
+        return {configuration.stage, getShaderModuleHandle(createInfo, device)};
+    }
+
+    std::vector<ShaderModule>
+    getShaderModules(const std::vector<ShaderModuleConfiguration> configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<ShaderModuleConfiguration, ShaderModule>(configurations,
+                                                                  [device](const auto& configuration, const auto index)
+                                                                  {
+                                                                      return getShaderModule(configuration, device);
+                                                                  });
     }
 } // namespace nd::src::graphics::vulkan

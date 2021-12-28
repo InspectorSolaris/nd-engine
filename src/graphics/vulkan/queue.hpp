@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -27,19 +26,26 @@ namespace nd::src::graphics::vulkan
         const std::vector<uint32_t>&       imageIndices;
     };
 
+    std::vector<VkQueueFamilyProperties>
+    getQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept;
+
+    std::vector<QueueFamily>
+    getQueueFamilies(const std::vector<VkQueueFamilyProperties>& queueFamiliesProperties) noexcept;
+
+    std::vector<QueueFamily>
+    getQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept;
+
+    std::vector<QueueFamily>
+    getQueueFamilies(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
+
+    std::vector<QueueFamily>
+    getQueueFamilies(const std::vector<QueueFamily>& queueFamilies, const std::function<bool(const QueueFamily, const size_t)> filter) noexcept;
+
     VkQueue
     getQueue(const VkDevice device, const uint32_t queueFamilyIndex, const uint32_t queueIndex) noexcept;
 
-    std::optional<QueueFamily>
-    getQueueFamily(const std::vector<QueueFamily>& queueFamilies, const VkQueueFlags queueFlags) noexcept;
-
-    std::optional<QueueFamily>
-    getPresentQueueFamily(const std::vector<QueueFamily>& queueFamilies,
-                          const VkPhysicalDevice          physicalDevice,
-                          const VkSurfaceKHR              surface);
-
-    std::vector<uint32_t>
-    getQueueFamiliesIndices(const std::vector<const QueueFamily*>& queueFamilies) noexcept;
+    std::map<uint32_t, std::vector<VkQueue>>
+    getQueues(const VkDevice device, const std::vector<QueueFamily>& queueFamilies) noexcept;
 
     VkSubmitInfo
     getSubmitInfo(const uint32_t              commandBuffersCount,

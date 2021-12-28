@@ -3,10 +3,10 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkCommandBufferBeginInfo
-    getCommandBufferBeginInfo(const VkCommandBufferInheritanceInfo* inheritanceInfo,
-                              const VkCommandBufferUsageFlags       flags,
-                              const void*                           next) noexcept
+    getCommandBufferBeginInfo(const VkCommandBufferInheritanceInfo* inheritanceInfo, const VkCommandBufferUsageFlags flags, const void* next) noexcept
     {
         ND_SET_SCOPE();
 
@@ -36,25 +36,27 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkCommandBuffer>
-    getCommandBuffer(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device)
+    getCommandBuffersHandles(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
         auto commandBuffers = std::vector<VkCommandBuffer>(allocateInfo.commandBufferCount);
 
-        ND_ASSERT(vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data()) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data()) == VK_SUCCESS);
 
         return commandBuffers;
     }
 
-    std::vector<VkCommandBuffer>
-    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device)
+    CommandBuffers
+    getCommandBuffers(const CommandBufferConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
-        const auto allocateInfo =
-            getCommandBufferAllocateInfo(configuration.commandPool, configuration.level, configuration.count);
+        const auto allocateInfo = getCommandBufferAllocateInfo(configuration.commandPool,
+                                                               configuration.level,
+                                                               configuration.count,
+                                                               configuration.next);
 
-        return getCommandBuffer(allocateInfo, device);
+        return {getCommandBuffersHandles(allocateInfo, device)};
     }
 } // namespace nd::src::graphics::vulkan

@@ -3,52 +3,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    Buffer::Buffer() noexcept
-    {
-        ND_SET_SCOPE();
-    }
-
-    Buffer::Buffer(const VkDevice device, const VkBufferCreateInfo& createInfo)
-        : device_(device)
-    {
-        ND_SET_SCOPE();
-
-        ND_ASSERT(vkCreateBuffer(device_, &createInfo, nullptr, &buffer_) == VK_SUCCESS);
-    }
-
-    Buffer::Buffer(Buffer&& buffer) noexcept
-        : device_(std::move(buffer.device_))
-        , buffer_(std::move(buffer.buffer_))
-    {
-        ND_SET_SCOPE();
-
-        buffer.buffer_ = VK_NULL_HANDLE;
-    }
-
-    Buffer&
-    Buffer::operator=(Buffer&& buffer) noexcept
-    {
-        ND_SET_SCOPE();
-
-        if(&buffer == this)
-        {
-            return *this;
-        }
-
-        device_ = std::move(buffer.device_);
-        buffer_ = std::move(buffer.buffer_);
-
-        buffer.buffer_ = VK_NULL_HANDLE;
-
-        return *this;
-    }
-
-    Buffer::~Buffer()
-    {
-        ND_SET_SCOPE();
-
-        vkDestroyBuffer(device_, buffer_, nullptr);
-    }
+    using namespace nd::src::tools;
 
     VkBufferCreateInfo
     getBufferCreateInfo(const VkDeviceSize        size,
@@ -71,5 +26,17 @@ namespace nd::src::graphics::vulkan
             queueFamilyIndicesCount,              // queueFamilyIndexCount;
             queueFamilyIndices                    // pQueueFamilyIndices;
         };
+    }
+
+    VkBuffer
+    getBufferHandle(const VkBufferCreateInfo& createInfo, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        VkBuffer buffer;
+
+        ND_ASSERT_EXEC(vkCreateBuffer(device, &createInfo, nullptr, &buffer) == VK_SUCCESS);
+
+        return buffer;
     }
 } // namespace nd::src::graphics::vulkan

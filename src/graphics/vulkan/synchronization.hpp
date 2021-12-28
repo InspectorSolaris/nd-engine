@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -14,6 +13,9 @@ namespace nd::src::graphics::vulkan
     VkSemaphore
     getSemaphore(const VkDevice device, const VkSemaphoreCreateFlags flags = {}, const void* next = {});
 
+    std::vector<VkSemaphore>
+    getSemaphore(const VkDevice device, const size_t count, const VkSemaphoreCreateFlags flags = {}, const void* next = {});
+
     VkFenceCreateInfo
     getFenceCreateInfo(const VkFenceCreateFlags flags = {}, const void* next = {}) noexcept;
 
@@ -22,4 +24,7 @@ namespace nd::src::graphics::vulkan
 
     VkFence
     getFence(const VkDevice device, const VkFenceCreateFlags flags = {}, const void* next = {});
+
+    std::vector<VkFence>
+    getFence(const VkDevice device, const size_t count, const VkFenceCreateFlags flags = {}, const void* next = {});
 } // namespace nd::src::graphics::vulkan

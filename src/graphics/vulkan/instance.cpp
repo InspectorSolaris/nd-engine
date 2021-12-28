@@ -3,18 +3,21 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkApplicationInfo
     getApplicationInfo(const char*    applicationName,
                        const char*    engineName,
                        const uint32_t applicationVersion,
                        const uint32_t engineVersion,
-                       const uint32_t apiVersion) noexcept
+                       const uint32_t apiVersion,
+                       const void*    next) noexcept
     {
         ND_SET_SCOPE();
 
         return {
             VK_STRUCTURE_TYPE_APPLICATION_INFO, // sType;
-            nullptr,                            // pNext;
+            next,                               // pNext;
             applicationName,                    // pApplicationName;
             applicationVersion,                 // applicationVersion;
             engineName,                         // pEngineName;
@@ -105,18 +108,18 @@ namespace nd::src::graphics::vulkan
     }
 
     VkInstance
-    getInstance(const VkInstanceCreateInfo& createInfo)
+    getInstanceHandle(const VkInstanceCreateInfo& createInfo)
     {
         ND_SET_SCOPE();
 
         VkInstance instance;
 
-        ND_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateInstance(&createInfo, nullptr, &instance) == VK_SUCCESS);
 
         return instance;
     }
 
-    VkInstance
+    Instance
     getInstance(const InstanceConfiguration& configuration)
     {
         ND_SET_SCOPE();
@@ -139,8 +142,10 @@ namespace nd::src::graphics::vulkan
                                                       static_cast<uint32_t>(clayers.size()),
                                                       static_cast<uint32_t>(cextensions.size()),
                                                       clayers.data(),
-                                                      cextensions.data());
+                                                      cextensions.data(),
+                                                      configuration.flags,
+                                                      configuration.next);
 
-        return getInstance(createInfo);
+        return {getInstanceHandle(createInfo)};
     }
 } // namespace nd::src::graphics::vulkan
