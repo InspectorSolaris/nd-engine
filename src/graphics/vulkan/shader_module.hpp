@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -34,4 +33,7 @@ namespace nd::src::graphics::vulkan
 
     ShaderModule
     getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device);
+
+    std::vector<ShaderModule>
+    getShaderModules(const std::vector<ShaderModuleConfiguration> configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

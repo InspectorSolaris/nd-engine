@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkSemaphoreCreateInfo
     getSemaphoreCreateInfo(const VkSemaphoreCreateFlags flags, const void* next) noexcept
     {

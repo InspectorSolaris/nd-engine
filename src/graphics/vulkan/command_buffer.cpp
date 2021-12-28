@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkCommandBufferBeginInfo
     getCommandBufferBeginInfo(const VkCommandBufferInheritanceInfo* inheritanceInfo,
                               const VkCommandBufferUsageFlags       flags,

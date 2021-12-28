@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkBufferViewCreateInfo
     getBufferViewCreateInfo(const VkBuffer                buffer,
                             const VkFormat                format,

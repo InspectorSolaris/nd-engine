@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkImageViewCreateInfo
     getImageViewCreateInfo(const VkImage                  image,
                            const VkImageViewType          viewType,
@@ -52,5 +54,17 @@ namespace nd::src::graphics::vulkan
                                                        configuration.next);
 
         return {getImageViewHandle(createInfo, device)};
+    }
+
+    std::vector<ImageView>
+    getImageViews(const std::vector<ImageViewConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<ImageViewConfiguration, ImageView>(configurations,
+                                                            [device](const auto& configuration, const auto index)
+                                                            {
+                                                                return getImageView(configuration, device);
+                                                            });
     }
 } // namespace nd::src::graphics::vulkan

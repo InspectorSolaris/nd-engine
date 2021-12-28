@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkBufferCreateInfo
     getBufferCreateInfo(const VkDeviceSize        size,
                         const VkBufferUsageFlags  usage,

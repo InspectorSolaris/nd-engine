@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkRenderPassBeginInfo
     getRenderPassBeginInfo(const VkRenderPass  renderPass,
                            const VkFramebuffer framebuffer,

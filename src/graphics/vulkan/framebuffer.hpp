@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -39,4 +38,7 @@ namespace nd::src::graphics::vulkan
 
     Framebuffer
     getFramebuffer(const FramebufferConfiguration& configuration, const VkDevice device);
+
+    std::vector<Framebuffer>
+    getFramebuffers(const std::vector<FramebufferConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

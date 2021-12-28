@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkImageCreateInfo
     getImageCreateInfo(const VkImageType           type,
                        const VkFormat              format,
@@ -53,7 +55,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<Image>
-    getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept
+    getSwapchainImages(const VkSwapchainKHR swapchain, const VkDevice device) noexcept
     {
         ND_SET_SCOPE();
 

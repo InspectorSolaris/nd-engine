@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkFramebufferCreateInfo
     getFramebufferCreateInfo(const VkRenderPass             renderPass,
                              const uint32_t                 attachmentsCount,
@@ -55,5 +57,17 @@ namespace nd::src::graphics::vulkan
                                                          configuration.next);
 
         return {getFramebufferHandle(createInfo, device)};
+    }
+
+    std::vector<Framebuffer>
+    getFramebuffers(const std::vector<FramebufferConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<FramebufferConfiguration, Framebuffer>(configurations,
+                                                                [device](const auto& configuration, const auto index)
+                                                                {
+                                                                    return getFramebuffer(configuration, device);
+                                                                });
     }
 } // namespace nd::src::graphics::vulkan

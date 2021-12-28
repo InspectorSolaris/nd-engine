@@ -31,7 +31,7 @@ BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeComma
 BreakStringLiterals: true
-ColumnLimit: 125
+ColumnLimit: 150
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
@@ -91,3 +91,6 @@ Standard: c++17
 TabWidth: 4
 UseCRLF: false
 UseTab: Never
+
+PenaltyBreakAssignment: 1024
+PenaltyBreakBeforeFirstCallParameter: 0

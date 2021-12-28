@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VulkanContext::VulkanContext(const Configuration& configuration)
         : instance_(configuration.instance)
         , device_(configuration.device)
@@ -48,10 +50,7 @@ namespace nd::src::graphics::vulkan
             vkDestroyFence(device_.handle, imageRenderedFences_[index], nullptr);
         }
 
-        vkFreeCommandBuffers(device_.handle,
-                             commandPool_.handle,
-                             commandBuffers_.handles.size(),
-                             commandBuffers_.handles.data());
+        vkFreeCommandBuffers(device_.handle, commandPool_.handle, commandBuffers_.handles.size(), commandBuffers_.handles.data());
 
         vkDestroyCommandPool(device_.handle, commandPool_.handle, nullptr);
 
@@ -62,10 +61,7 @@ namespace nd::src::graphics::vulkan
 
         vkDestroyPipelineLayout(device_.handle, pipelineLayout_.handle, nullptr);
 
-        vkFreeDescriptorSets(device_.handle,
-                             descriptorPool_.handle,
-                             descriptorSets_.handles.size(),
-                             descriptorSets_.handles.data());
+        vkFreeDescriptorSets(device_.handle, descriptorPool_.handle, descriptorSets_.handles.size(), descriptorSets_.handles.data());
 
         vkDestroyDescriptorSetLayout(device_.handle, descriptorSetLayout_.handle, nullptr);
         vkDestroyDescriptorPool(device_.handle, descriptorPool_.handle, nullptr);
@@ -112,8 +108,7 @@ namespace nd::src::graphics::vulkan
         vkWaitForFences(device_.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
         vkResetFences(device_.handle, fences.size(), fences.data());
 
-        const auto imageIndex =
-            getNextSwapchainImage(device_.handle, swapchain_.handle, imageAcquiredSemaphore, imageAcquiredFence);
+        const auto imageIndex = getNextSwapchainImage(device_.handle, swapchain_.handle, imageAcquiredSemaphore, imageAcquiredFence);
 
         const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_.handles[imageIndex]};
         const auto waitDstStageMask = std::vector<VkPipelineStageFlags> {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
@@ -141,56 +136,41 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto instanceConfiguration = configurations.getInstanceConfiguration(configurationExternal);
+        const auto instanceConfiguration = configurations.getInstance(configurationExternal);
         const auto instance              = initializers.getInstance(instanceConfiguration);
 
-        const auto physicalDeviceConfiguration = configurations.getPhysicalDeviceConfiguration();
-        const auto physicalDevice = initializers.getPhysicalDevice(physicalDeviceConfiguration, instance.handle);
+        const auto physicalDeviceConfiguration = configurations.getPhysicalDevice();
+        const auto physicalDevice              = initializers.getPhysicalDevice(physicalDeviceConfiguration, instance.handle);
 
-        const auto deviceConfiguration = configurations.getDeviceConfiguration(physicalDeviceConfiguration);
+        const auto deviceConfiguration = configurations.getDevice(physicalDeviceConfiguration);
         const auto device              = initializers.getDevice(deviceConfiguration, physicalDevice.handle);
 
         const auto surface = initializers.getSurface(instance.handle);
 
-        const auto swapchainConfiguration = configurations.getSwapchainConfiguration(physicalDevice.handle,
-                                                                                     surface.handle,
-                                                                                     configurationExternal.width,
-                                                                                     configurationExternal.height);
+        const auto swapchainConfiguration = configurations.getSwapchain(physicalDevice.handle,
+                                                                        surface.handle,
+                                                                        configurationExternal.width,
+                                                                        configurationExternal.height);
 
         const auto swapchain = initializers.getSwapchain(swapchainConfiguration, device.handle);
 
-        const auto renderPassConfiguration = configurations.getRenderPassConfiguration(swapchainConfiguration);
+        const auto renderPassConfiguration = configurations.getRenderPass(swapchainConfiguration);
         const auto renderPass              = initializers.getRenderPass(renderPassConfiguration, device.handle);
 
-        const auto swapchainImages     = getSwapchainImages(device.handle, swapchain.handle);
-        const auto swapchainImageViews = getMapped<VkImage, ImageView>(
-            swapchainImages,
-            [device = device.handle, &swapchainConfiguration, &initializers, &configurations](const auto image,
-                                                                                              const auto index)
-            {
-                const auto imageViewConfiguration =
-                    configurations.getSwapchainImageViewConfiguration(swapchainConfiguration, image.handle);
+        const auto swapchainImages = initializers.getSwapchainImages(swapchain.handle, device.handle);
 
-                return initializers.getSwapchainImageView(imageViewConfiguration, device);
-            });
+        const auto swapchainImageViewConfigurations = configurations.getSwapchainImageViews(swapchainConfiguration, swapchainImages);
+        const auto swapchainImageViews              = initializers.getSwapchainImageViews(swapchainImageViewConfigurations, device.handle);
 
-        const auto swapchainFramebuffers = getMapped<ImageView, Framebuffer>(
-            swapchainImageViews,
-            [device = device.handle, renderPass, &swapchainConfiguration, &initializers, &configurations](
-                const auto imageView,
-                const auto index)
-            {
-                const auto framebufferConfiguration =
-                    configurations.getSwapchainFramebufferConfiguration(swapchainConfiguration,
-                                                                        imageView.handle,
-                                                                        renderPass.handle);
+        const auto swapchainFramebufferConfigurations = configurations.getSwapchainFramebuffers(swapchainConfiguration,
+                                                                                                swapchainImageViews,
+                                                                                                renderPass.handle);
 
-                return initializers.getSwapchainFramebuffer(framebufferConfiguration, device);
-            });
+        const auto swapchainFramebuffers = initializers.getSwapchainFramebuffers(swapchainFramebufferConfigurations, device.handle);
 
-        const auto shaderModulesConfigurations =
-            std::vector<ShaderModuleConfiguration> {{"src/graphics/vulkan/shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT},
-                                                    {"src/graphics/vulkan/shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT}};
+        const auto shaderModulesConfigurations = std::vector<ShaderModuleConfiguration> {
+            {"src/graphics/vulkan/shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT},
+            {"src/graphics/vulkan/shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT}};
 
         const auto shaderModules = getMapped<ShaderModuleConfiguration, ShaderModule>(
             shaderModulesConfigurations,
@@ -204,18 +184,16 @@ namespace nd::src::graphics::vulkan
             device.handle);
 
         const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device.handle);
-        const auto descriptorSets = getDescriptorSets({{descriptorSetLayout.handle}, descriptorPool.handle}, device.handle);
+        const auto descriptorSets      = getDescriptorSets({{descriptorSetLayout.handle}, descriptorPool.handle}, device.handle);
 
         const auto pipelineLayout = getPipelineLayout({{descriptorSetLayout.handle}, {}}, device.handle);
 
-        const auto vertexInputStateCreateInfo = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
-        const auto inputAssemblyStateCreateInfo =
-            getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
+        const auto vertexInputStateCreateInfo   = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
+        const auto inputAssemblyStateCreateInfo = getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
 
         const auto tessellationStateCreateInfo = VkPipelineTessellationStateCreateInfo {};
 
-        const auto scissors =
-            VkRect2D {{0, 0}, {swapchainConfiguration.imageExtent.width, swapchainConfiguration.imageExtent.height}};
+        const auto scissors = VkRect2D {{0, 0}, {swapchainConfiguration.imageExtent.width, swapchainConfiguration.imageExtent.height}};
         const auto viewport = VkViewport {0.0f,
                                           0.0f,
                                           static_cast<float>(swapchainConfiguration.imageExtent.width),
@@ -236,8 +214,12 @@ namespace nd::src::graphics::vulkan
                                                                                           0.0f,
                                                                                           1.0f);
 
-        const auto multisampleStateCreateInfo =
-            getPipelineMultisampleStateCreateInfo(VK_SAMPLE_COUNT_1_BIT, VK_FALSE, 1.0f, nullptr, VK_FALSE, VK_FALSE);
+        const auto multisampleStateCreateInfo = getPipelineMultisampleStateCreateInfo(VK_SAMPLE_COUNT_1_BIT,
+                                                                                      VK_FALSE,
+                                                                                      1.0f,
+                                                                                      nullptr,
+                                                                                      VK_FALSE,
+                                                                                      VK_FALSE);
 
         const auto depthStencilStateCreateInfo = VkPipelineDepthStencilStateCreateInfo {};
 
@@ -252,8 +234,11 @@ namespace nd::src::graphics::vulkan
             VK_BLEND_OP_ADD,
             VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
 
-        const auto colorBlendStateCreateInfo =
-            getPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_OR, 1, &colorBlendAttachment, blendConstants.data());
+        const auto colorBlendStateCreateInfo = getPipelineColorBlendStateCreateInfo(VK_FALSE,
+                                                                                    VK_LOGIC_OP_OR,
+                                                                                    1,
+                                                                                    &colorBlendAttachment,
+                                                                                    blendConstants.data());
 
         const auto dynamicStateCreateInfo = getPipelineDynamicStateCreateInfo(0, nullptr);
 

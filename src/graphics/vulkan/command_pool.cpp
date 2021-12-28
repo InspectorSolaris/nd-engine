@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkCommandPoolCreateInfo
     getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
                              const VkCommandPoolCreateFlags flags,

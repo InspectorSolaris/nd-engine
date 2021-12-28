@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkApplicationInfo
     getApplicationInfo(const char*    applicationName,
                        const char*    engineName,

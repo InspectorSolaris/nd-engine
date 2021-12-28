@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkDescriptorSetLayoutCreateInfo
     getDescriptorSetLayoutCreateInfo(const uint32_t                         bindingsCount,
                                      const VkDescriptorSetLayoutBinding*    bindings,

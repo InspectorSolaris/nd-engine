@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     std::vector<VkQueueFamilyProperties>
     getQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept
     {

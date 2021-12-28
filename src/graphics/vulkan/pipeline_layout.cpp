@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkPipelineLayoutCreateInfo
     getPipelineLayoutCreateInfo(const uint32_t                    setLayoutsCount,
                                 const uint32_t                    pushConstantRangesCount,

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -30,5 +29,5 @@ namespace nd::src::graphics::vulkan
     getImageHandle(const VkImageCreateInfo& createInfo, const VkDevice device);
 
     std::vector<Image>
-    getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept;
+    getSwapchainImages(const VkSwapchainKHR swapchain, const VkDevice device) noexcept;
 } // namespace nd::src::graphics::vulkan

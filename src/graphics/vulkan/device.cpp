@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkDeviceQueueCreateInfo
     getQueueCreateInfo(const uint32_t                 queueFamilyIndex,
                        const uint32_t                 queueCount,

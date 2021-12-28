@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     VkPipelineShaderStageCreateInfo
     getPipelineShaderStageCreateInfo(const VkShaderStageFlagBits            stage,
                                      const VkShaderModule                   shaderModule,

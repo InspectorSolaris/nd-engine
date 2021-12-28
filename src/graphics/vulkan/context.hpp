@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 #include "context_configuration.hpp"
 

@@ -3,6 +3,8 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     std::vector<char>
     getShaderCode(const std::string& path)
     {
@@ -65,5 +67,17 @@ namespace nd::src::graphics::vulkan
                                                           configuration.next);
 
         return {configuration.stage, getShaderModuleHandle(createInfo, device)};
+    }
+
+    std::vector<ShaderModule>
+    getShaderModules(const std::vector<ShaderModuleConfiguration> configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<ShaderModuleConfiguration, ShaderModule>(configurations,
+                                                                  [device](const auto& configuration, const auto index)
+                                                                  {
+                                                                      return getShaderModule(configuration, device);
+                                                                  });
     }
 } // namespace nd::src::graphics::vulkan

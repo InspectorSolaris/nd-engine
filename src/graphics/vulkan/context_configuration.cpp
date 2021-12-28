@@ -3,14 +3,18 @@
 
 namespace nd::src::graphics::vulkan
 {
+    using namespace nd::src::tools;
+
     auto initializersBuilder = VulkanContextInitializersBuilder {} //
         << getInstance                                             //
         << getPhysicalDevice                                       //
         << getDevice                                               //
         << getSwapchain                                            //
         << getRenderPass                                           //
-        << getImageView                                            //
-        << getFramebuffer;                                         //
+        << getSwapchainImages                                      //
+        << getImageViews                                           //
+        << getFramebuffers                                         //
+        << getShaderModules;                                       //
 
     auto configurationsBuilder = VulkanContextConfigurationsBuilder {} //
         << getInstanceConfiguration                                    //
@@ -18,8 +22,9 @@ namespace nd::src::graphics::vulkan
         << getDeviceConfiguration                                      //
         << getSwapchainConfiguration                                   //
         << getRenderPassConfiguration                                  //
-        << getSwapchainImageViewConfiguration                          //
-        << getSwapchainFramebufferConfiguration;                       //
+        << getSwapchainImageViewConfigurations                         //
+        << getSwapchainFramebufferConfigurations                       //
+        << getShaderModulesConfigurations;                             //
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -149,5 +154,43 @@ namespace nd::src::graphics::vulkan
                 swapchainConfiguration.imageExtent.width,
                 swapchainConfiguration.imageExtent.height,
                 swapchainConfiguration.imageArrayLayers};
+    }
+
+    std::vector<ImageViewConfiguration>
+    getSwapchainImageViewConfigurations(const SwapchainConfiguration& swapchainConfiguration,
+                                        const std::vector<Image>&     images) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<Image, ImageViewConfiguration>(images,
+                                                        [&swapchainConfiguration](const auto image, const auto index)
+                                                        {
+                                                            return getSwapchainImageViewConfiguration(swapchainConfiguration,
+                                                                                                      image.handle);
+                                                        });
+    }
+
+    std::vector<FramebufferConfiguration>
+    getSwapchainFramebufferConfigurations(const SwapchainConfiguration& swapchainConfiguration,
+                                          const std::vector<ImageView>  imageViews,
+                                          const VkRenderPass            renderPass) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<ImageView, FramebufferConfiguration>(
+            imageViews,
+            [&swapchainConfiguration, renderPass](const auto imageView, const auto index)
+            {
+                return getSwapchainFramebufferConfiguration(swapchainConfiguration, imageView.handle, renderPass);
+            });
+    }
+
+    std::vector<ShaderModuleConfiguration>
+    getShaderModulesConfigurations() noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {{"src/graphics/vulkan/shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT},
+                {"src/graphics/vulkan/shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT}};
     }
 } // namespace nd::src::graphics::vulkan

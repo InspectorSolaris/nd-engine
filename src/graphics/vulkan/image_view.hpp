@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -36,4 +35,7 @@ namespace nd::src::graphics::vulkan
 
     ImageView
     getImageView(const ImageViewConfiguration& configuration, const VkDevice device);
+
+    std::vector<ImageView>
+    getImageViews(const std::vector<ImageViewConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

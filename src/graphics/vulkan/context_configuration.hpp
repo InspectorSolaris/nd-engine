@@ -1,27 +1,8 @@
 #pragma once
 
 #include "pch.hpp"
-#include "shared.hpp"
 
-#include "instance.hpp"
-#include "device.hpp"
-#include "surface.hpp"
-#include "swapchain.hpp"
-#include "descriptor_pool.hpp"
-#include "descriptor_set_layout.hpp"
-#include "descriptor_set.hpp"
-#include "render_pass.hpp"
-#include "shader_module.hpp"
-#include "pipeline_layout.hpp"
-#include "pipeline.hpp"
-#include "image.hpp"
-#include "image_view.hpp"
-#include "framebuffer.hpp"
-#include "buffer.hpp"
-#include "buffer_view.hpp"
-#include "command_pool.hpp"
-#include "command_buffer.hpp"
-#include "synchronization.hpp"
+#include "shared.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -51,18 +32,24 @@ namespace nd::src::graphics::vulkan
 
         using RenderPass = RenderPass(const RenderPassConfiguration&, const VkDevice);
 
-        using ImageView = ImageView(const ImageViewConfiguration&, const VkDevice);
+        using SwapchainImages = std::vector<Image>(const VkSwapchainKHR, const VkDevice);
 
-        using Framebuffer = Framebuffer(const FramebufferConfiguration&, const VkDevice);
+        using SwapchainImageViews = std::vector<ImageView>(const std::vector<ImageViewConfiguration>&, const VkDevice);
 
-        const std::function<Instance>       getInstance;
-        const std::function<PhysicalDevice> getPhysicalDevice;
-        const std::function<Device>         getDevice;
-        const std::function<Surface>        getSurface;
-        const std::function<Swapchain>      getSwapchain;
-        const std::function<RenderPass>     getRenderPass;
-        const std::function<ImageView>      getSwapchainImageView;
-        const std::function<Framebuffer>    getSwapchainFramebuffer;
+        using SwapchainFramebuffers = std::vector<Framebuffer>(const std::vector<FramebufferConfiguration>&, const VkDevice);
+
+        using ShaderModules = std::vector<ShaderModule>(const std::vector<ShaderModuleConfiguration>&, const VkDevice);
+
+        const std::function<Instance>              getInstance;
+        const std::function<PhysicalDevice>        getPhysicalDevice;
+        const std::function<Device>                getDevice;
+        const std::function<Surface>               getSurface;
+        const std::function<Swapchain>             getSwapchain;
+        const std::function<RenderPass>            getRenderPass;
+        const std::function<SwapchainImages>       getSwapchainImages;
+        const std::function<SwapchainImageViews>   getSwapchainImageViews;
+        const std::function<SwapchainFramebuffers> getSwapchainFramebuffers;
+        const std::function<ShaderModules>         getShaderModules;
     };
 
     struct VulkanContextConfigurations final
@@ -80,19 +67,22 @@ namespace nd::src::graphics::vulkan
 
         using RenderPass = RenderPassConfiguration(const SwapchainConfiguration&);
 
-        using SwapchainImageView = ImageViewConfiguration(const SwapchainConfiguration&, const VkImage image);
+        using SwapchainImageViews = std::vector<ImageViewConfiguration>(const SwapchainConfiguration&, const std::vector<Image>&);
 
-        using SwapchainFramebuffer = FramebufferConfiguration(const SwapchainConfiguration&,
-                                                              const VkImageView,
-                                                              const VkRenderPass);
+        using SwapchainFramebuffers = std::vector<FramebufferConfiguration>(const SwapchainConfiguration&,
+                                                                            const std::vector<ImageView>,
+                                                                            const VkRenderPass);
 
-        const std::function<Instance>             getInstanceConfiguration;
-        const std::function<PhysicalDevice>       getPhysicalDeviceConfiguration;
-        const std::function<Device>               getDeviceConfiguration;
-        const std::function<Swapchain>            getSwapchainConfiguration;
-        const std::function<RenderPass>           getRenderPassConfiguration;
-        const std::function<SwapchainImageView>   getSwapchainImageViewConfiguration;
-        const std::function<SwapchainFramebuffer> getSwapchainFramebufferConfiguration;
+        using ShaderModules = std::vector<ShaderModuleConfiguration>();
+
+        const std::function<Instance>              getInstance;
+        const std::function<PhysicalDevice>        getPhysicalDevice;
+        const std::function<Device>                getDevice;
+        const std::function<Swapchain>             getSwapchain;
+        const std::function<RenderPass>            getRenderPass;
+        const std::function<SwapchainImageViews>   getSwapchainImageViews;
+        const std::function<SwapchainFramebuffers> getSwapchainFramebuffers;
+        const std::function<ShaderModules>         getShaderModules;
     };
 
     InstanceConfiguration
@@ -121,10 +111,24 @@ namespace nd::src::graphics::vulkan
                                          const VkImageView             imageView,
                                          const VkRenderPass            renderPass) noexcept;
 
+    std::vector<ImageViewConfiguration>
+    getSwapchainImageViewConfigurations(const SwapchainConfiguration& swapchainConfiguration, const std::vector<Image>& images) noexcept;
+
+    std::vector<FramebufferConfiguration>
+    getSwapchainFramebufferConfigurations(const SwapchainConfiguration& swapchainConfiguration,
+                                          const std::vector<ImageView>  imageViews,
+                                          const VkRenderPass            renderPass) noexcept;
+
+    std::vector<ShaderModuleConfiguration>
+    getShaderModulesConfigurations() noexcept;
+
     class VulkanContextInitializersBuilder final
     {
     public:
-        VulkanContextInitializers
+        using Type    = VulkanContextInitializers;
+        using Builder = VulkanContextInitializersBuilder;
+
+        Type
         build() const noexcept
         {
             return {getInstance,
@@ -133,142 +137,177 @@ namespace nd::src::graphics::vulkan
                     getSurface,
                     getSwapchain,
                     getRenderPass,
-                    getSwapchainImageView,
-                    getSwapchainFramebuffer};
+                    getSwapchainImages,
+                    getSwapchainImageViews,
+                    getSwapchainFramebuffers,
+                    getShaderModules};
         }
 
-        operator VulkanContextInitializers() const noexcept
+        operator Type() const noexcept
         {
             return build();
         }
 
-        VulkanContextInitializersBuilder&
-        add(decltype(VulkanContextInitializers::getInstance)& initializer) noexcept
+        Builder&
+        add(decltype(Type::getInstance)& initializer) noexcept
         {
             getInstance = initializer;
 
             return *this;
         }
 
-        VulkanContextInitializersBuilder&
-        add(decltype(VulkanContextInitializers::getPhysicalDevice)& initializer) noexcept
+        Builder&
+        add(decltype(Type::getPhysicalDevice)& initializer) noexcept
         {
             getPhysicalDevice = initializer;
 
             return *this;
         }
 
-        VulkanContextInitializersBuilder&
-        add(decltype(VulkanContextInitializers::getDevice)& initializer) noexcept
+        Builder&
+        add(decltype(Type::getDevice)& initializer) noexcept
         {
             getDevice = initializer;
 
             return *this;
         }
 
-        VulkanContextInitializersBuilder&
-        add(decltype(VulkanContextInitializers::getSurface)& initializer) noexcept
+        Builder&
+        add(decltype(Type::getSurface)& initializer) noexcept
         {
             getSurface = initializer;
 
             return *this;
         }
 
-        VulkanContextInitializersBuilder&
-        add(decltype(VulkanContextInitializers::getSwapchain)& initializer) noexcept
+        Builder&
+        add(decltype(Type::getSwapchain)& initializer) noexcept
         {
             getSwapchain = initializer;
 
             return *this;
         }
 
-        VulkanContextInitializersBuilder&
-        add(decltype(VulkanContextInitializers::getRenderPass)& initializer) noexcept
+        Builder&
+        add(decltype(Type::getRenderPass)& initializer) noexcept
         {
             getRenderPass = initializer;
 
             return *this;
         }
 
-        VulkanContextInitializersBuilder&
-        add(decltype(VulkanContextInitializers::getSwapchainImageView)& initializer) noexcept
+        Builder&
+        add(decltype(Type::getSwapchainImages)& initializer) noexcept
         {
-            getSwapchainImageView = initializer;
+            getSwapchainImages = initializer;
 
             return *this;
         }
 
-        VulkanContextInitializersBuilder&
-        add(decltype(VulkanContextInitializers::getSwapchainFramebuffer)& initializer) noexcept
+        Builder&
+        add(decltype(Type::getSwapchainImageViews)& initializer) noexcept
         {
-            getSwapchainFramebuffer = initializer;
+            getSwapchainImageViews = initializer;
 
             return *this;
         }
 
-        VulkanContextInitializersBuilder&
-        operator<<(decltype(VulkanContextInitializers::getInstance)& initializer) noexcept
+        Builder&
+        add(decltype(Type::getSwapchainFramebuffers)& initializer) noexcept
+        {
+            getSwapchainFramebuffers = initializer;
+
+            return *this;
+        }
+
+        Builder&
+        add(decltype(Type::getShaderModules)& initializer) noexcept
+        {
+            getShaderModules = initializer;
+
+            return *this;
+        }
+
+        Builder&
+        operator<<(decltype(Type::getInstance)& initializer) noexcept
         {
             return add(initializer);
         }
 
-        VulkanContextInitializersBuilder&
-        operator<<(decltype(VulkanContextInitializers::getPhysicalDevice)& initializer) noexcept
+        Builder&
+        operator<<(decltype(Type::getPhysicalDevice)& initializer) noexcept
         {
             return add(initializer);
         }
 
-        VulkanContextInitializersBuilder&
-        operator<<(decltype(VulkanContextInitializers::getDevice)& initializer) noexcept
+        Builder&
+        operator<<(decltype(Type::getDevice)& initializer) noexcept
         {
             return add(initializer);
         }
 
-        VulkanContextInitializersBuilder&
-        operator<<(decltype(VulkanContextInitializers::getSurface)& initializer) noexcept
+        Builder&
+        operator<<(decltype(Type::getSurface)& initializer) noexcept
         {
             return add(initializer);
         }
 
-        VulkanContextInitializersBuilder&
-        operator<<(decltype(VulkanContextInitializers::getSwapchain)& initializer) noexcept
+        Builder&
+        operator<<(decltype(Type::getSwapchain)& initializer) noexcept
         {
             return add(initializer);
         }
 
-        VulkanContextInitializersBuilder&
-        operator<<(decltype(VulkanContextInitializers::getRenderPass)& initializer) noexcept
+        Builder&
+        operator<<(decltype(Type::getRenderPass)& initializer) noexcept
         {
             return add(initializer);
         }
 
-        VulkanContextInitializersBuilder&
-        operator<<(decltype(VulkanContextInitializers::getSwapchainImageView)& initializer) noexcept
+        Builder&
+        operator<<(decltype(Type::getSwapchainImages)& initializer) noexcept
         {
             return add(initializer);
         }
 
-        VulkanContextInitializersBuilder&
-        operator<<(decltype(VulkanContextInitializers::getSwapchainFramebuffer)& initializer) noexcept
+        Builder&
+        operator<<(decltype(Type::getSwapchainImageViews)& initializer) noexcept
+        {
+            return add(initializer);
+        }
+
+        Builder&
+        operator<<(decltype(Type::getSwapchainFramebuffers)& initializer) noexcept
+        {
+            return add(initializer);
+        }
+
+        Builder&
+        operator<<(decltype(Type::getShaderModules)& initializer) noexcept
         {
             return add(initializer);
         }
 
     private:
-        std::remove_cv_t<decltype(VulkanContextInitializers::getInstance)>             getInstance;
-        std::remove_cv_t<decltype(VulkanContextInitializers::getPhysicalDevice)>       getPhysicalDevice;
-        std::remove_cv_t<decltype(VulkanContextInitializers::getDevice)>               getDevice;
-        std::remove_cv_t<decltype(VulkanContextInitializers::getSurface)>              getSurface;
-        std::remove_cv_t<decltype(VulkanContextInitializers::getSwapchain)>            getSwapchain;
-        std::remove_cv_t<decltype(VulkanContextInitializers::getRenderPass)>           getRenderPass;
-        std::remove_cv_t<decltype(VulkanContextInitializers::getSwapchainImageView)>   getSwapchainImageView;
-        std::remove_cv_t<decltype(VulkanContextInitializers::getSwapchainFramebuffer)> getSwapchainFramebuffer;
+        std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
+        std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
+        std::remove_cv_t<decltype(Type::getDevice)>                getDevice;
+        std::remove_cv_t<decltype(Type::getSurface)>               getSurface;
+        std::remove_cv_t<decltype(Type::getSwapchain)>             getSwapchain;
+        std::remove_cv_t<decltype(Type::getRenderPass)>            getRenderPass;
+        std::remove_cv_t<decltype(Type::getSwapchainImages)>       getSwapchainImages;
+        std::remove_cv_t<decltype(Type::getSwapchainImageViews)>   getSwapchainImageViews;
+        std::remove_cv_t<decltype(Type::getSwapchainFramebuffers)> getSwapchainFramebuffers;
+        std::remove_cv_t<decltype(Type::getShaderModules)>         getShaderModules;
     };
 
     class VulkanContextConfigurationsBuilder final
     {
     public:
-        VulkanContextConfigurations
+        using Type    = VulkanContextConfigurations;
+        using Builder = VulkanContextConfigurationsBuilder;
+
+        Type
         build() const noexcept
         {
             return {getInstance,
@@ -276,122 +315,137 @@ namespace nd::src::graphics::vulkan
                     getDevice,
                     getSwapchain,
                     getRenderPass,
-                    getSwapchainImageView,
-                    getSwapchainFramebuffer};
+                    getSwapchainImageViews,
+                    getSwapchainFramebuffers,
+                    getShaderModules};
         }
 
-        operator VulkanContextConfigurations() const noexcept
+        operator Type() const noexcept
         {
             return build();
         }
 
-        VulkanContextConfigurationsBuilder&
-        add(decltype(VulkanContextConfigurations::getInstanceConfiguration)& configuration) noexcept
+        Builder&
+        add(decltype(Type::getInstance)& configuration) noexcept
         {
             getInstance = configuration;
 
             return *this;
         }
 
-        VulkanContextConfigurationsBuilder&
-        add(decltype(VulkanContextConfigurations::getPhysicalDeviceConfiguration)& configuration) noexcept
+        Builder&
+        add(decltype(Type::getPhysicalDevice)& configuration) noexcept
         {
             getPhysicalDevice = configuration;
 
             return *this;
         }
 
-        VulkanContextConfigurationsBuilder&
-        add(decltype(VulkanContextConfigurations::getDeviceConfiguration)& configuration) noexcept
+        Builder&
+        add(decltype(Type::getDevice)& configuration) noexcept
         {
             getDevice = configuration;
 
             return *this;
         }
 
-        VulkanContextConfigurationsBuilder&
-        add(decltype(VulkanContextConfigurations::getSwapchainConfiguration)& configuration) noexcept
+        Builder&
+        add(decltype(Type::getSwapchain)& configuration) noexcept
         {
             getSwapchain = configuration;
 
             return *this;
         }
 
-        VulkanContextConfigurationsBuilder&
-        add(decltype(VulkanContextConfigurations::getRenderPassConfiguration)& configuration) noexcept
+        Builder&
+        add(decltype(Type::getRenderPass)& configuration) noexcept
         {
             getRenderPass = configuration;
 
             return *this;
         }
 
-        VulkanContextConfigurationsBuilder&
-        add(decltype(VulkanContextConfigurations::getSwapchainImageViewConfiguration)& configuration) noexcept
+        Builder&
+        add(decltype(Type::getSwapchainImageViews)& configuration) noexcept
         {
-            getSwapchainImageView = configuration;
+            getSwapchainImageViews = configuration;
 
             return *this;
         }
 
-        VulkanContextConfigurationsBuilder&
-        add(decltype(VulkanContextConfigurations::getSwapchainFramebufferConfiguration)& configuration) noexcept
+        Builder&
+        add(decltype(Type::getSwapchainFramebuffers)& configuration) noexcept
         {
-            getSwapchainFramebuffer = configuration;
+            getSwapchainFramebuffers = configuration;
 
             return *this;
         }
 
-        VulkanContextConfigurationsBuilder&
-        operator<<(decltype(VulkanContextConfigurations::getInstanceConfiguration)& configuration) noexcept
+        Builder&
+        add(decltype(Type::getShaderModules)& configuration) noexcept
+        {
+            getShaderModules = configuration;
+
+            return *this;
+        }
+
+        Builder&
+        operator<<(decltype(Type::getInstance)& configuration) noexcept
         {
             return add(configuration);
         }
 
-        VulkanContextConfigurationsBuilder&
-        operator<<(decltype(VulkanContextConfigurations::getPhysicalDeviceConfiguration)& configuration) noexcept
+        Builder&
+        operator<<(decltype(Type::getPhysicalDevice)& configuration) noexcept
         {
             return add(configuration);
         }
 
-        VulkanContextConfigurationsBuilder&
-        operator<<(decltype(VulkanContextConfigurations::getDeviceConfiguration)& configuration) noexcept
+        Builder&
+        operator<<(decltype(Type::getDevice)& configuration) noexcept
         {
             return add(configuration);
         }
 
-        VulkanContextConfigurationsBuilder&
-        operator<<(decltype(VulkanContextConfigurations::getSwapchainConfiguration)& configuration) noexcept
+        Builder&
+        operator<<(decltype(Type::getSwapchain)& configuration) noexcept
         {
             return add(configuration);
         }
 
-        VulkanContextConfigurationsBuilder&
-        operator<<(decltype(VulkanContextConfigurations::getRenderPassConfiguration)& configuration) noexcept
+        Builder&
+        operator<<(decltype(Type::getRenderPass)& configuration) noexcept
         {
             return add(configuration);
         }
 
-        VulkanContextConfigurationsBuilder&
-        operator<<(decltype(VulkanContextConfigurations::getSwapchainImageViewConfiguration)& configuration) noexcept
+        Builder&
+        operator<<(decltype(Type::getSwapchainImageViews)& configuration) noexcept
         {
             return add(configuration);
         }
 
-        VulkanContextConfigurationsBuilder&
-        operator<<(decltype(VulkanContextConfigurations::getSwapchainFramebufferConfiguration)& configuration) noexcept
+        Builder&
+        operator<<(decltype(Type::getSwapchainFramebuffers)& configuration) noexcept
+        {
+            return add(configuration);
+        }
+
+        Builder&
+        operator<<(decltype(Type::getShaderModules)& configuration) noexcept
         {
             return add(configuration);
         }
 
     private:
-        std::remove_cv_t<decltype(VulkanContextConfigurations::getInstanceConfiguration)>           getInstance;
-        std::remove_cv_t<decltype(VulkanContextConfigurations::getPhysicalDeviceConfiguration)>     getPhysicalDevice;
-        std::remove_cv_t<decltype(VulkanContextConfigurations::getDeviceConfiguration)>             getDevice;
-        std::remove_cv_t<decltype(VulkanContextConfigurations::getSwapchainConfiguration)>          getSwapchain;
-        std::remove_cv_t<decltype(VulkanContextConfigurations::getRenderPassConfiguration)>         getRenderPass;
-        std::remove_cv_t<decltype(VulkanContextConfigurations::getSwapchainImageViewConfiguration)> getSwapchainImageView;
-        std::remove_cv_t<decltype(VulkanContextConfigurations::getSwapchainFramebufferConfiguration)>
-            getSwapchainFramebuffer;
+        std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
+        std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
+        std::remove_cv_t<decltype(Type::getDevice)>                getDevice;
+        std::remove_cv_t<decltype(Type::getSwapchain)>             getSwapchain;
+        std::remove_cv_t<decltype(Type::getRenderPass)>            getRenderPass;
+        std::remove_cv_t<decltype(Type::getSwapchainImageViews)>   getSwapchainImageViews;
+        std::remove_cv_t<decltype(Type::getSwapchainFramebuffers)> getSwapchainFramebuffers;
+        std::remove_cv_t<decltype(Type::getShaderModules)>         getShaderModules;
     };
 
     extern VulkanContextInitializersBuilder   initializersBuilder;
