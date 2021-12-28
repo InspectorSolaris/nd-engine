@@ -291,29 +291,48 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto createInfos = getMapped<PipelineConfiguration, VkGraphicsPipelineCreateInfo>(configurations,
-                                                                                                [](const auto& configuration, const auto index)
-                                                                                                {
-                                                                                                    return getGraphicsPipelineCreateInfo(
-                                                                                                        configuration.stages.size(),
-                                                                                                        configuration.stages.data(),
-                                                                                                        configuration.vertexInputState,
-                                                                                                        configuration.inputAssemblyState,
-                                                                                                        configuration.tessellationState,
-                                                                                                        configuration.viewportState,
-                                                                                                        configuration.rasterizationState,
-                                                                                                        configuration.multisampleState,
-                                                                                                        configuration.depthStencilState,
-                                                                                                        configuration.colorBlendState,
-                                                                                                        configuration.dynamicState,
-                                                                                                        configuration.layout,
-                                                                                                        configuration.renderPass,
-                                                                                                        configuration.subpass,
-                                                                                                        VK_NULL_HANDLE,
-                                                                                                        0,
-                                                                                                        configuration.flags,
-                                                                                                        configuration.next);
-                                                                                                });
+        auto viewportStates   = std::vector<VkPipelineViewportStateCreateInfo> {};
+        auto colorBlendStates = std::vector<VkPipelineColorBlendStateCreateInfo> {};
+
+        viewportStates.reserve(configurations.size());
+        colorBlendStates.reserve(configurations.size());
+
+        const auto createInfos = getMapped<PipelineConfiguration, VkGraphicsPipelineCreateInfo>(
+            configurations,
+            [&viewportStates, &colorBlendStates](const auto& configuration, const auto index)
+            {
+                viewportStates.push_back(getPipelineViewportStateCreateInfo(configuration.viewportState.viewports.size(),
+                                                                            configuration.viewportState.scissors.size(),
+                                                                            configuration.viewportState.viewports.data(),
+                                                                            configuration.viewportState.scissors.data(),
+                                                                            configuration.viewportState.flags,
+                                                                            configuration.viewportState.next));
+
+                colorBlendStates.push_back(getPipelineColorBlendStateCreateInfo(configuration.colorBlendState.logicOpEnable,
+                                                                                configuration.colorBlendState.logicOp,
+                                                                                configuration.colorBlendState.colorBlendAttachment.size(),
+                                                                                configuration.colorBlendState.colorBlendAttachment.data(),
+                                                                                configuration.colorBlendState.blendConstants.data()));
+
+                return getGraphicsPipelineCreateInfo(configuration.stages.size(),
+                                                     configuration.stages.data(),
+                                                     &configuration.vertexInputState,
+                                                     &configuration.inputAssemblyState,
+                                                     &configuration.tessellationState,
+                                                     &viewportStates.back(),
+                                                     &configuration.rasterizationState,
+                                                     &configuration.multisampleState,
+                                                     &configuration.depthStencilState,
+                                                     &colorBlendStates.back(),
+                                                     &configuration.dynamicState,
+                                                     configuration.layout,
+                                                     configuration.renderPass,
+                                                     configuration.subpass,
+                                                     VK_NULL_HANDLE,
+                                                     0,
+                                                     configuration.flags,
+                                                     configuration.next);
+            });
 
         return {getGraphicsPipelineHandle(createInfos, device)};
     }

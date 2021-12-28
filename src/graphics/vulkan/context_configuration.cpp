@@ -18,7 +18,8 @@ namespace nd::src::graphics::vulkan
         getDescriptorPool <<                                          //
         getDescriptorSetLayout <<                                     //
         getDescriptorSets <<                                          //
-        getPipelineLayout;
+        getPipelineLayout <<                                          //
+        getGraphicsPipelines;
 
     auto configurationsBuilder = VulkanContextConfigurationsBuilder {} << //
         getInstanceConfiguration <<                                       //
@@ -32,7 +33,8 @@ namespace nd::src::graphics::vulkan
         getDescriptorPoolConfiguration <<                                 //
         getDescriptorSetLayoutConfiguration <<                            //
         getDescriptorSetsConfiguration <<                                 //
-        getPipelineLayoutConfiguration;
+        getPipelineLayoutConfiguration <<                                 //
+        getGraphicsPipelineConfigurations;
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -223,6 +225,84 @@ namespace nd::src::graphics::vulkan
         return {{descriptorSetLayout}, {}};
     }
 
+    std::vector<PipelineConfiguration>
+    getGraphicsPipelineConfigurations(const std::vector<ShaderModule>& shaderModules,
+                                      const VkPipelineLayout           pipelineLayout,
+                                      const VkRenderPass               renderPass,
+                                      const uint32_t                   width,
+                                      const uint32_t                   height) noexcept
+    {
+        ND_SET_SCOPE();
+
+        const auto vertexInputStateCreateInfo   = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
+        const auto inputAssemblyStateCreateInfo = getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
+
+        const auto tessellationStateCreateInfo = getPipelineTessellationStateCreateInfo(1);
+
+        const auto scissors = VkRect2D {{0, 0}, {width, height}};
+        const auto viewport = VkViewport {0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, 0.1f};
+
+        const auto rasterizationStateCreateInfo = getPipelineRasterizationStateCreateInfo(VK_FALSE,
+                                                                                          VK_FALSE,
+                                                                                          VK_POLYGON_MODE_FILL,
+                                                                                          VK_CULL_MODE_NONE,
+                                                                                          VK_FRONT_FACE_CLOCKWISE,
+                                                                                          VK_FALSE,
+                                                                                          0.0f,
+                                                                                          0.0f,
+                                                                                          0.0f,
+                                                                                          1.0f);
+
+        const auto multisampleStateCreateInfo = getPipelineMultisampleStateCreateInfo(VK_SAMPLE_COUNT_1_BIT,
+                                                                                      VK_FALSE,
+                                                                                      1.0f,
+                                                                                      nullptr,
+                                                                                      VK_FALSE,
+                                                                                      VK_FALSE);
+
+        const auto depthStencilStateCreateInfo = getPipelineDepthStencilStateCreateInfo(VK_FALSE,
+                                                                                        VK_FALSE,
+                                                                                        VK_COMPARE_OP_NEVER,
+                                                                                        VK_FALSE,
+                                                                                        VK_FALSE,
+                                                                                        {},
+                                                                                        {},
+                                                                                        0.0,
+                                                                                        1.0);
+
+        const auto blendConstants       = std::vector<float> {0.0f, 0.0f, 0.0f, 0.0f};
+        const auto colorBlendAttachment = VkPipelineColorBlendAttachmentState {
+            VK_TRUE,
+            VK_BLEND_FACTOR_SRC_ALPHA,
+            VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+            VK_BLEND_OP_ADD,
+            VK_BLEND_FACTOR_ONE,
+            VK_BLEND_FACTOR_ZERO,
+            VK_BLEND_OP_ADD,
+            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
+
+        const auto dynamicStateCreateInfo = getPipelineDynamicStateCreateInfo(0, nullptr);
+
+        return {{getMapped<VkShaderModule, VkPipelineShaderStageCreateInfo>(
+                     shaderModules,
+                     [](const auto& shaderModule, const auto index)
+                     {
+                         return getPipelineShaderStageCreateInfo(shaderModule.stage, shaderModule.handle, "main", nullptr);
+                     }),
+                 vertexInputStateCreateInfo,
+                 inputAssemblyStateCreateInfo,
+                 tessellationStateCreateInfo,
+                 {{viewport}, {scissors}},
+                 rasterizationStateCreateInfo,
+                 multisampleStateCreateInfo,
+                 depthStencilStateCreateInfo,
+                 {blendConstants, {colorBlendAttachment}, VK_FALSE, VK_LOGIC_OP_OR},
+                 dynamicStateCreateInfo,
+                 pipelineLayout,
+                 renderPass,
+                 0}};
+    }
+
     VulkanContextInitializersBuilder::Type
     VulkanContextInitializersBuilder::build() const
     {
@@ -241,7 +321,8 @@ namespace nd::src::graphics::vulkan
                   getDescriptorPool &&        //
                   getDescriptorSetLayout &&   //
                   getDescriptorSets &&        //
-                  getPipelineLayout);
+                  getPipelineLayout &&        //
+                  getPipelines);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -256,7 +337,8 @@ namespace nd::src::graphics::vulkan
                 getDescriptorPool,
                 getDescriptorSetLayout,
                 getDescriptorSets,
-                getPipelineLayout};
+                getPipelineLayout,
+                getPipelines};
     }
 
     VulkanContextConfigurationsBuilder::Type
@@ -275,7 +357,8 @@ namespace nd::src::graphics::vulkan
                   getDescriptorPool &&        //
                   getDescriptorSetLayout &&   //
                   getDescriptorSets &&        //
-                  getPipelineLayout);
+                  getPipelineLayout &&        //
+                  getPipelines);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -288,6 +371,7 @@ namespace nd::src::graphics::vulkan
                 getDescriptorPool,
                 getDescriptorSetLayout,
                 getDescriptorSets,
-                getPipelineLayout};
+                getPipelineLayout,
+                getPipelines};
     }
 } // namespace nd::src::graphics::vulkan

@@ -4,22 +4,47 @@
 
 namespace nd::src::graphics::vulkan
 {
+    struct PipelineViewportStateCreateInfo final
+    {
+        const std::vector<VkViewport> viewports;
+        const std::vector<VkRect2D>   scissors;
+
+        const VkPipelineViewportStateCreateFlags flags = {};
+        const void*                              next  = {};
+    };
+
+    struct PipelineColorBlendStateCreateInfo final
+    {
+        const std::vector<float>                               blendConstants;
+        const std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachment;
+
+        const VkBool32  logicOpEnable;
+        const VkLogicOp logicOp;
+
+        const VkPipelineColorBlendStateCreateFlags flags = {};
+        const void*                                next  = {};
+    };
+
     struct PipelineConfiguration final
     {
-        const std::vector<VkPipelineShaderStageCreateInfo>& stages;
+        const std::vector<VkPipelineShaderStageCreateInfo> stages;
 
-        const VkPipelineVertexInputStateCreateInfo*   vertexInputState;
-        const VkPipelineInputAssemblyStateCreateInfo* inputAssemblyState;
-        const VkPipelineTessellationStateCreateInfo*  tessellationState;
-        const VkPipelineViewportStateCreateInfo*      viewportState;
-        const VkPipelineRasterizationStateCreateInfo* rasterizationState;
-        const VkPipelineMultisampleStateCreateInfo*   multisampleState;
-        const VkPipelineDepthStencilStateCreateInfo*  depthStencilState;
-        const VkPipelineColorBlendStateCreateInfo*    colorBlendState;
-        const VkPipelineDynamicStateCreateInfo*       dynamicState;
-        const VkPipelineLayout                        layout;
-        const VkRenderPass                            renderPass;
-        const uint32_t                                subpass;
+        const VkPipelineVertexInputStateCreateInfo   vertexInputState;
+        const VkPipelineInputAssemblyStateCreateInfo inputAssemblyState;
+        const VkPipelineTessellationStateCreateInfo  tessellationState;
+
+        const PipelineViewportStateCreateInfo viewportState;
+
+        const VkPipelineRasterizationStateCreateInfo rasterizationState;
+        const VkPipelineMultisampleStateCreateInfo   multisampleState;
+        const VkPipelineDepthStencilStateCreateInfo  depthStencilState;
+
+        const PipelineColorBlendStateCreateInfo colorBlendState;
+
+        const VkPipelineDynamicStateCreateInfo dynamicState;
+        const VkPipelineLayout                 layout;
+        const VkRenderPass                     renderPass;
+        const uint32_t                         subpass;
 
         const VkPipelineCreateFlags flags = {};
         const void*                 next  = {};

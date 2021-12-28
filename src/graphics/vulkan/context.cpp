@@ -183,80 +183,13 @@ namespace nd::src::graphics::vulkan
         const auto pipelineLayoutConfiguration = configurations.getPipelineLayout(descriptorSetLayout.handle);
         const auto pipelineLayout              = initializers.getPipelineLayout(pipelineLayoutConfiguration, device.handle);
 
-        const auto vertexInputStateCreateInfo   = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
-        const auto inputAssemblyStateCreateInfo = getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
+        const auto pipelineConfigurations = configurations.getPipelines(shaderModules,
+                                                                        pipelineLayout.handle,
+                                                                        renderPass.handle,
+                                                                        configurationExternal.width,
+                                                                        configurationExternal.height);
 
-        const auto tessellationStateCreateInfo = VkPipelineTessellationStateCreateInfo {};
-
-        const auto scissors = VkRect2D {{0, 0}, {swapchainConfiguration.imageExtent.width, swapchainConfiguration.imageExtent.height}};
-        const auto viewport = VkViewport {0.0f,
-                                          0.0f,
-                                          static_cast<float>(swapchainConfiguration.imageExtent.width),
-                                          static_cast<float>(swapchainConfiguration.imageExtent.height),
-                                          0.0f,
-                                          0.1f};
-
-        const auto viewportStateCreateInfo = getPipelineViewportStateCreateInfo(1, 1, &viewport, &scissors);
-
-        const auto rasterizationStateCreateInfo = getPipelineRasterizationStateCreateInfo(VK_FALSE,
-                                                                                          VK_FALSE,
-                                                                                          VK_POLYGON_MODE_FILL,
-                                                                                          VK_CULL_MODE_NONE,
-                                                                                          VK_FRONT_FACE_CLOCKWISE,
-                                                                                          VK_FALSE,
-                                                                                          0.0f,
-                                                                                          0.0f,
-                                                                                          0.0f,
-                                                                                          1.0f);
-
-        const auto multisampleStateCreateInfo = getPipelineMultisampleStateCreateInfo(VK_SAMPLE_COUNT_1_BIT,
-                                                                                      VK_FALSE,
-                                                                                      1.0f,
-                                                                                      nullptr,
-                                                                                      VK_FALSE,
-                                                                                      VK_FALSE);
-
-        const auto depthStencilStateCreateInfo = VkPipelineDepthStencilStateCreateInfo {};
-
-        const auto blendConstants       = std::vector<float> {0.0f, 0.0f, 0.0f, 0.0f};
-        const auto colorBlendAttachment = VkPipelineColorBlendAttachmentState {
-            VK_TRUE,
-            VK_BLEND_FACTOR_SRC_ALPHA,
-            VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-            VK_BLEND_OP_ADD,
-            VK_BLEND_FACTOR_ONE,
-            VK_BLEND_FACTOR_ZERO,
-            VK_BLEND_OP_ADD,
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
-
-        const auto colorBlendStateCreateInfo = getPipelineColorBlendStateCreateInfo(VK_FALSE,
-                                                                                    VK_LOGIC_OP_OR,
-                                                                                    1,
-                                                                                    &colorBlendAttachment,
-                                                                                    blendConstants.data());
-
-        const auto dynamicStateCreateInfo = getPipelineDynamicStateCreateInfo(0, nullptr);
-
-        const auto pipelines = getGraphicsPipelines(
-            {{getMapped<VkShaderModule, VkPipelineShaderStageCreateInfo>(
-                  shaderModules,
-                  [](const auto& shaderModule, const auto index)
-                  {
-                      return getPipelineShaderStageCreateInfo(shaderModule.stage, shaderModule.handle, "main", nullptr);
-                  }),
-              &vertexInputStateCreateInfo,
-              &inputAssemblyStateCreateInfo,
-              nullptr,
-              &viewportStateCreateInfo,
-              &rasterizationStateCreateInfo,
-              &multisampleStateCreateInfo,
-              nullptr,
-              &colorBlendStateCreateInfo,
-              &dynamicStateCreateInfo,
-              pipelineLayout.handle,
-              renderPass.handle,
-              0}},
-            device.handle);
+        const auto pipelines = initializers.getPipelines(pipelineConfigurations, device.handle);
 
         const auto graphicsQueueFamily = std::find_if(device.queueFamilies.begin(),
                                                       device.queueFamilies.end(),
@@ -284,7 +217,7 @@ namespace nd::src::graphics::vulkan
             const auto clearValues         = std::vector<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
             const auto renderPassBeginInfo = getRenderPassBeginInfo(renderPass.handle,
                                                                     framebuffer.handle,
-                                                                    scissors,
+                                                                    {{0u, 0u}, {configurationExternal.width, configurationExternal.height}},
                                                                     clearValues.size(),
                                                                     clearValues.data());
 
