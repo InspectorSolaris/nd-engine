@@ -8,9 +8,7 @@ namespace nd::src::graphics::vulkan
 {
     struct PhysicalDeviceConfiguration final
     {
-        using PhysicalDevicePriority = size_t(const VkPhysicalDevice,
-                                              const VkPhysicalDeviceProperties&,
-                                              const VkPhysicalDeviceFeatures&);
+        using PhysicalDevicePriority = size_t(const VkPhysicalDevice, const VkPhysicalDeviceProperties&, const VkPhysicalDeviceFeatures&);
 
         const VkPhysicalDeviceFeatures features;
 
@@ -64,12 +62,10 @@ namespace nd::src::graphics::vulkan
     getPhysicalDevices(const VkInstance instance) noexcept;
 
     bool
-    isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available,
-                                      const VkPhysicalDeviceFeatures* required) noexcept;
+    isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available, const VkPhysicalDeviceFeatures* required) noexcept;
 
     bool
-    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice          physicalDevice,
-                                        const std::vector<std::string>& extensions) noexcept;
+    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice physicalDevice, const std::vector<std::string>& extensions) noexcept;
 
     bool
     isPhysicalDeviceQueuesSupported(const VkPhysicalDevice physicalDevice, const VkQueueFlags queueFlags) noexcept;

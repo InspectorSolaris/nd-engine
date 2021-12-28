@@ -66,8 +66,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available,
-                                      const VkPhysicalDeviceFeatures* required) noexcept
+    isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available, const VkPhysicalDeviceFeatures* required) noexcept
     {
         ND_SET_SCOPE();
 
@@ -93,8 +92,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice          physicalDevice,
-                                        const std::vector<std::string>& extensions) noexcept
+    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice physicalDevice, const std::vector<std::string>& extensions) noexcept
     {
         ND_SET_SCOPE();
 
@@ -217,9 +215,7 @@ namespace nd::src::graphics::vulkan
         for(const auto& queueFamily: queueFamilies)
         {
             queueCreateInfos.push_back(
-                getQueueCreateInfo(queueFamily.index,
-                                   queueFamily.queueCount,
-                                   queuePriorities.emplace_back(queueFamily.queueCount, 1.0f).data()));
+                getQueueCreateInfo(queueFamily.index, queueFamily.queueCount, queuePriorities.emplace_back(queueFamily.queueCount, 1.0f).data()));
         }
 
         const auto createInfo = getDeviceCreateInfo(queueCreateInfos.size(),

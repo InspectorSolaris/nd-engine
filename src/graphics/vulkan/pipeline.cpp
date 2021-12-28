@@ -281,9 +281,7 @@ namespace nd::src::graphics::vulkan
 
         auto pipelines = std::vector<VkPipeline>(createInfos.size());
 
-        ND_ASSERT_EXEC(
-            vkCreateGraphicsPipelines(device, nullptr, pipelines.size(), createInfos.data(), nullptr, pipelines.data()) ==
-            VK_SUCCESS);
+        ND_ASSERT_EXEC(vkCreateGraphicsPipelines(device, nullptr, pipelines.size(), createInfos.data(), nullptr, pipelines.data()) == VK_SUCCESS);
 
         return pipelines;
     }
@@ -293,29 +291,29 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto createInfos = getMapped<PipelineConfiguration, VkGraphicsPipelineCreateInfo>(
-            configurations,
-            [](const auto& configuration, const auto index)
-            {
-                return getGraphicsPipelineCreateInfo(configuration.stages.size(),
-                                                     configuration.stages.data(),
-                                                     configuration.vertexInputState,
-                                                     configuration.inputAssemblyState,
-                                                     configuration.tessellationState,
-                                                     configuration.viewportState,
-                                                     configuration.rasterizationState,
-                                                     configuration.multisampleState,
-                                                     configuration.depthStencilState,
-                                                     configuration.colorBlendState,
-                                                     configuration.dynamicState,
-                                                     configuration.layout,
-                                                     configuration.renderPass,
-                                                     configuration.subpass,
-                                                     VK_NULL_HANDLE,
-                                                     0,
-                                                     configuration.flags,
-                                                     configuration.next);
-            });
+        const auto createInfos = getMapped<PipelineConfiguration, VkGraphicsPipelineCreateInfo>(configurations,
+                                                                                                [](const auto& configuration, const auto index)
+                                                                                                {
+                                                                                                    return getGraphicsPipelineCreateInfo(
+                                                                                                        configuration.stages.size(),
+                                                                                                        configuration.stages.data(),
+                                                                                                        configuration.vertexInputState,
+                                                                                                        configuration.inputAssemblyState,
+                                                                                                        configuration.tessellationState,
+                                                                                                        configuration.viewportState,
+                                                                                                        configuration.rasterizationState,
+                                                                                                        configuration.multisampleState,
+                                                                                                        configuration.depthStencilState,
+                                                                                                        configuration.colorBlendState,
+                                                                                                        configuration.dynamicState,
+                                                                                                        configuration.layout,
+                                                                                                        configuration.renderPass,
+                                                                                                        configuration.subpass,
+                                                                                                        VK_NULL_HANDLE,
+                                                                                                        0,
+                                                                                                        configuration.flags,
+                                                                                                        configuration.next);
+                                                                                                });
 
         return {getGraphicsPipelineHandle(createInfos, device)};
     }

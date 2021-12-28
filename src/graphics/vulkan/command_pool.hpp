@@ -18,9 +18,7 @@ namespace nd::src::graphics::vulkan
     };
 
     VkCommandPoolCreateInfo
-    getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
-                             const VkCommandPoolCreateFlags flags = {},
-                             const void*                    next  = {}) noexcept;
+    getCommandPoolCreateInfo(const uint32_t queueFamilyIndex, const VkCommandPoolCreateFlags flags = {}, const void* next = {}) noexcept;
 
     VkCommandPool
     getCommandPoolHandle(const VkCommandPoolCreateInfo& createInfo, const VkDevice device);

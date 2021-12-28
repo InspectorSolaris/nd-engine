@@ -6,9 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     VkCommandBufferBeginInfo
-    getCommandBufferBeginInfo(const VkCommandBufferInheritanceInfo* inheritanceInfo,
-                              const VkCommandBufferUsageFlags       flags,
-                              const void*                           next) noexcept
+    getCommandBufferBeginInfo(const VkCommandBufferInheritanceInfo* inheritanceInfo, const VkCommandBufferUsageFlags flags, const void* next) noexcept
     {
         ND_SET_SCOPE();
 

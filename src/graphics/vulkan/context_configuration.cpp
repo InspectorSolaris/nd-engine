@@ -55,9 +55,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         return {{},
-                [](const VkPhysicalDevice            physicalDevice,
-                   const VkPhysicalDeviceProperties& properties,
-                   const VkPhysicalDeviceFeatures&   features)
+                [](const VkPhysicalDevice physicalDevice, const VkPhysicalDeviceProperties& properties, const VkPhysicalDeviceFeatures& features)
                 {
                     return 1;
                 },
@@ -74,10 +72,7 @@ namespace nd::src::graphics::vulkan
     }
 
     SwapchainConfiguration
-    getSwapchainConfiguration(const VkPhysicalDevice physicalDevice,
-                              const VkSurfaceKHR     surface,
-                              const uint32_t         width,
-                              const uint32_t         height) noexcept
+    getSwapchainConfiguration(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, const uint32_t width, const uint32_t height) noexcept
     {
         ND_SET_SCOPE();
 
@@ -113,8 +108,7 @@ namespace nd::src::graphics::vulkan
                                                                       VK_IMAGE_LAYOUT_UNDEFINED,
                                                                       VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)};
 
-        const auto subpasses =
-            Subpasses {{{}, {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}}, {}, {}, {}, VK_PIPELINE_BIND_POINT_GRAPHICS}};
+        const auto subpasses = Subpasses {{{}, {{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}}, {}, {}, {}, VK_PIPELINE_BIND_POINT_GRAPHICS}};
 
         const auto dependencies = Dependencies {{VK_SUBPASS_EXTERNAL,
                                                  0,
@@ -133,10 +127,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         return {{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
-                {VK_COMPONENT_SWIZZLE_IDENTITY,
-                 VK_COMPONENT_SWIZZLE_IDENTITY,
-                 VK_COMPONENT_SWIZZLE_IDENTITY,
-                 VK_COMPONENT_SWIZZLE_IDENTITY},
+                {VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY},
                 VK_IMAGE_VIEW_TYPE_2D,
                 swapchainConfiguration.imageFormat,
                 image};
@@ -157,16 +148,14 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<ImageViewConfiguration>
-    getSwapchainImageViewConfigurations(const SwapchainConfiguration& swapchainConfiguration,
-                                        const std::vector<Image>&     images) noexcept
+    getSwapchainImageViewConfigurations(const SwapchainConfiguration& swapchainConfiguration, const std::vector<Image>& images) noexcept
     {
         ND_SET_SCOPE();
 
         return getMapped<Image, ImageViewConfiguration>(images,
                                                         [&swapchainConfiguration](const auto image, const auto index)
                                                         {
-                                                            return getSwapchainImageViewConfiguration(swapchainConfiguration,
-                                                                                                      image.handle);
+                                                            return getSwapchainImageViewConfiguration(swapchainConfiguration, image.handle);
                                                         });
     }
 

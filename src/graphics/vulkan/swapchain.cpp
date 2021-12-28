@@ -58,14 +58,12 @@ namespace nd::src::graphics::vulkan
                            formats.end(),
                            [&configuration](const auto& format)
                            {
-                               return configuration.imageFormat == format.format &&
-                                   configuration.imageColorSpace == format.colorSpace;
+                               return configuration.imageFormat == format.format && configuration.imageColorSpace == format.colorSpace;
                            });
     }
 
     bool
-    isPresentModeSupported(const SwapchainConfiguration&        configuration,
-                           const std::vector<VkPresentModeKHR>& presentModes) noexcept
+    isPresentModeSupported(const SwapchainConfiguration& configuration, const std::vector<VkPresentModeKHR>& presentModes) noexcept
     {
         ND_SET_SCOPE();
 
@@ -94,8 +92,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isCompositeAlphaSupported(const SwapchainConfiguration&   configuration,
-                              const VkSurfaceCapabilitiesKHR& capabilities) noexcept
+    isCompositeAlphaSupported(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept
     {
         ND_SET_SCOPE();
 
@@ -107,9 +104,8 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return capabilities.maxImageCount
-            ? std::clamp(configuration.minImagesCount, capabilities.minImageCount, capabilities.maxImageCount)
-            : std::max(capabilities.minImageCount, configuration.minImagesCount);
+        return capabilities.maxImageCount ? std::clamp(configuration.minImagesCount, capabilities.minImageCount, capabilities.maxImageCount)
+                                          : std::max(capabilities.minImageCount, configuration.minImagesCount);
     }
 
     VkExtent2D
@@ -119,12 +115,8 @@ namespace nd::src::graphics::vulkan
 
         return capabilities.currentExtent.width != 0xFFFFFFFF || capabilities.currentExtent.height != 0xFFFFFFFF
             ? capabilities.currentExtent
-            : VkExtent2D {std::clamp(configuration.imageExtent.width,
-                                     capabilities.minImageExtent.width,
-                                     capabilities.maxImageExtent.width),
-                          std::clamp(configuration.imageExtent.height,
-                                     capabilities.minImageExtent.height,
-                                     capabilities.maxImageExtent.height)};
+            : VkExtent2D {std::clamp(configuration.imageExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width),
+                          std::clamp(configuration.imageExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height)};
     }
 
     uint32_t
@@ -218,24 +210,23 @@ namespace nd::src::graphics::vulkan
         const auto imageExtent      = getImageExtent(configuration, capabilities);
         const auto imageArrayLayers = getImageArrayLayers(configuration, capabilities);
 
-        const auto createInfo =
-            getSwapchainCreateInfo(configuration.surface,
-                                   minImagesCount,
-                                   configuration.imageFormat,
-                                   configuration.imageColorSpace,
-                                   imageExtent,
-                                   imageArrayLayers,
-                                   configuration.imageUsage,
-                                   queueFamiliesIndices.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
-                                   queueFamiliesIndices.size(),
-                                   queueFamiliesIndices.data(),
-                                   configuration.transform,
-                                   configuration.compositeAlpha,
-                                   configuration.presentMode,
-                                   configuration.clipped,
-                                   VK_NULL_HANDLE,
-                                   configuration.flags,
-                                   configuration.next);
+        const auto createInfo = getSwapchainCreateInfo(configuration.surface,
+                                                       minImagesCount,
+                                                       configuration.imageFormat,
+                                                       configuration.imageColorSpace,
+                                                       imageExtent,
+                                                       imageArrayLayers,
+                                                       configuration.imageUsage,
+                                                       queueFamiliesIndices.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
+                                                       queueFamiliesIndices.size(),
+                                                       queueFamiliesIndices.data(),
+                                                       configuration.transform,
+                                                       configuration.compositeAlpha,
+                                                       configuration.presentMode,
+                                                       configuration.clipped,
+                                                       VK_NULL_HANDLE,
+                                                       configuration.flags,
+                                                       configuration.next);
 
         return {getQueues(device, queueFamilies), std::move(queueFamilies), getSwapchainHandle(createInfo, device)};
     }

@@ -18,11 +18,10 @@
 #define ND_USE_SCOPE_MEDIUM 2
 #define ND_USE_SCOPE_LOW    1
 
-#define ND_USE_SCOPE_LEVEL 0
+#define ND_USE_SCOPE_LEVEL 5
 
 #if(ND_USE_SCOPE_LEVEL <= ND_USE_SCOPE)
-    #define ND_SET_SCOPE() \
-        const auto scope = nd::src::tools::Scope(ND_FUNCTION, nd::src::tools::onScopeBegin, nd::src::tools::onScopeEnd)
+    #define ND_SET_SCOPE() const auto scope = nd::src::tools::Scope(ND_FUNCTION, nd::src::tools::onScopeBegin, nd::src::tools::onScopeEnd)
 #else
     #define ND_SET_SCOPE()
 #endif
@@ -65,10 +64,7 @@ namespace nd::src::tools
     const char* const logScopeName = "scope";
 
     std::runtime_error
-    getRuntimeError(const std::string_view file,
-                    const std::string_view function,
-                    const std::string_view reason,
-                    const size_t           line) noexcept;
+    getRuntimeError(const std::string_view file, const std::string_view function, const std::string_view reason, const size_t line) noexcept;
 
     bool
     isSubmask(const uint32_t mask, const uint32_t submask) noexcept;
@@ -117,11 +113,7 @@ namespace nd::src::tools
         return outs;
     }
 
-    template<typename In,
-             typename Out,
-             typename Map,
-             typename CollectionIn  = std::vector<In>,
-             typename CollectionOut = std::vector<Out>>
+    template<typename In, typename Out, typename Map, typename CollectionIn = std::vector<In>, typename CollectionOut = std::vector<Out>>
     CollectionOut
     getMapped(const CollectionIn& ins, const Map& map) noexcept
     {
@@ -137,12 +129,7 @@ namespace nd::src::tools
         return outs;
     }
 
-    template<typename T,
-             typename Key,
-             typename Value,
-             typename KeyMap,
-             typename ValueMap,
-             typename Collection = std::vector<T>>
+    template<typename T, typename Key, typename Value, typename KeyMap, typename ValueMap, typename Collection = std::vector<T>>
     std::map<Key, Value>
     getMap(const Collection& ts, const KeyMap& keyMap, const ValueMap& valueMap) noexcept
     {

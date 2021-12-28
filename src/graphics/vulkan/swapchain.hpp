@@ -50,19 +50,16 @@ namespace nd::src::graphics::vulkan
     isFormatSupported(const SwapchainConfiguration& configuration, const std::vector<VkSurfaceFormatKHR>& formats) noexcept;
 
     bool
-    isPresentModeSupported(const SwapchainConfiguration&        configuration,
-                           const std::vector<VkPresentModeKHR>& presentModes) noexcept;
+    isPresentModeSupported(const SwapchainConfiguration& configuration, const std::vector<VkPresentModeKHR>& presentModes) noexcept;
 
     bool
-    isImageUsageSupported(const SwapchainConfiguration&   configuration,
-                          const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
+    isImageUsageSupported(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
     bool
     isTransformSupported(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
     bool
-    isCompositeAlphaSupported(const SwapchainConfiguration&   configuration,
-                              const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
+    isCompositeAlphaSupported(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;
 
     uint32_t
     getMinImagesCount(const SwapchainConfiguration& configuration, const VkSurfaceCapabilitiesKHR& capabilities) noexcept;

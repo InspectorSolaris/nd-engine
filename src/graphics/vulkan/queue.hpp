@@ -39,8 +39,7 @@ namespace nd::src::graphics::vulkan
     getQueueFamilies(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
 
     std::vector<QueueFamily>
-    getQueueFamilies(const std::vector<QueueFamily>&                            queueFamilies,
-                     const std::function<bool(const QueueFamily, const size_t)> filter) noexcept;
+    getQueueFamilies(const std::vector<QueueFamily>& queueFamilies, const std::function<bool(const QueueFamily, const size_t)> filter) noexcept;
 
     VkQueue
     getQueue(const VkDevice device, const uint32_t queueFamilyIndex, const uint32_t queueIndex) noexcept;

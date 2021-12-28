@@ -148,20 +148,18 @@ namespace nd::src::graphics::vulkan
             configuration.subpasses,
             [](const auto& subpass, const auto index)
             {
-                ND_ASSERT(!subpass.resolveAttachments.size() ||
-                          subpass.colorAttachments.size() == subpass.resolveAttachments.size());
+                ND_ASSERT(!subpass.resolveAttachments.size() || subpass.colorAttachments.size() == subpass.resolveAttachments.size());
 
-                return getRenderPassSubpass(
-                    subpass.pipelineBindPoint,
-                    subpass.inputAttachments.size(),
-                    subpass.colorAttachments.size(),
-                    subpass.preserveAttachments.size(),
-                    subpass.inputAttachments.data(),
-                    subpass.colorAttachments.data(),
-                    subpass.resolveAttachments.data(),
-                    subpass.depthStencilAttachment.has_value() ? &subpass.depthStencilAttachment.value() : nullptr,
-                    subpass.preserveAttachments.data(),
-                    subpass.flags);
+                return getRenderPassSubpass(subpass.pipelineBindPoint,
+                                            subpass.inputAttachments.size(),
+                                            subpass.colorAttachments.size(),
+                                            subpass.preserveAttachments.size(),
+                                            subpass.inputAttachments.data(),
+                                            subpass.colorAttachments.data(),
+                                            subpass.resolveAttachments.data(),
+                                            subpass.depthStencilAttachment.has_value() ? &subpass.depthStencilAttachment.value() : nullptr,
+                                            subpass.preserveAttachments.data(),
+                                            subpass.flags);
             });
 
         const auto createInfo = getRenderPassCreateInfo(configuration.attachments.size(),

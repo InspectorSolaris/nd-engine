@@ -26,10 +26,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VkShaderModuleCreateInfo
-    getShaderModuleCreateInfo(const size_t                    codeSize,
-                              const uint32_t*                 code,
-                              const VkShaderModuleCreateFlags flags,
-                              const void*                     next) noexcept
+    getShaderModuleCreateInfo(const size_t codeSize, const uint32_t* code, const VkShaderModuleCreateFlags flags, const void* next) noexcept
     {
         ND_SET_SCOPE();
 

@@ -6,9 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     VkCommandPoolCreateInfo
-    getCommandPoolCreateInfo(const uint32_t                 queueFamilyIndex,
-                             const VkCommandPoolCreateFlags flags,
-                             const void*                    next) noexcept
+    getCommandPoolCreateInfo(const uint32_t queueFamilyIndex, const VkCommandPoolCreateFlags flags, const void* next) noexcept
     {
         ND_SET_SCOPE();
 
@@ -37,8 +35,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto createInfo =
-            getCommandPoolCreateInfo(configuration.queueFamilyIndex, configuration.flags, configuration.next);
+        const auto createInfo = getCommandPoolCreateInfo(configuration.queueFamilyIndex, configuration.flags, configuration.next);
 
         return {getCommandPoolHandle(createInfo, device)};
     }
