@@ -5,6 +5,11 @@
 
 namespace nd::src::graphics::vulkan
 {
+    struct Image final
+    {
+        const VkImage handle;
+    };
+
     VkImageCreateInfo
     getImageCreateInfo(const VkImageType           type,
                        const VkFormat              format,
@@ -23,4 +28,7 @@ namespace nd::src::graphics::vulkan
 
     VkImage
     getImageHandle(const VkImageCreateInfo& createInfo, const VkDevice device);
+
+    std::vector<Image>
+    getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept;
 } // namespace nd::src::graphics::vulkan

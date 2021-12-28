@@ -15,7 +15,7 @@ namespace nd::src::graphics::vulkan
             const Device    device;
             const Swapchain swapchain;
 
-            const std::vector<VkImage>&      swapchainImages;
+            const std::vector<Image>&        swapchainImages;
             const std::vector<ImageView>&    swapchainImageViews;
             const std::vector<Framebuffer>&  swapchainFramebuffers;
             const std::vector<ShaderModule>& shaderModules;
@@ -59,7 +59,7 @@ namespace nd::src::graphics::vulkan
         Device    device_ {};
         Swapchain swapchain_ {};
 
-        std::vector<VkImage>      swapchainImages_ {};
+        std::vector<Image>        swapchainImages_ {};
         std::vector<ImageView>    swapchainImageViews_ {};
         std::vector<Framebuffer>  swapchainFramebuffers_ {};
         std::vector<ShaderModule> shaderModules_ {};

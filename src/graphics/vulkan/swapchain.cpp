@@ -238,22 +238,6 @@ namespace nd::src::graphics::vulkan
         return {getQueues(device, queueFamilies), std::move(queueFamilies), getSwapchainHandle(createInfo, device)};
     }
 
-    std::vector<VkImage>
-    getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept
-    {
-        ND_SET_SCOPE();
-
-        uint32_t count;
-
-        vkGetSwapchainImagesKHR(device, swapchain, &count, nullptr);
-
-        auto images = std::vector<VkImage>(count);
-
-        vkGetSwapchainImagesKHR(device, swapchain, &count, images.data());
-
-        return images;
-    }
-
     uint32_t
     getNextSwapchainImage(const VkDevice       device,
                           const VkSwapchainKHR swapchain,

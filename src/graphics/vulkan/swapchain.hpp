@@ -99,9 +99,6 @@ namespace nd::src::graphics::vulkan
     Swapchain
     getSwapchain(const SwapchainConfiguration& configuration, const VkDevice device);
 
-    std::vector<VkImage>
-    getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept;
-
     uint32_t
     getNextSwapchainImage(const VkDevice       device,
                           const VkSwapchainKHR swapchain,

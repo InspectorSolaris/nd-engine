@@ -51,4 +51,24 @@ namespace nd::src::graphics::vulkan
 
         return image;
     }
+
+    std::vector<Image>
+    getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept
+    {
+        ND_SET_SCOPE();
+
+        uint32_t count;
+
+        vkGetSwapchainImagesKHR(device, swapchain, &count, nullptr);
+
+        auto images = std::vector<VkImage>(count);
+
+        vkGetSwapchainImagesKHR(device, swapchain, &count, images.data());
+
+        return getMapped<VkImage, Image>(images,
+                                         [](const auto image, const auto index)
+                                         {
+                                             return Image {image};
+                                         });
+    }
 } // namespace nd::src::graphics::vulkan

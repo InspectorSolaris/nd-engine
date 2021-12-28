@@ -99,8 +99,8 @@ namespace nd::src::graphics::vulkan
 
         static auto frameIndex = size_t {0};
 
-        const auto deviceQueue    = device_.queues.begin()->second[0];
-        const auto swapchainQueue = swapchain_.queues.begin()->second[0];
+        static auto deviceQueue    = device_.queues.begin()->second[0];
+        static auto swapchainQueue = swapchain_.queues.begin()->second[0];
 
         const auto imageAcquiredSemaphore = imageAcquiredSemaphores_[frameIndex];
         const auto imageRenderedSemaphore = imageRenderedSemaphores_[frameIndex];
@@ -169,7 +169,7 @@ namespace nd::src::graphics::vulkan
                                                                                               const auto index)
             {
                 const auto imageViewConfiguration =
-                    configurations.getSwapchainImageViewConfiguration(swapchainConfiguration, image);
+                    configurations.getSwapchainImageViewConfiguration(swapchainConfiguration, image.handle);
 
                 return initializers.getSwapchainImageView(imageViewConfiguration, device);
             });
