@@ -6,7 +6,7 @@ namespace nd::src::graphics::vulkan
 {
     struct DescriptorSetLayoutConfiguration final
     {
-        const std::vector<VkDescriptorSetLayoutBinding>& bindings;
+        const std::vector<VkDescriptorSetLayoutBinding> bindings;
 
         const VkDescriptorSetLayoutCreateFlags flags = {};
         const void*                            next  = {};

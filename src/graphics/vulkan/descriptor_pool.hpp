@@ -6,8 +6,8 @@ namespace nd::src::graphics::vulkan
 {
     struct DescriptorPoolConfiguration final
     {
-        const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes;
-        const uint32_t                           maxSets;
+        const std::vector<VkDescriptorPoolSize> descriptorPoolSizes;
+        const uint32_t                          maxSets;
 
         const VkDescriptorPoolCreateFlags flags = {};
         const void*                       next  = {};

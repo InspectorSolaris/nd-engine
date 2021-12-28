@@ -35,7 +35,7 @@ namespace nd::src::graphics::vulkan
     }
 
     DescriptorSets
-    getDescriptorSets(const DescriptorSetConfiguration& configuration, const VkDevice device)
+    getDescriptorSets(const DescriptorSetsConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 

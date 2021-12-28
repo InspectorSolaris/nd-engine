@@ -37,12 +37,12 @@ main()
     {
         ND_SET_SCOPE();
 
-        const auto windowConfiguration = nd::src::graphics::glfw::WindowConfiguration {"nd-engine", 800, 600};
+        const auto windowConfiguration = WindowConfiguration {"nd-engine", 800, 600};
 
         const auto glfwContext = getGlfwContext();
         const auto glfwWindow  = getWindow(windowConfiguration);
 
-        const auto getSurfaceLambda = [glfwWindow](const VkInstance instance)
+        const auto getSurfaceImplementation = [glfwWindow](const VkInstance instance)
         {
             return Surface {getSurface(glfwWindow, instance)};
         };
@@ -53,7 +53,7 @@ main()
                                                getRequiredExtensions(),
                                                static_cast<uint32_t>(windowConfiguration.width),
                                                static_cast<uint32_t>(windowConfiguration.height)},
-                                              initializersBuilder << getSurfaceLambda,
+                                              initializersBuilder << getSurfaceImplementation,
                                               configurationsBuilder);
 
         while(!glfwWindowShouldClose(glfwWindow))

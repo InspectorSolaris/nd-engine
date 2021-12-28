@@ -171,12 +171,14 @@ namespace nd::src::graphics::vulkan
         const auto shaderModuleConfigurations = configurations.getShaderModules();
         const auto shaderModules              = initializers.getShaderModules(shaderModuleConfigurations, device.handle);
 
-        const auto descriptorPool = getDescriptorPool(
-            {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
-            device.handle);
+        const auto descriptorPoolConfigurations = configurations.getDescriptorPool();
+        const auto descriptorPool               = initializers.getDescriptorPool(descriptorPoolConfigurations, device.handle);
 
-        const auto descriptorSetLayout = getDescriptorSetLayout(DescriptorSetLayoutConfiguration {{}}, device.handle);
-        const auto descriptorSets      = getDescriptorSets({{descriptorSetLayout.handle}, descriptorPool.handle}, device.handle);
+        const auto descriptorSetLayoutConfiguration = configurations.getDescriptorSetLayout();
+        const auto descriptorSetLayout              = initializers.getDescriptorSetLayout(descriptorSetLayoutConfiguration, device.handle);
+
+        const auto descriptorSetsConfiguration = configurations.getDescriptorSets(descriptorSetLayout.handle, descriptorPool.handle);
+        const auto descriptorSets              = initializers.getDescriptorSets(descriptorSetsConfiguration, device.handle);
 
         const auto pipelineLayout = getPipelineLayout({{descriptorSetLayout.handle}, {}}, device.handle);
 

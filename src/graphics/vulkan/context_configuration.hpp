@@ -40,6 +40,12 @@ namespace nd::src::graphics::vulkan
 
         using ShaderModules = std::vector<ShaderModule>(const std::vector<ShaderModuleConfiguration>&, const VkDevice);
 
+        using DescriptorPool = DescriptorPool(const DescriptorPoolConfiguration&, const VkDevice);
+
+        using DescriptorSetLayout = DescriptorSetLayout(const DescriptorSetLayoutConfiguration&, const VkDevice);
+
+        using DescriptorSets = DescriptorSets(const DescriptorSetsConfiguration&, const VkDevice);
+
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
         const std::function<Device>                getDevice;
@@ -50,6 +56,9 @@ namespace nd::src::graphics::vulkan
         const std::function<SwapchainImageViews>   getSwapchainImageViews;
         const std::function<SwapchainFramebuffers> getSwapchainFramebuffers;
         const std::function<ShaderModules>         getShaderModules;
+        const std::function<DescriptorPool>        getDescriptorPool;
+        const std::function<DescriptorSetLayout>   getDescriptorSetLayout;
+        const std::function<DescriptorSets>        getDescriptorSets;
     };
 
     struct VulkanContextConfigurations final
@@ -75,6 +84,12 @@ namespace nd::src::graphics::vulkan
 
         using ShaderModules = std::vector<ShaderModuleConfiguration>();
 
+        using DescriptorPool = DescriptorPoolConfiguration();
+
+        using DescriptorSetLayout = DescriptorSetLayoutConfiguration();
+
+        using DescriptorSets = DescriptorSetsConfiguration(const VkDescriptorSetLayout, const VkDescriptorPool);
+
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
         const std::function<Device>                getDevice;
@@ -83,6 +98,9 @@ namespace nd::src::graphics::vulkan
         const std::function<SwapchainImageViews>   getSwapchainImageViews;
         const std::function<SwapchainFramebuffers> getSwapchainFramebuffers;
         const std::function<ShaderModules>         getShaderModules;
+        const std::function<DescriptorPool>        getDescriptorPool;
+        const std::function<DescriptorSetLayout>   getDescriptorSetLayout;
+        const std::function<DescriptorSets>        getDescriptorSets;
     };
 
     InstanceConfiguration
@@ -122,6 +140,15 @@ namespace nd::src::graphics::vulkan
     std::vector<ShaderModuleConfiguration>
     getShaderModulesConfigurations() noexcept;
 
+    DescriptorPoolConfiguration
+    getDescriptorPoolConfiguration() noexcept;
+
+    DescriptorSetLayoutConfiguration
+    getDescriptorSetLayoutConfiguration() noexcept;
+
+    DescriptorSetsConfiguration
+    getDescriptorSetsConfiguration(const VkDescriptorSetLayout, const VkDescriptorPool) noexcept;
+
     class VulkanContextInitializersBuilder final
     {
     public:
@@ -140,7 +167,10 @@ namespace nd::src::graphics::vulkan
                     getSwapchainImages,
                     getSwapchainImageViews,
                     getSwapchainFramebuffers,
-                    getShaderModules};
+                    getShaderModules,
+                    getDescriptorPool,
+                    getDescriptorSetLayout,
+                    getDescriptorSets};
         }
 
         operator Type() const noexcept
@@ -229,6 +259,30 @@ namespace nd::src::graphics::vulkan
         }
 
         Builder&
+        add(decltype(Type::getDescriptorPool)& initializer) noexcept
+        {
+            getDescriptorPool = initializer;
+
+            return *this;
+        }
+
+        Builder&
+        add(decltype(Type::getDescriptorSetLayout)& initializer) noexcept
+        {
+            getDescriptorSetLayout = initializer;
+
+            return *this;
+        }
+
+        Builder&
+        add(decltype(Type::getDescriptorSets)& initializer) noexcept
+        {
+            getDescriptorSets = initializer;
+
+            return *this;
+        }
+
+        Builder&
         operator<<(decltype(Type::getInstance)& initializer) noexcept
         {
             return add(initializer);
@@ -288,6 +342,24 @@ namespace nd::src::graphics::vulkan
             return add(initializer);
         }
 
+        Builder&
+        operator<<(decltype(Type::getDescriptorPool)& initializer) noexcept
+        {
+            return add(initializer);
+        }
+
+        Builder&
+        operator<<(decltype(Type::getDescriptorSetLayout)& initializer) noexcept
+        {
+            return add(initializer);
+        }
+
+        Builder&
+        operator<<(decltype(Type::getDescriptorSets)& initializer) noexcept
+        {
+            return add(initializer);
+        }
+
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
         std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
@@ -299,6 +371,9 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getSwapchainImageViews)>   getSwapchainImageViews;
         std::remove_cv_t<decltype(Type::getSwapchainFramebuffers)> getSwapchainFramebuffers;
         std::remove_cv_t<decltype(Type::getShaderModules)>         getShaderModules;
+        std::remove_cv_t<decltype(Type::getDescriptorPool)>        getDescriptorPool;
+        std::remove_cv_t<decltype(Type::getDescriptorSetLayout)>   getDescriptorSetLayout;
+        std::remove_cv_t<decltype(Type::getDescriptorSets)>        getDescriptorSets;
     };
 
     class VulkanContextConfigurationsBuilder final
@@ -317,7 +392,10 @@ namespace nd::src::graphics::vulkan
                     getRenderPass,
                     getSwapchainImageViews,
                     getSwapchainFramebuffers,
-                    getShaderModules};
+                    getShaderModules,
+                    getDescriptorPool,
+                    getDescriptorSetLayout,
+                    getDescriptorSets};
         }
 
         operator Type() const noexcept
@@ -390,6 +468,30 @@ namespace nd::src::graphics::vulkan
         }
 
         Builder&
+        add(decltype(Type::getDescriptorPool)& configuration) noexcept
+        {
+            getDescriptorPool = configuration;
+
+            return *this;
+        }
+
+        Builder&
+        add(decltype(Type::getDescriptorSetLayout)& configuration) noexcept
+        {
+            getDescriptorSetLayout = configuration;
+
+            return *this;
+        }
+
+        Builder&
+        add(decltype(Type::getDescriptorSets)& configuration) noexcept
+        {
+            getDescriptorSets = configuration;
+
+            return *this;
+        }
+
+        Builder&
         operator<<(decltype(Type::getInstance)& configuration) noexcept
         {
             return add(configuration);
@@ -437,6 +539,24 @@ namespace nd::src::graphics::vulkan
             return add(configuration);
         }
 
+        Builder&
+        operator<<(decltype(Type::getDescriptorPool)& configuration) noexcept
+        {
+            return add(configuration);
+        }
+
+        Builder&
+        operator<<(decltype(Type::getDescriptorSetLayout)& configuration) noexcept
+        {
+            return add(configuration);
+        }
+
+        Builder&
+        operator<<(decltype(Type::getDescriptorSets)& configuration) noexcept
+        {
+            return add(configuration);
+        }
+
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
         std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
@@ -446,6 +566,9 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getSwapchainImageViews)>   getSwapchainImageViews;
         std::remove_cv_t<decltype(Type::getSwapchainFramebuffers)> getSwapchainFramebuffers;
         std::remove_cv_t<decltype(Type::getShaderModules)>         getShaderModules;
+        std::remove_cv_t<decltype(Type::getDescriptorPool)>        getDescriptorPool;
+        std::remove_cv_t<decltype(Type::getDescriptorSetLayout)>   getDescriptorSetLayout;
+        std::remove_cv_t<decltype(Type::getDescriptorSets)>        getDescriptorSets;
     };
 
     extern VulkanContextInitializersBuilder   initializersBuilder;

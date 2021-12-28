@@ -14,7 +14,10 @@ namespace nd::src::graphics::vulkan
         << getSwapchainImages                                      //
         << getImageViews                                           //
         << getFramebuffers                                         //
-        << getShaderModules;                                       //
+        << getShaderModules                                        //
+        << getDescriptorPool                                       //
+        << getDescriptorSetLayout                                  //
+        << getDescriptorSets;
 
     auto configurationsBuilder = VulkanContextConfigurationsBuilder {} //
         << getInstanceConfiguration                                    //
@@ -24,7 +27,10 @@ namespace nd::src::graphics::vulkan
         << getRenderPassConfiguration                                  //
         << getSwapchainImageViewConfigurations                         //
         << getSwapchainFramebufferConfigurations                       //
-        << getShaderModulesConfigurations;                             //
+        << getShaderModulesConfigurations                              //
+        << getDescriptorPoolConfiguration                              //
+        << getDescriptorSetLayoutConfiguration                         //
+        << getDescriptorSetsConfiguration;
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -181,5 +187,29 @@ namespace nd::src::graphics::vulkan
 
         return {{"src/graphics/vulkan/shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT},
                 {"src/graphics/vulkan/shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT}};
+    }
+
+    DescriptorPoolConfiguration
+    getDescriptorPoolConfiguration() noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT};
+    }
+
+    DescriptorSetLayoutConfiguration
+    getDescriptorSetLayoutConfiguration() noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {};
+    }
+
+    DescriptorSetsConfiguration
+    getDescriptorSetsConfiguration(const VkDescriptorSetLayout descriptorSetLayout, const VkDescriptorPool descriptorPool) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {{descriptorSetLayout}, descriptorPool};
     }
 } // namespace nd::src::graphics::vulkan
