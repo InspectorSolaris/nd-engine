@@ -156,22 +156,7 @@ namespace nd::src::graphics::vulkan
         using Builder = VulkanContextInitializersBuilder;
 
         Type
-        build() const noexcept
-        {
-            return {getInstance,
-                    getPhysicalDevice,
-                    getDevice,
-                    getSurface,
-                    getSwapchain,
-                    getRenderPass,
-                    getSwapchainImages,
-                    getSwapchainImageViews,
-                    getSwapchainFramebuffers,
-                    getShaderModules,
-                    getDescriptorPool,
-                    getDescriptorSetLayout,
-                    getDescriptorSets};
-        }
+        build() const;
 
         operator Type() const noexcept
         {
@@ -383,20 +368,7 @@ namespace nd::src::graphics::vulkan
         using Builder = VulkanContextConfigurationsBuilder;
 
         Type
-        build() const noexcept
-        {
-            return {getInstance,
-                    getPhysicalDevice,
-                    getDevice,
-                    getSwapchain,
-                    getRenderPass,
-                    getSwapchainImageViews,
-                    getSwapchainFramebuffers,
-                    getShaderModules,
-                    getDescriptorPool,
-                    getDescriptorSetLayout,
-                    getDescriptorSets};
-        }
+        build() const;
 
         operator Type() const noexcept
         {

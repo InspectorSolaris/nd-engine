@@ -5,32 +5,32 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    auto initializersBuilder = VulkanContextInitializersBuilder {} //
-        << getInstance                                             //
-        << getPhysicalDevice                                       //
-        << getDevice                                               //
-        << getSwapchain                                            //
-        << getRenderPass                                           //
-        << getSwapchainImages                                      //
-        << getImageViews                                           //
-        << getFramebuffers                                         //
-        << getShaderModules                                        //
-        << getDescriptorPool                                       //
-        << getDescriptorSetLayout                                  //
-        << getDescriptorSets;
+    auto initializersBuilder = VulkanContextInitializersBuilder {} << //
+        getInstance <<                                                //
+        getPhysicalDevice <<                                          //
+        getDevice <<                                                  //
+        getSwapchain <<                                               //
+        getRenderPass <<                                              //
+        getSwapchainImages <<                                         //
+        getImageViews <<                                              //
+        getFramebuffers <<                                            //
+        getShaderModules <<                                           //
+        getDescriptorPool <<                                          //
+        getDescriptorSetLayout <<                                     //
+        getDescriptorSets;
 
-    auto configurationsBuilder = VulkanContextConfigurationsBuilder {} //
-        << getInstanceConfiguration                                    //
-        << getPhysicalDeviceConfiguration                              //
-        << getDeviceConfiguration                                      //
-        << getSwapchainConfiguration                                   //
-        << getRenderPassConfiguration                                  //
-        << getSwapchainImageViewConfigurations                         //
-        << getSwapchainFramebufferConfigurations                       //
-        << getShaderModulesConfigurations                              //
-        << getDescriptorPoolConfiguration                              //
-        << getDescriptorSetLayoutConfiguration                         //
-        << getDescriptorSetsConfiguration;
+    auto configurationsBuilder = VulkanContextConfigurationsBuilder {} << //
+        getInstanceConfiguration <<                                       //
+        getPhysicalDeviceConfiguration <<                                 //
+        getDeviceConfiguration <<                                         //
+        getSwapchainConfiguration <<                                      //
+        getRenderPassConfiguration <<                                     //
+        getSwapchainImageViewConfigurations <<                            //
+        getSwapchainFramebufferConfigurations <<                          //
+        getShaderModulesConfigurations <<                                 //
+        getDescriptorPoolConfiguration <<                                 //
+        getDescriptorSetLayoutConfiguration <<                            //
+        getDescriptorSetsConfiguration;
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -211,5 +211,71 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         return {{descriptorSetLayout}, descriptorPool};
+    }
+
+    VulkanContextInitializersBuilder::Type
+    VulkanContextInitializersBuilder::build() const
+    {
+        ND_SET_SCOPE();
+
+        ND_ASSERT(getInstance &&              //
+                  getPhysicalDevice &&        //
+                  getDevice &&                //
+                  getSurface &&               //
+                  getSwapchain &&             //
+                  getRenderPass &&            //
+                  getSwapchainImages &&       //
+                  getSwapchainImageViews &&   //
+                  getSwapchainFramebuffers && //
+                  getShaderModules &&         //
+                  getDescriptorPool &&        //
+                  getDescriptorSetLayout &&   //
+                  getDescriptorSets           //
+        );
+
+        return {getInstance,
+                getPhysicalDevice,
+                getDevice,
+                getSurface,
+                getSwapchain,
+                getRenderPass,
+                getSwapchainImages,
+                getSwapchainImageViews,
+                getSwapchainFramebuffers,
+                getShaderModules,
+                getDescriptorPool,
+                getDescriptorSetLayout,
+                getDescriptorSets};
+    }
+
+    VulkanContextConfigurationsBuilder::Type
+    VulkanContextConfigurationsBuilder::build() const
+    {
+        ND_SET_SCOPE();
+
+        ND_ASSERT(getInstance &&              //
+                  getPhysicalDevice &&        //
+                  getDevice &&                //
+                  getSwapchain &&             //
+                  getRenderPass &&            //
+                  getSwapchainImageViews &&   //
+                  getSwapchainFramebuffers && //
+                  getShaderModules &&         //
+                  getDescriptorPool &&        //
+                  getDescriptorSetLayout &&   //
+                  getDescriptorSets           //
+        );
+
+        return {getInstance,
+                getPhysicalDevice,
+                getDevice,
+                getSwapchain,
+                getRenderPass,
+                getSwapchainImageViews,
+                getSwapchainFramebuffers,
+                getShaderModules,
+                getDescriptorPool,
+                getDescriptorSetLayout,
+                getDescriptorSets};
     }
 } // namespace nd::src::graphics::vulkan
