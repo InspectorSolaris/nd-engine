@@ -168,16 +168,8 @@ namespace nd::src::graphics::vulkan
 
         const auto swapchainFramebuffers = initializers.getSwapchainFramebuffers(swapchainFramebufferConfigurations, device.handle);
 
-        const auto shaderModulesConfigurations = std::vector<ShaderModuleConfiguration> {
-            {"src/graphics/vulkan/shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT},
-            {"src/graphics/vulkan/shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT}};
-
-        const auto shaderModules = getMapped<ShaderModuleConfiguration, ShaderModule>(
-            shaderModulesConfigurations,
-            [device = device.handle](const auto& shaderModuleConfiguration, const auto index)
-            {
-                return getShaderModule(shaderModuleConfiguration, device);
-            });
+        const auto shaderModuleConfigurations = configurations.getShaderModules();
+        const auto shaderModules              = initializers.getShaderModules(shaderModuleConfigurations, device.handle);
 
         const auto descriptorPool = getDescriptorPool(
             {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
