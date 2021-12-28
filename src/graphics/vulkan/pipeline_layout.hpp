@@ -6,8 +6,8 @@ namespace nd::src::graphics::vulkan
 {
     struct PipelineLayoutConfiguration final
     {
-        const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts;
-        const std::vector<VkPushConstantRange>&   pushConstantRanges;
+        const std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+        const std::vector<VkPushConstantRange>   pushConstantRanges;
 
         const VkPipelineLayoutCreateFlags flags = {};
         const void*                       next  = {};

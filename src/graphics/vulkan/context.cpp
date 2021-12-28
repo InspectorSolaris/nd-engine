@@ -180,7 +180,8 @@ namespace nd::src::graphics::vulkan
         const auto descriptorSetsConfiguration = configurations.getDescriptorSets(descriptorSetLayout.handle, descriptorPool.handle);
         const auto descriptorSets              = initializers.getDescriptorSets(descriptorSetsConfiguration, device.handle);
 
-        const auto pipelineLayout = getPipelineLayout({{descriptorSetLayout.handle}, {}}, device.handle);
+        const auto pipelineLayoutConfiguration = configurations.getPipelineLayout(descriptorSetLayout.handle);
+        const auto pipelineLayout              = initializers.getPipelineLayout(pipelineLayoutConfiguration, device.handle);
 
         const auto vertexInputStateCreateInfo   = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
         const auto inputAssemblyStateCreateInfo = getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);

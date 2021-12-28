@@ -46,6 +46,8 @@ namespace nd::src::graphics::vulkan
 
         using DescriptorSets = DescriptorSets(const DescriptorSetsConfiguration&, const VkDevice);
 
+        using PipelineLayout = PipelineLayout(const PipelineLayoutConfiguration&, const VkDevice);
+
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
         const std::function<Device>                getDevice;
@@ -59,6 +61,7 @@ namespace nd::src::graphics::vulkan
         const std::function<DescriptorPool>        getDescriptorPool;
         const std::function<DescriptorSetLayout>   getDescriptorSetLayout;
         const std::function<DescriptorSets>        getDescriptorSets;
+        const std::function<PipelineLayout>        getPipelineLayout;
     };
 
     struct VulkanContextConfigurations final
@@ -90,6 +93,8 @@ namespace nd::src::graphics::vulkan
 
         using DescriptorSets = DescriptorSetsConfiguration(const VkDescriptorSetLayout, const VkDescriptorPool);
 
+        using PipelineLayout = PipelineLayoutConfiguration(const VkDescriptorSetLayout);
+
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
         const std::function<Device>                getDevice;
@@ -101,6 +106,7 @@ namespace nd::src::graphics::vulkan
         const std::function<DescriptorPool>        getDescriptorPool;
         const std::function<DescriptorSetLayout>   getDescriptorSetLayout;
         const std::function<DescriptorSets>        getDescriptorSets;
+        const std::function<PipelineLayout>        getPipelineLayout;
     };
 
     InstanceConfiguration
@@ -147,7 +153,10 @@ namespace nd::src::graphics::vulkan
     getDescriptorSetLayoutConfiguration() noexcept;
 
     DescriptorSetsConfiguration
-    getDescriptorSetsConfiguration(const VkDescriptorSetLayout, const VkDescriptorPool) noexcept;
+    getDescriptorSetsConfiguration(const VkDescriptorSetLayout descriptorSetLayout, const VkDescriptorPool descriptorPool) noexcept;
+
+    PipelineLayoutConfiguration
+    getPipelineLayoutConfiguration(const VkDescriptorSetLayout descriptorSetLayout) noexcept;
 
     class VulkanContextInitializersBuilder final
     {
@@ -268,6 +277,14 @@ namespace nd::src::graphics::vulkan
         }
 
         Builder&
+        add(decltype(Type::getPipelineLayout)& initializer) noexcept
+        {
+            getPipelineLayout = initializer;
+
+            return *this;
+        }
+
+        Builder&
         operator<<(decltype(Type::getInstance)& initializer) noexcept
         {
             return add(initializer);
@@ -345,6 +362,12 @@ namespace nd::src::graphics::vulkan
             return add(initializer);
         }
 
+        Builder&
+        operator<<(decltype(Type::getPipelineLayout)& initializer) noexcept
+        {
+            return add(initializer);
+        }
+
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
         std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
@@ -359,6 +382,7 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getDescriptorPool)>        getDescriptorPool;
         std::remove_cv_t<decltype(Type::getDescriptorSetLayout)>   getDescriptorSetLayout;
         std::remove_cv_t<decltype(Type::getDescriptorSets)>        getDescriptorSets;
+        std::remove_cv_t<decltype(Type::getPipelineLayout)>        getPipelineLayout;
     };
 
     class VulkanContextConfigurationsBuilder final
@@ -464,6 +488,14 @@ namespace nd::src::graphics::vulkan
         }
 
         Builder&
+        add(decltype(Type::getPipelineLayout)& configuration) noexcept
+        {
+            getPipelineLayout = configuration;
+
+            return *this;
+        }
+
+        Builder&
         operator<<(decltype(Type::getInstance)& configuration) noexcept
         {
             return add(configuration);
@@ -529,6 +561,12 @@ namespace nd::src::graphics::vulkan
             return add(configuration);
         }
 
+        Builder&
+        operator<<(decltype(Type::getPipelineLayout)& configuration) noexcept
+        {
+            return add(configuration);
+        }
+
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
         std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
@@ -541,6 +579,7 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getDescriptorPool)>        getDescriptorPool;
         std::remove_cv_t<decltype(Type::getDescriptorSetLayout)>   getDescriptorSetLayout;
         std::remove_cv_t<decltype(Type::getDescriptorSets)>        getDescriptorSets;
+        std::remove_cv_t<decltype(Type::getPipelineLayout)>        getPipelineLayout;
     };
 
     extern VulkanContextInitializersBuilder   initializersBuilder;

@@ -17,7 +17,8 @@ namespace nd::src::graphics::vulkan
         getShaderModules <<                                           //
         getDescriptorPool <<                                          //
         getDescriptorSetLayout <<                                     //
-        getDescriptorSets;
+        getDescriptorSets <<                                          //
+        getPipelineLayout;
 
     auto configurationsBuilder = VulkanContextConfigurationsBuilder {} << //
         getInstanceConfiguration <<                                       //
@@ -30,7 +31,8 @@ namespace nd::src::graphics::vulkan
         getShaderModulesConfigurations <<                                 //
         getDescriptorPoolConfiguration <<                                 //
         getDescriptorSetLayoutConfiguration <<                            //
-        getDescriptorSetsConfiguration;
+        getDescriptorSetsConfiguration <<                                 //
+        getPipelineLayoutConfiguration;
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -213,6 +215,14 @@ namespace nd::src::graphics::vulkan
         return {{descriptorSetLayout}, descriptorPool};
     }
 
+    PipelineLayoutConfiguration
+    getPipelineLayoutConfiguration(const VkDescriptorSetLayout descriptorSetLayout) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {{descriptorSetLayout}, {}};
+    }
+
     VulkanContextInitializersBuilder::Type
     VulkanContextInitializersBuilder::build() const
     {
@@ -230,8 +240,8 @@ namespace nd::src::graphics::vulkan
                   getShaderModules &&         //
                   getDescriptorPool &&        //
                   getDescriptorSetLayout &&   //
-                  getDescriptorSets           //
-        );
+                  getDescriptorSets &&        //
+                  getPipelineLayout);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -245,7 +255,8 @@ namespace nd::src::graphics::vulkan
                 getShaderModules,
                 getDescriptorPool,
                 getDescriptorSetLayout,
-                getDescriptorSets};
+                getDescriptorSets,
+                getPipelineLayout};
     }
 
     VulkanContextConfigurationsBuilder::Type
@@ -263,8 +274,8 @@ namespace nd::src::graphics::vulkan
                   getShaderModules &&         //
                   getDescriptorPool &&        //
                   getDescriptorSetLayout &&   //
-                  getDescriptorSets           //
-        );
+                  getDescriptorSets &&        //
+                  getPipelineLayout);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -276,6 +287,7 @@ namespace nd::src::graphics::vulkan
                 getShaderModules,
                 getDescriptorPool,
                 getDescriptorSetLayout,
-                getDescriptorSets};
+                getDescriptorSets,
+                getPipelineLayout};
     }
 } // namespace nd::src::graphics::vulkan
