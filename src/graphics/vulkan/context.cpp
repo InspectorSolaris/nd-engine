@@ -164,8 +164,7 @@ namespace nd::src::graphics::vulkan
                                                                         surface.handle,
                                                                         configurationExternal.width,
                                                                         configurationExternal.height);
-
-        const auto swapchain = initializers.getSwapchain(swapchainConfiguration, device.handle);
+        const auto swapchain              = initializers.getSwapchain(swapchainConfiguration, device.handle);
 
         const auto renderPassConfiguration = configurations.getRenderPass(swapchainConfiguration);
         const auto renderPass              = initializers.getRenderPass(renderPassConfiguration, device.handle);
@@ -178,8 +177,7 @@ namespace nd::src::graphics::vulkan
         const auto swapchainFramebufferConfigurations = configurations.getSwapchainFramebuffers(swapchainConfiguration,
                                                                                                 swapchainImageViews,
                                                                                                 renderPass.handle);
-
-        const auto swapchainFramebuffers = initializers.getSwapchainFramebuffers(swapchainFramebufferConfigurations, device.handle);
+        const auto swapchainFramebuffers              = initializers.getSwapchainFramebuffers(swapchainFramebufferConfigurations, device.handle);
 
         const auto shaderModuleConfigurations = configurations.getShaderModules();
         const auto shaderModules              = initializers.getShaderModules(shaderModuleConfigurations, device.handle);
@@ -196,13 +194,12 @@ namespace nd::src::graphics::vulkan
         const auto pipelineLayoutConfigurations = configurations.getPipelineLayouts(descriptorSetLayouts);
         const auto pipelineLayouts              = initializers.getPipelineLayouts(pipelineLayoutConfigurations, device.handle);
 
-        const auto pipelineConfigurations = configurations.getGraphicsPipelines(shaderModules,
-                                                                                pipelineLayouts,
-                                                                                renderPass.handle,
-                                                                                configurationExternal.width,
-                                                                                configurationExternal.height);
-
-        const auto graphicsPipelines = initializers.getGraphicsPipelines(pipelineConfigurations, device.handle);
+        const auto graphicsPipelineConfigurations = configurations.getGraphicsPipelines(shaderModules,
+                                                                                        pipelineLayouts,
+                                                                                        renderPass.handle,
+                                                                                        configurationExternal.width,
+                                                                                        configurationExternal.height);
+        const auto graphicsPipelines              = initializers.getGraphicsPipelines(graphicsPipelineConfigurations, device.handle);
 
         const auto commandPoolConfigurations = configurations.getCommandPools(device.queueFamilies);
         const auto commandPools              = initializers.getCommandPools(commandPoolConfigurations, device.handle);
