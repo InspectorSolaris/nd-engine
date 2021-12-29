@@ -2,7 +2,8 @@
 
 #include "pch.hpp"
 
-#include "context_configuration.hpp"
+#include "context_configurations.hpp"
+#include "context_initializers.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -18,6 +19,7 @@ namespace nd::src::graphics::vulkan
             const std::vector<ImageView>&    swapchainImageViews;
             const std::vector<Framebuffer>&  swapchainFramebuffers;
             const std::vector<ShaderModule>& shaderModules;
+            const std::vector<CommandPool>&  commandPools;
 
             const Pipelines&      pipelines;
             const DescriptorSets& descriptorSets;
@@ -36,7 +38,6 @@ namespace nd::src::graphics::vulkan
             const DescriptorPool      descriptorPool;
             const DescriptorSetLayout descriptorSetLayout;
             const PipelineLayout      pipelineLayout;
-            const CommandPool         commandPool;
         };
 
         VulkanContext(const Configuration& configuration);
@@ -62,6 +63,7 @@ namespace nd::src::graphics::vulkan
         std::vector<ImageView>    swapchainImageViews_ {};
         std::vector<Framebuffer>  swapchainFramebuffers_ {};
         std::vector<ShaderModule> shaderModules_ {};
+        std::vector<CommandPool>  commandPools_ {};
 
         Pipelines      pipelines_ {};
         DescriptorSets descriptorSets_ {};
@@ -80,7 +82,6 @@ namespace nd::src::graphics::vulkan
         DescriptorPool      descriptorPool_ {};
         DescriptorSetLayout descriptorSetLayout_ {};
         PipelineLayout      pipelineLayout_ {};
-        CommandPool         commandPool_ {};
     };
 
     VulkanContext

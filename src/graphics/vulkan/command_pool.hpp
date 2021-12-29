@@ -2,11 +2,13 @@
 
 #include "pch.hpp"
 
+#include "queue.hpp"
+
 namespace nd::src::graphics::vulkan
 {
     struct CommandPoolConfiguration final
     {
-        const uint32_t queueFamilyIndex;
+        const QueueFamily queueFamily;
 
         const VkCommandPoolCreateFlags flags = {};
         const void*                    next  = {};
@@ -14,6 +16,7 @@ namespace nd::src::graphics::vulkan
 
     struct CommandPool final
     {
+        const QueueFamily   queueFamily;
         const VkCommandPool handle;
     };
 
@@ -25,4 +28,7 @@ namespace nd::src::graphics::vulkan
 
     CommandPool
     getCommandPool(const CommandPoolConfiguration& configuration, const VkDevice device);
+
+    std::vector<CommandPool>
+    getCommandPools(const std::vector<CommandPoolConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

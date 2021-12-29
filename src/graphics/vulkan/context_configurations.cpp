@@ -1,25 +1,9 @@
-#include "context_configuration.hpp"
+#include "context_configurations.hpp"
 #include "tools.hpp"
 
 namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
-
-    auto initializersBuilder = VulkanContextInitializersBuilder {} << //
-        getInstance <<                                                //
-        getPhysicalDevice <<                                          //
-        getDevice <<                                                  //
-        getSwapchain <<                                               //
-        getRenderPass <<                                              //
-        getSwapchainImages <<                                         //
-        getImageViews <<                                              //
-        getFramebuffers <<                                            //
-        getShaderModules <<                                           //
-        getDescriptorPool <<                                          //
-        getDescriptorSetLayout <<                                     //
-        getDescriptorSets <<                                          //
-        getPipelineLayout <<                                          //
-        getGraphicsPipelines;
 
     auto configurationsBuilder = VulkanContextConfigurationsBuilder {} << //
         getInstanceConfiguration <<                                       //
@@ -34,7 +18,8 @@ namespace nd::src::graphics::vulkan
         getDescriptorSetLayoutConfiguration <<                            //
         getDescriptorSetsConfiguration <<                                 //
         getPipelineLayoutConfiguration <<                                 //
-        getGraphicsPipelineConfigurations;
+        getGraphicsPipelineConfigurations <<                              //
+        getCommandPoolConfigurations;
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -303,42 +288,21 @@ namespace nd::src::graphics::vulkan
                  0}};
     }
 
-    VulkanContextInitializersBuilder::Type
-    VulkanContextInitializersBuilder::build() const
+    std::vector<CommandPoolConfiguration>
+    getCommandPoolConfigurations(const std::vector<QueueFamily>& queueFamiliesPool)
     {
         ND_SET_SCOPE();
 
-        ND_ASSERT(getInstance &&              //
-                  getPhysicalDevice &&        //
-                  getDevice &&                //
-                  getSurface &&               //
-                  getSwapchain &&             //
-                  getRenderPass &&            //
-                  getSwapchainImages &&       //
-                  getSwapchainImageViews &&   //
-                  getSwapchainFramebuffers && //
-                  getShaderModules &&         //
-                  getDescriptorPool &&        //
-                  getDescriptorSetLayout &&   //
-                  getDescriptorSets &&        //
-                  getPipelineLayout &&        //
-                  getPipelines);
+        const auto graphicsQueueFamily = std::find_if(queueFamiliesPool.begin(),
+                                                      queueFamiliesPool.end(),
+                                                      [](const auto& queueFamily)
+                                                      {
+                                                          return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
+                                                      });
 
-        return {getInstance,
-                getPhysicalDevice,
-                getDevice,
-                getSurface,
-                getSwapchain,
-                getRenderPass,
-                getSwapchainImages,
-                getSwapchainImageViews,
-                getSwapchainFramebuffers,
-                getShaderModules,
-                getDescriptorPool,
-                getDescriptorSetLayout,
-                getDescriptorSets,
-                getPipelineLayout,
-                getPipelines};
+        ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
+
+        return {{*graphicsQueueFamily}};
     }
 
     VulkanContextConfigurationsBuilder::Type
@@ -358,7 +322,8 @@ namespace nd::src::graphics::vulkan
                   getDescriptorSetLayout &&   //
                   getDescriptorSets &&        //
                   getPipelineLayout &&        //
-                  getPipelines);
+                  getPipelines &&             //
+                  getCommandPools);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -372,6 +337,7 @@ namespace nd::src::graphics::vulkan
                 getDescriptorSetLayout,
                 getDescriptorSets,
                 getPipelineLayout,
-                getPipelines};
+                getPipelines,
+                getCommandPools};
     }
 } // namespace nd::src::graphics::vulkan

@@ -20,7 +20,7 @@ namespace nd::src::graphics::vulkan
         , descriptorSets_(configuration.descriptorSets)
         , pipelineLayout_(configuration.pipelineLayout)
         , pipelines_(configuration.pipelines)
-        , commandPool_(configuration.commandPool)
+        , commandPools_(configuration.commandPools)
         , commandBuffers_(configuration.commandBuffers)
         , framesCount_(configuration.framesCount)
         , imageAcquiredSemaphores_(configuration.imageAcquiredSemaphores)
@@ -50,9 +50,9 @@ namespace nd::src::graphics::vulkan
             vkDestroyFence(device_.handle, imageRenderedFences_[index], nullptr);
         }
 
-        vkFreeCommandBuffers(device_.handle, commandPool_.handle, commandBuffers_.handles.size(), commandBuffers_.handles.data());
+        vkFreeCommandBuffers(device_.handle, commandPools_[0].handle, commandBuffers_.handles.size(), commandBuffers_.handles.data());
 
-        vkDestroyCommandPool(device_.handle, commandPool_.handle, nullptr);
+        vkDestroyCommandPool(device_.handle, commandPools_[0].handle, nullptr);
 
         for(const auto pipeline: pipelines_.handles)
         {
@@ -191,18 +191,11 @@ namespace nd::src::graphics::vulkan
 
         const auto pipelines = initializers.getPipelines(pipelineConfigurations, device.handle);
 
-        const auto graphicsQueueFamily = std::find_if(device.queueFamilies.begin(),
-                                                      device.queueFamilies.end(),
-                                                      [](const auto& queueFamily)
-                                                      {
-                                                          return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
-                                                      });
+        const auto commandPoolConfigurations = configurations.getCommandPools(device.queueFamilies);
+        const auto commandPools              = initializers.getCommandPools(commandPoolConfigurations, device.handle);
 
-        ND_ASSERT(graphicsQueueFamily != device.queueFamilies.end());
-
-        const auto commandPool    = getCommandPool({graphicsQueueFamily->index}, device.handle);
         const auto commandBuffers = getCommandBuffers(
-            {commandPool.handle, VK_COMMAND_BUFFER_LEVEL_PRIMARY, static_cast<uint32_t>(swapchainFramebuffers.size())},
+            {commandPools[0].handle, VK_COMMAND_BUFFER_LEVEL_PRIMARY, static_cast<uint32_t>(swapchainFramebuffers.size())},
             device.handle);
 
         for(size_t i = 0; i < commandBuffers.handles.size(); ++i)
@@ -243,6 +236,7 @@ namespace nd::src::graphics::vulkan
                               swapchainImageViews,
                               swapchainFramebuffers,
                               shaderModules,
+                              commandPools,
                               pipelines,
                               descriptorSets,
                               commandBuffers,
@@ -256,7 +250,6 @@ namespace nd::src::graphics::vulkan
                               renderPass,
                               descriptorPool,
                               descriptorSetLayout,
-                              pipelineLayout,
-                              commandPool});
+                              pipelineLayout});
     }
 } // namespace nd::src::graphics::vulkan
