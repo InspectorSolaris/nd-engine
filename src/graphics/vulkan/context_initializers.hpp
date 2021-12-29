@@ -29,15 +29,17 @@ namespace nd::src::graphics::vulkan
 
         using DescriptorPool = DescriptorPool(const DescriptorPoolConfiguration&, const VkDevice);
 
-        using DescriptorSetLayout = DescriptorSetLayout(const DescriptorSetLayoutConfiguration&, const VkDevice);
+        using DescriptorSetLayouts = std::vector<DescriptorSetLayout>(const std::vector<DescriptorSetLayoutConfiguration>&, const VkDevice);
 
-        using DescriptorSets = DescriptorSets(const DescriptorSetsConfiguration&, const VkDevice);
+        using DescriptorSet = DescriptorSet(const DescriptorSetConfiguration&, const VkDevice);
 
-        using PipelineLayout = PipelineLayout(const PipelineLayoutConfiguration&, const VkDevice);
+        using PipelineLayouts = std::vector<PipelineLayout>(const std::vector<PipelineLayoutConfiguration>&, const VkDevice);
 
-        using Pipelines = Pipelines(const std::vector<PipelineConfiguration>&, const VkDevice);
+        using GraphicsPipelines = Pipelines(const std::vector<GraphicsPipelineConfiguration>&, const VkDevice);
 
         using CommandPools = std::vector<CommandPool>(const std::vector<CommandPoolConfiguration>&, const VkDevice);
+
+        using CommandBuffers = std::vector<CommandBuffer>(const std::vector<CommandBufferConfiguration>&, const VkDevice);
 
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
@@ -50,11 +52,12 @@ namespace nd::src::graphics::vulkan
         const std::function<SwapchainFramebuffers> getSwapchainFramebuffers;
         const std::function<ShaderModules>         getShaderModules;
         const std::function<DescriptorPool>        getDescriptorPool;
-        const std::function<DescriptorSetLayout>   getDescriptorSetLayout;
-        const std::function<DescriptorSets>        getDescriptorSets;
-        const std::function<PipelineLayout>        getPipelineLayout;
-        const std::function<Pipelines>             getPipelines;
+        const std::function<DescriptorSetLayouts>  getDescriptorSetLayouts;
+        const std::function<DescriptorSet>         getDescriptorSet;
+        const std::function<PipelineLayouts>       getPipelineLayouts;
+        const std::function<GraphicsPipelines>     getGraphicsPipelines;
         const std::function<CommandPools>          getCommandPools;
+        const std::function<CommandBuffers>        getCommandBuffers;
     };
 
     class VulkanContextInitializersBuilder final
@@ -160,33 +163,33 @@ namespace nd::src::graphics::vulkan
         }
 
         Builder&
-        add(decltype(Type::getDescriptorSetLayout)& initializer) noexcept
+        add(decltype(Type::getDescriptorSetLayouts)& initializer) noexcept
         {
-            getDescriptorSetLayout = initializer;
+            getDescriptorSetLayouts = initializer;
 
             return *this;
         }
 
         Builder&
-        add(decltype(Type::getDescriptorSets)& initializer) noexcept
+        add(decltype(Type::getDescriptorSet)& initializer) noexcept
         {
-            getDescriptorSets = initializer;
+            getDescriptorSet = initializer;
 
             return *this;
         }
 
         Builder&
-        add(decltype(Type::getPipelineLayout)& initializer) noexcept
+        add(decltype(Type::getPipelineLayouts)& initializer) noexcept
         {
-            getPipelineLayout = initializer;
+            getPipelineLayouts = initializer;
 
             return *this;
         }
 
         Builder&
-        add(decltype(Type::getPipelines)& initializer) noexcept
+        add(decltype(Type::getGraphicsPipelines)& initializer) noexcept
         {
-            getPipelines = initializer;
+            getGraphicsPipelines = initializer;
 
             return *this;
         }
@@ -195,6 +198,14 @@ namespace nd::src::graphics::vulkan
         add(decltype(Type::getCommandPools)& initializer) noexcept
         {
             getCommandPools = initializer;
+
+            return *this;
+        }
+
+        Builder&
+        add(decltype(Type::getCommandBuffers)& initializer) noexcept
+        {
+            getCommandBuffers = initializer;
 
             return *this;
         }
@@ -266,31 +277,37 @@ namespace nd::src::graphics::vulkan
         }
 
         Builder&
-        operator<<(decltype(Type::getDescriptorSetLayout)& initializer) noexcept
+        operator<<(decltype(Type::getDescriptorSetLayouts)& initializer) noexcept
         {
             return add(initializer);
         }
 
         Builder&
-        operator<<(decltype(Type::getDescriptorSets)& initializer) noexcept
+        operator<<(decltype(Type::getDescriptorSet)& initializer) noexcept
         {
             return add(initializer);
         }
 
         Builder&
-        operator<<(decltype(Type::getPipelineLayout)& initializer) noexcept
+        operator<<(decltype(Type::getPipelineLayouts)& initializer) noexcept
         {
             return add(initializer);
         }
 
         Builder&
-        operator<<(decltype(Type::getPipelines)& initializer) noexcept
+        operator<<(decltype(Type::getGraphicsPipelines)& initializer) noexcept
         {
             return add(initializer);
         }
 
         Builder&
         operator<<(decltype(Type::getCommandPools)& initializer) noexcept
+        {
+            return add(initializer);
+        }
+
+        Builder&
+        operator<<(decltype(Type::getCommandBuffers)& initializer) noexcept
         {
             return add(initializer);
         }
@@ -307,11 +324,12 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getSwapchainFramebuffers)> getSwapchainFramebuffers;
         std::remove_cv_t<decltype(Type::getShaderModules)>         getShaderModules;
         std::remove_cv_t<decltype(Type::getDescriptorPool)>        getDescriptorPool;
-        std::remove_cv_t<decltype(Type::getDescriptorSetLayout)>   getDescriptorSetLayout;
-        std::remove_cv_t<decltype(Type::getDescriptorSets)>        getDescriptorSets;
-        std::remove_cv_t<decltype(Type::getPipelineLayout)>        getPipelineLayout;
-        std::remove_cv_t<decltype(Type::getPipelines)>             getPipelines;
+        std::remove_cv_t<decltype(Type::getDescriptorSetLayouts)>  getDescriptorSetLayouts;
+        std::remove_cv_t<decltype(Type::getDescriptorSet)>         getDescriptorSet;
+        std::remove_cv_t<decltype(Type::getPipelineLayouts)>       getPipelineLayouts;
+        std::remove_cv_t<decltype(Type::getGraphicsPipelines)>     getGraphicsPipelines;
         std::remove_cv_t<decltype(Type::getCommandPools)>          getCommandPools;
+        std::remove_cv_t<decltype(Type::getCommandBuffers)>        getCommandBuffers;
     };
 
     extern VulkanContextInitializersBuilder initializersBuilder;

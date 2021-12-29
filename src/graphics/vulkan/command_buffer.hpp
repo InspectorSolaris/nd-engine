@@ -13,7 +13,7 @@ namespace nd::src::graphics::vulkan
         const void* next = {};
     };
 
-    struct CommandBuffers final
+    struct CommandBuffer final
     {
         const std::vector<VkCommandBuffer> handles;
     };
@@ -32,6 +32,9 @@ namespace nd::src::graphics::vulkan
     std::vector<VkCommandBuffer>
     getCommandBuffersHandles(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device);
 
-    CommandBuffers
-    getCommandBuffers(const CommandBufferConfiguration& configuration, const VkDevice device);
+    CommandBuffer
+    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device);
+
+    std::vector<CommandBuffer>
+    getCommandBuffers(const std::vector<CommandBufferConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

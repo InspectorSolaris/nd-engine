@@ -47,8 +47,8 @@ namespace nd::src::graphics::vulkan
         return commandBuffers;
     }
 
-    CommandBuffers
-    getCommandBuffers(const CommandBufferConfiguration& configuration, const VkDevice device)
+    CommandBuffer
+    getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -58,5 +58,17 @@ namespace nd::src::graphics::vulkan
                                                                configuration.next);
 
         return {getCommandBuffersHandles(allocateInfo, device)};
+    }
+
+    std::vector<CommandBuffer>
+    getCommandBuffers(const std::vector<CommandBufferConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<CommandBufferConfiguration, CommandBuffer>(configurations,
+                                                                    [device](const auto configuration, const auto index)
+                                                                    {
+                                                                        return getCommandBuffer(configuration, device);
+                                                                    });
     }
 } // namespace nd::src::graphics::vulkan

@@ -16,11 +16,12 @@ namespace nd::src::graphics::vulkan
         getFramebuffers <<                                            //
         getShaderModules <<                                           //
         getDescriptorPool <<                                          //
-        getDescriptorSetLayout <<                                     //
-        getDescriptorSets <<                                          //
-        getPipelineLayout <<                                          //
+        getDescriptorSetLayouts <<                                    //
+        getDescriptorSet <<                                           //
+        getPipelineLayouts <<                                         //
         getGraphicsPipelines <<                                       //
-        getCommandPools;
+        getCommandPools <<                                            //
+        getCommandBuffers;
 
     VulkanContextInitializersBuilder::Type
     VulkanContextInitializersBuilder::build() const
@@ -38,11 +39,12 @@ namespace nd::src::graphics::vulkan
                   getSwapchainFramebuffers && //
                   getShaderModules &&         //
                   getDescriptorPool &&        //
-                  getDescriptorSetLayout &&   //
-                  getDescriptorSets &&        //
-                  getPipelineLayout &&        //
-                  getPipelines &&             //
-                  getCommandPools);
+                  getDescriptorSetLayouts &&  //
+                  getDescriptorSet &&         //
+                  getPipelineLayouts &&       //
+                  getGraphicsPipelines &&     //
+                  getCommandPools &&          //
+                  getCommandBuffers);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -55,10 +57,11 @@ namespace nd::src::graphics::vulkan
                 getSwapchainFramebuffers,
                 getShaderModules,
                 getDescriptorPool,
-                getDescriptorSetLayout,
-                getDescriptorSets,
-                getPipelineLayout,
-                getPipelines,
-                getCommandPools};
+                getDescriptorSetLayouts,
+                getDescriptorSet,
+                getPipelineLayouts,
+                getGraphicsPipelines,
+                getCommandPools,
+                getCommandBuffers};
     }
 } // namespace nd::src::graphics::vulkan

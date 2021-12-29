@@ -46,4 +46,16 @@ namespace nd::src::graphics::vulkan
 
         return {getDescriptorSetLayoutHandle(createInfo, device)};
     }
+
+    std::vector<DescriptorSetLayout>
+    getDescriptorSetLayouts(const std::vector<DescriptorSetLayoutConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<DescriptorSetLayoutConfiguration, DescriptorSetLayout>(configurations,
+                                                                                [device](const auto& configuration, const auto index)
+                                                                                {
+                                                                                    return getDescriptorSetLayout(configuration, device);
+                                                                                });
+    }
 } // namespace nd::src::graphics::vulkan

@@ -25,7 +25,7 @@ namespace nd::src::graphics::vulkan
         const void*                                next  = {};
     };
 
-    struct PipelineConfiguration final
+    struct GraphicsPipelineConfiguration final
     {
         const std::vector<VkPipelineShaderStageCreateInfo> stages;
 
@@ -163,8 +163,8 @@ namespace nd::src::graphics::vulkan
                                   const void*                                   next  = {}) noexcept;
 
     std::vector<VkPipeline>
-    getGraphicsPipelineHandle(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device);
+    getGraphicsPipelineHandles(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device);
 
     Pipelines
-    getGraphicsPipelines(const std::vector<PipelineConfiguration>& configurations, const VkDevice device);
+    getGraphicsPipelines(const std::vector<GraphicsPipelineConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

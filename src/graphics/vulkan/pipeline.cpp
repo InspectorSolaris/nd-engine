@@ -275,7 +275,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkPipeline>
-    getGraphicsPipelineHandle(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device)
+    getGraphicsPipelineHandles(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -287,7 +287,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Pipelines
-    getGraphicsPipelines(const std::vector<PipelineConfiguration>& configurations, const VkDevice device)
+    getGraphicsPipelines(const std::vector<GraphicsPipelineConfiguration>& configurations, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -297,7 +297,7 @@ namespace nd::src::graphics::vulkan
         viewportStates.reserve(configurations.size());
         colorBlendStates.reserve(configurations.size());
 
-        const auto createInfos = getMapped<PipelineConfiguration, VkGraphicsPipelineCreateInfo>(
+        const auto createInfos = getMapped<GraphicsPipelineConfiguration, VkGraphicsPipelineCreateInfo>(
             configurations,
             [&viewportStates, &colorBlendStates](const auto& configuration, const auto index)
             {
@@ -334,6 +334,6 @@ namespace nd::src::graphics::vulkan
                                                      configuration.next);
             });
 
-        return {getGraphicsPipelineHandle(createInfos, device)};
+        return {getGraphicsPipelineHandles(createInfos, device)};
     }
 } // namespace nd::src::graphics::vulkan

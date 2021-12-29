@@ -31,4 +31,7 @@ namespace nd::src::graphics::vulkan
 
     PipelineLayout
     getPipelineLayout(const PipelineLayoutConfiguration& configuration, const VkDevice device);
+
+    std::vector<PipelineLayout>
+    getPipelineLayouts(const std::vector<PipelineLayoutConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

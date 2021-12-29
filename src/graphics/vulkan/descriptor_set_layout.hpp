@@ -28,4 +28,7 @@ namespace nd::src::graphics::vulkan
 
     DescriptorSetLayout
     getDescriptorSetLayout(const DescriptorSetLayoutConfiguration& configuration, const VkDevice device);
+
+    std::vector<DescriptorSetLayout>
+    getDescriptorSetLayouts(const std::vector<DescriptorSetLayoutConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan
