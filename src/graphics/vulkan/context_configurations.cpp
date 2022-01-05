@@ -5,6 +5,8 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
+    const auto vertexBufferSize = 16 * sizeof(Vertex);
+
     auto configurationsBuilder = VulkanContextConfigurationsBuilder {} << //
         getInstanceConfiguration <<                                       //
         getPhysicalDeviceConfiguration <<                                 //
@@ -335,19 +337,32 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<BufferConfiguration>
-    getBufferConfigurations(const std::vector<QueueFamily>& queueFamilies) noexcept
+    getBufferConfigurations(const std::vector<QueueFamily>& queueFamiliesPool)
     {
         ND_SET_SCOPE();
 
-        return {{{}, 1024 * sizeof(Vertex), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT}};
+        const auto graphicsQueueFamily = std::find_if(queueFamiliesPool.begin(),
+                                                      queueFamiliesPool.end(),
+                                                      [](const auto& queueFamily)
+                                                      {
+                                                          return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
+                                                      });
+
+        ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
+
+        return {{{*graphicsQueueFamily}, vertexBufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT}};
     }
 
     std::vector<DeviceMemoryConfiguration>
-    getBufferMemoryConfigurations(const BufferConfiguration& bufferConfiguration, const VkPhysicalDeviceMemoryProperties& memoryProperties) noexcept
+    getBufferMemoryConfigurations(const VkPhysicalDeviceMemoryProperties& memoryProperties, const VkMemoryRequirements memoryRequirements) noexcept
     {
         ND_SET_SCOPE();
 
-        return {};
+        const auto memoryTypeIndex = getMemoryTypeIndex(memoryProperties,
+                                                        memoryRequirements,
+                                                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+        return {{memoryRequirements.size, memoryRequirements.alignment, memoryTypeIndex}};
     }
 
     VulkanContextConfigurationsBuilder::Type

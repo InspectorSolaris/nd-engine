@@ -70,7 +70,13 @@ namespace nd::src::tools
     isSubmask(const uint32_t mask, const uint32_t submask) noexcept;
 
     uint32_t
+    getBitIndex(const uint32_t bit) noexcept;
+
+    uint32_t
     getNextBit(const uint32_t bits) noexcept;
+
+    uint32_t
+    getNextBitIndex(const uint32_t bits) noexcept;
 
     std::vector<std::string>
     getMerged(const std::vector<std::string>& strings1, const std::vector<std::string>& strings2) noexcept;

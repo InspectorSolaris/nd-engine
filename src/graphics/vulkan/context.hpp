@@ -27,6 +27,8 @@ namespace nd::src::graphics::vulkan
             const std::vector<Pipeline>&            graphicsPipelines;
             const std::vector<CommandPool>&         commandPools;
             const std::vector<CommandBuffers>&      commandBuffers;
+            const std::vector<Buffer>&              buffers;
+            const std::vector<DeviceMemories>&      bufferMemories;
 
             const std::vector<VkSemaphore>& imageAcquiredSemaphores;
             const std::vector<VkSemaphore>& imageRenderedSemaphores;

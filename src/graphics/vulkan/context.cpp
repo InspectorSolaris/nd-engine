@@ -24,6 +24,8 @@ namespace nd::src::graphics::vulkan
         , graphicsPipelines_(configuration.graphicsPipelines)
         , commandPools_(configuration.commandPools)
         , commandBuffers_(configuration.commandBuffers)
+        , buffers_(configuration.buffers)
+        , bufferMemories_(configuration.bufferMemories)
         , framesCount_(configuration.framesCount)
         , imageAcquiredSemaphores_(configuration.imageAcquiredSemaphores)
         , imageRenderedSemaphores_(configuration.imageRenderedSemaphores)
@@ -52,9 +54,14 @@ namespace nd::src::graphics::vulkan
             vkDestroyFence(device_.handle, imageRenderedFences_[index], nullptr);
         }
 
-        for(const auto buffer: buffers_)
+        for(size_t bufferIndex = 0; bufferIndex < buffers_.size(); ++bufferIndex)
         {
-            vkDestroyBuffer(device_.handle, buffer, nullptr);
+            for(size_t memoryIndex = 0; memoryIndex < bufferMemories_[bufferIndex].size(); ++memoryIndex)
+            {
+                vkFreeMemory(device_.handle, bufferMemories_[bufferIndex][memoryIndex].handle, nullptr);
+            }
+
+            vkDestroyBuffer(device_.handle, buffers_[bufferIndex], nullptr);
         }
 
         for(size_t index = 0; index < commandPools_.size(); ++index)
@@ -210,6 +217,30 @@ namespace nd::src::graphics::vulkan
         const auto bufferConfigs = configurations.getBuffers(device.queueFamilies);
         const auto buffers       = initializers.getBuffers(bufferConfigs, device.handle);
 
+        const auto bufferMemoryConfigs = getMapped<Buffer, std::vector<DeviceMemoryConfiguration>>(
+            buffers,
+            [&configurations, &physicalDeviceMemoryProperties, device = device.handle](const auto& buffer, const auto index)
+            {
+                const auto memoryRequirements = getMemoryRequirements(device, buffer);
+
+                return configurations.getBufferMemories(physicalDeviceMemoryProperties, memoryRequirements);
+            });
+
+        const auto bufferMemories = getMapped<std::vector<DeviceMemoryConfiguration>, std::vector<DeviceMemory>>(
+            bufferMemoryConfigs,
+            [&initializers, device = device.handle](const auto& bufferMemoryConfig, const auto index)
+            {
+                return initializers.getBufferMemories(bufferMemoryConfig, device);
+            });
+
+        vkBindBufferMemory(device.handle, buffers[0], bufferMemories[0][0].handle, 0);
+
+        const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
+                                                   {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},
+                                                   {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}}};
+
+        mapMemory(device.handle, bufferMemories[0][0], 0, vertices.data());
+
         for(size_t i = 0; i < swapchainFramebuffers.size(); ++i)
         {
             const auto framebuffer   = swapchainFramebuffers[i];
@@ -228,6 +259,11 @@ namespace nd::src::graphics::vulkan
 
             vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelines[0]);
+
+            const auto vertexBuffers        = std::vector<VkBuffer> {buffers[0]};
+            const auto vertexBuffersOffsets = std::vector<VkDeviceSize> {0};
+
+            vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers.size(), vertexBuffers.data(), vertexBuffersOffsets.data());
             vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
             vkCmdEndRenderPass(commandBuffer);
@@ -255,6 +291,8 @@ namespace nd::src::graphics::vulkan
                               graphicsPipelines,
                               commandPools,
                               commandBuffers,
+                              buffers,
+                              bufferMemories,
                               imageAcquiredSemaphores,
                               imageRenderedSemaphores,
                               imageAcquiredFences,

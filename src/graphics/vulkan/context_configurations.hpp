@@ -66,7 +66,7 @@ namespace nd::src::graphics::vulkan
 
         using Buffers = std::vector<BufferConfiguration>(const std::vector<QueueFamily>&);
 
-        using BufferMemories = std::vector<DeviceMemoryConfiguration>(const BufferConfiguration&, const VkPhysicalDeviceMemoryProperties&);
+        using BufferMemories = std::vector<DeviceMemoryConfiguration>(const VkPhysicalDeviceMemoryProperties&, const VkMemoryRequirements);
 
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
@@ -150,10 +150,10 @@ namespace nd::src::graphics::vulkan
     getCommandBufferConfigurations(const std::vector<CommandPool>& commandPools) noexcept;
 
     std::vector<BufferConfiguration>
-    getBufferConfigurations(const std::vector<QueueFamily>& queueFamilies) noexcept;
+    getBufferConfigurations(const std::vector<QueueFamily>& queueFamiliesPool);
 
     std::vector<DeviceMemoryConfiguration>
-    getBufferMemoryConfigurations(const BufferConfiguration& bufferConfiguration, const VkPhysicalDeviceMemoryProperties& memoryProperties) noexcept;
+    getBufferMemoryConfigurations(const VkPhysicalDeviceMemoryProperties& memoryProperties, const VkMemoryRequirements memoryRequirements) noexcept;
 
     class VulkanContextConfigurationsBuilder final
     {

@@ -43,6 +43,8 @@ namespace nd::src::graphics::vulkan
 
         using Buffers = std::vector<Buffer>(const std::vector<BufferConfiguration>&, const VkDevice);
 
+        using BufferMemories = std::vector<DeviceMemory>(const std::vector<DeviceMemoryConfiguration>&, const VkDevice);
+
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
         const std::function<Device>                getDevice;
@@ -61,6 +63,7 @@ namespace nd::src::graphics::vulkan
         const std::function<CommandPools>          getCommandPools;
         const std::function<CommandBuffers>        getCommandBuffers;
         const std::function<Buffers>               getBuffers;
+        const std::function<BufferMemories>        getBufferMemories;
     };
 
     class VulkanContextInitializersBuilder final
@@ -222,6 +225,14 @@ namespace nd::src::graphics::vulkan
         }
 
         Builder&
+        add(decltype(Type::getBufferMemories)& initializer) noexcept
+        {
+            getBufferMemories = initializer;
+
+            return *this;
+        }
+
+        Builder&
         operator<<(decltype(Type::getInstance)& initializer) noexcept
         {
             return add(initializer);
@@ -329,6 +340,12 @@ namespace nd::src::graphics::vulkan
             return add(initializer);
         }
 
+        Builder&
+        operator<<(decltype(Type::getBufferMemories)& initializer) noexcept
+        {
+            return add(initializer);
+        }
+
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
         std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
@@ -348,6 +365,7 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getCommandPools)>          getCommandPools;
         std::remove_cv_t<decltype(Type::getCommandBuffers)>        getCommandBuffers;
         std::remove_cv_t<decltype(Type::getBuffers)>               getBuffers;
+        std::remove_cv_t<decltype(Type::getBufferMemories)>        getBufferMemories;
     };
 
     extern VulkanContextInitializersBuilder initializersBuilder;

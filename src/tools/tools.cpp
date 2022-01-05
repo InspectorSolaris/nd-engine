@@ -15,9 +15,28 @@ namespace nd::src::tools
     }
 
     uint32_t
+    getBitIndex(const uint32_t bit) noexcept
+    {
+        auto index = 0;
+
+        while(index < 32 && (bit & (1 << index)) == 0)
+        {
+            ++index;
+        }
+
+        return index;
+    }
+
+    uint32_t
     getNextBit(const uint32_t bits) noexcept
     {
         return bits - (bits & (bits - 1));
+    }
+
+    uint32_t
+    getNextBitIndex(const uint32_t bits) noexcept
+    {
+        return getBitIndex(getNextBit(bits));
     }
 
     std::vector<std::string>
