@@ -6,7 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     void
-    mapMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offsetMin, const void* data) noexcept
+    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offsetMin, const void* data) noexcept
     {
         const auto offset = offsetMin % memory.alignment ? static_cast<uint64_t>(offsetMin / memory.alignment + 1) * memory.alignment : offsetMin;
 

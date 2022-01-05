@@ -239,7 +239,7 @@ namespace nd::src::graphics::vulkan
                                                    {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},
                                                    {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}}};
 
-        mapMemory(device.handle, bufferMemories[0][0], 0, vertices.data());
+        setMemory(device.handle, bufferMemories[0][0], 0, vertices.data());
 
         for(size_t i = 0; i < swapchainFramebuffers.size(); ++i)
         {

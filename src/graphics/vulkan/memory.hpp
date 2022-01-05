@@ -25,7 +25,7 @@ namespace nd::src::graphics::vulkan
     using DeviceMemories = std::vector<DeviceMemory>;
 
     void
-    mapMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offsetMin, const void* data) noexcept;
+    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offsetMin, const void* data) noexcept;
 
     VkPhysicalDeviceMemoryProperties
     getPhysicalDeviceMemoryProperties(const VkPhysicalDevice physicalDevice) noexcept;
