@@ -5,9 +5,11 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <cstddef>
 
 // C++ library
 
+#include <span>
 #include <array>
 #include <vector>
 #include <map>
@@ -45,5 +47,6 @@
 
 // External library
 
+#include <glm/glm.hpp>
 #include <spdlog/spdlog.h>
 #include <vulkan/vulkan.h>

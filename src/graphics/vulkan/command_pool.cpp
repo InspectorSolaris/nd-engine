@@ -35,8 +35,20 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto createInfo = getCommandPoolCreateInfo(configuration.queueFamilyIndex, configuration.flags, configuration.next);
+        const auto createInfo = getCommandPoolCreateInfo(configuration.queueFamily.index, configuration.flags, configuration.next);
 
-        return {getCommandPoolHandle(createInfo, device)};
+        return {configuration.queueFamily, getCommandPoolHandle(createInfo, device)};
+    }
+
+    std::vector<CommandPool>
+    getCommandPools(const std::vector<CommandPoolConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<CommandPoolConfiguration, CommandPool>(configurations,
+                                                                [device](const auto& configuration, const auto index)
+                                                                {
+                                                                    return getCommandPool(configuration, device);
+                                                                });
     }
 } // namespace nd::src::graphics::vulkan

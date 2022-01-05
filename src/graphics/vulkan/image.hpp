@@ -4,10 +4,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    struct Image final
-    {
-        const VkImage handle;
-    };
+    using Image = VkImage;
 
     VkImageCreateInfo
     getImageCreateInfo(const VkImageType           type,

@@ -31,10 +31,7 @@ namespace nd::src::graphics::vulkan
         const void*                   next  = {};
     };
 
-    struct RenderPass final
-    {
-        const VkRenderPass handle;
-    };
+    using RenderPass = VkRenderPass;
 
     VkRenderPassBeginInfo
     getRenderPassBeginInfo(const VkRenderPass  renderPass,

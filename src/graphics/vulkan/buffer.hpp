@@ -2,8 +2,22 @@
 
 #include "pch.hpp"
 
+#include "queue.hpp"
+
 namespace nd::src::graphics::vulkan
 {
+    struct BufferConfiguration final
+    {
+        const std::vector<QueueFamily> queueFamilies;
+        const VkDeviceSize             size;
+        const VkBufferUsageFlags       usage;
+
+        const VkBufferCreateFlags flags = {};
+        const void*               next  = {};
+    };
+
+    using Buffer = VkBuffer;
+
     VkBufferCreateInfo
     getBufferCreateInfo(const VkDeviceSize        size,
                         const VkBufferUsageFlags  usage,
@@ -15,4 +29,10 @@ namespace nd::src::graphics::vulkan
 
     VkBuffer
     getBufferHandle(const VkBufferCreateInfo& createInfo, const VkDevice device);
+
+    Buffer
+    getBuffer(const BufferConfiguration& configuration, const VkDevice device);
+
+    std::vector<Buffer>
+    getBuffers(const std::vector<BufferConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

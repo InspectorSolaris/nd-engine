@@ -50,6 +50,18 @@ namespace nd::src::graphics::vulkan
                                                             configuration.flags,
                                                             configuration.next);
 
-        return {getPipelineLayoutHandle(createInfo, device)};
+        return getPipelineLayoutHandle(createInfo, device);
+    }
+
+    std::vector<PipelineLayout>
+    getPipelineLayouts(const std::vector<PipelineLayoutConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<PipelineLayoutConfiguration, PipelineLayout>(configurations,
+                                                                      [device](const auto& configuration, const auto index)
+                                                                      {
+                                                                          return getPipelineLayout(configuration, device);
+                                                                      });
     }
 } // namespace nd::src::graphics::vulkan

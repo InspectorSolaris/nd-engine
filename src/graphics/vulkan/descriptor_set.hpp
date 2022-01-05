@@ -4,7 +4,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    struct DescriptorSetsConfiguration final
+    struct DescriptorSetConfiguration final
     {
         const std::vector<VkDescriptorSetLayout> layouts;
         const VkDescriptorPool                   descriptorPool;
@@ -12,10 +12,7 @@ namespace nd::src::graphics::vulkan
         const void* next = {};
     };
 
-    struct DescriptorSets final
-    {
-        const std::vector<VkDescriptorSet> handles;
-    };
+    using DescriptorSet = VkDescriptorSet;
 
     VkDescriptorSetAllocateInfo
     getDescriptorSetAllocateInfo(const VkDescriptorPool       descriptorPool,
@@ -24,8 +21,8 @@ namespace nd::src::graphics::vulkan
                                  const void*                  next = {}) noexcept;
 
     std::vector<VkDescriptorSet>
-    getDescriptorSetsHandles(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device);
+    getDescriptorSetHandles(const VkDescriptorSetAllocateInfo& allocateInfo, const VkDevice device);
 
-    DescriptorSets
-    getDescriptorSets(const DescriptorSetsConfiguration& configuration, const VkDevice device);
+    std::vector<DescriptorSet>
+    getDescriptorSets(const DescriptorSetConfiguration& configuration, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

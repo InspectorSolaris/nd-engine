@@ -1,25 +1,11 @@
-#include "context_configuration.hpp"
+#include "context_configurations.hpp"
 #include "tools.hpp"
 
 namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    auto initializersBuilder = VulkanContextInitializersBuilder {} << //
-        getInstance <<                                                //
-        getPhysicalDevice <<                                          //
-        getDevice <<                                                  //
-        getSwapchain <<                                               //
-        getRenderPass <<                                              //
-        getSwapchainImages <<                                         //
-        getImageViews <<                                              //
-        getFramebuffers <<                                            //
-        getShaderModules <<                                           //
-        getDescriptorPool <<                                          //
-        getDescriptorSetLayout <<                                     //
-        getDescriptorSets <<                                          //
-        getPipelineLayout <<                                          //
-        getGraphicsPipelines;
+    const auto vertexBufferSize = 16 * sizeof(Vertex);
 
     auto configurationsBuilder = VulkanContextConfigurationsBuilder {} << //
         getInstanceConfiguration <<                                       //
@@ -31,10 +17,14 @@ namespace nd::src::graphics::vulkan
         getSwapchainFramebufferConfigurations <<                          //
         getShaderModulesConfigurations <<                                 //
         getDescriptorPoolConfiguration <<                                 //
-        getDescriptorSetLayoutConfiguration <<                            //
-        getDescriptorSetsConfiguration <<                                 //
-        getPipelineLayoutConfiguration <<                                 //
-        getGraphicsPipelineConfigurations;
+        getDescriptorSetLayoutConfigurations <<                           //
+        getDescriptorSetConfiguration <<                                  //
+        getPipelineLayoutConfigurations <<                                //
+        getGraphicsPipelineConfigurations <<                              //
+        getCommandPoolConfigurations <<                                   //
+        getCommandBufferConfigurations <<                                 //
+        getBufferConfigurations <<                                        //
+        getBufferMemoryConfigurations;
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -143,6 +133,18 @@ namespace nd::src::graphics::vulkan
                 image};
     }
 
+    std::vector<ImageViewConfiguration>
+    getSwapchainImageViewConfigurations(const SwapchainConfiguration& swapchainConfiguration, const std::vector<Image>& images) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<Image, ImageViewConfiguration>(images,
+                                                        [&swapchainConfiguration](const auto image, const auto index)
+                                                        {
+                                                            return getSwapchainImageViewConfiguration(swapchainConfiguration, image);
+                                                        });
+    }
+
     FramebufferConfiguration
     getSwapchainFramebufferConfiguration(const SwapchainConfiguration& swapchainConfiguration,
                                          const VkImageView             imageView,
@@ -157,18 +159,6 @@ namespace nd::src::graphics::vulkan
                 swapchainConfiguration.imageArrayLayers};
     }
 
-    std::vector<ImageViewConfiguration>
-    getSwapchainImageViewConfigurations(const SwapchainConfiguration& swapchainConfiguration, const std::vector<Image>& images) noexcept
-    {
-        ND_SET_SCOPE();
-
-        return getMapped<Image, ImageViewConfiguration>(images,
-                                                        [&swapchainConfiguration](const auto image, const auto index)
-                                                        {
-                                                            return getSwapchainImageViewConfiguration(swapchainConfiguration, image.handle);
-                                                        });
-    }
-
     std::vector<FramebufferConfiguration>
     getSwapchainFramebufferConfigurations(const SwapchainConfiguration& swapchainConfiguration,
                                           const std::vector<ImageView>  imageViews,
@@ -180,7 +170,7 @@ namespace nd::src::graphics::vulkan
             imageViews,
             [&swapchainConfiguration, renderPass](const auto imageView, const auto index)
             {
-                return getSwapchainFramebufferConfiguration(swapchainConfiguration, imageView.handle, renderPass);
+                return getSwapchainFramebufferConfiguration(swapchainConfiguration, imageView, renderPass);
             });
     }
 
@@ -201,46 +191,59 @@ namespace nd::src::graphics::vulkan
         return {{{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1}}, 1, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT};
     }
 
-    DescriptorSetLayoutConfiguration
-    getDescriptorSetLayoutConfiguration() noexcept
+    std::vector<DescriptorSetLayoutConfiguration>
+    getDescriptorSetLayoutConfigurations() noexcept
     {
         ND_SET_SCOPE();
 
-        return {};
+        return {{}};
     }
 
-    DescriptorSetsConfiguration
-    getDescriptorSetsConfiguration(const VkDescriptorSetLayout descriptorSetLayout, const VkDescriptorPool descriptorPool) noexcept
+    DescriptorSetConfiguration
+    getDescriptorSetConfiguration(const std::vector<DescriptorSetLayout>& descriptorSetLayouts, const VkDescriptorPool descriptorPool) noexcept
     {
         ND_SET_SCOPE();
 
-        return {{descriptorSetLayout}, descriptorPool};
+        return {getMapped<DescriptorSetLayout, VkDescriptorSetLayout>(descriptorSetLayouts,
+                                                                      [](const auto descriptorSetLayout, const auto index)
+                                                                      {
+                                                                          return descriptorSetLayout;
+                                                                      }),
+                descriptorPool};
     }
 
-    PipelineLayoutConfiguration
-    getPipelineLayoutConfiguration(const VkDescriptorSetLayout descriptorSetLayout) noexcept
+    std::vector<PipelineLayoutConfiguration>
+    getPipelineLayoutConfigurations(const std::vector<DescriptorSetLayout>& descriptorSetLayouts) noexcept
     {
         ND_SET_SCOPE();
 
-        return {{descriptorSetLayout}, {}};
+        return {{getMapped<DescriptorSetLayout, VkDescriptorSetLayout>(descriptorSetLayouts,
+                                                                       [](const auto descriptorSetLayout, const auto index)
+                                                                       {
+                                                                           return descriptorSetLayout;
+                                                                       }),
+                 {}}};
     }
 
-    std::vector<PipelineConfiguration>
-    getGraphicsPipelineConfigurations(const std::vector<ShaderModule>& shaderModules,
-                                      const VkPipelineLayout           pipelineLayout,
-                                      const VkRenderPass               renderPass,
-                                      const uint32_t                   width,
-                                      const uint32_t                   height) noexcept
+    std::vector<GraphicsPipelineConfiguration>
+    getGraphicsPipelineConfigurations(const std::vector<ShaderModule>&   shaderModules,
+                                      const std::vector<PipelineLayout>& pipelineLayouts,
+                                      const VkRenderPass                 renderPass,
+                                      const uint32_t                     width,
+                                      const uint32_t                     height) noexcept
     {
         ND_SET_SCOPE();
 
-        const auto vertexInputStateCreateInfo   = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
+        const auto vertexInputStateCreateInfo = PipelineVertexInputStateCreateInfo {
+            {{0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX}},
+            {{0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position)}, {1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)}}};
+
         const auto inputAssemblyStateCreateInfo = getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
 
         const auto tessellationStateCreateInfo = getPipelineTessellationStateCreateInfo(1);
 
         const auto scissors = VkRect2D {{0, 0}, {width, height}};
-        const auto viewport = VkViewport {0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, 0.1f};
+        const auto viewport = VkViewport {0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, 0.0f};
 
         const auto rasterizationStateCreateInfo = getPipelineRasterizationStateCreateInfo(VK_FALSE,
                                                                                           VK_FALSE,
@@ -298,47 +301,68 @@ namespace nd::src::graphics::vulkan
                  depthStencilStateCreateInfo,
                  {blendConstants, {colorBlendAttachment}, VK_FALSE, VK_LOGIC_OP_OR},
                  dynamicStateCreateInfo,
-                 pipelineLayout,
+                 pipelineLayouts[0],
                  renderPass,
                  0}};
     }
 
-    VulkanContextInitializersBuilder::Type
-    VulkanContextInitializersBuilder::build() const
+    std::vector<CommandPoolConfiguration>
+    getCommandPoolConfigurations(const std::vector<QueueFamily>& queueFamiliesPool)
     {
         ND_SET_SCOPE();
 
-        ND_ASSERT(getInstance &&              //
-                  getPhysicalDevice &&        //
-                  getDevice &&                //
-                  getSurface &&               //
-                  getSwapchain &&             //
-                  getRenderPass &&            //
-                  getSwapchainImages &&       //
-                  getSwapchainImageViews &&   //
-                  getSwapchainFramebuffers && //
-                  getShaderModules &&         //
-                  getDescriptorPool &&        //
-                  getDescriptorSetLayout &&   //
-                  getDescriptorSets &&        //
-                  getPipelineLayout &&        //
-                  getPipelines);
+        const auto graphicsQueueFamily = std::find_if(queueFamiliesPool.begin(),
+                                                      queueFamiliesPool.end(),
+                                                      [](const auto& queueFamily)
+                                                      {
+                                                          return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
+                                                      });
 
-        return {getInstance,
-                getPhysicalDevice,
-                getDevice,
-                getSurface,
-                getSwapchain,
-                getRenderPass,
-                getSwapchainImages,
-                getSwapchainImageViews,
-                getSwapchainFramebuffers,
-                getShaderModules,
-                getDescriptorPool,
-                getDescriptorSetLayout,
-                getDescriptorSets,
-                getPipelineLayout,
-                getPipelines};
+        ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
+
+        return {{*graphicsQueueFamily}};
+    }
+
+    std::vector<CommandBufferConfiguration>
+    getCommandBufferConfigurations(const std::vector<CommandPool>& commandPools) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<CommandPool, CommandBufferConfiguration>(
+            commandPools,
+            [](const auto& commandPool, const auto index)
+            {
+                return CommandBufferConfiguration {commandPool.handle, VK_COMMAND_BUFFER_LEVEL_PRIMARY, commandPool.queueFamily.queueCount};
+            });
+    }
+
+    std::vector<BufferConfiguration>
+    getBufferConfigurations(const std::vector<QueueFamily>& queueFamiliesPool)
+    {
+        ND_SET_SCOPE();
+
+        const auto graphicsQueueFamily = std::find_if(queueFamiliesPool.begin(),
+                                                      queueFamiliesPool.end(),
+                                                      [](const auto& queueFamily)
+                                                      {
+                                                          return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
+                                                      });
+
+        ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
+
+        return {{{*graphicsQueueFamily}, vertexBufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT}};
+    }
+
+    std::vector<DeviceMemoryConfiguration>
+    getBufferMemoryConfigurations(const VkPhysicalDeviceMemoryProperties& memoryProperties, const VkMemoryRequirements memoryRequirements) noexcept
+    {
+        ND_SET_SCOPE();
+
+        const auto memoryTypeIndex = getMemoryTypeIndex(memoryProperties,
+                                                        memoryRequirements,
+                                                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+        return {{memoryRequirements.size, memoryRequirements.alignment, memoryTypeIndex}};
     }
 
     VulkanContextConfigurationsBuilder::Type
@@ -355,10 +379,14 @@ namespace nd::src::graphics::vulkan
                   getSwapchainFramebuffers && //
                   getShaderModules &&         //
                   getDescriptorPool &&        //
-                  getDescriptorSetLayout &&   //
-                  getDescriptorSets &&        //
-                  getPipelineLayout &&        //
-                  getPipelines);
+                  getDescriptorSetLayouts &&  //
+                  getDescriptorSet &&         //
+                  getPipelineLayouts &&       //
+                  getGraphicsPipelines &&     //
+                  getCommandPools &&          //
+                  getCommandBuffers &&        //
+                  getBuffers &&               //
+                  getBufferMemories);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -369,9 +397,13 @@ namespace nd::src::graphics::vulkan
                 getSwapchainFramebuffers,
                 getShaderModules,
                 getDescriptorPool,
-                getDescriptorSetLayout,
-                getDescriptorSets,
-                getPipelineLayout,
-                getPipelines};
+                getDescriptorSetLayouts,
+                getDescriptorSet,
+                getPipelineLayouts,
+                getGraphicsPipelines,
+                getCommandPools,
+                getCommandBuffers,
+                getBuffers,
+                getBufferMemories};
     }
 } // namespace nd::src::graphics::vulkan

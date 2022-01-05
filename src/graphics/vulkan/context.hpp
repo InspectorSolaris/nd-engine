@@ -2,7 +2,8 @@
 
 #include "pch.hpp"
 
-#include "context_configuration.hpp"
+#include "context_configurations.hpp"
+#include "context_initializers.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -11,17 +12,23 @@ namespace nd::src::graphics::vulkan
     public:
         struct Configuration final
         {
+            const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties;
+
             const Device    device;
             const Swapchain swapchain;
 
-            const std::vector<Image>&        swapchainImages;
-            const std::vector<ImageView>&    swapchainImageViews;
-            const std::vector<Framebuffer>&  swapchainFramebuffers;
-            const std::vector<ShaderModule>& shaderModules;
-
-            const Pipelines&      pipelines;
-            const DescriptorSets& descriptorSets;
-            const CommandBuffers& commandBuffers;
+            const std::vector<Image>&               swapchainImages;
+            const std::vector<ImageView>&           swapchainImageViews;
+            const std::vector<Framebuffer>&         swapchainFramebuffers;
+            const std::vector<ShaderModule>&        shaderModules;
+            const std::vector<DescriptorSetLayout>& descriptorSetLayouts;
+            const std::vector<DescriptorSet>        descriptorSets;
+            const std::vector<PipelineLayout>&      pipelineLayouts;
+            const std::vector<Pipeline>&            graphicsPipelines;
+            const std::vector<CommandPool>&         commandPools;
+            const std::vector<CommandBuffers>&      commandBuffers;
+            const std::vector<Buffer>&              buffers;
+            const std::vector<DeviceMemories>&      bufferMemories;
 
             const std::vector<VkSemaphore>& imageAcquiredSemaphores;
             const std::vector<VkSemaphore>& imageRenderedSemaphores;
@@ -30,13 +37,11 @@ namespace nd::src::graphics::vulkan
 
             const size_t framesCount;
 
-            const Instance            instance;
-            const Surface             surface;
-            const RenderPass          renderPass;
-            const DescriptorPool      descriptorPool;
-            const DescriptorSetLayout descriptorSetLayout;
-            const PipelineLayout      pipelineLayout;
-            const CommandPool         commandPool;
+            const Instance       instance;
+            const PhysicalDevice physicalDevice;
+            const Surface        surface;
+            const RenderPass     renderPass;
+            const DescriptorPool descriptorPool;
         };
 
         VulkanContext(const Configuration& configuration);
@@ -55,17 +60,23 @@ namespace nd::src::graphics::vulkan
         drawNextFrame();
 
     private:
+        VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties_ {};
+
         Device    device_ {};
         Swapchain swapchain_ {};
 
-        std::vector<Image>        swapchainImages_ {};
-        std::vector<ImageView>    swapchainImageViews_ {};
-        std::vector<Framebuffer>  swapchainFramebuffers_ {};
-        std::vector<ShaderModule> shaderModules_ {};
-
-        Pipelines      pipelines_ {};
-        DescriptorSets descriptorSets_ {};
-        CommandBuffers commandBuffers_ {};
+        std::vector<Image>               swapchainImages_ {};
+        std::vector<ImageView>           swapchainImageViews_ {};
+        std::vector<Framebuffer>         swapchainFramebuffers_ {};
+        std::vector<ShaderModule>        shaderModules_ {};
+        std::vector<DescriptorSetLayout> descriptorSetLayouts_ {};
+        std::vector<DescriptorSet>       descriptorSets_ {};
+        std::vector<PipelineLayout>      pipelineLayouts_ {};
+        std::vector<Pipeline>            graphicsPipelines_ {};
+        std::vector<CommandPool>         commandPools_ {};
+        std::vector<CommandBuffers>      commandBuffers_ {};
+        std::vector<Buffer>              buffers_ {};
+        std::vector<DeviceMemories>      bufferMemories_ {};
 
         std::vector<VkSemaphore> imageAcquiredSemaphores_ {};
         std::vector<VkSemaphore> imageRenderedSemaphores_ {};
@@ -74,13 +85,11 @@ namespace nd::src::graphics::vulkan
 
         size_t framesCount_ {};
 
-        Instance            instance_ {};
-        Surface             surface_ {};
-        RenderPass          renderPass_ {};
-        DescriptorPool      descriptorPool_ {};
-        DescriptorSetLayout descriptorSetLayout_ {};
-        PipelineLayout      pipelineLayout_ {};
-        CommandPool         commandPool_ {};
+        Instance       instance_ {};
+        PhysicalDevice physicalDevice_ {};
+        Surface        surface_ {};
+        RenderPass     renderPass_ {};
+        DescriptorPool descriptorPool_ {};
     };
 
     VulkanContext

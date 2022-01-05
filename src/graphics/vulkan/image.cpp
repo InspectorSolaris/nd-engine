@@ -67,10 +67,6 @@ namespace nd::src::graphics::vulkan
 
         vkGetSwapchainImagesKHR(device, swapchain, &count, images.data());
 
-        return getMapped<VkImage, Image>(images,
-                                         [](const auto image, const auto index)
-                                         {
-                                             return Image {image};
-                                         });
+        return images;
     }
 } // namespace nd::src::graphics::vulkan

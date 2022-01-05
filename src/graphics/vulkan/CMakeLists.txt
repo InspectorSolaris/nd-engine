@@ -4,7 +4,8 @@ set(TARGET_SRC
     buffer_view.cpp
     command_buffer.cpp
     command_pool.cpp
-    context_configuration.cpp
+    context_configurations.cpp
+    context_initializers.cpp
     context.cpp
     descriptor_pool.cpp
     descriptor_set.cpp
@@ -14,6 +15,7 @@ set(TARGET_SRC
     image.cpp
     image_view.cpp
     instance.cpp
+    memory.cpp
     pipeline_layout.cpp
     pipeline.cpp
     queue.cpp
@@ -36,6 +38,7 @@ add_library(${TARGET_NAME} STATIC ${TARGET_SRC})
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE nd-src-libs-vulkan
+    PRIVATE nd-src-libs-glm
     PRIVATE nd-src-tools)
 
 target_precompile_headers(${TARGET_NAME} PRIVATE pch.hpp)

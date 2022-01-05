@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <cstddef>
 
 // C++ library
 

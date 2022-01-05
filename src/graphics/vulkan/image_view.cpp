@@ -53,7 +53,7 @@ namespace nd::src::graphics::vulkan
                                                        configuration.flags,
                                                        configuration.next);
 
-        return {getImageViewHandle(createInfo, device)};
+        return getImageViewHandle(createInfo, device);
     }
 
     std::vector<ImageView>

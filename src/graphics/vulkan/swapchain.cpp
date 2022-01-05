@@ -193,11 +193,7 @@ namespace nd::src::graphics::vulkan
 
         auto queueFamilies = getQueueFamilies(configuration.physicalDevice, configuration.surface);
 
-        const auto queueFamiliesIndices = getMapped<QueueFamily, uint32_t>(queueFamilies,
-                                                                           [](const auto& queueFamily, const auto index)
-                                                                           {
-                                                                               return queueFamily.index;
-                                                                           });
+        const auto queueFamiliesIndices = getQueueFamiliesIndices(queueFamilies);
 
         ND_ASSERT(queueFamiliesIndices.size());
         ND_ASSERT(isFormatSupported(configuration, formats));

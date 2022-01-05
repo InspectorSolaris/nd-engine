@@ -37,4 +37,19 @@ namespace nd::src::graphics::vulkan
 
         return bufferView;
     }
+
+    BufferView
+    getBufferView(const BufferViewConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto createInfo = getBufferViewCreateInfo(configuration.buffer,
+                                                        configuration.format,
+                                                        configuration.offset,
+                                                        configuration.range,
+                                                        configuration.flags,
+                                                        configuration.next);
+
+        return {getBufferViewHandle(createInfo, device)};
+    }
 } // namespace nd::src::graphics::vulkan

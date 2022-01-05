@@ -21,6 +21,7 @@
 #include "command_pool.hpp"
 #include "command_buffer.hpp"
 #include "synchronization.hpp"
+#include "memory.hpp"
 
 namespace nd::src::graphics::vulkan
 {

@@ -275,7 +275,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkPipeline>
-    getGraphicsPipelineHandle(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device)
+    getGraphicsPipelineHandles(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -286,44 +286,66 @@ namespace nd::src::graphics::vulkan
         return pipelines;
     }
 
-    Pipelines
-    getGraphicsPipelines(const std::vector<PipelineConfiguration>& configurations, const VkDevice device)
+    std::vector<Pipeline>
+    getGraphicsPipelines(const std::vector<GraphicsPipelineConfiguration>& configurations, const VkDevice device)
     {
         ND_SET_SCOPE();
 
-        auto viewportStates   = std::vector<VkPipelineViewportStateCreateInfo> {};
-        auto colorBlendStates = std::vector<VkPipelineColorBlendStateCreateInfo> {};
-
-        viewportStates.reserve(configurations.size());
-        colorBlendStates.reserve(configurations.size());
-
-        const auto createInfos = getMapped<PipelineConfiguration, VkGraphicsPipelineCreateInfo>(
+        const auto vertexInputStates = getMapped<GraphicsPipelineConfiguration, VkPipelineVertexInputStateCreateInfo>(
             configurations,
-            [&viewportStates, &colorBlendStates](const auto& configuration, const auto index)
+            [](const auto& configuration, const auto index)
             {
-                viewportStates.push_back(getPipelineViewportStateCreateInfo(configuration.viewportState.viewports.size(),
-                                                                            configuration.viewportState.scissors.size(),
-                                                                            configuration.viewportState.viewports.data(),
-                                                                            configuration.viewportState.scissors.data(),
-                                                                            configuration.viewportState.flags,
-                                                                            configuration.viewportState.next));
+                const auto& vertexInputState = configuration.vertexInputState;
 
-                colorBlendStates.push_back(getPipelineColorBlendStateCreateInfo(configuration.colorBlendState.logicOpEnable,
-                                                                                configuration.colorBlendState.logicOp,
-                                                                                configuration.colorBlendState.colorBlendAttachment.size(),
-                                                                                configuration.colorBlendState.colorBlendAttachment.data(),
-                                                                                configuration.colorBlendState.blendConstants.data()));
+                return getPipelineVertexInputStateCreateInfo(vertexInputState.vertexBindingDescriptions.size(),
+                                                             vertexInputState.vertexAttributeDescriptions.size(),
+                                                             vertexInputState.vertexBindingDescriptions.data(),
+                                                             vertexInputState.vertexAttributeDescriptions.data(),
+                                                             vertexInputState.flags,
+                                                             vertexInputState.next);
+            });
 
+        const auto viewportStates = getMapped<GraphicsPipelineConfiguration, VkPipelineViewportStateCreateInfo>(
+            configurations,
+            [](const auto& configuration, const auto index)
+            {
+                const auto& viewportState = configuration.viewportState;
+
+                return getPipelineViewportStateCreateInfo(viewportState.viewports.size(),
+                                                          viewportState.scissors.size(),
+                                                          viewportState.viewports.data(),
+                                                          viewportState.scissors.data(),
+                                                          viewportState.flags,
+                                                          viewportState.next);
+            });
+
+        const auto colorBlendStates = getMapped<GraphicsPipelineConfiguration, VkPipelineColorBlendStateCreateInfo>(
+            configurations,
+            [](const auto& configuration, const auto index)
+            {
+                const auto& colorBlendState = configuration.colorBlendState;
+
+                return getPipelineColorBlendStateCreateInfo(colorBlendState.logicOpEnable,
+                                                            colorBlendState.logicOp,
+                                                            colorBlendState.colorBlendAttachment.size(),
+                                                            colorBlendState.colorBlendAttachment.data(),
+                                                            colorBlendState.blendConstants.data());
+            });
+
+        const auto createInfos = getMapped<GraphicsPipelineConfiguration, VkGraphicsPipelineCreateInfo>(
+            configurations,
+            [&vertexInputStates, &viewportStates, &colorBlendStates](const auto& configuration, const auto index)
+            {
                 return getGraphicsPipelineCreateInfo(configuration.stages.size(),
                                                      configuration.stages.data(),
-                                                     &configuration.vertexInputState,
+                                                     &vertexInputStates[index],
                                                      &configuration.inputAssemblyState,
                                                      &configuration.tessellationState,
-                                                     &viewportStates.back(),
+                                                     &viewportStates[index],
                                                      &configuration.rasterizationState,
                                                      &configuration.multisampleState,
                                                      &configuration.depthStencilState,
-                                                     &colorBlendStates.back(),
+                                                     &colorBlendStates[index],
                                                      &configuration.dynamicState,
                                                      configuration.layout,
                                                      configuration.renderPass,
@@ -334,6 +356,6 @@ namespace nd::src::graphics::vulkan
                                                      configuration.next);
             });
 
-        return {getGraphicsPipelineHandle(createInfos, device)};
+        return getGraphicsPipelineHandles(createInfos, device);
     }
 } // namespace nd::src::graphics::vulkan
