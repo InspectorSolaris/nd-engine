@@ -139,7 +139,7 @@ namespace nd::src::graphics::vulkan
         return getMapped<Image, ImageViewConfiguration>(images,
                                                         [&swapchainConfiguration](const auto image, const auto index)
                                                         {
-                                                            return getSwapchainImageViewConfiguration(swapchainConfiguration, image.handle);
+                                                            return getSwapchainImageViewConfiguration(swapchainConfiguration, image);
                                                         });
     }
 
@@ -168,7 +168,7 @@ namespace nd::src::graphics::vulkan
             imageViews,
             [&swapchainConfiguration, renderPass](const auto imageView, const auto index)
             {
-                return getSwapchainFramebufferConfiguration(swapchainConfiguration, imageView.handle, renderPass);
+                return getSwapchainFramebufferConfiguration(swapchainConfiguration, imageView, renderPass);
             });
     }
 
@@ -205,7 +205,7 @@ namespace nd::src::graphics::vulkan
         return {getMapped<DescriptorSetLayout, VkDescriptorSetLayout>(descriptorSetLayouts,
                                                                       [](const auto descriptorSetLayout, const auto index)
                                                                       {
-                                                                          return descriptorSetLayout.handle;
+                                                                          return descriptorSetLayout;
                                                                       }),
                 descriptorPool};
     }
@@ -218,7 +218,7 @@ namespace nd::src::graphics::vulkan
         return {{getMapped<DescriptorSetLayout, VkDescriptorSetLayout>(descriptorSetLayouts,
                                                                        [](const auto descriptorSetLayout, const auto index)
                                                                        {
-                                                                           return descriptorSetLayout.handle;
+                                                                           return descriptorSetLayout;
                                                                        }),
                  {}}};
     }
