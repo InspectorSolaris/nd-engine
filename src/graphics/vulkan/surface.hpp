@@ -4,8 +4,5 @@
 
 namespace nd::src::graphics::vulkan
 {
-    struct Surface final
-    {
-        const VkSurfaceKHR handle;
-    };
+    using Surface = VkSurfaceKHR;
 } // namespace nd::src::graphics::vulkan

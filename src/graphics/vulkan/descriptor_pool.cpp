@@ -45,6 +45,6 @@ namespace nd::src::graphics::vulkan
                                                             configuration.flags,
                                                             configuration.next);
 
-        return {getDescriptorPoolHandle(createInfo, device)};
+        return getDescriptorPoolHandle(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

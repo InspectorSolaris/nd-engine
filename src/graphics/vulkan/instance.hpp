@@ -20,10 +20,7 @@ namespace nd::src::graphics::vulkan
         const void*                 next  = {};
     };
 
-    struct Instance final
-    {
-        const VkInstance handle;
-    };
+    using Instance = VkInstance;
 
     VkApplicationInfo
     getApplicationInfo(const char*    applicationName,

@@ -4,6 +4,15 @@
 
 namespace nd::src::graphics::vulkan
 {
+    struct PipelineVertexInputStateCreateInfo final
+    {
+        const std::vector<VkVertexInputBindingDescription>   vertexBindingDescriptions;
+        const std::vector<VkVertexInputAttributeDescription> vertexAttributeDescriptions;
+
+        const VkPipelineVertexInputStateCreateFlags flags = {};
+        const void*                                 next  = {};
+    };
+
     struct PipelineViewportStateCreateInfo final
     {
         const std::vector<VkViewport> viewports;
@@ -29,7 +38,8 @@ namespace nd::src::graphics::vulkan
     {
         const std::vector<VkPipelineShaderStageCreateInfo> stages;
 
-        const VkPipelineVertexInputStateCreateInfo   vertexInputState;
+        const PipelineVertexInputStateCreateInfo vertexInputState;
+
         const VkPipelineInputAssemblyStateCreateInfo inputAssemblyState;
         const VkPipelineTessellationStateCreateInfo  tessellationState;
 
@@ -50,10 +60,7 @@ namespace nd::src::graphics::vulkan
         const void*                 next  = {};
     };
 
-    struct Pipelines final
-    {
-        const std::vector<VkPipeline> handles;
-    };
+    using Pipeline = VkPipeline;
 
     VkPipelineShaderStageCreateInfo
     getPipelineShaderStageCreateInfo(const VkShaderStageFlagBits            stage,
@@ -165,6 +172,6 @@ namespace nd::src::graphics::vulkan
     std::vector<VkPipeline>
     getGraphicsPipelineHandles(const std::vector<VkGraphicsPipelineCreateInfo>& createInfos, const VkDevice device);
 
-    Pipelines
+    std::vector<Pipeline>
     getGraphicsPipelines(const std::vector<GraphicsPipelineConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

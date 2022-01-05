@@ -18,10 +18,7 @@ namespace nd::src::graphics::vulkan
         const void*                    next  = {};
     };
 
-    struct Framebuffer final
-    {
-        const VkFramebuffer handle;
-    };
+    using Framebuffer = VkFramebuffer;
 
     VkFramebufferCreateInfo
     getFramebufferCreateInfo(const VkRenderPass             renderPass,

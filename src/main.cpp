@@ -42,18 +42,13 @@ main()
         const auto glfwContext = getGlfwContext();
         const auto glfwWindow  = getWindow(windowConfiguration);
 
-        const auto getSurfaceImplementation = [glfwWindow](const VkInstance instance)
-        {
-            return Surface {getSurface(glfwWindow, instance)};
-        };
-
         auto vulkanContext = getVulkanContext({windowConfiguration.title,
                                                windowConfiguration.title,
                                                {},
                                                getRequiredExtensions(),
                                                static_cast<uint32_t>(windowConfiguration.width),
                                                static_cast<uint32_t>(windowConfiguration.height)},
-                                              initializersBuilder << getSurfaceImplementation,
+                                              initializersBuilder << bind(getSurface, cref(glfwWindow), _1),
                                               configurationsBuilder);
 
         while(!glfwWindowShouldClose(glfwWindow))

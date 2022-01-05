@@ -15,6 +15,7 @@ set(TARGET_SRC
     image.cpp
     image_view.cpp
     instance.cpp
+    memory.cpp
     pipeline_layout.cpp
     pipeline.cpp
     queue.cpp

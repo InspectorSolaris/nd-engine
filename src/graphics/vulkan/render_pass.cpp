@@ -171,6 +171,6 @@ namespace nd::src::graphics::vulkan
                                                         configuration.flags,
                                                         configuration.next);
 
-        return {getRenderPassHandle(createInfo, device)};
+        return getRenderPassHandle(createInfo, device);
     }
 } // namespace nd::src::graphics::vulkan

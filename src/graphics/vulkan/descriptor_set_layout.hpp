@@ -12,10 +12,7 @@ namespace nd::src::graphics::vulkan
         const void*                            next  = {};
     };
 
-    struct DescriptorSetLayout final
-    {
-        const VkDescriptorSetLayout handle;
-    };
+    using DescriptorSetLayout = VkDescriptorSetLayout;
 
     VkDescriptorSetLayoutCreateInfo
     getDescriptorSetLayoutCreateInfo(const uint32_t                         bindingsCount,

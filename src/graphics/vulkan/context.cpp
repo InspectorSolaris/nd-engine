@@ -8,6 +8,8 @@ namespace nd::src::graphics::vulkan
     VulkanContext::VulkanContext(const Configuration& configuration)
         : instance_(configuration.instance)
         , device_(configuration.device)
+        , physicalDevice_(configuration.physicalDevice)
+        , physicalDeviceMemoryProperties_(configuration.physicalDeviceMemoryProperties)
         , surface_(configuration.surface)
         , swapchain_(configuration.swapchain)
         , renderPass_(configuration.renderPass)
@@ -17,7 +19,7 @@ namespace nd::src::graphics::vulkan
         , shaderModules_(configuration.shaderModules)
         , descriptorPool_(configuration.descriptorPool)
         , descriptorSetLayouts_(configuration.descriptorSetLayouts)
-        , descriptorSet_(configuration.descriptorSet)
+        , descriptorSets_(configuration.descriptorSets)
         , pipelineLayouts_(configuration.pipelineLayouts)
         , graphicsPipelines_(configuration.graphicsPipelines)
         , commandPools_(configuration.commandPools)
@@ -50,34 +52,36 @@ namespace nd::src::graphics::vulkan
             vkDestroyFence(device_.handle, imageRenderedFences_[index], nullptr);
         }
 
+        for(const auto buffer: buffers_)
+        {
+            vkDestroyBuffer(device_.handle, buffer, nullptr);
+        }
+
         for(size_t index = 0; index < commandPools_.size(); ++index)
         {
-            vkFreeCommandBuffers(device_.handle,
-                                 commandPools_[index].handle,
-                                 commandBuffers_[index].handles.size(),
-                                 commandBuffers_[index].handles.data());
+            vkFreeCommandBuffers(device_.handle, commandPools_[index].handle, commandBuffers_[index].size(), commandBuffers_[index].data());
 
             vkDestroyCommandPool(device_.handle, commandPools_[index].handle, nullptr);
         }
 
-        for(const auto pipeline: graphicsPipelines_.handles)
+        for(const auto graphicsPipeline: graphicsPipelines_)
         {
-            vkDestroyPipeline(device_.handle, pipeline, nullptr);
+            vkDestroyPipeline(device_.handle, graphicsPipeline, nullptr);
         }
 
         for(const auto pipelineLayout: pipelineLayouts_)
         {
-            vkDestroyPipelineLayout(device_.handle, pipelineLayout.handle, nullptr);
+            vkDestroyPipelineLayout(device_.handle, pipelineLayout, nullptr);
         }
 
-        vkFreeDescriptorSets(device_.handle, descriptorPool_.handle, descriptorSet_.handles.size(), descriptorSet_.handles.data());
+        vkFreeDescriptorSets(device_.handle, descriptorPool_, descriptorSets_.size(), descriptorSets_.data());
 
         for(const auto descriptorSetLayout: descriptorSetLayouts_)
         {
-            vkDestroyDescriptorSetLayout(device_.handle, descriptorSetLayout.handle, nullptr);
+            vkDestroyDescriptorSetLayout(device_.handle, descriptorSetLayout, nullptr);
         }
 
-        vkDestroyDescriptorPool(device_.handle, descriptorPool_.handle, nullptr);
+        vkDestroyDescriptorPool(device_.handle, descriptorPool_, nullptr);
 
         for(const auto shaderModule: shaderModules_)
         {
@@ -86,19 +90,19 @@ namespace nd::src::graphics::vulkan
 
         for(const auto swapchainFramebuffer: swapchainFramebuffers_)
         {
-            vkDestroyFramebuffer(device_.handle, swapchainFramebuffer.handle, nullptr);
+            vkDestroyFramebuffer(device_.handle, swapchainFramebuffer, nullptr);
         }
 
         for(const auto swapchainImageView: swapchainImageViews_)
         {
-            vkDestroyImageView(device_.handle, swapchainImageView.handle, nullptr);
+            vkDestroyImageView(device_.handle, swapchainImageView, nullptr);
         }
 
-        vkDestroyRenderPass(device_.handle, renderPass_.handle, nullptr);
+        vkDestroyRenderPass(device_.handle, renderPass_, nullptr);
         vkDestroySwapchainKHR(device_.handle, swapchain_.handle, nullptr);
-        vkDestroySurfaceKHR(instance_.handle, surface_.handle, nullptr);
+        vkDestroySurfaceKHR(instance_, surface_, nullptr);
         vkDestroyDevice(device_.handle, nullptr);
-        vkDestroyInstance(instance_.handle, nullptr);
+        vkDestroyInstance(instance_, nullptr);
     }
 
     void
@@ -123,7 +127,7 @@ namespace nd::src::graphics::vulkan
 
         const auto imageIndex = getNextSwapchainImage(device_.handle, swapchain_.handle, imageAcquiredSemaphore, imageAcquiredFence);
 
-        const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_[0].handles[imageIndex]};
+        const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_[0][imageIndex]};
         const auto waitDstStageMask = std::vector<VkPipelineStageFlags> {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
         const auto waitSemaphores   = std::vector<VkSemaphore> {imageAcquiredSemaphore};
         const auto signalSemaphores = std::vector<VkSemaphore> {imageRenderedSemaphore};
@@ -156,14 +160,16 @@ namespace nd::src::graphics::vulkan
         const auto instance       = initializers.getInstance(instanceConfig);
 
         const auto physicalDeviceConfig = configurations.getPhysicalDevice();
-        const auto physicalDevice       = initializers.getPhysicalDevice(physicalDeviceConfig, instance.handle);
+        const auto physicalDevice       = initializers.getPhysicalDevice(physicalDeviceConfig, instance);
+
+        const auto physicalDeviceMemoryProperties = getPhysicalDeviceMemoryProperties(physicalDevice);
 
         const auto deviceConfig = configurations.getDevice(physicalDeviceConfig);
-        const auto device       = initializers.getDevice(deviceConfig, physicalDevice.handle);
+        const auto device       = initializers.getDevice(deviceConfig, physicalDevice);
 
-        const auto surface = initializers.getSurface(instance.handle);
+        const auto surface = initializers.getSurface(instance);
 
-        const auto swapchainConfig = configurations.getSwapchain(physicalDevice.handle, surface.handle, width, height);
+        const auto swapchainConfig = configurations.getSwapchain(physicalDevice, surface, width, height);
         const auto swapchain       = initializers.getSwapchain(swapchainConfig, device.handle);
 
         const auto renderPassConfig = configurations.getRenderPass(swapchainConfig);
@@ -171,54 +177,57 @@ namespace nd::src::graphics::vulkan
 
         const auto swapchainImages = initializers.getSwapchainImages(swapchain.handle, device.handle);
 
-        const auto swapchainImageViewConfig = configurations.getSwapchainImageViews(swapchainConfig, swapchainImages);
-        const auto swapchainImageViews      = initializers.getSwapchainImageViews(swapchainImageViewConfig, device.handle);
+        const auto swapchainImageViewConfigs = configurations.getSwapchainImageViews(swapchainConfig, swapchainImages);
+        const auto swapchainImageViews       = initializers.getSwapchainImageViews(swapchainImageViewConfigs, device.handle);
 
-        const auto swapchainFramebufferConfig = configurations.getSwapchainFramebuffers(swapchainConfig, swapchainImageViews, renderPass.handle);
-        const auto swapchainFramebuffers      = initializers.getSwapchainFramebuffers(swapchainFramebufferConfig, device.handle);
+        const auto swapchainFramebufferConfigs = configurations.getSwapchainFramebuffers(swapchainConfig, swapchainImageViews, renderPass);
+        const auto swapchainFramebuffers       = initializers.getSwapchainFramebuffers(swapchainFramebufferConfigs, device.handle);
 
-        const auto shaderModuleConfig = configurations.getShaderModules();
-        const auto shaderModules      = initializers.getShaderModules(shaderModuleConfig, device.handle);
+        const auto shaderModuleConfigs = configurations.getShaderModules();
+        const auto shaderModules       = initializers.getShaderModules(shaderModuleConfigs, device.handle);
 
         const auto descriptorPoolConfig = configurations.getDescriptorPool();
         const auto descriptorPool       = initializers.getDescriptorPool(descriptorPoolConfig, device.handle);
 
-        const auto descriptorSetLayoutConfig = configurations.getDescriptorSetLayouts();
-        const auto descriptorSetLayouts      = initializers.getDescriptorSetLayouts(descriptorSetLayoutConfig, device.handle);
+        const auto descriptorSetLayoutConfigs = configurations.getDescriptorSetLayouts();
+        const auto descriptorSetLayouts       = initializers.getDescriptorSetLayouts(descriptorSetLayoutConfigs, device.handle);
 
-        const auto descriptorSetsConfig = configurations.getDescriptorSet(descriptorSetLayouts, descriptorPool.handle);
-        const auto descriptorSets       = initializers.getDescriptorSet(descriptorSetsConfig, device.handle);
+        const auto descriptorSetConfig = configurations.getDescriptorSet(descriptorSetLayouts, descriptorPool);
+        const auto descriptorSets      = initializers.getDescriptorSets(descriptorSetConfig, device.handle);
 
-        const auto pipelineLayoutConfig = configurations.getPipelineLayouts(descriptorSetLayouts);
-        const auto pipelineLayouts      = initializers.getPipelineLayouts(pipelineLayoutConfig, device.handle);
+        const auto pipelineLayoutConfigs = configurations.getPipelineLayouts(descriptorSetLayouts);
+        const auto pipelineLayouts       = initializers.getPipelineLayouts(pipelineLayoutConfigs, device.handle);
 
-        const auto graphicsPipelineConfig = configurations.getGraphicsPipelines(shaderModules, pipelineLayouts, renderPass.handle, width, height);
-        const auto graphicsPipelines      = initializers.getGraphicsPipelines(graphicsPipelineConfig, device.handle);
+        const auto graphicsPipelineConfigs = configurations.getGraphicsPipelines(shaderModules, pipelineLayouts, renderPass, width, height);
+        const auto graphicsPipelines       = initializers.getGraphicsPipelines(graphicsPipelineConfigs, device.handle);
 
-        const auto commandPoolConfig = configurations.getCommandPools(device.queueFamilies);
-        const auto commandPools      = initializers.getCommandPools(commandPoolConfig, device.handle);
+        const auto commandPoolConfigs = configurations.getCommandPools(device.queueFamilies);
+        const auto commandPools       = initializers.getCommandPools(commandPoolConfigs, device.handle);
 
-        const auto commandBufferConfig = configurations.getCommandBuffers(commandPools);
-        const auto commandBuffers      = initializers.getCommandBuffers(commandBufferConfig, device.handle);
+        const auto commandBufferConfigs = configurations.getCommandBuffers(commandPools);
+        const auto commandBuffers       = initializers.getCommandBuffers(commandBufferConfigs, device.handle);
+
+        const auto bufferConfigs = configurations.getBuffers(device.queueFamilies);
+        const auto buffers       = initializers.getBuffers(bufferConfigs, device.handle);
 
         for(size_t i = 0; i < swapchainFramebuffers.size(); ++i)
         {
             const auto framebuffer   = swapchainFramebuffers[i];
-            const auto commandBuffer = commandBuffers[0].handles[i];
+            const auto commandBuffer = commandBuffers[0][i];
 
             const auto commandBufferBeginInfo = getCommandBufferBeginInfo(nullptr);
 
             ND_ASSERT_EXEC(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo) == VK_SUCCESS);
 
             const auto clearValues         = std::vector<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
-            const auto renderPassBeginInfo = getRenderPassBeginInfo(renderPass.handle,
-                                                                    framebuffer.handle,
+            const auto renderPassBeginInfo = getRenderPassBeginInfo(renderPass,
+                                                                    framebuffer,
                                                                     {{0u, 0u}, {width, height}},
                                                                     clearValues.size(),
                                                                     clearValues.data());
 
             vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelines.handles[0]);
+            vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelines[0]);
             vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
             vkCmdEndRenderPass(commandBuffer);
@@ -226,31 +235,33 @@ namespace nd::src::graphics::vulkan
             ND_ASSERT_EXEC(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS);
         }
 
-        const auto framesCount = size_t {2};
+        const auto framesCount = size_t {swapchainImages.size()};
 
         const auto imageAcquiredSemaphores = getSemaphore(device.handle, framesCount);
         const auto imageRenderedSemaphores = getSemaphore(device.handle, framesCount);
         const auto imageAcquiredFences     = getFence(device.handle, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
         const auto imageRenderedFences     = getFence(device.handle, framesCount, VK_FENCE_CREATE_SIGNALED_BIT);
 
-        return VulkanContext({device,
+        return VulkanContext({physicalDeviceMemoryProperties,
+                              device,
                               swapchain,
                               swapchainImages,
                               swapchainImageViews,
                               swapchainFramebuffers,
                               shaderModules,
                               descriptorSetLayouts,
+                              descriptorSets,
                               pipelineLayouts,
+                              graphicsPipelines,
                               commandPools,
                               commandBuffers,
-                              graphicsPipelines,
-                              descriptorSets,
                               imageAcquiredSemaphores,
                               imageRenderedSemaphores,
                               imageAcquiredFences,
                               imageRenderedFences,
                               framesCount,
                               instance,
+                              physicalDevice,
                               surface,
                               renderPass,
                               descriptorPool});

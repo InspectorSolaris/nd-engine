@@ -19,10 +19,7 @@ namespace nd::src::graphics::vulkan
         const VkQueueFlags queueFlags;
     };
 
-    struct PhysicalDevice final
-    {
-        const VkPhysicalDevice handle;
-    };
+    using PhysicalDevice = VkPhysicalDevice;
 
     struct DeviceConfiguration final
     {

@@ -13,10 +13,7 @@ namespace nd::src::graphics::vulkan
         const void*                       next  = {};
     };
 
-    struct DescriptorPool final
-    {
-        const VkDescriptorPool handle;
-    };
+    using DescriptorPool = VkDescriptorPool;
 
     VkDescriptorPoolCreateInfo
     getDescriptorPoolCreateInfo(const uint32_t                    maxSets,

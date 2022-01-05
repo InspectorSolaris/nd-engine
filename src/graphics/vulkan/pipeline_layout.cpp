@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
                                                             configuration.flags,
                                                             configuration.next);
 
-        return {getPipelineLayoutHandle(createInfo, device)};
+        return getPipelineLayoutHandle(createInfo, device);
     }
 
     std::vector<PipelineLayout>

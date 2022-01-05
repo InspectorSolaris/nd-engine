@@ -17,11 +17,12 @@ namespace nd::src::graphics::vulkan
         getShaderModules <<                                           //
         getDescriptorPool <<                                          //
         getDescriptorSetLayouts <<                                    //
-        getDescriptorSet <<                                           //
+        getDescriptorSets <<                                          //
         getPipelineLayouts <<                                         //
         getGraphicsPipelines <<                                       //
         getCommandPools <<                                            //
-        getCommandBuffers;
+        getCommandBuffers <<                                          //
+        getBuffers;
 
     VulkanContextInitializersBuilder::Type
     VulkanContextInitializersBuilder::build() const
@@ -40,11 +41,12 @@ namespace nd::src::graphics::vulkan
                   getShaderModules &&         //
                   getDescriptorPool &&        //
                   getDescriptorSetLayouts &&  //
-                  getDescriptorSet &&         //
+                  getDescriptorSets &&        //
                   getPipelineLayouts &&       //
                   getGraphicsPipelines &&     //
                   getCommandPools &&          //
-                  getCommandBuffers);
+                  getCommandBuffers &&        //
+                  getBuffers);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -58,10 +60,11 @@ namespace nd::src::graphics::vulkan
                 getShaderModules,
                 getDescriptorPool,
                 getDescriptorSetLayouts,
-                getDescriptorSet,
+                getDescriptorSets,
                 getPipelineLayouts,
                 getGraphicsPipelines,
                 getCommandPools,
-                getCommandBuffers};
+                getCommandBuffers,
+                getBuffers};
     }
 } // namespace nd::src::graphics::vulkan

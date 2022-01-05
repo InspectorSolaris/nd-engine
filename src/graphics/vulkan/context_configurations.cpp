@@ -20,7 +20,9 @@ namespace nd::src::graphics::vulkan
         getPipelineLayoutConfigurations <<                                //
         getGraphicsPipelineConfigurations <<                              //
         getCommandPoolConfigurations <<                                   //
-        getCommandBufferConfigurations;
+        getCommandBufferConfigurations <<                                 //
+        getBufferConfigurations <<                                        //
+        getBufferMemoryConfigurations;
 
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
@@ -230,7 +232,10 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto vertexInputStateCreateInfo   = getPipelineVertexInputStateCreateInfo(0, 0, nullptr, nullptr);
+        const auto vertexInputStateCreateInfo = PipelineVertexInputStateCreateInfo {
+            {{0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX}},
+            {{0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position)}, {1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)}}};
+
         const auto inputAssemblyStateCreateInfo = getPipelineInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
 
         const auto tessellationStateCreateInfo = getPipelineTessellationStateCreateInfo(1);
@@ -294,7 +299,7 @@ namespace nd::src::graphics::vulkan
                  depthStencilStateCreateInfo,
                  {blendConstants, {colorBlendAttachment}, VK_FALSE, VK_LOGIC_OP_OR},
                  dynamicStateCreateInfo,
-                 pipelineLayouts[0].handle,
+                 pipelineLayouts[0],
                  renderPass,
                  0}};
     }
@@ -329,6 +334,22 @@ namespace nd::src::graphics::vulkan
             });
     }
 
+    std::vector<BufferConfiguration>
+    getBufferConfigurations(const std::vector<QueueFamily>& queueFamilies) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {{{}, 1024 * sizeof(Vertex), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT}};
+    }
+
+    std::vector<DeviceMemoryConfiguration>
+    getBufferMemoryConfigurations(const BufferConfiguration& bufferConfiguration, const VkPhysicalDeviceMemoryProperties& memoryProperties) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return {};
+    }
+
     VulkanContextConfigurationsBuilder::Type
     VulkanContextConfigurationsBuilder::build() const
     {
@@ -348,7 +369,9 @@ namespace nd::src::graphics::vulkan
                   getPipelineLayouts &&       //
                   getGraphicsPipelines &&     //
                   getCommandPools &&          //
-                  getCommandBuffers);
+                  getCommandBuffers &&        //
+                  getBuffers &&               //
+                  getBufferMemories);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -364,6 +387,8 @@ namespace nd::src::graphics::vulkan
                 getPipelineLayouts,
                 getGraphicsPipelines,
                 getCommandPools,
-                getCommandBuffers};
+                getCommandBuffers,
+                getBuffers,
+                getBufferMemories};
     }
 } // namespace nd::src::graphics::vulkan

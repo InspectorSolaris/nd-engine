@@ -13,10 +13,7 @@ namespace nd::src::graphics::vulkan
         const void*                       next  = {};
     };
 
-    struct PipelineLayout final
-    {
-        const VkPipelineLayout handle;
-    };
+    using PipelineLayout = VkPipelineLayout;
 
     VkPipelineLayoutCreateInfo
     getPipelineLayoutCreateInfo(const uint32_t                    setLayoutsCount,

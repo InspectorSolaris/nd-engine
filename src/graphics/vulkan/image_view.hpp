@@ -16,10 +16,7 @@ namespace nd::src::graphics::vulkan
         const void*                  next  = {};
     };
 
-    struct ImageView final
-    {
-        const VkImageView handle;
-    };
+    using ImageView = VkImageView;
 
     VkImageViewCreateInfo
     getImageViewCreateInfo(const VkImage                  image,

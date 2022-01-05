@@ -186,7 +186,7 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT(physicalDeviceMax.has_value());
 
-        return {physicalDeviceMax.value()};
+        return physicalDeviceMax.value();
     }
 
     VkDevice

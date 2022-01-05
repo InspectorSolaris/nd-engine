@@ -5,6 +5,12 @@
 
 namespace nd::src::graphics::vulkan
 {
+    struct Vertex final
+    {
+        glm::vec3 position;
+        glm::vec3 color;
+    };
+
     struct VulkanContextConfigurationExternal final
     {
         const std::string& applicationName;
@@ -58,6 +64,10 @@ namespace nd::src::graphics::vulkan
 
         using CommandBuffers = std::vector<CommandBufferConfiguration>(const std::vector<CommandPool>&);
 
+        using Buffers = std::vector<BufferConfiguration>(const std::vector<QueueFamily>&);
+
+        using BufferMemories = std::vector<DeviceMemoryConfiguration>(const BufferConfiguration&, const VkPhysicalDeviceMemoryProperties&);
+
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
         const std::function<Device>                getDevice;
@@ -73,6 +83,8 @@ namespace nd::src::graphics::vulkan
         const std::function<GraphicsPipelines>     getGraphicsPipelines;
         const std::function<CommandPools>          getCommandPools;
         const std::function<CommandBuffers>        getCommandBuffers;
+        const std::function<Buffers>               getBuffers;
+        const std::function<BufferMemories>        getBufferMemories;
     };
 
     InstanceConfiguration
@@ -136,6 +148,12 @@ namespace nd::src::graphics::vulkan
 
     std::vector<CommandBufferConfiguration>
     getCommandBufferConfigurations(const std::vector<CommandPool>& commandPools) noexcept;
+
+    std::vector<BufferConfiguration>
+    getBufferConfigurations(const std::vector<QueueFamily>& queueFamilies) noexcept;
+
+    std::vector<DeviceMemoryConfiguration>
+    getBufferMemoryConfigurations(const BufferConfiguration& bufferConfiguration, const VkPhysicalDeviceMemoryProperties& memoryProperties) noexcept;
 
     class VulkanContextConfigurationsBuilder final
     {
@@ -272,6 +290,22 @@ namespace nd::src::graphics::vulkan
         }
 
         Builder&
+        add(decltype(Type::getBuffers)& configuration) noexcept
+        {
+            getBuffers = configuration;
+
+            return *this;
+        }
+
+        Builder&
+        add(decltype(Type::getBufferMemories)& configuration) noexcept
+        {
+            getBufferMemories = configuration;
+
+            return *this;
+        }
+
+        Builder&
         operator<<(decltype(Type::getInstance)& configuration) noexcept
         {
             return add(configuration);
@@ -361,6 +395,18 @@ namespace nd::src::graphics::vulkan
             return add(configuration);
         }
 
+        Builder&
+        operator<<(decltype(Type::getBuffers)& configuration) noexcept
+        {
+            return add(configuration);
+        }
+
+        Builder&
+        operator<<(decltype(Type::getBufferMemories)& configuration) noexcept
+        {
+            return add(configuration);
+        }
+
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
         std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
@@ -377,6 +423,8 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getGraphicsPipelines)>     getGraphicsPipelines;
         std::remove_cv_t<decltype(Type::getCommandPools)>          getCommandPools;
         std::remove_cv_t<decltype(Type::getCommandBuffers)>        getCommandBuffers;
+        std::remove_cv_t<decltype(Type::getBuffers)>               getBuffers;
+        std::remove_cv_t<decltype(Type::getBufferMemories)>        getBufferMemories;
     };
 
     extern VulkanContextConfigurationsBuilder configurationsBuilder;

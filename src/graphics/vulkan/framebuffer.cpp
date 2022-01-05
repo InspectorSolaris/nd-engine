@@ -56,7 +56,7 @@ namespace nd::src::graphics::vulkan
                                                          configuration.flags,
                                                          configuration.next);
 
-        return {getFramebufferHandle(createInfo, device)};
+        return getFramebufferHandle(createInfo, device);
     }
 
     std::vector<Framebuffer>

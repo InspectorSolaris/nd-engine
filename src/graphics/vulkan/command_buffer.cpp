@@ -36,7 +36,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkCommandBuffer>
-    getCommandBuffersHandles(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device)
+    getCommandBufferHandles(const VkCommandBufferAllocateInfo& allocateInfo, const VkDevice device)
     {
         ND_SET_SCOPE();
 
@@ -47,7 +47,7 @@ namespace nd::src::graphics::vulkan
         return commandBuffers;
     }
 
-    CommandBuffer
+    CommandBuffers
     getCommandBuffer(const CommandBufferConfiguration& configuration, const VkDevice device)
     {
         ND_SET_SCOPE();
@@ -57,18 +57,18 @@ namespace nd::src::graphics::vulkan
                                                                configuration.count,
                                                                configuration.next);
 
-        return {getCommandBuffersHandles(allocateInfo, device)};
+        return getCommandBufferHandles(allocateInfo, device);
     }
 
-    std::vector<CommandBuffer>
+    std::vector<CommandBuffers>
     getCommandBuffers(const std::vector<CommandBufferConfiguration>& configurations, const VkDevice device)
     {
         ND_SET_SCOPE();
 
-        return getMapped<CommandBufferConfiguration, CommandBuffer>(configurations,
-                                                                    [device](const auto configuration, const auto index)
-                                                                    {
-                                                                        return getCommandBuffer(configuration, device);
-                                                                    });
+        return getMapped<CommandBufferConfiguration, CommandBuffers>(configurations,
+                                                                     [device](const auto configuration, const auto index)
+                                                                     {
+                                                                         return getCommandBuffer(configuration, device);
+                                                                     });
     }
 } // namespace nd::src::graphics::vulkan

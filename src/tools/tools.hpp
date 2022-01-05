@@ -101,32 +101,32 @@ namespace nd::src::tools
     CollectionOut
     getMapped(const size_t size, const Map& map) noexcept
     {
-        auto outs = CollectionOut {};
+        auto mapped = CollectionOut {};
 
-        outs.reserve(size);
+        mapped.reserve(size);
 
         for(size_t index = 0; index < size; ++index)
         {
-            outs.push_back(map(index));
+            mapped.push_back(map(index));
         }
 
-        return outs;
+        return mapped;
     }
 
     template<typename In, typename Out, typename Map, typename CollectionIn = std::vector<In>, typename CollectionOut = std::vector<Out>>
     CollectionOut
     getMapped(const CollectionIn& ins, const Map& map) noexcept
     {
-        auto outs = CollectionOut {};
+        auto mapped = CollectionOut {};
 
-        outs.reserve(ins.size());
+        mapped.reserve(ins.size());
 
         for(size_t index = 0; index < ins.size(); ++index)
         {
-            outs.push_back(map(ins[index], index));
+            mapped.push_back(map(ins[index], index));
         }
 
-        return outs;
+        return mapped;
     }
 
     template<typename T, typename Key, typename Value, typename KeyMap, typename ValueMap, typename Collection = std::vector<T>>

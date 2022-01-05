@@ -9,6 +9,7 @@
 
 // C++ library
 
+#include <span>
 #include <array>
 #include <vector>
 #include <map>

@@ -146,6 +146,6 @@ namespace nd::src::graphics::vulkan
                                                       configuration.flags,
                                                       configuration.next);
 
-        return {getInstanceHandle(createInfo)};
+        return getInstanceHandle(createInfo);
     }
 } // namespace nd::src::graphics::vulkan

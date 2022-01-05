@@ -39,4 +39,32 @@ namespace nd::src::graphics::vulkan
 
         return buffer;
     }
+
+    Buffer
+    getBuffer(const BufferConfiguration& configuration, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        const auto queueFamiliesIndices = getQueueFamiliesIndices(configuration.queueFamilies);
+
+        const auto createInfo = getBufferCreateInfo(configuration.size,
+                                                    configuration.usage,
+                                                    queueFamiliesIndices.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
+                                                    queueFamiliesIndices.size(),
+                                                    queueFamiliesIndices.data());
+
+        return getBufferHandle(createInfo, device);
+    }
+
+    std::vector<Buffer>
+    getBuffers(const std::vector<BufferConfiguration>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<BufferConfiguration, Buffer>(configurations,
+                                                      [device](const auto& configuration, const auto index)
+                                                      {
+                                                          return getBuffer(configuration, device);
+                                                      });
+    }
 } // namespace nd::src::graphics::vulkan

@@ -44,7 +44,7 @@ namespace nd::src::graphics::vulkan
                                                                  configuration.flags,
                                                                  configuration.next);
 
-        return {getDescriptorSetLayoutHandle(createInfo, device)};
+        return getDescriptorSetLayoutHandle(createInfo, device);
     }
 
     std::vector<DescriptorSetLayout>
