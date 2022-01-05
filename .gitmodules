@@ -1,0 +1,15 @@
+[submodule "src/libs/glfw"]
+	path = src/libs/glfw
+	url = https://github.com/glfw/glfw
+[submodule "src/libs/glm"]
+	path = src/libs/glm
+	url = https://github.com/g-truc/glm
+[submodule "src/libs/fmt"]
+	path = src/libs/fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "src/libs/spdlog"]
+	path = src/libs/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "src/libs/gsl"]
+	path = src/libs/gsl
+	url = https://github.com/microsoft/GSL
