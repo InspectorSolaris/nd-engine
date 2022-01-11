@@ -7,59 +7,8 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class VulkanContext final
+    struct VulkanObjects final
     {
-    public:
-        struct Configuration final
-        {
-            const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties;
-
-            const Device    device;
-            const Swapchain swapchain;
-
-            const std::vector<Image>&               swapchainImages;
-            const std::vector<ImageView>&           swapchainImageViews;
-            const std::vector<Framebuffer>&         swapchainFramebuffers;
-            const std::vector<ShaderModule>&        shaderModules;
-            const std::vector<DescriptorSetLayout>& descriptorSetLayouts;
-            const std::vector<DescriptorSet>        descriptorSets;
-            const std::vector<PipelineLayout>&      pipelineLayouts;
-            const std::vector<Pipeline>&            graphicsPipelines;
-            const std::vector<CommandPool>&         commandPools;
-            const std::vector<CommandBuffers>&      commandBuffers;
-            const std::vector<Buffer>&              buffers;
-            const std::vector<DeviceMemories>&      bufferMemories;
-
-            const std::vector<VkSemaphore>& imageAcquiredSemaphores;
-            const std::vector<VkSemaphore>& imageRenderedSemaphores;
-            const std::vector<VkFence>&     imageAcquiredFences;
-            const std::vector<VkFence>&     imageRenderedFences;
-
-            const size_t framesCount;
-
-            const Instance       instance;
-            const PhysicalDevice physicalDevice;
-            const Surface        surface;
-            const RenderPass     renderPass;
-            const DescriptorPool descriptorPool;
-        };
-
-        VulkanContext(const Configuration& configuration);
-
-        VulkanContext(const VulkanContext& vulkanContext) = delete;
-        VulkanContext(VulkanContext&& vulkanContext)      = delete;
-
-        VulkanContext&
-        operator=(const VulkanContext& vulkanContext) = delete;
-        VulkanContext&
-        operator=(VulkanContext&& vulkanContext) = delete;
-
-        ~VulkanContext();
-
-        void
-        drawNextFrame();
-
-    private:
         VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties_ {};
 
         Device    device_ {};
@@ -90,6 +39,28 @@ namespace nd::src::graphics::vulkan
         Surface        surface_ {};
         RenderPass     renderPass_ {};
         DescriptorPool descriptorPool_ {};
+    };
+
+    class VulkanContext final
+    {
+    public:
+        VulkanContext(VulkanObjects&& objects);
+
+        VulkanContext(const VulkanContext& vulkanContext) = delete;
+        VulkanContext(VulkanContext&& vulkanContext)      = delete;
+
+        VulkanContext&
+        operator=(const VulkanContext& vulkanContext) = delete;
+        VulkanContext&
+        operator=(VulkanContext&& vulkanContext) = delete;
+
+        ~VulkanContext();
+
+        void
+        drawNextFrame();
+
+    private:
+        VulkanObjects objects_ {};
     };
 
     VulkanContext

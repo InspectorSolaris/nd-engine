@@ -7,25 +7,6 @@ namespace nd::src::graphics::vulkan
 
     const auto vertexBufferSize = 16 * sizeof(Vertex);
 
-    auto configurationsBuilder = VulkanContextConfigurationsBuilder {} << //
-        getInstanceConfiguration <<                                       //
-        getPhysicalDeviceConfiguration <<                                 //
-        getDeviceConfiguration <<                                         //
-        getSwapchainConfiguration <<                                      //
-        getRenderPassConfiguration <<                                     //
-        getSwapchainImageViewConfigurations <<                            //
-        getSwapchainFramebufferConfigurations <<                          //
-        getShaderModulesConfigurations <<                                 //
-        getDescriptorPoolConfiguration <<                                 //
-        getDescriptorSetLayoutConfigurations <<                           //
-        getDescriptorSetConfiguration <<                                  //
-        getPipelineLayoutConfigurations <<                                //
-        getGraphicsPipelineConfigurations <<                              //
-        getCommandPoolConfigurations <<                                   //
-        getCommandBufferConfigurations <<                                 //
-        getBufferConfigurations <<                                        //
-        getBufferMemoryConfigurations;
-
     InstanceConfiguration
     getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
     {
@@ -363,47 +344,5 @@ namespace nd::src::graphics::vulkan
                                                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         return {{memoryRequirements.size, memoryRequirements.alignment, memoryTypeIndex}};
-    }
-
-    VulkanContextConfigurationsBuilder::Type
-    VulkanContextConfigurationsBuilder::build() const
-    {
-        ND_SET_SCOPE();
-
-        ND_ASSERT(getInstance &&              //
-                  getPhysicalDevice &&        //
-                  getDevice &&                //
-                  getSwapchain &&             //
-                  getRenderPass &&            //
-                  getSwapchainImageViews &&   //
-                  getSwapchainFramebuffers && //
-                  getShaderModules &&         //
-                  getDescriptorPool &&        //
-                  getDescriptorSetLayouts &&  //
-                  getDescriptorSet &&         //
-                  getPipelineLayouts &&       //
-                  getGraphicsPipelines &&     //
-                  getCommandPools &&          //
-                  getCommandBuffers &&        //
-                  getBuffers &&               //
-                  getBufferMemories);
-
-        return {getInstance,
-                getPhysicalDevice,
-                getDevice,
-                getSwapchain,
-                getRenderPass,
-                getSwapchainImageViews,
-                getSwapchainFramebuffers,
-                getShaderModules,
-                getDescriptorPool,
-                getDescriptorSetLayouts,
-                getDescriptorSet,
-                getPipelineLayouts,
-                getGraphicsPipelines,
-                getCommandPools,
-                getCommandBuffers,
-                getBuffers,
-                getBufferMemories};
     }
 } // namespace nd::src::graphics::vulkan

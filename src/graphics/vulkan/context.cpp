@@ -5,32 +5,8 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    VulkanContext::VulkanContext(const Configuration& configuration)
-        : instance_(configuration.instance)
-        , device_(configuration.device)
-        , physicalDevice_(configuration.physicalDevice)
-        , physicalDeviceMemoryProperties_(configuration.physicalDeviceMemoryProperties)
-        , surface_(configuration.surface)
-        , swapchain_(configuration.swapchain)
-        , renderPass_(configuration.renderPass)
-        , swapchainImages_(configuration.swapchainImages)
-        , swapchainImageViews_(configuration.swapchainImageViews)
-        , swapchainFramebuffers_(configuration.swapchainFramebuffers)
-        , shaderModules_(configuration.shaderModules)
-        , descriptorPool_(configuration.descriptorPool)
-        , descriptorSetLayouts_(configuration.descriptorSetLayouts)
-        , descriptorSets_(configuration.descriptorSets)
-        , pipelineLayouts_(configuration.pipelineLayouts)
-        , graphicsPipelines_(configuration.graphicsPipelines)
-        , commandPools_(configuration.commandPools)
-        , commandBuffers_(configuration.commandBuffers)
-        , buffers_(configuration.buffers)
-        , bufferMemories_(configuration.bufferMemories)
-        , framesCount_(configuration.framesCount)
-        , imageAcquiredSemaphores_(configuration.imageAcquiredSemaphores)
-        , imageRenderedSemaphores_(configuration.imageRenderedSemaphores)
-        , imageAcquiredFences_(configuration.imageAcquiredFences)
-        , imageRenderedFences_(configuration.imageRenderedFences)
+    VulkanContext::VulkanContext(VulkanObjects&& objects)
+        : objects_(std::move(objects))
     {
         ND_SET_SCOPE();
     }
@@ -39,77 +15,80 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        vkDeviceWaitIdle(device_.handle);
+        vkDeviceWaitIdle(objects_.device_.handle);
 
-        for(size_t index = 0; index < framesCount_; ++index)
+        for(size_t index = 0; index < objects_.framesCount_; ++index)
         {
-            vkDestroySemaphore(device_.handle, imageAcquiredSemaphores_[index], nullptr);
-            vkDestroySemaphore(device_.handle, imageRenderedSemaphores_[index], nullptr);
+            vkDestroySemaphore(objects_.device_.handle, objects_.imageAcquiredSemaphores_[index], nullptr);
+            vkDestroySemaphore(objects_.device_.handle, objects_.imageRenderedSemaphores_[index], nullptr);
 
-            const auto fences = std::vector<VkFence> {imageAcquiredFences_[index], imageRenderedFences_[index]};
+            const auto fences = std::vector<VkFence> {objects_.imageAcquiredFences_[index], objects_.imageRenderedFences_[index]};
 
-            vkWaitForFences(device_.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
+            vkWaitForFences(objects_.device_.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
 
-            vkDestroyFence(device_.handle, imageAcquiredFences_[index], nullptr);
-            vkDestroyFence(device_.handle, imageRenderedFences_[index], nullptr);
+            vkDestroyFence(objects_.device_.handle, objects_.imageAcquiredFences_[index], nullptr);
+            vkDestroyFence(objects_.device_.handle, objects_.imageRenderedFences_[index], nullptr);
         }
 
-        for(size_t bufferIndex = 0; bufferIndex < buffers_.size(); ++bufferIndex)
+        for(size_t bufferIndex = 0; bufferIndex < objects_.buffers_.size(); ++bufferIndex)
         {
-            for(size_t memoryIndex = 0; memoryIndex < bufferMemories_[bufferIndex].size(); ++memoryIndex)
+            for(size_t memoryIndex = 0; memoryIndex < objects_.bufferMemories_[bufferIndex].size(); ++memoryIndex)
             {
-                vkFreeMemory(device_.handle, bufferMemories_[bufferIndex][memoryIndex].handle, nullptr);
+                vkFreeMemory(objects_.device_.handle, objects_.bufferMemories_[bufferIndex][memoryIndex].handle, nullptr);
             }
 
-            vkDestroyBuffer(device_.handle, buffers_[bufferIndex], nullptr);
+            vkDestroyBuffer(objects_.device_.handle, objects_.buffers_[bufferIndex], nullptr);
         }
 
-        for(size_t index = 0; index < commandPools_.size(); ++index)
+        for(size_t index = 0; index < objects_.commandPools_.size(); ++index)
         {
-            vkFreeCommandBuffers(device_.handle, commandPools_[index].handle, commandBuffers_[index].size(), commandBuffers_[index].data());
+            vkFreeCommandBuffers(objects_.device_.handle,
+                                 objects_.commandPools_[index].handle,
+                                 objects_.commandBuffers_[index].size(),
+                                 objects_.commandBuffers_[index].data());
 
-            vkDestroyCommandPool(device_.handle, commandPools_[index].handle, nullptr);
+            vkDestroyCommandPool(objects_.device_.handle, objects_.commandPools_[index].handle, nullptr);
         }
 
-        for(const auto graphicsPipeline: graphicsPipelines_)
+        for(const auto graphicsPipeline: objects_.graphicsPipelines_)
         {
-            vkDestroyPipeline(device_.handle, graphicsPipeline, nullptr);
+            vkDestroyPipeline(objects_.device_.handle, graphicsPipeline, nullptr);
         }
 
-        for(const auto pipelineLayout: pipelineLayouts_)
+        for(const auto pipelineLayout: objects_.pipelineLayouts_)
         {
-            vkDestroyPipelineLayout(device_.handle, pipelineLayout, nullptr);
+            vkDestroyPipelineLayout(objects_.device_.handle, pipelineLayout, nullptr);
         }
 
-        vkFreeDescriptorSets(device_.handle, descriptorPool_, descriptorSets_.size(), descriptorSets_.data());
+        vkFreeDescriptorSets(objects_.device_.handle, objects_.descriptorPool_, objects_.descriptorSets_.size(), objects_.descriptorSets_.data());
 
-        for(const auto descriptorSetLayout: descriptorSetLayouts_)
+        for(const auto descriptorSetLayout: objects_.descriptorSetLayouts_)
         {
-            vkDestroyDescriptorSetLayout(device_.handle, descriptorSetLayout, nullptr);
+            vkDestroyDescriptorSetLayout(objects_.device_.handle, descriptorSetLayout, nullptr);
         }
 
-        vkDestroyDescriptorPool(device_.handle, descriptorPool_, nullptr);
+        vkDestroyDescriptorPool(objects_.device_.handle, objects_.descriptorPool_, nullptr);
 
-        for(const auto shaderModule: shaderModules_)
+        for(const auto shaderModule: objects_.shaderModules_)
         {
-            vkDestroyShaderModule(device_.handle, shaderModule.handle, nullptr);
+            vkDestroyShaderModule(objects_.device_.handle, shaderModule.handle, nullptr);
         }
 
-        for(const auto swapchainFramebuffer: swapchainFramebuffers_)
+        for(const auto swapchainFramebuffer: objects_.swapchainFramebuffers_)
         {
-            vkDestroyFramebuffer(device_.handle, swapchainFramebuffer, nullptr);
+            vkDestroyFramebuffer(objects_.device_.handle, swapchainFramebuffer, nullptr);
         }
 
-        for(const auto swapchainImageView: swapchainImageViews_)
+        for(const auto swapchainImageView: objects_.swapchainImageViews_)
         {
-            vkDestroyImageView(device_.handle, swapchainImageView, nullptr);
+            vkDestroyImageView(objects_.device_.handle, swapchainImageView, nullptr);
         }
 
-        vkDestroyRenderPass(device_.handle, renderPass_, nullptr);
-        vkDestroySwapchainKHR(device_.handle, swapchain_.handle, nullptr);
-        vkDestroySurfaceKHR(instance_, surface_, nullptr);
-        vkDestroyDevice(device_.handle, nullptr);
-        vkDestroyInstance(instance_, nullptr);
+        vkDestroyRenderPass(objects_.device_.handle, objects_.renderPass_, nullptr);
+        vkDestroySwapchainKHR(objects_.device_.handle, objects_.swapchain_.handle, nullptr);
+        vkDestroySurfaceKHR(objects_.instance_, objects_.surface_, nullptr);
+        vkDestroyDevice(objects_.device_.handle, nullptr);
+        vkDestroyInstance(objects_.instance_, nullptr);
     }
 
     void
@@ -119,22 +98,25 @@ namespace nd::src::graphics::vulkan
 
         static auto frameIndex = size_t {0};
 
-        static auto deviceQueue    = device_.queues.begin()->second[0];
-        static auto swapchainQueue = swapchain_.queues.begin()->second[0];
+        static auto deviceQueue    = objects_.device_.queues.begin()->second[0];
+        static auto swapchainQueue = objects_.swapchain_.queues.begin()->second[0];
 
-        const auto imageAcquiredSemaphore = imageAcquiredSemaphores_[frameIndex];
-        const auto imageRenderedSemaphore = imageRenderedSemaphores_[frameIndex];
-        const auto imageAcquiredFence     = imageAcquiredFences_[frameIndex];
-        const auto imageRenderedFence     = imageRenderedFences_[frameIndex];
+        const auto imageAcquiredSemaphore = objects_.imageAcquiredSemaphores_[frameIndex];
+        const auto imageRenderedSemaphore = objects_.imageRenderedSemaphores_[frameIndex];
+        const auto imageAcquiredFence     = objects_.imageAcquiredFences_[frameIndex];
+        const auto imageRenderedFence     = objects_.imageRenderedFences_[frameIndex];
 
         const auto fences = std::vector<VkFence> {imageAcquiredFence, imageRenderedFence};
 
-        vkWaitForFences(device_.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
-        vkResetFences(device_.handle, fences.size(), fences.data());
+        vkWaitForFences(objects_.device_.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
+        vkResetFences(objects_.device_.handle, fences.size(), fences.data());
 
-        const auto imageIndex = getNextSwapchainImage(device_.handle, swapchain_.handle, imageAcquiredSemaphore, imageAcquiredFence);
+        const auto imageIndex = getNextSwapchainImage(objects_.device_.handle,
+                                                      objects_.swapchain_.handle,
+                                                      imageAcquiredSemaphore,
+                                                      imageAcquiredFence);
 
-        const auto commandBuffers   = std::vector<VkCommandBuffer> {commandBuffers_[0][imageIndex]};
+        const auto commandBuffers   = std::vector<VkCommandBuffer> {objects_.commandBuffers_[0][imageIndex]};
         const auto waitDstStageMask = std::vector<VkPipelineStageFlags> {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
         const auto waitSemaphores   = std::vector<VkSemaphore> {imageAcquiredSemaphore};
         const auto signalSemaphores = std::vector<VkSemaphore> {imageRenderedSemaphore};
@@ -143,14 +125,14 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, submitInfos.size(), submitInfos.data(), imageRenderedFence) == VK_SUCCESS);
 
-        const auto swapchains   = std::vector<VkSwapchainKHR> {swapchain_.handle};
+        const auto swapchains   = std::vector<VkSwapchainKHR> {objects_.swapchain_.handle};
         const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(imageIndex)};
 
         const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
 
         ND_ASSERT_EXEC(vkQueuePresentKHR(swapchainQueue, &presentInfo) == VK_SUCCESS);
 
-        frameIndex = (frameIndex + 1) % framesCount_;
+        frameIndex = (frameIndex + 1) % objects_.framesCount_;
     }
 
     VulkanContext

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "vulkan/context_configurations_builder.hpp"
+#include "vulkan/context_initializers_builder.hpp"
 #include "vulkan/context.hpp"
 #include "glfw/context.hpp"
 

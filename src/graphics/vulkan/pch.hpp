@@ -48,5 +48,6 @@
 // External library
 
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 #include <spdlog/spdlog.h>
 #include <vulkan/vulkan.h>
