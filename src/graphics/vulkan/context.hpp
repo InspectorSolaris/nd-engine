@@ -9,36 +9,36 @@ namespace nd::src::graphics::vulkan
 {
     struct VulkanObjects final
     {
-        VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties_ {};
+        VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties {};
 
-        Device    device_ {};
-        Swapchain swapchain_ {};
+        Device    device {};
+        Swapchain swapchain {};
 
-        std::vector<Image>               swapchainImages_ {};
-        std::vector<ImageView>           swapchainImageViews_ {};
-        std::vector<Framebuffer>         swapchainFramebuffers_ {};
-        std::vector<ShaderModule>        shaderModules_ {};
-        std::vector<DescriptorSetLayout> descriptorSetLayouts_ {};
-        std::vector<DescriptorSet>       descriptorSets_ {};
-        std::vector<PipelineLayout>      pipelineLayouts_ {};
-        std::vector<Pipeline>            graphicsPipelines_ {};
-        std::vector<CommandPool>         commandPools_ {};
-        std::vector<CommandBuffers>      commandBuffers_ {};
-        std::vector<Buffer>              buffers_ {};
-        std::vector<DeviceMemories>      bufferMemories_ {};
+        std::vector<Image>               swapchainImages {};
+        std::vector<ImageView>           swapchainImageViews {};
+        std::vector<Framebuffer>         swapchainFramebuffers {};
+        std::vector<ShaderModule>        shaderModules {};
+        std::vector<DescriptorSetLayout> descriptorSetLayouts {};
+        std::vector<DescriptorSet>       descriptorSets {};
+        std::vector<PipelineLayout>      pipelineLayouts {};
+        std::vector<Pipeline>            graphicsPipelines {};
+        std::vector<CommandPool>         commandPools {};
+        std::vector<CommandBuffers>      commandBuffers {};
+        std::vector<Buffer>              buffers {};
+        std::vector<DeviceMemories>      bufferMemories {};
 
-        std::vector<VkSemaphore> imageAcquiredSemaphores_ {};
-        std::vector<VkSemaphore> imageRenderedSemaphores_ {};
-        std::vector<VkFence>     imageAcquiredFences_ {};
-        std::vector<VkFence>     imageRenderedFences_ {};
+        std::vector<VkSemaphore> imageAcquiredSemaphores {};
+        std::vector<VkSemaphore> imageRenderedSemaphores {};
+        std::vector<VkFence>     imageAcquiredFences {};
+        std::vector<VkFence>     imageRenderedFences {};
 
-        size_t framesCount_ {};
+        size_t framesCount {};
 
-        Instance       instance_ {};
-        PhysicalDevice physicalDevice_ {};
-        Surface        surface_ {};
-        RenderPass     renderPass_ {};
-        DescriptorPool descriptorPool_ {};
+        Instance       instance {};
+        PhysicalDevice physicalDevice {};
+        Surface        surface {};
+        RenderPass     renderPass {};
+        DescriptorPool descriptorPool {};
     };
 
     class VulkanContext final
