@@ -45,6 +45,11 @@ namespace nd::src::graphics::vulkan
 
         using BufferMemories = std::vector<DeviceMemory>(const std::vector<DeviceMemoryConfiguration>&, const VkDevice);
 
+        using BufferMemoriesBind = void(const VkDevice,
+                                        const std::vector<Buffer>&,
+                                        const std::vector<DeviceMemories>&,
+                                        const VkPhysicalDeviceMemoryProperties&);
+
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
         const std::function<Device>                getDevice;
@@ -64,5 +69,6 @@ namespace nd::src::graphics::vulkan
         const std::function<CommandBuffers>        getCommandBuffers;
         const std::function<Buffers>               getBuffers;
         const std::function<BufferMemories>        getBufferMemories;
+        const std::function<BufferMemoriesBind>    bindBufferMemories;
     };
 } // namespace nd::src::graphics::vulkan

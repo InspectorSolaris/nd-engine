@@ -212,7 +212,7 @@ namespace nd::src::graphics::vulkan
                 return initializers.getBufferMemories(bufferMemoryConfig, device);
             });
 
-        vkBindBufferMemory(device.handle, buffers[0], bufferMemories[0][0].handle, 0);
+        initializers.bindBufferMemories(device.handle, buffers, bufferMemories, physicalDeviceMemoryProperties);
 
         const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
                                                    {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},

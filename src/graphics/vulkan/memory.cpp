@@ -5,10 +5,25 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    void
-    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offsetMin, const void* data) noexcept
+    VkDeviceSize
+    getAlignedOffset(const VkDeviceSize offset, const VkDeviceSize alignment) noexcept
     {
-        const auto offset = offsetMin % memory.alignment ? static_cast<uint64_t>(offsetMin / memory.alignment + 1) * memory.alignment : offsetMin;
+        ND_SET_SCOPE();
+
+        const auto mod = offset % alignment;
+
+        if(!mod)
+        {
+            return offset;
+        }
+
+        return offset + alignment - mod;
+    }
+
+    void
+    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offset, const void* data) noexcept
+    {
+        ND_SET_SCOPE();
 
         void* ptr;
 
@@ -17,6 +32,32 @@ namespace nd::src::graphics::vulkan
         memcpy(ptr, data, memory.size);
 
         vkUnmapMemory(device, memory.handle);
+    }
+
+    void
+    bindMemories(const VkDevice                          device,
+                 const std::vector<Buffer>&              buffers,
+                 const std::vector<DeviceMemories>&      bufferMemories,
+                 const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties) noexcept
+    {
+        ND_SET_SCOPE();
+
+        VkDeviceSize offsets[VK_MAX_MEMORY_HEAPS] = {};
+
+        for(size_t bufferIndex = 0; bufferIndex < buffers.size(); ++bufferIndex)
+        {
+            for(size_t memoryIndex = 0; memoryIndex < bufferMemories[bufferIndex].size(); ++memoryIndex)
+            {
+                const auto memory          = bufferMemories[bufferIndex][memoryIndex];
+                const auto memoryHeapIndex = physicalDeviceMemoryProperties.memoryTypes[memory.memoryTypeIndex].heapIndex;
+
+                const auto offset = getAlignedOffset(offsets[memoryHeapIndex], memory.alignment);
+
+                vkBindBufferMemory(device, buffers[bufferIndex], memory.handle, offset);
+
+                offsets[memoryHeapIndex] = offset + memory.size;
+            }
+        }
     }
 
     VkPhysicalDeviceMemoryProperties
@@ -103,7 +144,7 @@ namespace nd::src::graphics::vulkan
 
         const auto allocateInfo = getMemoryAllocateInfo(configuration.allocationSize, configuration.memoryTypeIndex, configuration.next);
 
-        return {getDeviceMemoryHandle(allocateInfo, device), configuration.allocationSize, configuration.alignment};
+        return {getDeviceMemoryHandle(allocateInfo, device), configuration.allocationSize, configuration.alignment, configuration.memoryTypeIndex};
     }
 
     std::vector<DeviceMemory>

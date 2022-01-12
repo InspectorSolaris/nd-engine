@@ -23,7 +23,8 @@ namespace nd::src::graphics::vulkan
         getCommandPools <<                                            //
         getCommandBuffers <<                                          //
         getBuffers <<                                                 //
-        getDeviceMemories;
+        getDeviceMemories <<                                          //
+        bindMemories;
 
     VulkanContextInitializersBuilder::Type
     VulkanContextInitializersBuilder::build() const
@@ -48,26 +49,15 @@ namespace nd::src::graphics::vulkan
                   getCommandPools &&          //
                   getCommandBuffers &&        //
                   getBuffers &&               //
-                  getBufferMemories);
+                  getBufferMemories &&        //
+                  bindBufferMemories);
 
-        return {getInstance,
-                getPhysicalDevice,
-                getDevice,
-                getSurface,
-                getSwapchain,
-                getRenderPass,
-                getSwapchainImages,
-                getSwapchainImageViews,
-                getSwapchainFramebuffers,
-                getShaderModules,
-                getDescriptorPool,
-                getDescriptorSetLayouts,
-                getDescriptorSets,
-                getPipelineLayouts,
-                getGraphicsPipelines,
-                getCommandPools,
-                getCommandBuffers,
-                getBuffers,
-                getBufferMemories};
+        return {getInstance,        getPhysicalDevice,      getDevice,
+                getSurface,         getSwapchain,           getRenderPass,
+                getSwapchainImages, getSwapchainImageViews, getSwapchainFramebuffers,
+                getShaderModules,   getDescriptorPool,      getDescriptorSetLayouts,
+                getDescriptorSets,  getPipelineLayouts,     getGraphicsPipelines,
+                getCommandPools,    getCommandBuffers,      getBuffers,
+                getBufferMemories,  bindBufferMemories};
     }
 } // namespace nd::src::graphics::vulkan

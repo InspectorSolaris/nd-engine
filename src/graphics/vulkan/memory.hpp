@@ -9,7 +9,8 @@ namespace nd::src::graphics::vulkan
     {
         const VkDeviceSize allocationSize;
         const VkDeviceSize alignment;
-        const uint32_t     memoryTypeIndex;
+
+        const uint32_t memoryTypeIndex;
 
         const void* next = {};
     };
@@ -20,12 +21,23 @@ namespace nd::src::graphics::vulkan
 
         const VkDeviceSize size;
         const VkDeviceSize alignment;
+
+        const uint32_t memoryTypeIndex;
     };
 
     using DeviceMemories = std::vector<DeviceMemory>;
 
+    VkDeviceSize
+    getAlignedOffset(const VkDeviceSize offset, const VkDeviceSize alignment) noexcept;
+
     void
-    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offsetMin, const void* data) noexcept;
+    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offset, const void* data) noexcept;
+
+    void
+    bindMemories(const VkDevice                          device,
+                 const std::vector<Buffer>&              buffers,
+                 const std::vector<DeviceMemories>&      bufferMemories,
+                 const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties) noexcept;
 
     VkPhysicalDeviceMemoryProperties
     getPhysicalDeviceMemoryProperties(const VkPhysicalDevice physicalDevice) noexcept;

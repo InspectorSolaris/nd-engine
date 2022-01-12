@@ -53,6 +53,7 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getCommandBuffers);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getBuffers);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getBufferMemories);
+        ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(bindBufferMemories);
 
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getInstance);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getPhysicalDevice);
@@ -73,6 +74,7 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getCommandBuffers);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getBuffers);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getBufferMemories);
+        ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(bindBufferMemories);
 
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
@@ -94,6 +96,7 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getCommandBuffers)>        getCommandBuffers;
         std::remove_cv_t<decltype(Type::getBuffers)>               getBuffers;
         std::remove_cv_t<decltype(Type::getBufferMemories)>        getBufferMemories;
+        std::remove_cv_t<decltype(Type::bindBufferMemories)>       bindBufferMemories;
     };
 
     extern VulkanContextInitializersBuilder initializersBuilder;
