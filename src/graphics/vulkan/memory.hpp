@@ -61,4 +61,7 @@ namespace nd::src::graphics::vulkan
 
     std::vector<DeviceMemory>
     getDeviceMemories(const std::vector<DeviceMemoryConfiguration>& configurations, const VkDevice device);
+
+    std::vector<DeviceMemories>
+    getAllDeviceMemories(const std::vector<std::vector<DeviceMemoryConfiguration>>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

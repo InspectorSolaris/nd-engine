@@ -66,7 +66,9 @@ namespace nd::src::graphics::vulkan
 
         using Buffers = std::vector<BufferConfiguration>(const std::vector<QueueFamily>&);
 
-        using BufferMemories = std::vector<DeviceMemoryConfiguration>(const VkPhysicalDeviceMemoryProperties&, const VkMemoryRequirements);
+        using BufferMemories = std::vector<std::vector<DeviceMemoryConfiguration>>(const VkDevice,
+                                                                                   const VkPhysicalDeviceMemoryProperties&,
+                                                                                   const std::vector<VkBuffer>&);
 
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
@@ -154,4 +156,9 @@ namespace nd::src::graphics::vulkan
 
     std::vector<DeviceMemoryConfiguration>
     getBufferMemoryConfigurations(const VkPhysicalDeviceMemoryProperties& memoryProperties, const VkMemoryRequirements memoryRequirements) noexcept;
+
+    std::vector<std::vector<DeviceMemoryConfiguration>>
+    getAllBufferMemoryConfigurations(const VkDevice                          device,
+                                     const VkPhysicalDeviceMemoryProperties& memoryProperties,
+                                     const std::vector<VkBuffer>&            buffers) noexcept;
 } // namespace nd::src::graphics::vulkan

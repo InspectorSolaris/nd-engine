@@ -22,7 +22,7 @@ namespace nd::src::graphics::vulkan
         getCommandPoolConfigurations <<                                   //
         getCommandBufferConfigurations <<                                 //
         getBufferConfigurations <<                                        //
-        getBufferMemoryConfigurations;
+        getAllBufferMemoryConfigurations;
 
     VulkanContextConfigurationsBuilder::Type
     VulkanContextConfigurationsBuilder::build() const

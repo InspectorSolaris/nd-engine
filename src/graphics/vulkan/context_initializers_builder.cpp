@@ -23,7 +23,7 @@ namespace nd::src::graphics::vulkan
         getCommandPools <<                                            //
         getCommandBuffers <<                                          //
         getBuffers <<                                                 //
-        getDeviceMemories <<                                          //
+        getAllDeviceMemories <<                                       //
         bindMemories;
 
     VulkanContextInitializersBuilder::Type

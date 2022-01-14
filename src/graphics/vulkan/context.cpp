@@ -196,21 +196,8 @@ namespace nd::src::graphics::vulkan
         const auto bufferConfigs = configurations.getBuffers(device.queueFamilies);
         const auto buffers       = initializers.getBuffers(bufferConfigs, device.handle);
 
-        const auto bufferMemoryConfigs = getMapped<Buffer, std::vector<DeviceMemoryConfiguration>>(
-            buffers,
-            [&configurations, &physicalDeviceMemoryProperties, device = device.handle](const auto& buffer, const auto index)
-            {
-                const auto memoryRequirements = getMemoryRequirements(device, buffer);
-
-                return configurations.getBufferMemories(physicalDeviceMemoryProperties, memoryRequirements);
-            });
-
-        const auto bufferMemories = getMapped<std::vector<DeviceMemoryConfiguration>, std::vector<DeviceMemory>>(
-            bufferMemoryConfigs,
-            [&initializers, device = device.handle](const auto& bufferMemoryConfig, const auto index)
-            {
-                return initializers.getBufferMemories(bufferMemoryConfig, device);
-            });
+        const auto bufferMemoryConfigs = configurations.getBufferMemories(device.handle, physicalDeviceMemoryProperties, buffers);
+        const auto bufferMemories      = initializers.getBufferMemories(bufferMemoryConfigs, device.handle);
 
         initializers.bindBufferMemories(device.handle, buffers, bufferMemories, physicalDeviceMemoryProperties);
 

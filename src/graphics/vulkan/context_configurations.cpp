@@ -345,4 +345,21 @@ namespace nd::src::graphics::vulkan
 
         return {{memoryRequirements.size, memoryRequirements.alignment, memoryTypeIndex}};
     }
+
+    std::vector<std::vector<DeviceMemoryConfiguration>>
+    getAllBufferMemoryConfigurations(const VkDevice                          device,
+                                     const VkPhysicalDeviceMemoryProperties& memoryProperties,
+                                     const std::vector<VkBuffer>&            buffers) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<Buffer, std::vector<DeviceMemoryConfiguration>>(
+            buffers,
+            [device, &memoryProperties](const auto& buffer, const auto index)
+            {
+                const auto memoryRequirements = getMemoryRequirements(device, buffer);
+
+                return getBufferMemoryConfigurations(memoryProperties, memoryRequirements);
+            });
+    }
 } // namespace nd::src::graphics::vulkan

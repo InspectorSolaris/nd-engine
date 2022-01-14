@@ -43,7 +43,7 @@ namespace nd::src::graphics::vulkan
 
         using Buffers = std::vector<Buffer>(const std::vector<BufferConfiguration>&, const VkDevice);
 
-        using BufferMemories = std::vector<DeviceMemory>(const std::vector<DeviceMemoryConfiguration>&, const VkDevice);
+        using BufferMemories = std::vector<std::vector<DeviceMemory>>(const std::vector<std::vector<DeviceMemoryConfiguration>>&, const VkDevice);
 
         using BufferMemoriesBind = void(const VkDevice,
                                         const std::vector<Buffer>&,

@@ -158,4 +158,16 @@ namespace nd::src::graphics::vulkan
                                                                       return getDeviceMemory(configuration, device);
                                                                   });
     }
+
+    std::vector<DeviceMemories>
+    getAllDeviceMemories(const std::vector<std::vector<DeviceMemoryConfiguration>>& configurations, const VkDevice device)
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<std::vector<DeviceMemoryConfiguration>, std::vector<DeviceMemory>>(configurations,
+                                                                                            [device](const auto& bufferMemoryConfig, const auto index)
+                                                                                            {
+                                                                                                return getDeviceMemories(bufferMemoryConfig, device);
+                                                                                            });
+    }
 } // namespace nd::src::graphics::vulkan
