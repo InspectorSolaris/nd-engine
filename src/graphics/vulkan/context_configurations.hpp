@@ -41,7 +41,7 @@ namespace nd::src::graphics::vulkan
         using SwapchainImageViews = std::vector<ImageViewConfiguration>(const SwapchainConfiguration&, const std::vector<Image>&);
 
         using SwapchainFramebuffers = std::vector<FramebufferConfiguration>(const SwapchainConfiguration&,
-                                                                            const std::vector<ImageView>,
+                                                                            const std::vector<ImageView>&,
                                                                             const VkRenderPass);
 
         using ShaderModules = std::vector<ShaderModuleConfiguration>();
@@ -120,7 +120,7 @@ namespace nd::src::graphics::vulkan
 
     std::vector<FramebufferConfiguration>
     getSwapchainFramebufferConfigurations(const SwapchainConfiguration& swapchainConfiguration,
-                                          const std::vector<ImageView>  imageViews,
+                                          const std::vector<ImageView>& imageViews,
                                           const VkRenderPass            renderPass) noexcept;
 
     std::vector<ShaderModuleConfiguration>

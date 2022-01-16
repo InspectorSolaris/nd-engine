@@ -67,7 +67,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<ShaderModule>
-    getShaderModules(const std::vector<ShaderModuleConfiguration> configurations, const VkDevice device)
+    getShaderModules(const std::vector<ShaderModuleConfiguration>& configurations, const VkDevice device)
     {
         ND_SET_SCOPE();
 

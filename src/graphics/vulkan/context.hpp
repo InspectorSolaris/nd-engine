@@ -35,17 +35,17 @@ namespace nd::src::graphics::vulkan
         RenderPass     renderPass {};
         DescriptorPool descriptorPool {};
 
-        VulkanObjects(Instance&&                         instance,
+        VulkanObjects(Instance                           instance,
+                      Surface                            surface,
+                      RenderPass                         renderPass,
+                      DescriptorPool                     descriptorPool,
                       PhysicalDevice&&                   physicalDevice,
                       Device&&                           device,
-                      Surface&&                          surface,
                       Swapchain&&                        swapchain,
-                      RenderPass&&                       renderPass,
                       std::vector<Image>&&               swapchainImages,
                       std::vector<ImageView>&&           swapchainImageViews,
                       std::vector<Framebuffer>&&         swapchainFramebuffers,
                       std::vector<ShaderModule>&&        shaderModules,
-                      DescriptorPool&&                   descriptorPool,
                       std::vector<DescriptorSetLayout>&& descriptorSetLayouts,
                       std::vector<DescriptorSet>&&       descriptorSets,
                       std::vector<PipelineLayout>&&      pipelineLayouts,
@@ -56,12 +56,12 @@ namespace nd::src::graphics::vulkan
                       std::vector<DeviceMemories>&&      bufferMemories);
 
         VulkanObjects(const VulkanObjects& vulkanObjects) = delete;
-        VulkanObjects(VulkanObjects&& vulkanObjects);
+        VulkanObjects(VulkanObjects&& vulkanObjects) noexcept;
 
         VulkanObjects&
         operator=(const VulkanObjects& vulkanObjects) = delete;
         VulkanObjects&
-        operator=(VulkanObjects&& vulkanObjects);
+        operator=(VulkanObjects&& vulkanObjects) noexcept;
 
         ~VulkanObjects();
     };
@@ -72,12 +72,12 @@ namespace nd::src::graphics::vulkan
         VulkanContext(VulkanObjects&& objects);
 
         VulkanContext(const VulkanContext& vulkanContext) = delete;
-        VulkanContext(VulkanContext&& vulkanContext);
+        VulkanContext(VulkanContext&& vulkanContext)      = delete;
 
         VulkanContext&
         operator=(const VulkanContext& vulkanContext) = delete;
         VulkanContext&
-        operator=(VulkanContext&& vulkanContext);
+        operator=(VulkanContext&& vulkanContext) = delete;
 
         const QueueFamily&
         getGraphicsQueueFamily();

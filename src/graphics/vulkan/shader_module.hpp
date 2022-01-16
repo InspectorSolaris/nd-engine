@@ -35,5 +35,5 @@ namespace nd::src::graphics::vulkan
     getShaderModule(const ShaderModuleConfiguration& configuration, const VkDevice device);
 
     std::vector<ShaderModule>
-    getShaderModules(const std::vector<ShaderModuleConfiguration> configurations, const VkDevice device);
+    getShaderModules(const std::vector<ShaderModuleConfiguration>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

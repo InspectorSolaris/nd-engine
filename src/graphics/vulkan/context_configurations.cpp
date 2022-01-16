@@ -10,14 +10,14 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto layers = getMerged(configurationExternal.layers,
-                                      {
+        auto layers = getMerged(configurationExternal.layers,
+                                {
 #ifndef NDEBUG
-                                          "VK_LAYER_KHRONOS_validation"
+                                    "VK_LAYER_KHRONOS_validation"
 #endif
-                                      });
+                                });
 
-        const auto extensions = getMerged(configurationExternal.extensions, {});
+        auto extensions = getMerged(configurationExternal.extensions, {});
 
         return {configurationExternal.applicationName,
                 configurationExternal.engineName,
@@ -140,7 +140,7 @@ namespace nd::src::graphics::vulkan
 
     std::vector<FramebufferConfiguration>
     getSwapchainFramebufferConfigurations(const SwapchainConfiguration& swapchainConfiguration,
-                                          const std::vector<ImageView>  imageViews,
+                                          const std::vector<ImageView>& imageViews,
                                           const VkRenderPass            renderPass) noexcept
     {
         ND_SET_SCOPE();

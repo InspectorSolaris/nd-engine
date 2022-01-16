@@ -5,17 +5,17 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    VulkanObjects::VulkanObjects(Instance&&                         instance,
+    VulkanObjects::VulkanObjects(Instance                           instance,
+                                 Surface                            surface,
+                                 RenderPass                         renderPass,
+                                 DescriptorPool                     descriptorPool,
                                  PhysicalDevice&&                   physicalDevice,
                                  Device&&                           device,
-                                 Surface&&                          surface,
                                  Swapchain&&                        swapchain,
-                                 RenderPass&&                       renderPass,
                                  std::vector<Image>&&               swapchainImages,
                                  std::vector<ImageView>&&           swapchainImageViews,
                                  std::vector<Framebuffer>&&         swapchainFramebuffers,
                                  std::vector<ShaderModule>&&        shaderModules,
-                                 DescriptorPool&&                   descriptorPool,
                                  std::vector<DescriptorSetLayout>&& descriptorSetLayouts,
                                  std::vector<DescriptorSet>&&       descriptorSets,
                                  std::vector<PipelineLayout>&&      pipelineLayouts,
@@ -24,17 +24,17 @@ namespace nd::src::graphics::vulkan
                                  std::vector<CommandBuffers>&&      commandBuffers,
                                  std::vector<Buffer>&&              buffers,
                                  std::vector<DeviceMemories>&&      bufferMemories)
-        : instance {std::move(instance)}
+        : instance {instance}
         , physicalDevice {std::move(physicalDevice)}
         , device {std::move(device)}
-        , surface {std::move(surface)}
+        , surface {surface}
         , swapchain {std::move(swapchain)}
-        , renderPass {std::move(renderPass)}
+        , renderPass {renderPass}
         , swapchainImages {std::move(swapchainImages)}
         , swapchainImageViews {std::move(swapchainImageViews)}
         , swapchainFramebuffers {std::move(swapchainFramebuffers)}
         , shaderModules {std::move(shaderModules)}
-        , descriptorPool {std::move(descriptorPool)}
+        , descriptorPool {descriptorPool}
         , descriptorSetLayouts {std::move(descriptorSetLayouts)}
         , descriptorSets {std::move(descriptorSets)}
         , pipelineLayouts {std::move(pipelineLayouts)}
@@ -55,18 +55,18 @@ namespace nd::src::graphics::vulkan
         descriptorPool = VK_NULL_HANDLE;
     }
 
-    VulkanObjects::VulkanObjects(VulkanObjects&& vulkanObjects)
-        : instance {std::move(vulkanObjects.instance)}
+    VulkanObjects::VulkanObjects(VulkanObjects&& vulkanObjects) noexcept
+        : instance {vulkanObjects.instance}
         , physicalDevice {std::move(vulkanObjects.physicalDevice)}
         , device {std::move(vulkanObjects.device)}
-        , surface {std::move(vulkanObjects.surface)}
+        , surface {vulkanObjects.surface}
         , swapchain {std::move(vulkanObjects.swapchain)}
-        , renderPass {std::move(vulkanObjects.renderPass)}
+        , renderPass {vulkanObjects.renderPass}
         , swapchainImages {std::move(vulkanObjects.swapchainImages)}
         , swapchainImageViews {std::move(vulkanObjects.swapchainImageViews)}
         , swapchainFramebuffers {std::move(vulkanObjects.swapchainFramebuffers)}
         , shaderModules {std::move(vulkanObjects.shaderModules)}
-        , descriptorPool {std::move(vulkanObjects.descriptorPool)}
+        , descriptorPool {vulkanObjects.descriptorPool}
         , descriptorSetLayouts {std::move(vulkanObjects.descriptorSetLayouts)}
         , descriptorSets {std::move(vulkanObjects.descriptorSets)}
         , pipelineLayouts {std::move(vulkanObjects.pipelineLayouts)}
@@ -75,7 +75,6 @@ namespace nd::src::graphics::vulkan
         , commandBuffers {std::move(vulkanObjects.commandBuffers)}
         , buffers {std::move(vulkanObjects.buffers)}
         , bufferMemories {std::move(vulkanObjects.bufferMemories)}
-
     {
         ND_SET_SCOPE();
 
@@ -89,7 +88,7 @@ namespace nd::src::graphics::vulkan
     }
 
     VulkanObjects&
-    VulkanObjects::operator=(VulkanObjects&& vulkanObjects)
+    VulkanObjects::operator=(VulkanObjects&& vulkanObjects) noexcept
     {
         ND_SET_SCOPE();
 
@@ -107,7 +106,7 @@ namespace nd::src::graphics::vulkan
         swapchainFramebuffers = std::move(vulkanObjects.swapchainFramebuffers);
         shaderModules         = std::move(vulkanObjects.shaderModules);
 
-        descriptorPool = std::move(vulkanObjects.descriptorPool);
+        descriptorPool = vulkanObjects.descriptorPool;
 
         descriptorSetLayouts = std::move(vulkanObjects.descriptorSetLayouts);
         descriptorSets       = std::move(vulkanObjects.descriptorSets);
@@ -282,7 +281,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto semaphores = nd::src::graphics::vulkan::getSemaphore(objects_.device.handle, count, flags, next);
+        auto semaphores = nd::src::graphics::vulkan::getSemaphore(objects_.device.handle, count, flags, next);
 
         objects_.semaphores.insert(objects_.semaphores.end(), semaphores.begin(), semaphores.end());
 
@@ -306,7 +305,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto fences = nd::src::graphics::vulkan::getFence(objects_.device.handle, count, flags, next);
+        auto fences = nd::src::graphics::vulkan::getFence(objects_.device.handle, count, flags, next);
 
         objects_.fences.insert(objects_.fences.end(), fences.begin(), fences.end());
 
@@ -462,17 +461,17 @@ namespace nd::src::graphics::vulkan
             ND_ASSERT_EXEC(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS);
         }
 
-        return VulkanObjects {std::move(instance),
+        return VulkanObjects {instance,
+                              surface,
+                              renderPass,
+                              descriptorPool,
                               std::move(physicalDevice),
                               std::move(device),
-                              std::move(surface),
                               std::move(swapchain),
-                              std::move(renderPass),
                               std::move(swapchainImages),
                               std::move(swapchainImageViews),
                               std::move(swapchainFramebuffers),
                               std::move(shaderModules),
-                              std::move(descriptorPool),
                               std::move(descriptorSetLayouts),
                               std::move(descriptorSets),
                               std::move(pipelineLayouts),
