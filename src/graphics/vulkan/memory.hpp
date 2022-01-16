@@ -39,9 +39,6 @@ namespace nd::src::graphics::vulkan
                  const std::vector<DeviceMemories>&      bufferMemories,
                  const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties) noexcept;
 
-    VkPhysicalDeviceMemoryProperties
-    getPhysicalDeviceMemoryProperties(const VkPhysicalDevice physicalDevice) noexcept;
-
     VkMemoryRequirements
     getMemoryRequirements(const VkDevice device, const VkBuffer buffer) noexcept;
 

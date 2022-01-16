@@ -5,27 +5,27 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    auto configurationsBuilder = VulkanContextConfigurationsBuilder {} << //
-        getInstanceConfiguration <<                                       //
-        getPhysicalDeviceConfiguration <<                                 //
-        getDeviceConfiguration <<                                         //
-        getSwapchainConfiguration <<                                      //
-        getRenderPassConfiguration <<                                     //
-        getSwapchainImageViewConfigurations <<                            //
-        getSwapchainFramebufferConfigurations <<                          //
-        getShaderModulesConfigurations <<                                 //
-        getDescriptorPoolConfiguration <<                                 //
-        getDescriptorSetLayoutConfigurations <<                           //
-        getDescriptorSetConfiguration <<                                  //
-        getPipelineLayoutConfigurations <<                                //
-        getGraphicsPipelineConfigurations <<                              //
-        getCommandPoolConfigurations <<                                   //
-        getCommandBufferConfigurations <<                                 //
-        getBufferConfigurations <<                                        //
+    auto configurationsBuilder = VulkanConfigurationsBuilder {} << //
+        getInstanceConfiguration <<                                //
+        getPhysicalDeviceConfiguration <<                          //
+        getDeviceConfiguration <<                                  //
+        getSwapchainConfiguration <<                               //
+        getRenderPassConfiguration <<                              //
+        getSwapchainImageViewConfigurations <<                     //
+        getSwapchainFramebufferConfigurations <<                   //
+        getShaderModulesConfigurations <<                          //
+        getDescriptorPoolConfiguration <<                          //
+        getDescriptorSetLayoutConfigurations <<                    //
+        getDescriptorSetConfiguration <<                           //
+        getPipelineLayoutConfigurations <<                         //
+        getGraphicsPipelineConfigurations <<                       //
+        getCommandPoolConfigurations <<                            //
+        getCommandBufferConfigurations <<                          //
+        getBufferConfigurations <<                                 //
         getAllBufferMemoryConfigurations;
 
-    VulkanContextConfigurationsBuilder::Type
-    VulkanContextConfigurationsBuilder::build() const
+    VulkanConfigurationsBuilder::Type
+    VulkanConfigurationsBuilder::build() const
     {
         ND_SET_SCOPE();
 

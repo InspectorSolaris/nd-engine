@@ -5,29 +5,29 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    auto initializersBuilder = VulkanContextInitializersBuilder {} << //
-        getInstance <<                                                //
-        getPhysicalDevice <<                                          //
-        getDevice <<                                                  //
-        getSwapchain <<                                               //
-        getRenderPass <<                                              //
-        getSwapchainImages <<                                         //
-        getImageViews <<                                              //
-        getFramebuffers <<                                            //
-        getShaderModules <<                                           //
-        getDescriptorPool <<                                          //
-        getDescriptorSetLayouts <<                                    //
-        getDescriptorSets <<                                          //
-        getPipelineLayouts <<                                         //
-        getGraphicsPipelines <<                                       //
-        getCommandPools <<                                            //
-        getCommandBuffers <<                                          //
-        getBuffers <<                                                 //
-        getAllDeviceMemories <<                                       //
+    auto initializersBuilder = VulkanInitializersBuilder {} << //
+        getInstance <<                                         //
+        getPhysicalDevice <<                                   //
+        getDevice <<                                           //
+        getSwapchain <<                                        //
+        getRenderPass <<                                       //
+        getSwapchainImages <<                                  //
+        getImageViews <<                                       //
+        getFramebuffers <<                                     //
+        getShaderModules <<                                    //
+        getDescriptorPool <<                                   //
+        getDescriptorSetLayouts <<                             //
+        getDescriptorSets <<                                   //
+        getPipelineLayouts <<                                  //
+        getGraphicsPipelines <<                                //
+        getCommandPools <<                                     //
+        getCommandBuffers <<                                   //
+        getBuffers <<                                          //
+        getAllDeviceMemories <<                                //
         bindMemories;
 
-    VulkanContextInitializersBuilder::Type
-    VulkanContextInitializersBuilder::build() const
+    VulkanInitializersBuilder::Type
+    VulkanInitializersBuilder::build() const
     {
         ND_SET_SCOPE();
 

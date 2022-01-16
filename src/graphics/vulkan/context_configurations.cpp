@@ -8,7 +8,7 @@ namespace nd::src::graphics::vulkan
     const auto vertexBufferSize = 16 * sizeof(Vertex);
 
     InstanceConfiguration
-    getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept
+    getInstanceConfiguration(const VulkanConfigurationExternal& configurationExternal) noexcept
     {
         ND_SET_SCOPE();
 

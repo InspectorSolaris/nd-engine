@@ -11,7 +11,7 @@ namespace nd::src::graphics::vulkan
         glm::vec3 color;
     };
 
-    struct VulkanContextConfigurationExternal final
+    struct VulkanConfigurationExternal final
     {
         const std::string& applicationName;
         const std::string& engineName;
@@ -23,9 +23,9 @@ namespace nd::src::graphics::vulkan
         const uint32_t height;
     };
 
-    struct VulkanContextConfigurations final
+    struct VulkanConfigurations final
     {
-        using Instance = InstanceConfiguration(const VulkanContextConfigurationExternal&);
+        using Instance = InstanceConfiguration(const VulkanConfigurationExternal&);
 
         using PhysicalDevice = PhysicalDeviceConfiguration();
 
@@ -90,7 +90,7 @@ namespace nd::src::graphics::vulkan
     };
 
     InstanceConfiguration
-    getInstanceConfiguration(const VulkanContextConfigurationExternal& configurationExternal) noexcept;
+    getInstanceConfiguration(const VulkanConfigurationExternal& configurationExternal) noexcept;
 
     PhysicalDeviceConfiguration
     getPhysicalDeviceConfiguration() noexcept;

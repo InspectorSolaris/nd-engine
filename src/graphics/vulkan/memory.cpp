@@ -60,18 +60,6 @@ namespace nd::src::graphics::vulkan
         }
     }
 
-    VkPhysicalDeviceMemoryProperties
-    getPhysicalDeviceMemoryProperties(const VkPhysicalDevice physicalDevice) noexcept
-    {
-        ND_SET_SCOPE();
-
-        VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties;
-
-        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &physicalDeviceMemoryProperties);
-
-        return physicalDeviceMemoryProperties;
-    }
-
     VkMemoryRequirements
     getMemoryRequirements(const VkDevice device, const VkBuffer buffer) noexcept
     {

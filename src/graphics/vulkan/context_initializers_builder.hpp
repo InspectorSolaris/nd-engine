@@ -20,11 +20,11 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class VulkanContextInitializersBuilder final
+    class VulkanInitializersBuilder final
     {
     public:
-        using Type    = VulkanContextInitializers;
-        using Builder = VulkanContextInitializersBuilder;
+        using Type    = VulkanInitializers;
+        using Builder = VulkanInitializersBuilder;
 
         Type
         build() const;
@@ -99,5 +99,5 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::bindBufferMemories)>       bindBufferMemories;
     };
 
-    extern VulkanContextInitializersBuilder initializersBuilder;
+    extern VulkanInitializersBuilder initializersBuilder;
 } // namespace nd::src::graphics::vulkan

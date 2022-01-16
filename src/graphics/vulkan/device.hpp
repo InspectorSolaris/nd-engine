@@ -19,7 +19,11 @@ namespace nd::src::graphics::vulkan
         const VkQueueFlags queueFlags;
     };
 
-    using PhysicalDevice = VkPhysicalDevice;
+    struct PhysicalDevice final
+    {
+        VkPhysicalDeviceMemoryProperties memoryProperties;
+        VkPhysicalDevice                 handle;
+    };
 
     struct DeviceConfiguration final
     {
@@ -33,10 +37,10 @@ namespace nd::src::graphics::vulkan
 
     struct Device final
     {
-        const std::map<uint32_t, std::vector<VkQueue>> queues;
-        const std::vector<QueueFamily>                 queueFamilies;
+        std::map<uint32_t, std::vector<VkQueue>> queues;
+        std::vector<QueueFamily>                 queueFamilies;
 
-        const VkDevice handle;
+        VkDevice handle;
     };
 
     VkDeviceQueueCreateInfo
@@ -57,6 +61,9 @@ namespace nd::src::graphics::vulkan
 
     std::vector<VkPhysicalDevice>
     getPhysicalDevices(const VkInstance instance) noexcept;
+
+    VkPhysicalDeviceMemoryProperties
+    getPhysicalDeviceMemoryProperties(const VkPhysicalDevice physicalDevice) noexcept;
 
     bool
     isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available, const VkPhysicalDeviceFeatures* required) noexcept;

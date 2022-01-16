@@ -65,6 +65,18 @@ namespace nd::src::graphics::vulkan
         return physicalDevices;
     }
 
+    VkPhysicalDeviceMemoryProperties
+    getPhysicalDeviceMemoryProperties(const VkPhysicalDevice physicalDevice) noexcept
+    {
+        ND_SET_SCOPE();
+
+        VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties;
+
+        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &physicalDeviceMemoryProperties);
+
+        return physicalDeviceMemoryProperties;
+    }
+
     bool
     isPhysicalDeviceFeaturesSupported(const VkPhysicalDeviceFeatures* available, const VkPhysicalDeviceFeatures* required) noexcept
     {
@@ -186,7 +198,7 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT(physicalDeviceMax.has_value());
 
-        return physicalDeviceMax.value();
+        return {getPhysicalDeviceMemoryProperties(physicalDeviceMax.value()), physicalDeviceMax.value()};
     }
 
     VkDevice

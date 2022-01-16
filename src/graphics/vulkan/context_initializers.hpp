@@ -5,7 +5,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    struct VulkanContextInitializers final
+    struct VulkanInitializers final
     {
         using Instance = Instance(const InstanceConfiguration&);
 

@@ -20,11 +20,11 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class VulkanContextConfigurationsBuilder final
+    class VulkanConfigurationsBuilder final
     {
     public:
-        using Type    = VulkanContextConfigurations;
-        using Builder = VulkanContextConfigurationsBuilder;
+        using Type    = VulkanConfigurations;
+        using Builder = VulkanConfigurationsBuilder;
 
         Type
         build() const;
@@ -90,5 +90,5 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getBufferMemories)>        getBufferMemories;
     };
 
-    extern VulkanContextConfigurationsBuilder configurationsBuilder;
+    extern VulkanConfigurationsBuilder configurationsBuilder;
 } // namespace nd::src::graphics::vulkan
