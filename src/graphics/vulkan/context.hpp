@@ -27,10 +27,8 @@ namespace nd::src::graphics::vulkan
         std::vector<Buffer>              buffers {};
         std::vector<DeviceMemories>      bufferMemories {};
 
-        std::vector<VkSemaphore> imageAcquiredSemaphores {};
-        std::vector<VkSemaphore> imageRenderedSemaphores {};
-        std::vector<VkFence>     imageAcquiredFences {};
-        std::vector<VkFence>     imageRenderedFences {};
+        std::vector<VkSemaphore> semaphores {};
+        std::vector<VkFence>     fences {};
 
         Instance       instance {};
         Surface        surface {};
@@ -55,11 +53,7 @@ namespace nd::src::graphics::vulkan
                       std::vector<CommandPool>&&         commandPools,
                       std::vector<CommandBuffers>&&      commandBuffers,
                       std::vector<Buffer>&&              buffers,
-                      std::vector<DeviceMemories>&&      bufferMemories,
-                      std::vector<VkSemaphore>&&         imageAcquiredSemaphores,
-                      std::vector<VkSemaphore>&&         imageRenderedSemaphores,
-                      std::vector<VkFence>&&             imageAcquiredFences,
-                      std::vector<VkFence>&&             imageRenderedFences);
+                      std::vector<DeviceMemories>&&      bufferMemories);
 
         VulkanObjects(const VulkanObjects& vulkanObjects) = delete;
         VulkanObjects(VulkanObjects&& vulkanObjects);
@@ -84,6 +78,18 @@ namespace nd::src::graphics::vulkan
         operator=(const VulkanContext& vulkanContext) = delete;
         VulkanContext&
         operator=(VulkanContext&& vulkanContext);
+
+        VkSemaphore
+        getSemaphore(const VkSemaphoreCreateFlags flags = {}, const void* next = {}) noexcept;
+
+        std::vector<VkSemaphore>
+        getSemaphore(const size_t count, const VkSemaphoreCreateFlags flags = {}, const void* next = {}) noexcept;
+
+        VkFence
+        getFence(const VkFenceCreateFlags flags = {}, const void* next = {}) noexcept;
+
+        std::vector<VkFence>
+        getFence(const size_t count, const VkFenceCreateFlags flags = {}, const void* next = {}) noexcept;
 
         void
         drawNextFrame();

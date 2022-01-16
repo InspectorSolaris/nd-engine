@@ -23,11 +23,7 @@ namespace nd::src::graphics::vulkan
                                  std::vector<CommandPool>&&         commandPools,
                                  std::vector<CommandBuffers>&&      commandBuffers,
                                  std::vector<Buffer>&&              buffers,
-                                 std::vector<DeviceMemories>&&      bufferMemories,
-                                 std::vector<VkSemaphore>&&         imageAcquiredSemaphores,
-                                 std::vector<VkSemaphore>&&         imageRenderedSemaphores,
-                                 std::vector<VkFence>&&             imageAcquiredFences,
-                                 std::vector<VkFence>&&             imageRenderedFences)
+                                 std::vector<DeviceMemories>&&      bufferMemories)
         : instance {std::move(instance)}
         , physicalDevice {std::move(physicalDevice)}
         , device {std::move(device)}
@@ -47,10 +43,6 @@ namespace nd::src::graphics::vulkan
         , commandBuffers {std::move(commandBuffers)}
         , buffers {std::move(buffers)}
         , bufferMemories {std::move(bufferMemories)}
-        , imageAcquiredSemaphores {std::move(imageAcquiredSemaphores)}
-        , imageRenderedSemaphores {std::move(imageRenderedSemaphores)}
-        , imageAcquiredFences {std::move(imageAcquiredFences)}
-        , imageRenderedFences {std::move(imageRenderedFences)}
     {
         ND_SET_SCOPE();
 
@@ -83,10 +75,6 @@ namespace nd::src::graphics::vulkan
         , commandBuffers {std::move(vulkanObjects.commandBuffers)}
         , buffers {std::move(vulkanObjects.buffers)}
         , bufferMemories {std::move(vulkanObjects.bufferMemories)}
-        , imageAcquiredSemaphores {std::move(vulkanObjects.imageAcquiredSemaphores)}
-        , imageRenderedSemaphores {std::move(vulkanObjects.imageRenderedSemaphores)}
-        , imageAcquiredFences {std::move(vulkanObjects.imageAcquiredFences)}
-        , imageRenderedFences {std::move(vulkanObjects.imageRenderedFences)}
 
     {
         ND_SET_SCOPE();
@@ -130,11 +118,6 @@ namespace nd::src::graphics::vulkan
         buffers              = std::move(vulkanObjects.buffers);
         bufferMemories       = std::move(vulkanObjects.bufferMemories);
 
-        imageAcquiredSemaphores = std::move(vulkanObjects.imageAcquiredSemaphores);
-        imageRenderedSemaphores = std::move(vulkanObjects.imageRenderedSemaphores);
-        imageAcquiredFences     = std::move(vulkanObjects.imageAcquiredFences);
-        imageRenderedFences     = std::move(vulkanObjects.imageRenderedFences);
-
         vulkanObjects.instance       = VK_NULL_HANDLE;
         vulkanObjects.physicalDevice = {};
         vulkanObjects.device         = {};
@@ -156,18 +139,16 @@ namespace nd::src::graphics::vulkan
         }
 
         vkDeviceWaitIdle(device.handle);
+        vkWaitForFences(device.handle, fences.size(), fences.data(), true, UINT64_MAX);
 
-        for(size_t index = 0; index < swapchainImages.size(); ++index)
+        for(size_t index = 0; index < semaphores.size(); ++index)
         {
-            vkDestroySemaphore(device.handle, imageAcquiredSemaphores[index], nullptr);
-            vkDestroySemaphore(device.handle, imageRenderedSemaphores[index], nullptr);
+            vkDestroySemaphore(device.handle, semaphores[index], nullptr);
+        }
 
-            const auto fences = std::vector<VkFence> {imageAcquiredFences[index], imageRenderedFences[index]};
-
-            vkWaitForFences(device.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
-
-            vkDestroyFence(device.handle, imageAcquiredFences[index], nullptr);
-            vkDestroyFence(device.handle, imageRenderedFences[index], nullptr);
+        for(size_t index = 0; index < fences.size(); ++index)
+        {
+            vkDestroyFence(device.handle, fences[index], nullptr);
         }
 
         for(size_t bufferIndex = 0; bufferIndex < buffers.size(); ++bufferIndex)
@@ -234,6 +215,54 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
     }
 
+    VkSemaphore
+    VulkanContext::getSemaphore(const VkSemaphoreCreateFlags flags, const void* next) noexcept
+    {
+        ND_SET_SCOPE();
+
+        const auto semaphore = nd::src::graphics::vulkan::getSemaphore(objects_.device.handle, flags, next);
+
+        objects_.semaphores.push_back(semaphore);
+
+        return semaphore;
+    }
+
+    std::vector<VkSemaphore>
+    VulkanContext::getSemaphore(const size_t count, const VkSemaphoreCreateFlags flags, const void* next) noexcept
+    {
+        ND_SET_SCOPE();
+
+        const auto semaphores = nd::src::graphics::vulkan::getSemaphore(objects_.device.handle, count, flags, next);
+
+        objects_.semaphores.insert(objects_.semaphores.end(), semaphores.begin(), semaphores.end());
+
+        return semaphores;
+    }
+
+    VkFence
+    VulkanContext::getFence(const VkFenceCreateFlags flags, const void* next) noexcept
+    {
+        ND_SET_SCOPE();
+
+        const auto fence = nd::src::graphics::vulkan::getFence(objects_.device.handle, flags, next);
+
+        objects_.fences.push_back(fence);
+
+        return fence;
+    }
+
+    std::vector<VkFence>
+    VulkanContext::getFence(const size_t count, const VkFenceCreateFlags flags, const void* next) noexcept
+    {
+        ND_SET_SCOPE();
+
+        const auto fences = nd::src::graphics::vulkan::getFence(objects_.device.handle, count, flags, next);
+
+        objects_.fences.insert(objects_.fences.end(), fences.begin(), fences.end());
+
+        return fences;
+    }
+
     void
     VulkanContext::drawNextFrame()
     {
@@ -241,13 +270,18 @@ namespace nd::src::graphics::vulkan
 
         static auto frameIndex = size_t {0};
 
-        static auto deviceQueue    = objects_.device.queues.begin()->second[0];
-        static auto swapchainQueue = objects_.swapchain.queues.begin()->second[0];
+        static const auto deviceQueue    = objects_.device.queues.begin()->second[0];
+        static const auto swapchainQueue = objects_.swapchain.queues.begin()->second[0];
 
-        const auto imageAcquiredSemaphore = objects_.imageAcquiredSemaphores[frameIndex];
-        const auto imageRenderedSemaphore = objects_.imageRenderedSemaphores[frameIndex];
-        const auto imageAcquiredFence     = objects_.imageAcquiredFences[frameIndex];
-        const auto imageRenderedFence     = objects_.imageRenderedFences[frameIndex];
+        static const auto imageAcquiredSemaphores = getSemaphore(objects_.swapchainImages.size());
+        static const auto imageRenderedSemaphores = getSemaphore(objects_.swapchainImages.size());
+        static const auto imageAcquiredFences     = getFence(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
+        static const auto imageRenderedFences     = getFence(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
+
+        const auto imageAcquiredSemaphore = imageAcquiredSemaphores[frameIndex];
+        const auto imageRenderedSemaphore = imageRenderedSemaphores[frameIndex];
+        const auto imageAcquiredFence     = imageAcquiredFences[frameIndex];
+        const auto imageRenderedFence     = imageRenderedFences[frameIndex];
 
         const auto fences = std::vector<VkFence> {imageAcquiredFence, imageRenderedFence};
 
@@ -378,11 +412,6 @@ namespace nd::src::graphics::vulkan
             ND_ASSERT_EXEC(vkEndCommandBuffer(commandBuffer) == VK_SUCCESS);
         }
 
-        auto imageAcquiredSemaphores = getSemaphore(device.handle, swapchainImages.size());
-        auto imageRenderedSemaphores = getSemaphore(device.handle, swapchainImages.size());
-        auto imageAcquiredFences     = getFence(device.handle, swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
-        auto imageRenderedFences     = getFence(device.handle, swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
-
         return VulkanObjects {std::move(instance),
                               std::move(physicalDevice),
                               std::move(device),
@@ -401,11 +430,7 @@ namespace nd::src::graphics::vulkan
                               std::move(commandPools),
                               std::move(commandBuffers),
                               std::move(buffers),
-                              std::move(bufferMemories),
-                              std::move(imageAcquiredSemaphores),
-                              std::move(imageRenderedSemaphores),
-                              std::move(imageAcquiredFences),
-                              std::move(imageRenderedFences)};
+                              std::move(bufferMemories)};
     }
 
     VulkanContext
