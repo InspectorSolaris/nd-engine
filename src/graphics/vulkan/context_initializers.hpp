@@ -48,7 +48,7 @@ namespace nd::src::graphics::vulkan
         using BufferMemoriesBind = void(const VkDevice,
                                         const std::vector<Buffer>&,
                                         const std::vector<DeviceMemories>&,
-                                        const VkPhysicalDeviceMemoryProperties&);
+                                        const VkPhysicalDeviceMemoryProperties*);
 
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;

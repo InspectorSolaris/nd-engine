@@ -254,7 +254,7 @@ namespace nd::src::graphics::vulkan
     }
 
     const QueueFamily&
-    VulkanContext::getPresentQueueFamily()
+    VulkanContext::getSwapchainQueueFamily()
     {
         ND_SET_SCOPE();
 
@@ -321,7 +321,7 @@ namespace nd::src::graphics::vulkan
         static auto frameIndex = size_t {0};
 
         static const auto deviceQueue    = getGraphicsQueueFamily().queues.front();
-        static const auto swapchainQueue = getPresentQueueFamily().queues.front();
+        static const auto swapchainQueue = getSwapchainQueueFamily().queues.front();
 
         static const auto imageAcquiredSemaphores = getSemaphores(objects_.swapchainImages.size());
         static const auto imageRenderedSemaphores = getSemaphores(objects_.swapchainImages.size());
@@ -421,10 +421,10 @@ namespace nd::src::graphics::vulkan
         const auto bufferConfigs = configurations.getBuffers(device.queueFamilies);
         auto       buffers       = initializers.getBuffers(bufferConfigs, device.handle);
 
-        const auto bufferMemoryConfigs = configurations.getBufferMemories(device.handle, physicalDevice.memoryProperties, buffers);
+        const auto bufferMemoryConfigs = configurations.getBufferMemories(device.handle, physicalDevice.memoryProperties.get(), buffers);
         auto       bufferMemories      = initializers.getBufferMemories(bufferMemoryConfigs, device.handle);
 
-        initializers.bindBufferMemories(device.handle, buffers, bufferMemories, physicalDevice.memoryProperties);
+        initializers.bindBufferMemories(device.handle, buffers, bufferMemories, physicalDevice.memoryProperties.get());
 
         const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
                                                    {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},

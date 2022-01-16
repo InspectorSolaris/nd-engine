@@ -37,13 +37,13 @@ namespace nd::src::graphics::vulkan
     bindMemories(const VkDevice                          device,
                  const std::vector<Buffer>&              buffers,
                  const std::vector<DeviceMemories>&      bufferMemories,
-                 const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties) noexcept;
+                 const VkPhysicalDeviceMemoryProperties* physicalDeviceMemoryProperties) noexcept;
 
     VkMemoryRequirements
     getMemoryRequirements(const VkDevice device, const VkBuffer buffer) noexcept;
 
     uint32_t
-    getMemoryTypeIndex(const VkPhysicalDeviceMemoryProperties& memoryProperties,
+    getMemoryTypeIndex(const VkPhysicalDeviceMemoryProperties* memoryProperties,
                        const VkMemoryRequirements              memoryRequirements,
                        const VkMemoryPropertyFlags             flags);
 

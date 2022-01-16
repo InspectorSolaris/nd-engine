@@ -333,7 +333,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<DeviceMemoryConfiguration>
-    getBufferMemoryConfigurations(const VkPhysicalDeviceMemoryProperties& memoryProperties, const VkMemoryRequirements memoryRequirements) noexcept
+    getBufferMemoryConfigurations(const VkPhysicalDeviceMemoryProperties* memoryProperties, const VkMemoryRequirements memoryRequirements) noexcept
     {
         ND_SET_SCOPE();
 
@@ -346,7 +346,7 @@ namespace nd::src::graphics::vulkan
 
     std::vector<std::vector<DeviceMemoryConfiguration>>
     getAllBufferMemoryConfigurations(const VkDevice                          device,
-                                     const VkPhysicalDeviceMemoryProperties& memoryProperties,
+                                     const VkPhysicalDeviceMemoryProperties* memoryProperties,
                                      const std::vector<VkBuffer>&            buffers) noexcept
     {
         ND_SET_SCOPE();

@@ -21,8 +21,9 @@ namespace nd::src::graphics::vulkan
 
     struct PhysicalDevice final
     {
-        VkPhysicalDeviceMemoryProperties memoryProperties;
-        VkPhysicalDevice                 handle;
+        std::unique_ptr<VkPhysicalDeviceMemoryProperties> memoryProperties;
+
+        VkPhysicalDevice handle;
     };
 
     struct DeviceConfiguration final

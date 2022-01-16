@@ -38,7 +38,7 @@ namespace nd::src::graphics::vulkan
     bindMemories(const VkDevice                          device,
                  const std::vector<Buffer>&              buffers,
                  const std::vector<DeviceMemories>&      bufferMemories,
-                 const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties) noexcept
+                 const VkPhysicalDeviceMemoryProperties* physicalDeviceMemoryProperties) noexcept
     {
         ND_SET_SCOPE();
 
@@ -49,7 +49,7 @@ namespace nd::src::graphics::vulkan
             for(size_t memoryIndex = 0; memoryIndex < bufferMemories[bufferIndex].size(); ++memoryIndex)
             {
                 const auto memory          = bufferMemories[bufferIndex][memoryIndex];
-                const auto memoryHeapIndex = physicalDeviceMemoryProperties.memoryTypes[memory.memoryTypeIndex].heapIndex;
+                const auto memoryHeapIndex = physicalDeviceMemoryProperties->memoryTypes[memory.memoryTypeIndex].heapIndex;
 
                 const auto offset = getAlignedOffset(offsets[memoryHeapIndex], memory.alignment);
 
@@ -73,7 +73,7 @@ namespace nd::src::graphics::vulkan
     }
 
     uint32_t
-    getMemoryTypeIndex(const VkPhysicalDeviceMemoryProperties& memoryProperties,
+    getMemoryTypeIndex(const VkPhysicalDeviceMemoryProperties* memoryProperties,
                        const VkMemoryRequirements              memoryRequirements,
                        const VkMemoryPropertyFlags             flags)
     {
@@ -87,7 +87,7 @@ namespace nd::src::graphics::vulkan
             const auto bit   = getNextBit(memoryTypeBits);
             const auto index = getBitIndex(bit);
 
-            if(isSubmask(memoryProperties.memoryTypes[index].propertyFlags, flags))
+            if(isSubmask(memoryProperties->memoryTypes[index].propertyFlags, flags))
             {
                 memoryTypeIndex = index;
             }

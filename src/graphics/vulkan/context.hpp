@@ -89,7 +89,7 @@ namespace nd::src::graphics::vulkan
         getTransferQueueFamily();
 
         const QueueFamily&
-        getPresentQueueFamily();
+        getSwapchainQueueFamily();
 
         VkSemaphore
         getSemaphore(const VkSemaphoreCreateFlags flags = {}, const void* next = {}) noexcept;

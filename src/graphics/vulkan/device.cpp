@@ -198,7 +198,8 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT(physicalDeviceMax.has_value());
 
-        return {getPhysicalDeviceMemoryProperties(physicalDeviceMax.value()), physicalDeviceMax.value()};
+        return {std::make_unique<VkPhysicalDeviceMemoryProperties>(getPhysicalDeviceMemoryProperties(physicalDeviceMax.value())),
+                physicalDeviceMax.value()};
     }
 
     VkDevice
