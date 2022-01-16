@@ -215,6 +215,56 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
     }
 
+    const QueueFamily&
+    VulkanContext::getGraphicsQueueFamily()
+    {
+        ND_SET_SCOPE();
+
+        static const auto queueFamily = getQueueFamily(objects_.device.queueFamilies, VK_QUEUE_GRAPHICS_BIT);
+
+        ND_ASSERT(queueFamily != objects_.device.queueFamilies.end());
+
+        return *queueFamily;
+    }
+
+    const QueueFamily&
+    VulkanContext::getComputeQueueFamily()
+    {
+        ND_SET_SCOPE();
+
+        static const auto queueFamily = getQueueFamily(objects_.device.queueFamilies, VK_QUEUE_COMPUTE_BIT);
+
+        ND_ASSERT(queueFamily != objects_.device.queueFamilies.end());
+
+        return *queueFamily;
+    }
+
+    const QueueFamily&
+    VulkanContext::getTransferQueueFamily()
+    {
+        ND_SET_SCOPE();
+
+        static const auto queueFamily = getQueueFamily(objects_.device.queueFamilies,
+                                                       VK_QUEUE_TRANSFER_BIT,
+                                                       VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
+
+        ND_ASSERT(queueFamily != objects_.device.queueFamilies.end());
+
+        return *queueFamily;
+    }
+
+    const QueueFamily&
+    VulkanContext::getPresentQueueFamily()
+    {
+        ND_SET_SCOPE();
+
+        ND_ASSERT(objects_.swapchain.queueFamilies.size());
+
+        static const auto queueFamily = objects_.swapchain.queueFamilies.front();
+
+        return queueFamily;
+    }
+
     VkSemaphore
     VulkanContext::getSemaphore(const VkSemaphoreCreateFlags flags, const void* next) noexcept
     {
@@ -228,7 +278,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkSemaphore>
-    VulkanContext::getSemaphore(const size_t count, const VkSemaphoreCreateFlags flags, const void* next) noexcept
+    VulkanContext::getSemaphores(const size_t count, const VkSemaphoreCreateFlags flags, const void* next) noexcept
     {
         ND_SET_SCOPE();
 
@@ -252,7 +302,7 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<VkFence>
-    VulkanContext::getFence(const size_t count, const VkFenceCreateFlags flags, const void* next) noexcept
+    VulkanContext::getFences(const size_t count, const VkFenceCreateFlags flags, const void* next) noexcept
     {
         ND_SET_SCOPE();
 
@@ -270,13 +320,13 @@ namespace nd::src::graphics::vulkan
 
         static auto frameIndex = size_t {0};
 
-        static const auto deviceQueue    = objects_.device.queues.begin()->second[0];
-        static const auto swapchainQueue = objects_.swapchain.queues.begin()->second[0];
+        static const auto deviceQueue    = getGraphicsQueueFamily().queues.front();
+        static const auto swapchainQueue = getPresentQueueFamily().queues.front();
 
-        static const auto imageAcquiredSemaphores = getSemaphore(objects_.swapchainImages.size());
-        static const auto imageRenderedSemaphores = getSemaphore(objects_.swapchainImages.size());
-        static const auto imageAcquiredFences     = getFence(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
-        static const auto imageRenderedFences     = getFence(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
+        static const auto imageAcquiredSemaphores = getSemaphores(objects_.swapchainImages.size());
+        static const auto imageRenderedSemaphores = getSemaphores(objects_.swapchainImages.size());
+        static const auto imageAcquiredFences     = getFences(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
+        static const auto imageRenderedFences     = getFences(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
 
         const auto imageAcquiredSemaphore = imageAcquiredSemaphores[frameIndex];
         const auto imageRenderedSemaphore = imageRenderedSemaphores[frameIndex];

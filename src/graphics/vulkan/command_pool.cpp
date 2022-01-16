@@ -35,9 +35,9 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto createInfo = getCommandPoolCreateInfo(configuration.queueFamily.index, configuration.flags, configuration.next);
+        const auto createInfo = getCommandPoolCreateInfo(configuration.queueFamilyIndex, configuration.flags, configuration.next);
 
-        return {configuration.queueFamily, getCommandPoolHandle(createInfo, device)};
+        return {configuration.queueFamilyIndex, configuration.queueCount, configuration.queueFlags, getCommandPoolHandle(createInfo, device)};
     }
 
     std::vector<CommandPool>

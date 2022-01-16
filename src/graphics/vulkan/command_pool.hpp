@@ -8,7 +8,9 @@ namespace nd::src::graphics::vulkan
 {
     struct CommandPoolConfiguration final
     {
-        const QueueFamily queueFamily;
+        const uint32_t     queueFamilyIndex;
+        const uint32_t     queueCount;
+        const VkQueueFlags queueFlags;
 
         const VkCommandPoolCreateFlags flags = {};
         const void*                    next  = {};
@@ -16,7 +18,9 @@ namespace nd::src::graphics::vulkan
 
     struct CommandPool final
     {
-        const QueueFamily   queueFamily;
+        const uint32_t      queueFamilyIndex;
+        const uint32_t      queueCount;
+        const VkQueueFlags  queueFlags;
         const VkCommandPool handle;
     };
 

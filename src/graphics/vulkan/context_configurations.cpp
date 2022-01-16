@@ -5,8 +5,6 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    const auto vertexBufferSize = 16 * sizeof(Vertex);
-
     InstanceConfiguration
     getInstanceConfiguration(const VulkanConfigurationExternal& configurationExternal) noexcept
     {
@@ -301,7 +299,7 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
 
-        return {{*graphicsQueueFamily}};
+        return {{graphicsQueueFamily->index, static_cast<uint32_t>(graphicsQueueFamily->queues.size()), graphicsQueueFamily->queueFlags}};
     }
 
     std::vector<CommandBufferConfiguration>
@@ -313,7 +311,7 @@ namespace nd::src::graphics::vulkan
             commandPools,
             [](const auto& commandPool, const auto index)
             {
-                return CommandBufferConfiguration {commandPool.handle, VK_COMMAND_BUFFER_LEVEL_PRIMARY, commandPool.queueFamily.queueCount};
+                return CommandBufferConfiguration {commandPool.handle, VK_COMMAND_BUFFER_LEVEL_PRIMARY, commandPool.queueCount};
             });
     }
 
@@ -331,7 +329,7 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
 
-        return {{{*graphicsQueueFamily}, vertexBufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT}};
+        return {{{graphicsQueueFamily->index}, 16 * sizeof(Vertex), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT}};
     }
 
     std::vector<DeviceMemoryConfiguration>

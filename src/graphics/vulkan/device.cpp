@@ -220,14 +220,17 @@ namespace nd::src::graphics::vulkan
 
         const auto cextensions = getRawStrings(configuration.extensions);
 
-        auto queueFamilies    = getQueueFamilies(physicalDevice);
+        const auto queueFamiliesProperties = getQueueFamiliesProperties(physicalDevice);
+
         auto queuePriorities  = std::vector<std::vector<float>> {};
         auto queueCreateInfos = std::vector<VkDeviceQueueCreateInfo> {};
 
-        for(const auto& queueFamily: queueFamilies)
+        for(size_t queueFamilyIndex = 0; queueFamilyIndex < queueFamiliesProperties.size(); ++queueFamilyIndex)
         {
-            queueCreateInfos.push_back(
-                getQueueCreateInfo(queueFamily.index, queueFamily.queueCount, queuePriorities.emplace_back(queueFamily.queueCount, 1.0f).data()));
+            const auto  properties = queueFamiliesProperties[queueFamilyIndex];
+            const auto& priorities = queuePriorities.emplace_back(properties.queueCount, 1.0f);
+
+            queueCreateInfos.push_back(getQueueCreateInfo(queueFamilyIndex, properties.queueCount, priorities.data()));
         }
 
         const auto createInfo = getDeviceCreateInfo(queueCreateInfos.size(),
@@ -240,6 +243,6 @@ namespace nd::src::graphics::vulkan
 
         const auto handle = getDeviceHandle(createInfo, physicalDevice);
 
-        return {getQueues(handle, queueFamilies), std::move(queueFamilies), handle};
+        return {getQueueFamilies(physicalDevice, handle), handle};
     }
 } // namespace nd::src::graphics::vulkan

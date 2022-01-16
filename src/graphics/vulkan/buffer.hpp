@@ -8,9 +8,10 @@ namespace nd::src::graphics::vulkan
 {
     struct BufferConfiguration final
     {
-        const std::vector<QueueFamily> queueFamilies;
-        const VkDeviceSize             size;
-        const VkBufferUsageFlags       usage;
+        const std::vector<uint32_t> queueFamiliesIndices;
+
+        const VkDeviceSize       size;
+        const VkBufferUsageFlags usage;
 
         const VkBufferCreateFlags flags = {};
         const void*               next  = {};

@@ -7,8 +7,9 @@ namespace nd::src::graphics::vulkan
     struct QueueFamily final
     {
         const uint32_t     index;
-        const uint32_t     queueCount;
         const VkQueueFlags queueFlags;
+
+        const std::vector<VkQueue> queues;
     };
 
     struct SubmitConfiguration final
@@ -30,25 +31,22 @@ namespace nd::src::graphics::vulkan
     getQueueFamiliesProperties(const VkPhysicalDevice physicalDevice) noexcept;
 
     std::vector<QueueFamily>
-    getQueueFamilies(const std::vector<VkQueueFamilyProperties>& queueFamiliesProperties) noexcept;
+    getQueueFamilies(const VkPhysicalDevice physicalDevice, const VkDevice device) noexcept;
 
     std::vector<QueueFamily>
-    getQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept;
+    getQueueFamilies(const VkPhysicalDevice physicalDevice, const VkDevice device, const VkSurfaceKHR surface) noexcept;
 
-    std::vector<QueueFamily>
-    getQueueFamilies(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept;
-
-    std::vector<QueueFamily>
-    getQueueFamilies(const std::vector<QueueFamily>& queueFamilies, const std::function<bool(const QueueFamily, const size_t)> filter) noexcept;
+    std::vector<QueueFamily>::const_iterator
+    getQueueFamily(const std::vector<QueueFamily>& queueFamilies, const VkQueueFlags queueFlags, const VkQueueFlags queueFlagsNot = {}) noexcept;
 
     VkQueue
     getQueue(const VkDevice device, const uint32_t queueFamilyIndex, const uint32_t queueIndex) noexcept;
 
-    std::map<uint32_t, std::vector<VkQueue>>
-    getQueues(const VkDevice device, const std::vector<QueueFamily>& queueFamilies) noexcept;
+    std::vector<VkQueue>
+    getQueues(const VkDevice device, const uint32_t queueFamilyIndex, const VkQueueFamilyProperties queueFamilyProperties) noexcept;
 
     std::vector<uint32_t>
-    getQueueFamiliesIndices(const std::vector<QueueFamily> queueFamilies) noexcept;
+    getQueueFamiliesIndices(const std::vector<QueueFamily>& queueFamilies) noexcept;
 
     VkSubmitInfo
     getSubmitInfo(const uint32_t              commandBuffersCount,

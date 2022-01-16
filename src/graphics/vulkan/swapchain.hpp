@@ -31,8 +31,7 @@ namespace nd::src::graphics::vulkan
 
     struct Swapchain final
     {
-        std::map<uint32_t, std::vector<VkQueue>> queues;
-        std::vector<QueueFamily>                 queueFamilies;
+        std::vector<QueueFamily> queueFamilies;
 
         VkSwapchainKHR handle;
     };

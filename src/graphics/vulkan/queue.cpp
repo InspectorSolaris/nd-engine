@@ -22,53 +22,49 @@ namespace nd::src::graphics::vulkan
     }
 
     std::vector<QueueFamily>
-    getQueueFamilies(const std::vector<VkQueueFamilyProperties>& queueFamiliesProperties) noexcept
+    getQueueFamilies(const VkPhysicalDevice physicalDevice, const VkDevice device) noexcept
     {
         ND_SET_SCOPE();
 
+        const auto queueFamiliesProperties = getQueueFamiliesProperties(physicalDevice);
+
         return getMapped<VkQueueFamilyProperties, QueueFamily>(
             queueFamiliesProperties,
-            [](const auto& properties, const auto index)
+            [device](const auto& properties, const auto index)
             {
-                return QueueFamily {static_cast<uint32_t>(index), properties.queueCount, properties.queueFlags};
+                return QueueFamily {static_cast<uint32_t>(index), properties.queueFlags, getQueues(device, index, properties)};
             });
     }
 
     std::vector<QueueFamily>
-    getQueueFamilies(const VkPhysicalDevice physicalDevice) noexcept
+    getQueueFamilies(const VkPhysicalDevice physicalDevice, const VkDevice device, const VkSurfaceKHR surface) noexcept
     {
         ND_SET_SCOPE();
 
-        const auto queueFamiliesProperties = getQueueFamiliesProperties(physicalDevice);
+        const auto queueFamilies = getQueueFamilies(physicalDevice, device);
 
-        return getQueueFamilies(queueFamiliesProperties);
+        return getFiltered<QueueFamily>(queueFamilies,
+                                        [physicalDevice, surface](const auto& queueFamily, const auto index)
+                                        {
+                                            VkBool32 isSupported;
+
+                                            vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamily.index, surface, &isSupported);
+
+                                            return isSupported;
+                                        });
     }
 
-    std::vector<QueueFamily>
-    getQueueFamilies(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept
+    std::vector<QueueFamily>::const_iterator
+    getQueueFamily(const std::vector<QueueFamily>& queueFamilies, const VkQueueFlags queueFlags, const VkQueueFlags queueFlagsNot) noexcept
     {
         ND_SET_SCOPE();
 
-        const auto queueFamiliesProperties = getQueueFamiliesProperties(physicalDevice);
-        const auto queueFamilies           = getQueueFamilies(queueFamiliesProperties);
-
-        return getQueueFamilies(queueFamilies,
-                                [physicalDevice, surface](const auto queueFamilies, const auto index)
-                                {
-                                    VkBool32 isSupported;
-
-                                    vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilies.index, surface, &isSupported);
-
-                                    return isSupported;
-                                });
-    }
-
-    std::vector<QueueFamily>
-    getQueueFamilies(const std::vector<QueueFamily>& queueFamilies, const std::function<bool(const QueueFamily, const size_t)> filter) noexcept
-    {
-        ND_SET_SCOPE();
-
-        return getFiltered<QueueFamily>(queueFamilies, filter);
+        return std::find_if(queueFamilies.begin(),
+                            queueFamilies.end(),
+                            [queueFlags, queueFlagsNot](const auto& queueFamily)
+                            {
+                                return isSubmask(queueFamily.queueFlags, queueFlags) && !(queueFamily.queueFlags & queueFlagsNot);
+                            });
     }
 
     VkQueue
@@ -83,25 +79,20 @@ namespace nd::src::graphics::vulkan
         return queue;
     }
 
-    std::map<uint32_t, std::vector<VkQueue>>
-    getQueues(const VkDevice device, const std::vector<QueueFamily>& queueFamilies) noexcept
+    std::vector<VkQueue>
+    getQueues(const VkDevice device, const uint32_t queueFamilyIndex, const VkQueueFamilyProperties queueFamilyProperties) noexcept
     {
         ND_SET_SCOPE();
 
-        return getMap<QueueFamily, uint32_t, std::vector<VkQueue>>(
-            queueFamilies,
-            [device](const auto queueFamily, const auto index)
-            {
-                return queueFamily.index;
-            },
-            [device](const auto queueFamily, const auto index)
-            {
-                return getMapped<VkQueue>(queueFamily.queueCount, std::bind(getQueue, device, queueFamily.index, std::placeholders::_1));
-            });
+        return getMapped<VkQueue>(queueFamilyProperties.queueCount,
+                                  [device, queueFamilyIndex](const auto queueIndex)
+                                  {
+                                      return getQueue(device, queueFamilyIndex, queueIndex);
+                                  });
     }
 
     std::vector<uint32_t>
-    getQueueFamiliesIndices(const std::vector<QueueFamily> queueFamilies) noexcept
+    getQueueFamiliesIndices(const std::vector<QueueFamily>& queueFamilies) noexcept
     {
         ND_SET_SCOPE();
 

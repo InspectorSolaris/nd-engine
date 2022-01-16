@@ -45,13 +45,12 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto queueFamiliesIndices = getQueueFamiliesIndices(configuration.queueFamilies);
-
-        const auto createInfo = getBufferCreateInfo(configuration.size,
-                                                    configuration.usage,
-                                                    queueFamiliesIndices.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
-                                                    queueFamiliesIndices.size(),
-                                                    queueFamiliesIndices.data());
+        const auto createInfo = getBufferCreateInfo(
+            configuration.size,
+            configuration.usage,
+            configuration.queueFamiliesIndices.size() > 1 ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
+            configuration.queueFamiliesIndices.size(),
+            configuration.queueFamiliesIndices.data());
 
         return getBufferHandle(createInfo, device);
     }

@@ -191,7 +191,7 @@ namespace nd::src::graphics::vulkan
         const auto presentModes = getSurfacePresentModes(configuration.physicalDevice, configuration.surface);
         const auto capabilities = getSurfaceCapabilities(configuration.physicalDevice, configuration.surface);
 
-        auto queueFamilies = getQueueFamilies(configuration.physicalDevice, configuration.surface);
+        auto queueFamilies = getQueueFamilies(configuration.physicalDevice, device, configuration.surface);
 
         const auto queueFamiliesIndices = getQueueFamiliesIndices(queueFamilies);
 
@@ -224,7 +224,7 @@ namespace nd::src::graphics::vulkan
                                                        configuration.flags,
                                                        configuration.next);
 
-        return {getQueues(device, queueFamilies), std::move(queueFamilies), getSwapchainHandle(createInfo, device)};
+        return {std::move(queueFamilies), getSwapchainHandle(createInfo, device)};
     }
 
     uint32_t

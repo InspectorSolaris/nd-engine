@@ -79,17 +79,29 @@ namespace nd::src::graphics::vulkan
         VulkanContext&
         operator=(VulkanContext&& vulkanContext);
 
+        const QueueFamily&
+        getGraphicsQueueFamily();
+
+        const QueueFamily&
+        getComputeQueueFamily();
+
+        const QueueFamily&
+        getTransferQueueFamily();
+
+        const QueueFamily&
+        getPresentQueueFamily();
+
         VkSemaphore
         getSemaphore(const VkSemaphoreCreateFlags flags = {}, const void* next = {}) noexcept;
 
         std::vector<VkSemaphore>
-        getSemaphore(const size_t count, const VkSemaphoreCreateFlags flags = {}, const void* next = {}) noexcept;
+        getSemaphores(const size_t count, const VkSemaphoreCreateFlags flags = {}, const void* next = {}) noexcept;
 
         VkFence
         getFence(const VkFenceCreateFlags flags = {}, const void* next = {}) noexcept;
 
         std::vector<VkFence>
-        getFence(const size_t count, const VkFenceCreateFlags flags = {}, const void* next = {}) noexcept;
+        getFences(const size_t count, const VkFenceCreateFlags flags = {}, const void* next = {}) noexcept;
 
         void
         drawNextFrame();
