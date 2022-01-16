@@ -10,9 +10,8 @@ namespace nd::src::graphics::vulkan
     class VulkanObjects final
     {
     public:
-        PhysicalDevice physicalDevice {};
-        Device         device {};
-        Swapchain      swapchain {};
+        Device    device {};
+        Swapchain swapchain {};
 
         std::vector<Image>               swapchainImages {};
         std::vector<ImageView>           swapchainImageViews {};
@@ -30,6 +29,7 @@ namespace nd::src::graphics::vulkan
         std::vector<VkSemaphore> semaphores {};
         std::vector<VkFence>     fences {};
 
+        PhysicalDevice physicalDevice {};
         Instance       instance {};
         Surface        surface {};
         RenderPass     renderPass {};
