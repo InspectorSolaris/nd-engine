@@ -22,7 +22,6 @@ set(TARGET_SRC
     pipeline.cpp
     queue.cpp
     render_pass.cpp
-    render.cpp
     shader_module.cpp
     shared.cpp
     surface.cpp
