@@ -219,7 +219,7 @@ namespace nd::src::graphics::vulkan
     }
 
     const QueueFamily&
-    VulkanContext::getGraphicsQueueFamily()
+    VulkanContext::getGraphicsQueueFamily() const
     {
         ND_SET_SCOPE();
 
@@ -231,7 +231,7 @@ namespace nd::src::graphics::vulkan
     }
 
     const QueueFamily&
-    VulkanContext::getComputeQueueFamily()
+    VulkanContext::getComputeQueueFamily() const
     {
         ND_SET_SCOPE();
 
@@ -243,7 +243,7 @@ namespace nd::src::graphics::vulkan
     }
 
     const QueueFamily&
-    VulkanContext::getTransferQueueFamily()
+    VulkanContext::getTransferQueueFamily() const
     {
         ND_SET_SCOPE();
 
@@ -257,7 +257,7 @@ namespace nd::src::graphics::vulkan
     }
 
     const QueueFamily&
-    VulkanContext::getSwapchainQueueFamily()
+    VulkanContext::getSwapchainQueueFamily() const
     {
         ND_SET_SCOPE();
 
@@ -322,6 +322,12 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         static auto frameIndex = size_t {0};
+
+        const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
+                                                   {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},
+                                                   {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}}};
+
+        setMemory(objects_.device.handle, objects_.bufferMemories[0][0], 0, vertices.data());
 
         static const auto deviceQueue    = getGraphicsQueueFamily().queues.front();
         static const auto swapchainQueue = getSwapchainQueueFamily().queues.front();
@@ -428,12 +434,6 @@ namespace nd::src::graphics::vulkan
         auto       bufferMemories      = initializers.getBufferMemories(bufferMemoryConfigs, device.handle);
 
         initializers.bindBufferMemories(device.handle, buffers, bufferMemories, physicalDevice.memoryProperties.get());
-
-        const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
-                                                   {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},
-                                                   {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}}};
-
-        setMemory(device.handle, bufferMemories[0][0], 0, vertices.data());
 
         for(size_t i = 0; i < swapchainFramebuffers.size(); ++i)
         {

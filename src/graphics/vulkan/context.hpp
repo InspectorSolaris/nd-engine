@@ -80,16 +80,16 @@ namespace nd::src::graphics::vulkan
         operator=(VulkanContext&& vulkanContext) = delete;
 
         const QueueFamily&
-        getGraphicsQueueFamily();
+        getGraphicsQueueFamily() const;
 
         const QueueFamily&
-        getComputeQueueFamily();
+        getComputeQueueFamily() const;
 
         const QueueFamily&
-        getTransferQueueFamily();
+        getTransferQueueFamily() const;
 
         const QueueFamily&
-        getSwapchainQueueFamily();
+        getSwapchainQueueFamily() const;
 
         VkSemaphore
         getSemaphore(const VkSemaphoreCreateFlags flags = {}, const void* next = {}) noexcept;
