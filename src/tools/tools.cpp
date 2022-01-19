@@ -9,13 +9,19 @@ namespace nd::src::tools
     }
 
     bool
-    isSubmask(const uint32_t mask, const uint32_t submask) noexcept
+    isSubmask(const int mask, const int submask) noexcept
     {
         return (mask & submask) == submask;
     }
 
-    uint32_t
-    getBitIndex(const uint32_t bit) noexcept
+    bool
+    isNotSubmask(const int mask, const int submask) noexcept
+    {
+        return !(mask & submask);
+    }
+
+    int
+    getBitIndex(const int bit) noexcept
     {
         auto index = 0;
 
@@ -27,14 +33,14 @@ namespace nd::src::tools
         return index;
     }
 
-    uint32_t
-    getNextBit(const uint32_t bits) noexcept
+    int
+    getNextBit(const int bits) noexcept
     {
         return bits - (bits & (bits - 1));
     }
 
-    uint32_t
-    getNextBitIndex(const uint32_t bits) noexcept
+    int
+    getNextBitIndex(const int bits) noexcept
     {
         return getBitIndex(getNextBit(bits));
     }

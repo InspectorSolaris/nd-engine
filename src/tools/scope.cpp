@@ -3,9 +3,9 @@
 namespace nd::src::tools
 {
     std::shared_ptr<spdlog::logger> Scope::s_logPtr {};
-    uint64_t                        Scope::s_depth {};
+    int                             Scope::s_depth {};
 
-    Scope::Scope(const std::string& name, const Event& onBegin, const Event& onEnd) noexcept
+    Scope::Scope(const std::string_view name, const Event& onBegin, const Event& onEnd) noexcept
         : onEnd_(onEnd)
         , name_(name)
     {
@@ -18,13 +18,13 @@ namespace nd::src::tools
     }
 
     void
-    onScopeBegin(const std::shared_ptr<spdlog::logger>& logPtr, const std::string& name, const uint64_t depth) noexcept
+    onScopeBegin(const std::shared_ptr<spdlog::logger>& logPtr, const std::string_view name, const int depth) noexcept
     {
         logPtr->trace("[{}] {}", depth, name);
     }
 
     void
-    onScopeEnd(const std::shared_ptr<spdlog::logger>& logPtr, const std::string& name, const uint64_t depth) noexcept
+    onScopeEnd(const std::shared_ptr<spdlog::logger>& logPtr, const std::string_view name, const int depth) noexcept
     {
         logPtr->trace("[{}] {}", depth, name);
     }

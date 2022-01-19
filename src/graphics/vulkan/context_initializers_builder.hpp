@@ -37,6 +37,7 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getInstance);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getPhysicalDevice);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getDevice);
+        ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getDeviceMemories);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getSurface);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getSwapchain);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getRenderPass);
@@ -52,12 +53,11 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getCommandPools);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getCommandBuffers);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getBuffers);
-        ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getBufferMemories);
-        ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(bindBufferMemories);
 
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getInstance);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getPhysicalDevice);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getDevice);
+        ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getDeviceMemories);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getSurface);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getSwapchain);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getRenderPass);
@@ -73,13 +73,12 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getCommandPools);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getCommandBuffers);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getBuffers);
-        ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getBufferMemories);
-        ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(bindBufferMemories);
 
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
         std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
         std::remove_cv_t<decltype(Type::getDevice)>                getDevice;
+        std::remove_cv_t<decltype(Type::getDeviceMemories)>        getDeviceMemories;
         std::remove_cv_t<decltype(Type::getSurface)>               getSurface;
         std::remove_cv_t<decltype(Type::getSwapchain)>             getSwapchain;
         std::remove_cv_t<decltype(Type::getRenderPass)>            getRenderPass;
@@ -95,8 +94,6 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getCommandPools)>          getCommandPools;
         std::remove_cv_t<decltype(Type::getCommandBuffers)>        getCommandBuffers;
         std::remove_cv_t<decltype(Type::getBuffers)>               getBuffers;
-        std::remove_cv_t<decltype(Type::getBufferMemories)>        getBufferMemories;
-        std::remove_cv_t<decltype(Type::bindBufferMemories)>       bindBufferMemories;
     };
 
     extern VulkanInitializersBuilder initializersBuilder;

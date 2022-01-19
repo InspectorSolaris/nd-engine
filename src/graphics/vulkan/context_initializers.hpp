@@ -13,6 +13,8 @@ namespace nd::src::graphics::vulkan
 
         using Device = Device(const DeviceConfiguration&, const VkPhysicalDevice);
 
+        using DeviceMemories = std::vector<DeviceMemory>(const std::vector<DeviceMemoryConfiguration>&, const VkDevice);
+
         using Surface = Surface(const VkInstance);
 
         using Swapchain = Swapchain(const SwapchainConfiguration&, const VkDevice);
@@ -43,16 +45,10 @@ namespace nd::src::graphics::vulkan
 
         using Buffers = std::vector<Buffer>(const std::vector<BufferConfiguration>&, const VkDevice);
 
-        using BufferMemories = std::vector<std::vector<DeviceMemory>>(const std::vector<std::vector<DeviceMemoryConfiguration>>&, const VkDevice);
-
-        using BufferMemoriesBind = void(const VkDevice,
-                                        const std::vector<Buffer>&,
-                                        const std::vector<DeviceMemories>&,
-                                        const VkPhysicalDeviceMemoryProperties*);
-
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
         const std::function<Device>                getDevice;
+        const std::function<DeviceMemories>        getDeviceMemories;
         const std::function<Surface>               getSurface;
         const std::function<Swapchain>             getSwapchain;
         const std::function<RenderPass>            getRenderPass;
@@ -68,7 +64,5 @@ namespace nd::src::graphics::vulkan
         const std::function<CommandPools>          getCommandPools;
         const std::function<CommandBuffers>        getCommandBuffers;
         const std::function<Buffers>               getBuffers;
-        const std::function<BufferMemories>        getBufferMemories;
-        const std::function<BufferMemoriesBind>    bindBufferMemories;
     };
 } // namespace nd::src::graphics::vulkan

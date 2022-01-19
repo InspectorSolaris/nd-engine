@@ -67,16 +67,19 @@ namespace nd::src::tools
     getRuntimeError(const std::string_view file, const std::string_view function, const std::string_view reason, const size_t line) noexcept;
 
     bool
-    isSubmask(const uint32_t mask, const uint32_t submask) noexcept;
+    isSubmask(const int mask, const int submask) noexcept;
 
-    uint32_t
-    getBitIndex(const uint32_t bit) noexcept;
+    bool
+    isNotSubmask(const int mask, const int submask) noexcept;
 
-    uint32_t
-    getNextBit(const uint32_t bits) noexcept;
+    int
+    getBitIndex(const int bit) noexcept;
 
-    uint32_t
-    getNextBitIndex(const uint32_t bits) noexcept;
+    int
+    getNextBit(const int bits) noexcept;
+
+    int
+    getNextBitIndex(const int bits) noexcept;
 
     std::vector<std::string>
     getMerged(const std::vector<std::string>& strings1, const std::vector<std::string>& strings2) noexcept;
@@ -84,13 +87,13 @@ namespace nd::src::tools
     std::vector<const char*>
     getRawStrings(const std::vector<std::string>& strings) noexcept;
 
-    template<typename T, typename Filter, typename Collection = std::vector<T>>
-    Collection
-    getFiltered(const Collection& ts, const Filter& filter) noexcept
+    template<typename Type, typename FilterType, typename CollectionType = std::vector<Type>>
+    CollectionType
+    getFiltered(const CollectionType& ts, const FilterType& filter) noexcept
     {
-        auto filtered = Collection {};
+        auto filtered = CollectionType {};
 
-        for(size_t index = 0; index < ts.size(); ++index)
+        for(auto index = 0; index < ts.size(); ++index)
         {
             const auto t = ts[index];
 
@@ -103,15 +106,15 @@ namespace nd::src::tools
         return filtered;
     }
 
-    template<typename Out, typename Map, typename CollectionOut = std::vector<Out>>
-    CollectionOut
-    getMapped(const size_t size, const Map& map) noexcept
+    template<typename Type, typename MapType, typename CollectionType = std::vector<Type>>
+    CollectionType
+    getMapped(const int size, const MapType& map) noexcept
     {
-        auto mapped = CollectionOut {};
+        auto mapped = CollectionType {};
 
         mapped.reserve(size);
 
-        for(size_t index = 0; index < size; ++index)
+        for(auto index = 0; index < size; ++index)
         {
             mapped.push_back(map(index));
         }
@@ -119,15 +122,19 @@ namespace nd::src::tools
         return mapped;
     }
 
-    template<typename In, typename Out, typename Map, typename CollectionIn = std::vector<In>, typename CollectionOut = std::vector<Out>>
-    CollectionOut
-    getMapped(const CollectionIn& ins, const Map& map) noexcept
+    template<typename TypeIn,
+             typename Type,
+             typename MapType,
+             typename CollectionTypeIn = std::vector<TypeIn>,
+             typename CollectionType   = std::vector<Type>>
+    CollectionType
+    getMapped(const CollectionTypeIn& ins, const MapType& map) noexcept
     {
-        auto mapped = CollectionOut {};
+        auto mapped = CollectionType {};
 
         mapped.reserve(ins.size());
 
-        for(size_t index = 0; index < ins.size(); ++index)
+        for(auto index = 0; index < ins.size(); ++index)
         {
             mapped.push_back(map(ins[index], index));
         }
@@ -135,19 +142,14 @@ namespace nd::src::tools
         return mapped;
     }
 
-    template<typename T, typename Key, typename Value, typename KeyMap, typename ValueMap, typename Collection = std::vector<T>>
-    std::map<Key, Value>
-    getMap(const Collection& ts, const KeyMap& keyMap, const ValueMap& valueMap) noexcept
+    template<typename Type, typename CompareType, typename CollectionType = std::vector<Type>>
+    CollectionType
+    getSorted(const CollectionType& ts, const CompareType& compare) noexcept
     {
-        auto map = std::map<Key, Value> {};
+        auto sorted = ts;
 
-        for(size_t index = 0; index < ts.size(); ++index)
-        {
-            const auto& t = ts[index];
+        std::sort(sorted.begin(), sorted.end(), compare);
 
-            map[keyMap(t, index)] = valueMap(t, index);
-        }
-
-        return map;
+        return sorted;
     }
 } // namespace nd::src::tools

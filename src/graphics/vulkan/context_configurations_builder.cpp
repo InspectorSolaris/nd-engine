@@ -9,6 +9,7 @@ namespace nd::src::graphics::vulkan
         getInstanceConfiguration <<                                //
         getPhysicalDeviceConfiguration <<                          //
         getDeviceConfiguration <<                                  //
+        getDeviceMemoryConfigurations <<                           //
         getSwapchainConfiguration <<                               //
         getRenderPassConfiguration <<                              //
         getSwapchainImageViewConfigurations <<                     //
@@ -21,8 +22,7 @@ namespace nd::src::graphics::vulkan
         getGraphicsPipelineConfigurations <<                       //
         getCommandPoolConfigurations <<                            //
         getCommandBufferConfigurations <<                          //
-        getBufferConfigurations <<                                 //
-        getAllBufferMemoryConfigurations;
+        getBufferConfigurations;
 
     VulkanConfigurationsBuilder::Type
     VulkanConfigurationsBuilder::build() const
@@ -32,6 +32,7 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(getInstance &&              //
                   getPhysicalDevice &&        //
                   getDevice &&                //
+                  getDeviceMemories &&        //
                   getSwapchain &&             //
                   getRenderPass &&            //
                   getSwapchainImageViews &&   //
@@ -44,12 +45,12 @@ namespace nd::src::graphics::vulkan
                   getGraphicsPipelines &&     //
                   getCommandPools &&          //
                   getCommandBuffers &&        //
-                  getBuffers &&               //
-                  getBufferMemories);
+                  getBuffers);
 
         return {getInstance,
                 getPhysicalDevice,
                 getDevice,
+                getDeviceMemories,
                 getSwapchain,
                 getRenderPass,
                 getSwapchainImageViews,
@@ -62,7 +63,6 @@ namespace nd::src::graphics::vulkan
                 getGraphicsPipelines,
                 getCommandPools,
                 getCommandBuffers,
-                getBuffers,
-                getBufferMemories};
+                getBuffers};
     }
 } // namespace nd::src::graphics::vulkan

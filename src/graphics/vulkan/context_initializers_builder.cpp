@@ -9,6 +9,7 @@ namespace nd::src::graphics::vulkan
         getInstance <<                                         //
         getPhysicalDevice <<                                   //
         getDevice <<                                           //
+        getDeviceMemories <<                                   //
         getSwapchain <<                                        //
         getRenderPass <<                                       //
         getSwapchainImages <<                                  //
@@ -22,9 +23,7 @@ namespace nd::src::graphics::vulkan
         getGraphicsPipelines <<                                //
         getCommandPools <<                                     //
         getCommandBuffers <<                                   //
-        getBuffers <<                                          //
-        getAllDeviceMemories <<                                //
-        bindMemories;
+        getBuffers;
 
     VulkanInitializersBuilder::Type
     VulkanInitializersBuilder::build() const
@@ -34,6 +33,7 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(getInstance &&              //
                   getPhysicalDevice &&        //
                   getDevice &&                //
+                  getDeviceMemories &&        //
                   getSurface &&               //
                   getSwapchain &&             //
                   getRenderPass &&            //
@@ -48,16 +48,26 @@ namespace nd::src::graphics::vulkan
                   getGraphicsPipelines &&     //
                   getCommandPools &&          //
                   getCommandBuffers &&        //
-                  getBuffers &&               //
-                  getBufferMemories &&        //
-                  bindBufferMemories);
+                  getBuffers);
 
-        return {getInstance,        getPhysicalDevice,      getDevice,
-                getSurface,         getSwapchain,           getRenderPass,
-                getSwapchainImages, getSwapchainImageViews, getSwapchainFramebuffers,
-                getShaderModules,   getDescriptorPool,      getDescriptorSetLayouts,
-                getDescriptorSets,  getPipelineLayouts,     getGraphicsPipelines,
-                getCommandPools,    getCommandBuffers,      getBuffers,
-                getBufferMemories,  bindBufferMemories};
+        return {getInstance,
+                getPhysicalDevice,
+                getDevice,
+                getDeviceMemories,
+                getSurface,
+                getSwapchain,
+                getRenderPass,
+                getSwapchainImages,
+                getSwapchainImageViews,
+                getSwapchainFramebuffers,
+                getShaderModules,
+                getDescriptorPool,
+                getDescriptorSetLayouts,
+                getDescriptorSets,
+                getPipelineLayouts,
+                getGraphicsPipelines,
+                getCommandPools,
+                getCommandBuffers,
+                getBuffers};
     }
 } // namespace nd::src::graphics::vulkan

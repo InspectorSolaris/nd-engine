@@ -37,6 +37,7 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getInstance);
         ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getPhysicalDevice);
         ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getDevice);
+        ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getDeviceMemories);
         ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getSwapchain);
         ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getRenderPass);
         ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getSwapchainImageViews);
@@ -50,11 +51,11 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getCommandPools);
         ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getCommandBuffers);
         ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getBuffers);
-        ND_DEFINE_CONFIGURATIONS_BUILDER_MEMBER_FUNCTION(getBufferMemories);
 
         ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getInstance);
         ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getPhysicalDevice);
         ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getDevice);
+        ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getDeviceMemories);
         ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getSwapchain);
         ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getRenderPass);
         ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getSwapchainImageViews);
@@ -68,12 +69,12 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getCommandPools);
         ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getCommandBuffers);
         ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getBuffers);
-        ND_DEFINE_CONFIGURATIONS_BUILDER_OPERATOR(getBufferMemories);
 
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
         std::remove_cv_t<decltype(Type::getPhysicalDevice)>        getPhysicalDevice;
         std::remove_cv_t<decltype(Type::getDevice)>                getDevice;
+        std::remove_cv_t<decltype(Type::getDeviceMemories)>        getDeviceMemories;
         std::remove_cv_t<decltype(Type::getSwapchain)>             getSwapchain;
         std::remove_cv_t<decltype(Type::getRenderPass)>            getRenderPass;
         std::remove_cv_t<decltype(Type::getSwapchainImageViews)>   getSwapchainImageViews;
@@ -87,7 +88,6 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getCommandPools)>          getCommandPools;
         std::remove_cv_t<decltype(Type::getCommandBuffers)>        getCommandBuffers;
         std::remove_cv_t<decltype(Type::getBuffers)>               getBuffers;
-        std::remove_cv_t<decltype(Type::getBufferMemories)>        getBufferMemories;
     };
 
     extern VulkanConfigurationsBuilder configurationsBuilder;

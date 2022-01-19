@@ -13,6 +13,7 @@ namespace nd::src::graphics::vulkan
         Device    device {};
         Swapchain swapchain {};
 
+        std::vector<DeviceMemory>        deviceMemories {};
         std::vector<Image>               swapchainImages {};
         std::vector<ImageView>           swapchainImageViews {};
         std::vector<Framebuffer>         swapchainFramebuffers {};
@@ -24,7 +25,6 @@ namespace nd::src::graphics::vulkan
         std::vector<CommandPool>         commandPools {};
         std::vector<CommandBuffers>      commandBuffers {};
         std::vector<Buffer>              buffers {};
-        std::vector<DeviceMemories>      bufferMemories {};
 
         std::vector<VkSemaphore> semaphores {};
         std::vector<VkFence>     fences {};
@@ -42,6 +42,7 @@ namespace nd::src::graphics::vulkan
                       PhysicalDevice&&                   physicalDevice,
                       Device&&                           device,
                       Swapchain&&                        swapchain,
+                      std::vector<DeviceMemory>&&        deviceMemories,
                       std::vector<Image>&&               swapchainImages,
                       std::vector<ImageView>&&           swapchainImageViews,
                       std::vector<Framebuffer>&&         swapchainFramebuffers,
@@ -52,8 +53,7 @@ namespace nd::src::graphics::vulkan
                       std::vector<Pipeline>&&            graphicsPipelines,
                       std::vector<CommandPool>&&         commandPools,
                       std::vector<CommandBuffers>&&      commandBuffers,
-                      std::vector<Buffer>&&              buffers,
-                      std::vector<DeviceMemories>&&      bufferMemories);
+                      std::vector<Buffer>&&              buffers);
 
         VulkanObjects(const VulkanObjects& vulkanObjects) = delete;
         VulkanObjects(VulkanObjects&& vulkanObjects) noexcept;

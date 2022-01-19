@@ -7,8 +7,7 @@ namespace nd::src::graphics::vulkan
 {
     struct DeviceMemoryConfiguration final
     {
-        const VkDeviceSize allocationSize;
-        const VkDeviceSize alignment;
+        const VkDeviceSize size;
 
         const uint32_t memoryTypeIndex;
 
@@ -18,9 +17,7 @@ namespace nd::src::graphics::vulkan
     struct DeviceMemory final
     {
         const VkDeviceMemory handle;
-
-        const VkDeviceSize size;
-        const VkDeviceSize alignment;
+        const VkDeviceSize   size;
 
         const uint32_t memoryTypeIndex;
     };
@@ -33,14 +30,11 @@ namespace nd::src::graphics::vulkan
     void
     setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offset, const void* data) noexcept;
 
-    void
-    bindMemories(const VkDevice                          device,
-                 const std::vector<Buffer>&              buffers,
-                 const std::vector<DeviceMemories>&      bufferMemories,
-                 const VkPhysicalDeviceMemoryProperties* physicalDeviceMemoryProperties) noexcept;
-
     VkMemoryRequirements
     getMemoryRequirements(const VkDevice device, const VkBuffer buffer) noexcept;
+
+    VkMemoryRequirements
+    getMemoryRequirements(const VkDevice device, const VkImage image) noexcept;
 
     uint32_t
     getMemoryTypeIndex(const VkPhysicalDeviceMemoryProperties* memoryProperties,
@@ -58,7 +52,4 @@ namespace nd::src::graphics::vulkan
 
     std::vector<DeviceMemory>
     getDeviceMemories(const std::vector<DeviceMemoryConfiguration>& configurations, const VkDevice device);
-
-    std::vector<DeviceMemories>
-    getAllDeviceMemories(const std::vector<std::vector<DeviceMemoryConfiguration>>& configurations, const VkDevice device);
 } // namespace nd::src::graphics::vulkan

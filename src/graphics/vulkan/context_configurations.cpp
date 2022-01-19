@@ -50,6 +50,28 @@ namespace nd::src::graphics::vulkan
         return {physicalDeviceConfiguration.features, physicalDeviceConfiguration.extensions};
     }
 
+    std::vector<DeviceMemoryConfiguration>
+    getDeviceMemoryConfigurations(const VkPhysicalDeviceMemoryProperties* physicalDeviceMemoryProperties) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return getFiltered<DeviceMemoryConfiguration>(
+            getMapped<DeviceMemoryConfiguration>(physicalDeviceMemoryProperties->memoryTypeCount,
+                                                 [physicalDeviceMemoryProperties](const auto index)
+                                                 {
+                                                     return DeviceMemoryConfiguration {
+                                                         index < physicalDeviceMemoryProperties->memoryTypeCount &&
+                                                                 physicalDeviceMemoryProperties->memoryTypes[index].propertyFlags
+                                                             ? static_cast<VkDeviceSize>(128 * 1024)
+                                                             : static_cast<VkDeviceSize>(0),
+                                                         static_cast<uint32_t>(index)};
+                                                 }),
+            [](const auto& configuration, const auto index)
+            {
+                return configuration.size;
+            });
+    }
+
     SwapchainConfiguration
     getSwapchainConfiguration(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface, const uint32_t width, const uint32_t height) noexcept
     {
@@ -330,34 +352,5 @@ namespace nd::src::graphics::vulkan
         ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
 
         return {{{graphicsQueueFamily->index}, 16 * sizeof(Vertex), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT}};
-    }
-
-    std::vector<DeviceMemoryConfiguration>
-    getBufferMemoryConfigurations(const VkPhysicalDeviceMemoryProperties* memoryProperties, const VkMemoryRequirements memoryRequirements) noexcept
-    {
-        ND_SET_SCOPE();
-
-        const auto memoryTypeIndex = getMemoryTypeIndex(memoryProperties,
-                                                        memoryRequirements,
-                                                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-        return {{memoryRequirements.size, memoryRequirements.alignment, memoryTypeIndex}};
-    }
-
-    std::vector<std::vector<DeviceMemoryConfiguration>>
-    getAllBufferMemoryConfigurations(const VkDevice                          device,
-                                     const VkPhysicalDeviceMemoryProperties* memoryProperties,
-                                     const std::vector<VkBuffer>&            buffers) noexcept
-    {
-        ND_SET_SCOPE();
-
-        return getMapped<Buffer, std::vector<DeviceMemoryConfiguration>>(
-            buffers,
-            [device, &memoryProperties](const auto& buffer, const auto index)
-            {
-                const auto memoryRequirements = getMemoryRequirements(device, buffer);
-
-                return getBufferMemoryConfigurations(memoryProperties, memoryRequirements);
-            });
     }
 } // namespace nd::src::graphics::vulkan

@@ -12,6 +12,7 @@ namespace nd::src::graphics::vulkan
                                  PhysicalDevice&&                   physicalDevice,
                                  Device&&                           device,
                                  Swapchain&&                        swapchain,
+                                 std::vector<DeviceMemory>&&        deviceMemories,
                                  std::vector<Image>&&               swapchainImages,
                                  std::vector<ImageView>&&           swapchainImageViews,
                                  std::vector<Framebuffer>&&         swapchainFramebuffers,
@@ -22,8 +23,7 @@ namespace nd::src::graphics::vulkan
                                  std::vector<Pipeline>&&            graphicsPipelines,
                                  std::vector<CommandPool>&&         commandPools,
                                  std::vector<CommandBuffers>&&      commandBuffers,
-                                 std::vector<Buffer>&&              buffers,
-                                 std::vector<DeviceMemories>&&      bufferMemories)
+                                 std::vector<Buffer>&&              buffers)
         : instance {instance}
         , surface {surface}
         , renderPass {renderPass}
@@ -31,6 +31,7 @@ namespace nd::src::graphics::vulkan
         , physicalDevice {std::move(physicalDevice)}
         , device {std::move(device)}
         , swapchain {std::move(swapchain)}
+        , deviceMemories {std::move(deviceMemories)}
         , swapchainImages {std::move(swapchainImages)}
         , swapchainImageViews {std::move(swapchainImageViews)}
         , swapchainFramebuffers {std::move(swapchainFramebuffers)}
@@ -42,7 +43,6 @@ namespace nd::src::graphics::vulkan
         , commandPools {std::move(commandPools)}
         , commandBuffers {std::move(commandBuffers)}
         , buffers {std::move(buffers)}
-        , bufferMemories {std::move(bufferMemories)}
     {
         ND_SET_SCOPE();
 
@@ -63,6 +63,7 @@ namespace nd::src::graphics::vulkan
         , physicalDevice {std::move(vulkanObjects.physicalDevice)}
         , device {std::move(vulkanObjects.device)}
         , swapchain {std::move(vulkanObjects.swapchain)}
+        , deviceMemories {std::move(vulkanObjects.deviceMemories)}
         , swapchainImages {std::move(vulkanObjects.swapchainImages)}
         , swapchainImageViews {std::move(vulkanObjects.swapchainImageViews)}
         , swapchainFramebuffers {std::move(vulkanObjects.swapchainFramebuffers)}
@@ -74,7 +75,6 @@ namespace nd::src::graphics::vulkan
         , commandPools {std::move(vulkanObjects.commandPools)}
         , commandBuffers {std::move(vulkanObjects.commandBuffers)}
         , buffers {std::move(vulkanObjects.buffers)}
-        , bufferMemories {std::move(vulkanObjects.bufferMemories)}
     {
         ND_SET_SCOPE();
 
@@ -106,6 +106,7 @@ namespace nd::src::graphics::vulkan
         device         = std::move(vulkanObjects.device);
         swapchain      = std::move(vulkanObjects.swapchain);
 
+        deviceMemories        = std::move(vulkanObjects.deviceMemories);
         swapchainImages       = std::move(vulkanObjects.swapchainImages);
         swapchainImageViews   = std::move(vulkanObjects.swapchainImageViews);
         swapchainFramebuffers = std::move(vulkanObjects.swapchainFramebuffers);
@@ -118,7 +119,6 @@ namespace nd::src::graphics::vulkan
         commandPools         = std::move(vulkanObjects.commandPools);
         commandBuffers       = std::move(vulkanObjects.commandBuffers);
         buffers              = std::move(vulkanObjects.buffers);
-        bufferMemories       = std::move(vulkanObjects.bufferMemories);
 
         vulkanObjects.instance       = VK_NULL_HANDLE;
         vulkanObjects.surface        = VK_NULL_HANDLE;
@@ -142,29 +142,28 @@ namespace nd::src::graphics::vulkan
         }
 
         vkDeviceWaitIdle(device.handle);
-        vkWaitForFences(device.handle, fences.size(), fences.data(), true, UINT64_MAX);
 
-        for(size_t index = 0; index < semaphores.size(); ++index)
+        if(fences.size())
         {
-            vkDestroySemaphore(device.handle, semaphores[index], nullptr);
+            vkWaitForFences(device.handle, fences.size(), fences.data(), true, UINT64_MAX);
         }
 
-        for(size_t index = 0; index < fences.size(); ++index)
+        for(const auto semaphore: semaphores)
         {
-            vkDestroyFence(device.handle, fences[index], nullptr);
+            vkDestroySemaphore(device.handle, semaphore, nullptr);
         }
 
-        for(size_t bufferIndex = 0; bufferIndex < buffers.size(); ++bufferIndex)
+        for(const auto fence: fences)
         {
-            for(size_t memoryIndex = 0; memoryIndex < bufferMemories[bufferIndex].size(); ++memoryIndex)
-            {
-                vkFreeMemory(device.handle, bufferMemories[bufferIndex][memoryIndex].handle, nullptr);
-            }
-
-            vkDestroyBuffer(device.handle, buffers[bufferIndex], nullptr);
+            vkDestroyFence(device.handle, fence, nullptr);
         }
 
-        for(size_t index = 0; index < commandPools.size(); ++index)
+        for(const auto buffer: buffers)
+        {
+            vkDestroyBuffer(device.handle, buffer, nullptr);
+        }
+
+        for(auto index = 0; index < commandPools.size(); ++index)
         {
             vkFreeCommandBuffers(device.handle, commandPools[index].handle, commandBuffers[index].size(), commandBuffers[index].data());
 
@@ -208,6 +207,12 @@ namespace nd::src::graphics::vulkan
         vkDestroyRenderPass(device.handle, renderPass, nullptr);
         vkDestroySwapchainKHR(device.handle, swapchain.handle, nullptr);
         vkDestroySurfaceKHR(instance, surface, nullptr);
+
+        for(const auto deviceMemory: deviceMemories)
+        {
+            vkFreeMemory(device.handle, deviceMemory.handle, nullptr);
+        }
+
         vkDestroyDevice(device.handle, nullptr);
         vkDestroyInstance(instance, nullptr);
     }
@@ -323,11 +328,11 @@ namespace nd::src::graphics::vulkan
 
         static auto frameIndex = size_t {0};
 
-        const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
-                                                   {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},
-                                                   {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}}};
+        // const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
+        //                                            {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},
+        //                                            {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}}};
 
-        setMemory(objects_.device.handle, objects_.bufferMemories[0][0], 0, vertices.data());
+        // setMemory(objects_.device.handle, objects_.bufferMemories[0][0], 0, vertices.data());
 
         static const auto deviceQueue    = getGraphicsQueueFamily().queues.front();
         static const auto swapchainQueue = getSwapchainQueueFamily().queues.front();
@@ -342,24 +347,24 @@ namespace nd::src::graphics::vulkan
         const auto imageAcquiredFence     = imageAcquiredFences[frameIndex];
         const auto imageRenderedFence     = imageRenderedFences[frameIndex];
 
-        const auto fences = std::vector<VkFence> {imageAcquiredFence, imageRenderedFence};
+        const auto fences = std::array {imageAcquiredFence, imageRenderedFence};
 
         vkWaitForFences(objects_.device.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
         vkResetFences(objects_.device.handle, fences.size(), fences.data());
 
         const auto imageIndex = getNextSwapchainImage(objects_.device.handle, objects_.swapchain.handle, imageAcquiredSemaphore, imageAcquiredFence);
 
-        const auto commandBuffers   = std::vector<VkCommandBuffer> {objects_.commandBuffers[0][imageIndex]};
-        const auto waitDstStageMask = std::vector<VkPipelineStageFlags> {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-        const auto waitSemaphores   = std::vector<VkSemaphore> {imageAcquiredSemaphore};
-        const auto signalSemaphores = std::vector<VkSemaphore> {imageRenderedSemaphore};
+        const auto commandBuffers   = std::array {objects_.commandBuffers[0][imageIndex]};
+        const auto waitDstStageMask = std::array {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        const auto waitSemaphores   = std::array {imageAcquiredSemaphore};
+        const auto signalSemaphores = std::array {imageRenderedSemaphore};
 
-        const auto submitInfos = std::vector<VkSubmitInfo> {getSubmitInfo({commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores})};
+        const auto submitInfos = std::array {getSubmitInfo({commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores})};
 
         ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, submitInfos.size(), submitInfos.data(), imageRenderedFence) == VK_SUCCESS);
 
-        const auto swapchains   = std::vector<VkSwapchainKHR> {objects_.swapchain.handle};
-        const auto imageIndices = std::vector<uint32_t> {static_cast<uint32_t>(imageIndex)};
+        const auto swapchains   = std::array {objects_.swapchain.handle};
+        const auto imageIndices = std::array {static_cast<uint32_t>(imageIndex)};
 
         const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
 
@@ -386,6 +391,9 @@ namespace nd::src::graphics::vulkan
 
         const auto deviceConfig = configurations.getDevice(physicalDeviceConfig);
         auto       device       = initializers.getDevice(deviceConfig, physicalDevice.handle);
+
+        const auto deviceMemoryConfigs = configurations.getDeviceMemories(physicalDevice.memoryProperties.get());
+        auto       deviceMemories      = initializers.getDeviceMemories(deviceMemoryConfigs, device.handle);
 
         auto surface = initializers.getSurface(instance);
 
@@ -430,12 +438,42 @@ namespace nd::src::graphics::vulkan
         const auto bufferConfigs = configurations.getBuffers(device.queueFamilies);
         auto       buffers       = initializers.getBuffers(bufferConfigs, device.handle);
 
-        const auto bufferMemoryConfigs = configurations.getBufferMemories(device.handle, physicalDevice.memoryProperties.get(), buffers);
-        auto       bufferMemories      = initializers.getBufferMemories(bufferMemoryConfigs, device.handle);
+        for(const auto& buffer: buffers)
+        {
+            const auto requirements = getMemoryRequirements(device.handle, buffer);
 
-        initializers.bindBufferMemories(device.handle, buffers, bufferMemories, physicalDevice.memoryProperties.get());
+            auto typeIndex = std::optional<uint32_t> {};
+            auto typeBits  = requirements.memoryTypeBits;
 
-        for(size_t i = 0; i < swapchainFramebuffers.size(); ++i)
+            while(typeBits)
+            {
+                const auto typeBitIndex = getNextBitIndex(typeBits);
+                const auto flags        = physicalDevice.memoryProperties->memoryTypes[typeBitIndex].propertyFlags;
+
+                if(isSubmask(flags, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) &&
+                   isNotSubmask(flags, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT))
+                {
+                    typeIndex = typeBitIndex;
+                }
+
+                typeBits -= (1 << typeBitIndex);
+            }
+
+            ND_ASSERT(typeIndex.has_value());
+
+            const auto deviceMemory = std::find_if(deviceMemories.begin(),
+                                                   deviceMemories.end(),
+                                                   [typeIndex](const auto& deviceMemory)
+                                                   {
+                                                       return deviceMemory.memoryTypeIndex == typeIndex.value();
+                                                   });
+
+            ND_ASSERT(deviceMemory != deviceMemories.end());
+
+            vkBindBufferMemory(device.handle, buffer, deviceMemory->handle, getAlignedOffset(0, requirements.alignment));
+        }
+
+        for(auto i = 0; i < swapchainFramebuffers.size(); ++i)
         {
             const auto framebuffer   = swapchainFramebuffers[i];
             const auto commandBuffer = commandBuffers[0][i];
@@ -454,8 +492,8 @@ namespace nd::src::graphics::vulkan
             vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelines[0]);
 
-            const auto vertexBuffers        = std::vector<VkBuffer> {buffers[0]};
-            const auto vertexBuffersOffsets = std::vector<VkDeviceSize> {0};
+            const auto vertexBuffers        = std::array {buffers[0]};
+            const auto vertexBuffersOffsets = std::array {VkDeviceSize {0}};
 
             vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers.size(), vertexBuffers.data(), vertexBuffersOffsets.data());
             vkCmdDraw(commandBuffer, 3, 1, 0, 0);
@@ -472,6 +510,7 @@ namespace nd::src::graphics::vulkan
                               std::move(physicalDevice),
                               std::move(device),
                               std::move(swapchain),
+                              std::move(deviceMemories),
                               std::move(swapchainImages),
                               std::move(swapchainImageViews),
                               std::move(swapchainFramebuffers),
@@ -482,8 +521,7 @@ namespace nd::src::graphics::vulkan
                               std::move(graphicsPipelines),
                               std::move(commandPools),
                               std::move(commandBuffers),
-                              std::move(buffers),
-                              std::move(bufferMemories)};
+                              std::move(buffers)};
     }
 
     VulkanContext

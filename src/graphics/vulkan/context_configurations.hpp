@@ -31,6 +31,8 @@ namespace nd::src::graphics::vulkan
 
         using Device = DeviceConfiguration(const PhysicalDeviceConfiguration&);
 
+        using DeviceMemories = std::vector<DeviceMemoryConfiguration>(const VkPhysicalDeviceMemoryProperties*);
+
         using Swapchain = SwapchainConfiguration(const VkPhysicalDevice physicalDevice,
                                                  const VkSurfaceKHR     surface,
                                                  const uint32_t         width,
@@ -66,13 +68,10 @@ namespace nd::src::graphics::vulkan
 
         using Buffers = std::vector<BufferConfiguration>(const std::vector<QueueFamily>&);
 
-        using BufferMemories = std::vector<std::vector<DeviceMemoryConfiguration>>(const VkDevice,
-                                                                                   const VkPhysicalDeviceMemoryProperties*,
-                                                                                   const std::vector<VkBuffer>&);
-
         const std::function<Instance>              getInstance;
         const std::function<PhysicalDevice>        getPhysicalDevice;
         const std::function<Device>                getDevice;
+        const std::function<DeviceMemories>        getDeviceMemories;
         const std::function<Swapchain>             getSwapchain;
         const std::function<RenderPass>            getRenderPass;
         const std::function<SwapchainImageViews>   getSwapchainImageViews;
@@ -86,7 +85,6 @@ namespace nd::src::graphics::vulkan
         const std::function<CommandPools>          getCommandPools;
         const std::function<CommandBuffers>        getCommandBuffers;
         const std::function<Buffers>               getBuffers;
-        const std::function<BufferMemories>        getBufferMemories;
     };
 
     InstanceConfiguration
@@ -97,6 +95,9 @@ namespace nd::src::graphics::vulkan
 
     DeviceConfiguration
     getDeviceConfiguration(const PhysicalDeviceConfiguration& physicalDeviceConfiguration) noexcept;
+
+    std::vector<DeviceMemoryConfiguration>
+    getDeviceMemoryConfigurations(const VkPhysicalDeviceMemoryProperties* physicalDeviceMemoryProperties) noexcept;
 
     SwapchainConfiguration
     getSwapchainConfiguration(const VkPhysicalDevice physicalDevice,
@@ -153,12 +154,4 @@ namespace nd::src::graphics::vulkan
 
     std::vector<BufferConfiguration>
     getBufferConfigurations(const std::vector<QueueFamily>& queueFamiliesPool);
-
-    std::vector<DeviceMemoryConfiguration>
-    getBufferMemoryConfigurations(const VkPhysicalDeviceMemoryProperties* memoryProperties, const VkMemoryRequirements memoryRequirements) noexcept;
-
-    std::vector<std::vector<DeviceMemoryConfiguration>>
-    getAllBufferMemoryConfigurations(const VkDevice                          device,
-                                     const VkPhysicalDeviceMemoryProperties* memoryProperties,
-                                     const std::vector<VkBuffer>&            buffers) noexcept;
 } // namespace nd::src::graphics::vulkan

@@ -34,32 +34,6 @@ namespace nd::src::graphics::vulkan
         vkUnmapMemory(device, memory.handle);
     }
 
-    void
-    bindMemories(const VkDevice                          device,
-                 const std::vector<Buffer>&              buffers,
-                 const std::vector<DeviceMemories>&      bufferMemories,
-                 const VkPhysicalDeviceMemoryProperties* physicalDeviceMemoryProperties) noexcept
-    {
-        ND_SET_SCOPE();
-
-        VkDeviceSize offsets[VK_MAX_MEMORY_HEAPS] = {};
-
-        for(size_t bufferIndex = 0; bufferIndex < buffers.size(); ++bufferIndex)
-        {
-            for(size_t memoryIndex = 0; memoryIndex < bufferMemories[bufferIndex].size(); ++memoryIndex)
-            {
-                const auto memory          = bufferMemories[bufferIndex][memoryIndex];
-                const auto memoryHeapIndex = physicalDeviceMemoryProperties->memoryTypes[memory.memoryTypeIndex].heapIndex;
-
-                const auto offset = getAlignedOffset(offsets[memoryHeapIndex], memory.alignment);
-
-                vkBindBufferMemory(device, buffers[bufferIndex], memory.handle, offset);
-
-                offsets[memoryHeapIndex] = offset + memory.size;
-            }
-        }
-    }
-
     VkMemoryRequirements
     getMemoryRequirements(const VkDevice device, const VkBuffer buffer) noexcept
     {
@@ -68,6 +42,18 @@ namespace nd::src::graphics::vulkan
         VkMemoryRequirements memoryRequirements;
 
         vkGetBufferMemoryRequirements(device, buffer, &memoryRequirements);
+
+        return memoryRequirements;
+    }
+
+    VkMemoryRequirements
+    getMemoryRequirements(const VkDevice device, const VkImage image) noexcept
+    {
+        ND_SET_SCOPE();
+
+        VkMemoryRequirements memoryRequirements;
+
+        vkGetImageMemoryRequirements(device, image, &memoryRequirements);
 
         return memoryRequirements;
     }
@@ -130,9 +116,9 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto allocateInfo = getMemoryAllocateInfo(configuration.allocationSize, configuration.memoryTypeIndex, configuration.next);
+        const auto allocateInfo = getMemoryAllocateInfo(configuration.size, configuration.memoryTypeIndex, configuration.next);
 
-        return {getDeviceMemoryHandle(allocateInfo, device), configuration.allocationSize, configuration.alignment, configuration.memoryTypeIndex};
+        return {getDeviceMemoryHandle(allocateInfo, device), configuration.size, configuration.memoryTypeIndex};
     }
 
     std::vector<DeviceMemory>
@@ -145,17 +131,5 @@ namespace nd::src::graphics::vulkan
                                                                   {
                                                                       return getDeviceMemory(configuration, device);
                                                                   });
-    }
-
-    std::vector<DeviceMemories>
-    getAllDeviceMemories(const std::vector<std::vector<DeviceMemoryConfiguration>>& configurations, const VkDevice device)
-    {
-        ND_SET_SCOPE();
-
-        return getMapped<std::vector<DeviceMemoryConfiguration>, std::vector<DeviceMemory>>(configurations,
-                                                                                            [device](const auto& bufferMemoryConfig, const auto index)
-                                                                                            {
-                                                                                                return getDeviceMemories(bufferMemoryConfig, device);
-                                                                                            });
     }
 } // namespace nd::src::graphics::vulkan
