@@ -342,15 +342,21 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto graphicsQueueFamily = std::find_if(queueFamiliesPool.begin(),
-                                                      queueFamiliesPool.end(),
-                                                      [](const auto& queueFamily)
-                                                      {
-                                                          return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
-                                                      });
+        const auto graphicsQueueFamily = getQueueFamily(queueFamiliesPool, VK_QUEUE_GRAPHICS_BIT);
+        const auto transferQueueFamily = getQueueFamily(queueFamiliesPool, VK_QUEUE_TRANSFER_BIT);
 
         ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
+        ND_ASSERT(transferQueueFamily != queueFamiliesPool.end());
 
-        return {{{graphicsQueueFamily->index}, 16 * sizeof(Vertex), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT}};
+        return {{{graphicsQueueFamily->index},
+                 16 * sizeof(Vertex),
+                 VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT},
+                {{transferQueueFamily->index},
+                 16 * sizeof(Vertex),
+                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT}};
     }
 } // namespace nd::src::graphics::vulkan

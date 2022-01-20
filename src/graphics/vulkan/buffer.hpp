@@ -13,6 +13,9 @@ namespace nd::src::graphics::vulkan
         const VkDeviceSize       size;
         const VkBufferUsageFlags usage;
 
+        const VkMemoryPropertyFlags memoryPropertyFlags;
+        const VkMemoryPropertyFlags memoryPropertyNotFlags;
+
         const VkBufferCreateFlags flags = {};
         const void*               next  = {};
     };

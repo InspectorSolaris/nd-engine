@@ -63,7 +63,7 @@ namespace nd::src::graphics::vulkan
                             queueFamilies.end(),
                             [queueFlags, queueFlagsNot](const auto& queueFamily)
                             {
-                                return isSubmask(queueFamily.queueFlags, queueFlags) && !(queueFamily.queueFlags & queueFlagsNot);
+                                return isSubmask(queueFamily.queueFlags, queueFlags) && isNotSubmask(queueFamily.queueFlags, queueFlagsNot);
                             });
     }
 
