@@ -55,7 +55,7 @@ main()
         {
             glfwPollEvents();
 
-            // vulkanContext.drawNextFrame();
+            vulkanContext.drawNextFrame();
         }
     }
     catch(std::runtime_error error)

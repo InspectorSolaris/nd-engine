@@ -14,17 +14,17 @@ namespace nd::src::graphics::vulkan
 
     struct SubmitConfiguration final
     {
-        const std::vector<VkCommandBuffer>&      commandBuffers;
-        const std::vector<VkPipelineStageFlags>& waitDstStageMask;
-        const std::vector<VkSemaphore>&          waitSemaphores;
-        const std::vector<VkSemaphore>&          signalSemaphores;
+        const gsl::span<const VkCommandBuffer>      commandBuffers;
+        const gsl::span<const VkPipelineStageFlags> waitDstStageMask;
+        const gsl::span<const VkSemaphore>          waitSemaphores;
+        const gsl::span<const VkSemaphore>          signalSemaphores;
     };
 
     struct PresentConfiguration final
     {
-        const std::vector<VkSwapchainKHR>& swapchains;
-        const std::vector<VkSemaphore>&    waitSemaphores;
-        const std::vector<uint32_t>&       imageIndices;
+        const gsl::span<const VkSwapchainKHR> swapchains;
+        const gsl::span<const VkSemaphore>    waitSemaphores;
+        const gsl::span<const uint32_t>       imageIndices;
     };
 
     std::vector<VkQueueFamilyProperties>

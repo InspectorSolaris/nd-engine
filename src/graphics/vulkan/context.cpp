@@ -355,20 +355,20 @@ namespace nd::src::graphics::vulkan
         const auto imageIndex = getNextSwapchainImage(objects_.device.handle, objects_.swapchain.handle, imageAcquiredSemaphore, imageAcquiredFence);
 
         const auto commandBuffers   = std::array {objects_.commandBuffers[0][imageIndex]};
-        const auto waitDstStageMask = std::array {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        const auto waitDstStageMask = std::array {static_cast<VkPipelineStageFlags>(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT)};
         const auto waitSemaphores   = std::array {imageAcquiredSemaphore};
         const auto signalSemaphores = std::array {imageRenderedSemaphore};
 
-        // const auto submitInfos = std::array {getSubmitInfo({commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores})};
+        const auto submitInfos = std::array {getSubmitInfo(SubmitConfiguration {commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores})};
 
-        // ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, submitInfos.size(), submitInfos.data(), imageRenderedFence) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, submitInfos.size(), submitInfos.data(), imageRenderedFence) == VK_SUCCESS);
 
-        // const auto swapchains   = std::array {objects_.swapchain.handle};
-        // const auto imageIndices = std::array {static_cast<uint32_t>(imageIndex)};
+        const auto swapchains   = std::array {objects_.swapchain.handle};
+        const auto imageIndices = std::array {static_cast<uint32_t>(imageIndex)};
 
-        // const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
+        const auto presentInfo = getPresentInfo(PresentConfiguration {swapchains, signalSemaphores, imageIndices});
 
-        // ND_ASSERT_EXEC(vkQueuePresentKHR(swapchainQueue, &presentInfo) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkQueuePresentKHR(swapchainQueue, &presentInfo) == VK_SUCCESS);
 
         frameIndex = (frameIndex + 1) % objects_.swapchainImages.size();
     }
