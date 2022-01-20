@@ -30,6 +30,18 @@ namespace nd::src::graphics::vulkan
     void
     setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offset, const void* data) noexcept;
 
+    std::vector<size_t>
+    bindBufferMemory(const VkDevice                          device,
+                     const VkPhysicalDeviceMemoryProperties* memoryProperties,
+                     const std::vector<DeviceMemory>&        deviceMemories,
+                     const std::vector<Buffer>&              buffers);
+
+    std::vector<size_t>
+    bindImageMemory(const VkDevice                          device,
+                    const VkPhysicalDeviceMemoryProperties* memoryProperties,
+                    const std::vector<DeviceMemory>&        deviceMemories,
+                    const std::vector<Image>&               images);
+
     VkMemoryRequirements
     getMemoryRequirements(const VkDevice device, const VkBuffer buffer) noexcept;
 

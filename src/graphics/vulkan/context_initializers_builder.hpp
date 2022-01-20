@@ -53,6 +53,8 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getCommandPools);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getCommandBuffers);
         ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(getBuffers);
+        ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(bindBufferMemory);
+        ND_DEFINE_INITIALIZERS_BUILDER_MEMBER_FUNCTION(bindImageMemory);
 
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getInstance);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getPhysicalDevice);
@@ -73,6 +75,8 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getCommandPools);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getCommandBuffers);
         ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(getBuffers);
+        ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(bindBufferMemory);
+        ND_DEFINE_INITIALIZERS_BUILDER_OPERATOR(bindImageMemory);
 
     private:
         std::remove_cv_t<decltype(Type::getInstance)>              getInstance;
@@ -94,6 +98,8 @@ namespace nd::src::graphics::vulkan
         std::remove_cv_t<decltype(Type::getCommandPools)>          getCommandPools;
         std::remove_cv_t<decltype(Type::getCommandBuffers)>        getCommandBuffers;
         std::remove_cv_t<decltype(Type::getBuffers)>               getBuffers;
+        std::remove_cv_t<decltype(Type::bindBufferMemory)>         bindBufferMemory;
+        std::remove_cv_t<decltype(Type::bindImageMemory)>          bindImageMemory;
     };
 
     extern VulkanInitializersBuilder initializersBuilder;

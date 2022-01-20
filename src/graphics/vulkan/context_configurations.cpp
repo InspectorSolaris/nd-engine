@@ -312,16 +312,14 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        const auto graphicsQueueFamily = std::find_if(queueFamiliesPool.begin(),
-                                                      queueFamiliesPool.end(),
-                                                      [](const auto& queueFamily)
-                                                      {
-                                                          return isSubmask(queueFamily.queueFlags, VK_QUEUE_GRAPHICS_BIT);
-                                                      });
+        const auto graphicsQueueFamily = getQueueFamily(queueFamiliesPool, VK_QUEUE_GRAPHICS_BIT);
+        const auto transferQueueFamily = getQueueFamily(queueFamiliesPool, VK_QUEUE_TRANSFER_BIT, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
 
         ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
+        ND_ASSERT(transferQueueFamily != queueFamiliesPool.end());
 
-        return {{graphicsQueueFamily->index, static_cast<uint32_t>(graphicsQueueFamily->queues.size()), graphicsQueueFamily->queueFlags}};
+        return {{graphicsQueueFamily->index, static_cast<uint32_t>(graphicsQueueFamily->queues.size()), graphicsQueueFamily->queueFlags},
+                {transferQueueFamily->index, static_cast<uint32_t>(transferQueueFamily->queues.size()), transferQueueFamily->queueFlags}};
     }
 
     std::vector<CommandBufferConfiguration>
@@ -343,7 +341,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         const auto graphicsQueueFamily = getQueueFamily(queueFamiliesPool, VK_QUEUE_GRAPHICS_BIT);
-        const auto transferQueueFamily = getQueueFamily(queueFamiliesPool, VK_QUEUE_TRANSFER_BIT);
+        const auto transferQueueFamily = getQueueFamily(queueFamiliesPool, VK_QUEUE_TRANSFER_BIT, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
 
         ND_ASSERT(graphicsQueueFamily != queueFamiliesPool.end());
         ND_ASSERT(transferQueueFamily != queueFamiliesPool.end());

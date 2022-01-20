@@ -23,7 +23,9 @@ namespace nd::src::graphics::vulkan
                                  std::vector<Pipeline>&&            graphicsPipelines,
                                  std::vector<CommandPool>&&         commandPools,
                                  std::vector<CommandBuffers>&&      commandBuffers,
-                                 std::vector<Buffer>&&              buffers)
+                                 std::vector<Buffer>&&              buffers,
+                                 std::vector<size_t>&&              bufferMemoryIndices,
+                                 std::vector<size_t>&&              imageMemoryIndices)
         : instance {instance}
         , surface {surface}
         , renderPass {renderPass}
@@ -43,6 +45,8 @@ namespace nd::src::graphics::vulkan
         , commandPools {std::move(commandPools)}
         , commandBuffers {std::move(commandBuffers)}
         , buffers {std::move(buffers)}
+        , bufferMemoryIndices {std::move(bufferMemoryIndices)}
+        , imageMemoryIndices {std::move(imageMemoryIndices)}
     {
         ND_SET_SCOPE();
 
@@ -75,6 +79,10 @@ namespace nd::src::graphics::vulkan
         , commandPools {std::move(vulkanObjects.commandPools)}
         , commandBuffers {std::move(vulkanObjects.commandBuffers)}
         , buffers {std::move(vulkanObjects.buffers)}
+        , bufferMemoryIndices {std::move(vulkanObjects.bufferMemoryIndices)}
+        , imageMemoryIndices {std::move(vulkanObjects.imageMemoryIndices)}
+        , semaphores {std::move(vulkanObjects.semaphores)}
+        , fences {std::move(vulkanObjects.fences)}
     {
         ND_SET_SCOPE();
 
@@ -120,6 +128,12 @@ namespace nd::src::graphics::vulkan
         commandBuffers       = std::move(vulkanObjects.commandBuffers);
         buffers              = std::move(vulkanObjects.buffers);
 
+        bufferMemoryIndices = std::move(vulkanObjects.bufferMemoryIndices);
+        imageMemoryIndices  = std::move(vulkanObjects.imageMemoryIndices);
+
+        semaphores = std::move(vulkanObjects.semaphores);
+        fences     = std::move(vulkanObjects.fences);
+
         vulkanObjects.instance       = VK_NULL_HANDLE;
         vulkanObjects.surface        = VK_NULL_HANDLE;
         vulkanObjects.renderPass     = VK_NULL_HANDLE;
@@ -160,7 +174,7 @@ namespace nd::src::graphics::vulkan
 
         for(const auto buffer: buffers)
         {
-            vkDestroyBuffer(device.handle, buffer, nullptr);
+            vkDestroyBuffer(device.handle, buffer.handle, nullptr);
         }
 
         for(auto index = 0; index < commandPools.size(); ++index)
@@ -273,6 +287,50 @@ namespace nd::src::graphics::vulkan
         return queueFamily;
     }
 
+    const CommandBuffers&
+    VulkanContext::getGraphicsCommandBuffers() const
+    {
+        ND_SET_SCOPE();
+
+        return objects_.commandBuffers[0];
+    }
+
+    const CommandBuffers&
+    VulkanContext::getTransferCommandBuffers() const
+    {
+        ND_SET_SCOPE();
+
+        return objects_.commandBuffers[1];
+    }
+
+    constexpr int
+    VulkanContext::getVertexBufferIndex() const
+    {
+        return 0;
+    }
+
+    constexpr int
+    VulkanContext::getStagingBufferIndex() const
+    {
+        return 1;
+    }
+
+    const Buffer&
+    VulkanContext::getVertexBuffer() const
+    {
+        ND_SET_SCOPE();
+
+        return objects_.buffers[getVertexBufferIndex()];
+    }
+
+    const Buffer&
+    VulkanContext::getStagingBuffer() const
+    {
+        ND_SET_SCOPE();
+
+        return objects_.buffers[getStagingBufferIndex()];
+    }
+
     VkSemaphore
     VulkanContext::getSemaphore(const VkSemaphoreCreateFlags flags, const void* next) noexcept
     {
@@ -327,12 +385,42 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         static auto frameIndex = size_t {0};
+        static auto loaded     = false;
 
-        // const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
-        //                                            {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},
-        //                                            {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}}};
+        if(!loaded)
+        {
+            const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
+                                                       {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},
+                                                       {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}}};
 
-        // setMemory(objects_.device.handle, objects_.bufferMemories[0][0], 0, vertices.data());
+            const auto stagingBufferMemoryIndex = objects_.bufferMemoryIndices[getStagingBufferIndex()];
+            const auto stagingBufferMemory      = objects_.deviceMemories[stagingBufferMemoryIndex];
+
+            setMemory(objects_.device.handle, stagingBufferMemory, 0, vertices.data());
+
+            const auto transferQueue                  = getTransferQueueFamily().queues.front();
+            const auto transferCommandBuffer          = getTransferCommandBuffers().front();
+            const auto transferCommandBufferBeginInfo = getCommandBufferBeginInfo(nullptr);
+
+            const auto regions = std::array {VkBufferCopy {0, 0, sizeof(Vertex) * vertices.size()}};
+
+            vkBeginCommandBuffer(transferCommandBuffer, &transferCommandBufferBeginInfo);
+
+            vkCmdCopyBuffer(transferCommandBuffer, getStagingBuffer().handle, getVertexBuffer().handle, regions.size(), regions.data());
+
+            vkEndCommandBuffer(transferCommandBuffer);
+
+            auto transferSubmitInfo = VkSubmitInfo {};
+
+            transferSubmitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            transferSubmitInfo.commandBufferCount = 1;
+            transferSubmitInfo.pCommandBuffers    = &transferCommandBuffer;
+
+            vkQueueSubmit(transferQueue, 1, &transferSubmitInfo, VK_NULL_HANDLE);
+            vkQueueWaitIdle(transferQueue);
+
+            loaded = true;
+        }
 
         static const auto deviceQueue    = getGraphicsQueueFamily().queues.front();
         static const auto swapchainQueue = getSwapchainQueueFamily().queues.front();
@@ -359,14 +447,14 @@ namespace nd::src::graphics::vulkan
         const auto waitSemaphores   = std::array {imageAcquiredSemaphore};
         const auto signalSemaphores = std::array {imageRenderedSemaphore};
 
-        const auto submitInfos = std::array {getSubmitInfo(SubmitConfiguration {commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores})};
+        const auto submitInfos = std::array {getSubmitInfo({commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores})};
 
         ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, submitInfos.size(), submitInfos.data(), imageRenderedFence) == VK_SUCCESS);
 
         const auto swapchains   = std::array {objects_.swapchain.handle};
         const auto imageIndices = std::array {static_cast<uint32_t>(imageIndex)};
 
-        const auto presentInfo = getPresentInfo(PresentConfiguration {swapchains, signalSemaphores, imageIndices});
+        const auto presentInfo = getPresentInfo({swapchains, signalSemaphores, imageIndices});
 
         ND_ASSERT_EXEC(vkQueuePresentKHR(swapchainQueue, &presentInfo) == VK_SUCCESS);
 
@@ -438,40 +526,11 @@ namespace nd::src::graphics::vulkan
         const auto bufferConfigs = configurations.getBuffers(device.queueFamilies);
         auto       buffers       = initializers.getBuffers(bufferConfigs, device.handle);
 
-        for(const auto& buffer: buffers)
-        {
-            const auto requirements = getMemoryRequirements(device.handle, buffer);
-
-            auto typeIndex = std::optional<uint32_t> {};
-            auto typeBits  = requirements.memoryTypeBits;
-
-            while(typeBits)
-            {
-                const auto typeBitIndex = getNextBitIndex(typeBits);
-                const auto flags        = physicalDevice.memoryProperties->memoryTypes[typeBitIndex].propertyFlags;
-
-                if(isSubmask(flags, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) &&
-                   isNotSubmask(flags, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT))
-                {
-                    typeIndex = typeBitIndex;
-                }
-
-                typeBits -= (1 << typeBitIndex);
-            }
-
-            ND_ASSERT(typeIndex.has_value());
-
-            const auto deviceMemory = std::find_if(deviceMemories.begin(),
-                                                   deviceMemories.end(),
-                                                   [typeIndex](const auto& deviceMemory)
-                                                   {
-                                                       return deviceMemory.memoryTypeIndex == typeIndex.value();
-                                                   });
-
-            ND_ASSERT(deviceMemory != deviceMemories.end());
-
-            vkBindBufferMemory(device.handle, buffer, deviceMemory->handle, getAlignedOffset(0, requirements.alignment));
-        }
+        auto bufferMemoryIndices = initializers.bindBufferMemory(device.handle, physicalDevice.memoryProperties.get(), deviceMemories, buffers);
+        auto imageMemoryIndices  = initializers.bindImageMemory(device.handle,
+                                                               physicalDevice.memoryProperties.get(),
+                                                               deviceMemories,
+                                                               std::vector<Image> {});
 
         for(auto i = 0; i < swapchainFramebuffers.size(); ++i)
         {
@@ -492,7 +551,7 @@ namespace nd::src::graphics::vulkan
             vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelines[0]);
 
-            const auto vertexBuffers        = std::array {buffers[0]};
+            const auto vertexBuffers        = std::array {buffers[0].handle};
             const auto vertexBuffersOffsets = std::array {VkDeviceSize {0}};
 
             vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers.size(), vertexBuffers.data(), vertexBuffersOffsets.data());
@@ -521,7 +580,9 @@ namespace nd::src::graphics::vulkan
                               std::move(graphicsPipelines),
                               std::move(commandPools),
                               std::move(commandBuffers),
-                              std::move(buffers)};
+                              std::move(buffers),
+                              std::move(bufferMemoryIndices),
+                              std::move(imageMemoryIndices)};
     }
 
     VulkanContext

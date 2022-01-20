@@ -23,7 +23,9 @@ namespace nd::src::graphics::vulkan
         getGraphicsPipelines <<                                //
         getCommandPools <<                                     //
         getCommandBuffers <<                                   //
-        getBuffers;
+        getBuffers <<                                          //
+        bindBufferMemory <<                                    //
+        bindImageMemory;
 
     VulkanInitializersBuilder::Type
     VulkanInitializersBuilder::build() const
@@ -48,7 +50,9 @@ namespace nd::src::graphics::vulkan
                   getGraphicsPipelines &&     //
                   getCommandPools &&          //
                   getCommandBuffers &&        //
-                  getBuffers);
+                  getBuffers &&               //
+                  bindBufferMemory &&         //
+                  bindImageMemory);
 
         return {getInstance,
                 getPhysicalDevice,
@@ -68,6 +72,8 @@ namespace nd::src::graphics::vulkan
                 getGraphicsPipelines,
                 getCommandPools,
                 getCommandBuffers,
-                getBuffers};
+                getBuffers,
+                bindBufferMemory,
+                bindImageMemory};
     }
 } // namespace nd::src::graphics::vulkan

@@ -45,24 +45,36 @@ namespace nd::src::graphics::vulkan
 
         using Buffers = std::vector<Buffer>(const std::vector<BufferConfiguration>&, const VkDevice);
 
-        const std::function<Instance>              getInstance;
-        const std::function<PhysicalDevice>        getPhysicalDevice;
-        const std::function<Device>                getDevice;
-        const std::function<DeviceMemories>        getDeviceMemories;
-        const std::function<Surface>               getSurface;
-        const std::function<Swapchain>             getSwapchain;
-        const std::function<RenderPass>            getRenderPass;
-        const std::function<SwapchainImages>       getSwapchainImages;
-        const std::function<SwapchainImageViews>   getSwapchainImageViews;
-        const std::function<SwapchainFramebuffers> getSwapchainFramebuffers;
-        const std::function<ShaderModules>         getShaderModules;
-        const std::function<DescriptorPool>        getDescriptorPool;
-        const std::function<DescriptorSetLayouts>  getDescriptorSetLayouts;
-        const std::function<DescriptorSets>        getDescriptorSets;
-        const std::function<PipelineLayouts>       getPipelineLayouts;
-        const std::function<GraphicsPipelines>     getGraphicsPipelines;
-        const std::function<CommandPools>          getCommandPools;
-        const std::function<CommandBuffers>        getCommandBuffers;
-        const std::function<Buffers>               getBuffers;
+        using DeviceMemoryBufferBindings = std::vector<size_t>(const VkDevice,
+                                                               const VkPhysicalDeviceMemoryProperties*,
+                                                               const std::vector<DeviceMemory>&,
+                                                               const std::vector<Buffer>&);
+
+        using DeviceMemoryImageBindings = std::vector<size_t>(const VkDevice,
+                                                              const VkPhysicalDeviceMemoryProperties*,
+                                                              const std::vector<DeviceMemory>&,
+                                                              const std::vector<Image>&);
+
+        const std::function<Instance>                   getInstance;
+        const std::function<PhysicalDevice>             getPhysicalDevice;
+        const std::function<Device>                     getDevice;
+        const std::function<DeviceMemories>             getDeviceMemories;
+        const std::function<Surface>                    getSurface;
+        const std::function<Swapchain>                  getSwapchain;
+        const std::function<RenderPass>                 getRenderPass;
+        const std::function<SwapchainImages>            getSwapchainImages;
+        const std::function<SwapchainImageViews>        getSwapchainImageViews;
+        const std::function<SwapchainFramebuffers>      getSwapchainFramebuffers;
+        const std::function<ShaderModules>              getShaderModules;
+        const std::function<DescriptorPool>             getDescriptorPool;
+        const std::function<DescriptorSetLayouts>       getDescriptorSetLayouts;
+        const std::function<DescriptorSets>             getDescriptorSets;
+        const std::function<PipelineLayouts>            getPipelineLayouts;
+        const std::function<GraphicsPipelines>          getGraphicsPipelines;
+        const std::function<CommandPools>               getCommandPools;
+        const std::function<CommandBuffers>             getCommandBuffers;
+        const std::function<Buffers>                    getBuffers;
+        const std::function<DeviceMemoryBufferBindings> bindBufferMemory;
+        const std::function<DeviceMemoryImageBindings>  bindImageMemory;
     };
 } // namespace nd::src::graphics::vulkan

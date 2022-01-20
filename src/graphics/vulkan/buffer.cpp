@@ -52,7 +52,7 @@ namespace nd::src::graphics::vulkan
             configuration.queueFamiliesIndices.size(),
             configuration.queueFamiliesIndices.data());
 
-        return getBufferHandle(createInfo, device);
+        return {getBufferHandle(createInfo, device), configuration.memoryPropertyFlags, configuration.memoryPropertyNotFlags};
     }
 
     std::vector<Buffer>

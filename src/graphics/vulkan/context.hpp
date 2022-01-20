@@ -26,6 +26,9 @@ namespace nd::src::graphics::vulkan
         std::vector<CommandBuffers>      commandBuffers {};
         std::vector<Buffer>              buffers {};
 
+        std::vector<size_t> bufferMemoryIndices {};
+        std::vector<size_t> imageMemoryIndices {};
+
         std::vector<VkSemaphore> semaphores {};
         std::vector<VkFence>     fences {};
 
@@ -53,7 +56,9 @@ namespace nd::src::graphics::vulkan
                       std::vector<Pipeline>&&            graphicsPipelines,
                       std::vector<CommandPool>&&         commandPools,
                       std::vector<CommandBuffers>&&      commandBuffers,
-                      std::vector<Buffer>&&              buffers);
+                      std::vector<Buffer>&&              buffers,
+                      std::vector<size_t>&&              bufferMemoryIndices,
+                      std::vector<size_t>&&              imageMemoryIndices);
 
         VulkanObjects(const VulkanObjects& vulkanObjects) = delete;
         VulkanObjects(VulkanObjects&& vulkanObjects) noexcept;
@@ -90,6 +95,24 @@ namespace nd::src::graphics::vulkan
 
         const QueueFamily&
         getSwapchainQueueFamily() const;
+
+        const CommandBuffers&
+        getGraphicsCommandBuffers() const;
+
+        const CommandBuffers&
+        getTransferCommandBuffers() const;
+
+        constexpr int
+        getVertexBufferIndex() const;
+
+        constexpr int
+        getStagingBufferIndex() const;
+
+        const Buffer&
+        getVertexBuffer() const;
+
+        const Buffer&
+        getStagingBuffer() const;
 
         VkSemaphore
         getSemaphore(const VkSemaphoreCreateFlags flags = {}, const void* next = {}) noexcept;

@@ -20,7 +20,13 @@ namespace nd::src::graphics::vulkan
         const void*               next  = {};
     };
 
-    using Buffer = VkBuffer;
+    struct Buffer final
+    {
+        const VkBuffer handle;
+
+        const VkMemoryPropertyFlags memoryPropertyFlags;
+        const VkMemoryPropertyFlags memoryPropertyNotFlags;
+    };
 
     VkBufferCreateInfo
     getBufferCreateInfo(const VkDeviceSize        size,

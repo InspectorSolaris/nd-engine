@@ -34,6 +34,69 @@ namespace nd::src::graphics::vulkan
         vkUnmapMemory(device, memory.handle);
     }
 
+    std::vector<size_t>
+    bindBufferMemory(const VkDevice                          device,
+                     const VkPhysicalDeviceMemoryProperties* memoryProperties,
+                     const std::vector<DeviceMemory>&        deviceMemories,
+                     const std::vector<Buffer>&              buffers)
+    {
+        ND_SET_SCOPE();
+
+        auto memoryIndices = std::vector<size_t>(buffers.size());
+
+        for(auto index = 0; index < buffers.size(); ++index)
+        {
+            const auto& buffer       = buffers[index];
+            const auto  requirements = getMemoryRequirements(device, buffer.handle);
+
+            auto typeIndex = std::optional<uint32_t> {};
+            auto typeBits  = requirements.memoryTypeBits;
+
+            while(typeBits)
+            {
+                const auto typeBitIndex = getNextBitIndex(typeBits);
+                const auto flags        = memoryProperties->memoryTypes[typeBitIndex].propertyFlags;
+
+                if(isSubmask(flags, buffer.memoryPropertyFlags) && isNotSubmask(flags, buffer.memoryPropertyNotFlags))
+                {
+                    typeIndex = typeBitIndex;
+
+                    break;
+                }
+
+                typeBits -= (1 << typeBitIndex);
+            }
+
+            ND_ASSERT(typeIndex.has_value());
+
+            const auto deviceMemory = std::find_if(deviceMemories.begin(),
+                                                   deviceMemories.end(),
+                                                   [typeIndex](const auto& deviceMemory)
+                                                   {
+                                                       return deviceMemory.memoryTypeIndex == typeIndex.value();
+                                                   });
+
+            ND_ASSERT(deviceMemory != deviceMemories.end());
+
+            vkBindBufferMemory(device, buffer.handle, deviceMemory->handle, getAlignedOffset(0, requirements.alignment));
+
+            memoryIndices[index] = std::distance(deviceMemories.begin(), deviceMemory);
+        }
+
+        return memoryIndices;
+    }
+
+    std::vector<size_t>
+    bindImageMemory(const VkDevice                          device,
+                    const VkPhysicalDeviceMemoryProperties* memoryProperties,
+                    const std::vector<DeviceMemory>&        deviceMemories,
+                    const std::vector<Image>&               images)
+    {
+        ND_SET_SCOPE();
+
+        return std::vector<size_t> {};
+    }
+
     VkMemoryRequirements
     getMemoryRequirements(const VkDevice device, const VkBuffer buffer) noexcept
     {
