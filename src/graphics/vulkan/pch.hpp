@@ -9,7 +9,6 @@
 
 // C++ library
 
-#include <span>
 #include <array>
 #include <vector>
 #include <map>
@@ -47,7 +46,8 @@
 
 // External library
 
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-#include <spdlog/spdlog.h>
 #include <vulkan/vulkan.h>
+
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
+#include "spdlog/spdlog.h"
