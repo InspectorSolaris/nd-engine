@@ -8,12 +8,31 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Glfw Examples" FORCE)
 set(SPDLOG_FMT_EXTERNAL ON CACHE BOOL "Spdlog Fmt External" FORCE)
 
 find_package(Vulkan REQUIRED)
+find_package(GLFW)
+find_package(GLM)
+find_package(fmt)
+find_package(spdlog)
+find_package(GSL)
 
-add_subdirectory(glfw)
-add_subdirectory(glm)
-add_subdirectory(fmt)
-add_subdirectory(spdlog)
-add_subdirectory(gsl)
+if(NOT TARGET glfw)
+    add_subdirectory(glfw)
+endif()
+
+if(NOT TARGET glm)
+    add_subdirectory(glm)
+endif()
+
+if(NOT TARGET fmt::fmt)
+    add_subdirectory(fmt)
+endif()
+
+if(NOT TARGET spdlog::spdlog)
+    add_subdirectory(spdlog)
+endif()
+
+if(NOT TARGET gsl)
+    add_subdirectory(gsl)
+endif()
 
 add_library(${LIBS_NAME}-vulkan INTERFACE)
 add_library(${LIBS_NAME}-glfw INTERFACE)
