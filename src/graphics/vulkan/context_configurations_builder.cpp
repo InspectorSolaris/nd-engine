@@ -5,23 +5,23 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    auto configurationsBuilder = VulkanConfigurationsBuilder {} << //
-        getInstanceConfiguration <<                                //
-        getPhysicalDeviceConfiguration <<                          //
-        getDeviceConfiguration <<                                  //
-        getDeviceMemoryConfigurations <<                           //
-        getSwapchainConfiguration <<                               //
-        getRenderPassConfiguration <<                              //
-        getSwapchainImageViewConfigurations <<                     //
-        getSwapchainFramebufferConfigurations <<                   //
-        getShaderModulesConfigurations <<                          //
-        getDescriptorPoolConfiguration <<                          //
-        getDescriptorSetLayoutConfigurations <<                    //
-        getDescriptorSetConfiguration <<                           //
-        getPipelineLayoutConfigurations <<                         //
-        getGraphicsPipelineConfigurations <<                       //
-        getCommandPoolConfigurations <<                            //
-        getCommandBufferConfigurations <<                          //
+    VulkanConfigurationsBuilder configurationsBuilder = VulkanConfigurationsBuilder {} << //
+        getInstanceConfiguration <<                                                       //
+        getPhysicalDeviceConfiguration <<                                                 //
+        getDeviceConfiguration <<                                                         //
+        getDeviceMemoryConfigurations <<                                                  //
+        getSwapchainConfiguration <<                                                      //
+        getRenderPassConfiguration <<                                                     //
+        getSwapchainImageViewConfigurations <<                                            //
+        getSwapchainFramebufferConfigurations <<                                          //
+        getShaderModulesConfigurations <<                                                 //
+        getDescriptorPoolConfiguration <<                                                 //
+        getDescriptorSetLayoutConfigurations <<                                           //
+        getDescriptorSetConfiguration <<                                                  //
+        getPipelineLayoutConfigurations <<                                                //
+        getGraphicsPipelineConfigurations <<                                              //
+        getCommandPoolConfigurations <<                                                   //
+        getCommandBufferConfigurations <<                                                 //
         getBufferConfigurations;
 
     VulkanConfigurationsBuilder::Type

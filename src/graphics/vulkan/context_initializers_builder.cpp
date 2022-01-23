@@ -5,26 +5,26 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    auto initializersBuilder = VulkanInitializersBuilder {} << //
-        getInstance <<                                         //
-        getPhysicalDevice <<                                   //
-        getDevice <<                                           //
-        getDeviceMemories <<                                   //
-        getSwapchain <<                                        //
-        getRenderPass <<                                       //
-        getSwapchainImages <<                                  //
-        getImageViews <<                                       //
-        getFramebuffers <<                                     //
-        getShaderModules <<                                    //
-        getDescriptorPool <<                                   //
-        getDescriptorSetLayouts <<                             //
-        getDescriptorSets <<                                   //
-        getPipelineLayouts <<                                  //
-        getGraphicsPipelines <<                                //
-        getCommandPools <<                                     //
-        getCommandBuffers <<                                   //
-        getBuffers <<                                          //
-        bindBufferMemory <<                                    //
+    VulkanInitializersBuilder initializersBuilder = VulkanInitializersBuilder {} << //
+        getInstance <<                                                              //
+        getPhysicalDevice <<                                                        //
+        getDevice <<                                                                //
+        getDeviceMemories <<                                                        //
+        getSwapchain <<                                                             //
+        getRenderPass <<                                                            //
+        getSwapchainImages <<                                                       //
+        getImageViews <<                                                            //
+        getFramebuffers <<                                                          //
+        getShaderModules <<                                                         //
+        getDescriptorPool <<                                                        //
+        getDescriptorSetLayouts <<                                                  //
+        getDescriptorSets <<                                                        //
+        getPipelineLayouts <<                                                       //
+        getGraphicsPipelines <<                                                     //
+        getCommandPools <<                                                          //
+        getCommandBuffers <<                                                        //
+        getBuffers <<                                                               //
+        bindBufferMemory <<                                                         //
         bindImageMemory;
 
     VulkanInitializersBuilder::Type

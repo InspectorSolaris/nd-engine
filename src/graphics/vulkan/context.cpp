@@ -310,9 +310,15 @@ namespace nd::src::graphics::vulkan
     }
 
     constexpr int
-    VulkanContext::getStagingBufferIndex() const
+    VulkanContext::getIndexBufferIndex() const
     {
         return 1;
+    }
+
+    constexpr int
+    VulkanContext::getStagingBufferIndex() const
+    {
+        return 2;
     }
 
     const Buffer&
@@ -321,6 +327,14 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         return objects_.buffers[getVertexBufferIndex()];
+    }
+
+    const Buffer&
+    VulkanContext::getIndexBuffer() const
+    {
+        ND_SET_SCOPE();
+
+        return objects_.buffers[getIndexBufferIndex()];
     }
 
     const Buffer&
@@ -389,24 +403,38 @@ namespace nd::src::graphics::vulkan
 
         if(!loaded)
         {
+            const auto indices  = std::vector<uint16_t> {0, 1, 2, 2, 3, 0};
             const auto vertices = std::vector<Vertex> {{{0.0, -0.5, 0.0}, {1.0, 0.0, 0.0}},
                                                        {{0.5, 0.5, 0.0}, {0.0, 1.0, 0.0}},
-                                                       {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}}};
+                                                       {{-0.5, 0.5, 0.0}, {0.0, 0.0, 1.0}},
+                                                       {{-0.5, -0.5, 0.0}, {0.0, 1.0, 0.0}}};
 
             const auto stagingBufferMemoryIndex = objects_.bufferMemoryIndices[getStagingBufferIndex()];
             const auto stagingBufferMemory      = objects_.deviceMemories[stagingBufferMemoryIndex];
 
-            setMemory(objects_.device.handle, stagingBufferMemory, 0, vertices.data());
+            const auto indexBufferSize    = sizeof(uint16_t) * indices.size();
+            const auto vertexBufferSize   = sizeof(Vertex) * vertices.size();
+            const auto indexBufferOffset  = 0;
+            const auto vertexBufferOffset = indexBufferOffset + indexBufferSize;
+
+            setMemory(objects_.device.handle, stagingBufferMemory, indexBufferOffset, indexBufferSize, indices.data());
+            setMemory(objects_.device.handle, stagingBufferMemory, vertexBufferOffset, vertexBufferSize, vertices.data());
 
             const auto transferQueue                  = getTransferQueueFamily().queues.front();
             const auto transferCommandBuffer          = getTransferCommandBuffers().front();
             const auto transferCommandBufferBeginInfo = getCommandBufferBeginInfo(nullptr);
 
-            const auto regions = std::array {VkBufferCopy {0, 0, sizeof(Vertex) * vertices.size()}};
-
             vkBeginCommandBuffer(transferCommandBuffer, &transferCommandBufferBeginInfo);
 
-            vkCmdCopyBuffer(transferCommandBuffer, getStagingBuffer().handle, getVertexBuffer().handle, regions.size(), regions.data());
+            const auto& indexBuffer   = getIndexBuffer();
+            const auto& vertexBuffer  = getVertexBuffer();
+            const auto& stagingBuffer = getStagingBuffer();
+
+            const auto indexRegions  = std::array {VkBufferCopy {indexBufferOffset, 0, indexBufferSize}};
+            const auto vertexRegions = std::array {VkBufferCopy {vertexBufferOffset, 0, vertexBufferSize}};
+
+            vkCmdCopyBuffer(transferCommandBuffer, stagingBuffer.handle, indexBuffer.handle, indexRegions.size(), indexRegions.data());
+            vkCmdCopyBuffer(transferCommandBuffer, stagingBuffer.handle, vertexBuffer.handle, vertexRegions.size(), vertexRegions.data());
 
             vkEndCommandBuffer(transferCommandBuffer);
 
@@ -422,7 +450,7 @@ namespace nd::src::graphics::vulkan
             loaded = true;
         }
 
-        static const auto deviceQueue    = getGraphicsQueueFamily().queues.front();
+        static const auto graphicsQueue  = getGraphicsQueueFamily().queues.front();
         static const auto swapchainQueue = getSwapchainQueueFamily().queues.front();
 
         static const auto imageAcquiredSemaphores = getSemaphores(objects_.swapchainImages.size());
@@ -449,7 +477,7 @@ namespace nd::src::graphics::vulkan
 
         const auto submitInfos = std::array {getSubmitInfo({commandBuffers, waitDstStageMask, waitSemaphores, signalSemaphores})};
 
-        ND_ASSERT_EXEC(vkQueueSubmit(deviceQueue, submitInfos.size(), submitInfos.data(), imageRenderedFence) == VK_SUCCESS);
+        ND_ASSERT_EXEC(vkQueueSubmit(graphicsQueue, submitInfos.size(), submitInfos.data(), imageRenderedFence) == VK_SUCCESS);
 
         const auto swapchains   = std::array {objects_.swapchain.handle};
         const auto imageIndices = std::array {static_cast<uint32_t>(imageIndex)};
@@ -555,7 +583,9 @@ namespace nd::src::graphics::vulkan
             const auto vertexBuffersOffsets = std::array {VkDeviceSize {0}};
 
             vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers.size(), vertexBuffers.data(), vertexBuffersOffsets.data());
-            vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+            vkCmdBindIndexBuffer(commandBuffer, buffers[1].handle, VkDeviceSize {0}, VK_INDEX_TYPE_UINT16);
+
+            vkCmdDrawIndexed(commandBuffer, 6, 1, 0, 0, 0);
 
             vkCmdEndRenderPass(commandBuffer);
 

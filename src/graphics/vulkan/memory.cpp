@@ -21,15 +21,15 @@ namespace nd::src::graphics::vulkan
     }
 
     void
-    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offset, const void* data) noexcept
+    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offset, const VkDeviceSize size, const void* data) noexcept
     {
         ND_SET_SCOPE();
 
         void* ptr;
 
-        vkMapMemory(device, memory.handle, offset, memory.size, {}, &ptr);
+        vkMapMemory(device, memory.handle, offset, size, {}, &ptr);
 
-        memcpy(ptr, data, memory.size);
+        memcpy(ptr, data, size);
 
         vkUnmapMemory(device, memory.handle);
     }

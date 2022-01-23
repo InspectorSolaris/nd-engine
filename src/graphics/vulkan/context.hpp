@@ -106,10 +106,16 @@ namespace nd::src::graphics::vulkan
         getVertexBufferIndex() const;
 
         constexpr int
+        getIndexBufferIndex() const;
+
+        constexpr int
         getStagingBufferIndex() const;
 
         const Buffer&
         getVertexBuffer() const;
+
+        const Buffer&
+        getIndexBuffer() const;
 
         const Buffer&
         getStagingBuffer() const;

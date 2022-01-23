@@ -28,7 +28,7 @@ namespace nd::src::graphics::vulkan
     getAlignedOffset(const VkDeviceSize offset, const VkDeviceSize alignment) noexcept;
 
     void
-    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offset, const void* data) noexcept;
+    setMemory(const VkDevice device, const DeviceMemory memory, const VkDeviceSize offset, const VkDeviceSize size, const void* data) noexcept;
 
     std::vector<size_t>
     bindBufferMemory(const VkDevice                          device,

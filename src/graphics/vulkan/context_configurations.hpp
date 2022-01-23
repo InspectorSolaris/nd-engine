@@ -25,66 +25,63 @@ namespace nd::src::graphics::vulkan
 
     struct VulkanConfigurations final
     {
-        using Instance = InstanceConfiguration(const VulkanConfigurationExternal&);
+        using InstanceFunction = InstanceConfiguration(const VulkanConfigurationExternal&);
 
-        using PhysicalDevice = PhysicalDeviceConfiguration();
+        using PhysicalDeviceFunction = PhysicalDeviceConfiguration();
 
-        using Device = DeviceConfiguration(const PhysicalDeviceConfiguration&);
+        using DeviceFunction = DeviceConfiguration(const PhysicalDeviceConfiguration&);
 
-        using DeviceMemories = std::vector<DeviceMemoryConfiguration>(const VkPhysicalDeviceMemoryProperties*);
+        using DeviceMemoriesFunction = std::vector<DeviceMemoryConfiguration>(const VkPhysicalDeviceMemoryProperties*);
 
-        using Swapchain = SwapchainConfiguration(const VkPhysicalDevice physicalDevice,
-                                                 const VkSurfaceKHR     surface,
-                                                 const uint32_t         width,
-                                                 const uint32_t         height);
+        using SwapchainFunction = SwapchainConfiguration(const VkPhysicalDevice, const VkSurfaceKHR, const uint32_t, const uint32_t);
 
-        using RenderPass = RenderPassConfiguration(const SwapchainConfiguration&);
+        using RenderPassFunction = RenderPassConfiguration(const SwapchainConfiguration&);
 
-        using SwapchainImageViews = std::vector<ImageViewConfiguration>(const SwapchainConfiguration&, const std::vector<Image>&);
+        using SwapchainImageViewsFunction = std::vector<ImageViewConfiguration>(const SwapchainConfiguration&, const std::vector<Image>&);
 
-        using SwapchainFramebuffers = std::vector<FramebufferConfiguration>(const SwapchainConfiguration&,
-                                                                            const std::vector<ImageView>&,
-                                                                            const VkRenderPass);
+        using SwapchainFramebuffersFunction = std::vector<FramebufferConfiguration>(const SwapchainConfiguration&,
+                                                                                    const std::vector<ImageView>&,
+                                                                                    const VkRenderPass);
 
-        using ShaderModules = std::vector<ShaderModuleConfiguration>();
+        using ShaderModulesFunction = std::vector<ShaderModuleConfiguration>();
 
-        using DescriptorPool = DescriptorPoolConfiguration();
+        using DescriptorPoolFunction = DescriptorPoolConfiguration();
 
-        using DescriptorSetLayouts = std::vector<DescriptorSetLayoutConfiguration>();
+        using DescriptorSetLayoutsFunction = std::vector<DescriptorSetLayoutConfiguration>();
 
-        using DescriptorSet = DescriptorSetConfiguration(const std::vector<DescriptorSetLayout>&, const VkDescriptorPool);
+        using DescriptorSetFunction = DescriptorSetConfiguration(const std::vector<DescriptorSetLayout>&, const VkDescriptorPool);
 
-        using PipelineLayouts = std::vector<PipelineLayoutConfiguration>(const std::vector<DescriptorSetLayout>&);
+        using PipelineLayoutsFunction = std::vector<PipelineLayoutConfiguration>(const std::vector<DescriptorSetLayout>&);
 
-        using GraphicsPipelines = std::vector<GraphicsPipelineConfiguration>(const std::vector<ShaderModule>&,
-                                                                             const std::vector<PipelineLayout>&,
-                                                                             const VkRenderPass,
-                                                                             const uint32_t,
-                                                                             const uint32_t);
+        using GraphicsPipelinesFunction = std::vector<GraphicsPipelineConfiguration>(const std::vector<ShaderModule>&,
+                                                                                     const std::vector<PipelineLayout>&,
+                                                                                     const VkRenderPass,
+                                                                                     const uint32_t,
+                                                                                     const uint32_t);
 
-        using CommandPools = std::vector<CommandPoolConfiguration>(const std::vector<QueueFamily>&);
+        using CommandPoolsFunction = std::vector<CommandPoolConfiguration>(const std::vector<QueueFamily>&);
 
-        using CommandBuffers = std::vector<CommandBufferConfiguration>(const std::vector<CommandPool>&);
+        using CommandBuffersFunction = std::vector<CommandBufferConfiguration>(const std::vector<CommandPool>&);
 
-        using Buffers = std::vector<BufferConfiguration>(const std::vector<QueueFamily>&);
+        using BuffersFunction = std::vector<BufferConfiguration>(const std::vector<QueueFamily>&);
 
-        const std::function<Instance>              getInstance;
-        const std::function<PhysicalDevice>        getPhysicalDevice;
-        const std::function<Device>                getDevice;
-        const std::function<DeviceMemories>        getDeviceMemories;
-        const std::function<Swapchain>             getSwapchain;
-        const std::function<RenderPass>            getRenderPass;
-        const std::function<SwapchainImageViews>   getSwapchainImageViews;
-        const std::function<SwapchainFramebuffers> getSwapchainFramebuffers;
-        const std::function<ShaderModules>         getShaderModules;
-        const std::function<DescriptorPool>        getDescriptorPool;
-        const std::function<DescriptorSetLayouts>  getDescriptorSetLayouts;
-        const std::function<DescriptorSet>         getDescriptorSet;
-        const std::function<PipelineLayouts>       getPipelineLayouts;
-        const std::function<GraphicsPipelines>     getGraphicsPipelines;
-        const std::function<CommandPools>          getCommandPools;
-        const std::function<CommandBuffers>        getCommandBuffers;
-        const std::function<Buffers>               getBuffers;
+        const std::function<InstanceFunction>              getInstance;
+        const std::function<PhysicalDeviceFunction>        getPhysicalDevice;
+        const std::function<DeviceFunction>                getDevice;
+        const std::function<DeviceMemoriesFunction>        getDeviceMemories;
+        const std::function<SwapchainFunction>             getSwapchain;
+        const std::function<RenderPassFunction>            getRenderPass;
+        const std::function<SwapchainImageViewsFunction>   getSwapchainImageViews;
+        const std::function<SwapchainFramebuffersFunction> getSwapchainFramebuffers;
+        const std::function<ShaderModulesFunction>         getShaderModules;
+        const std::function<DescriptorPoolFunction>        getDescriptorPool;
+        const std::function<DescriptorSetLayoutsFunction>  getDescriptorSetLayouts;
+        const std::function<DescriptorSetFunction>         getDescriptorSet;
+        const std::function<PipelineLayoutsFunction>       getPipelineLayouts;
+        const std::function<GraphicsPipelinesFunction>     getGraphicsPipelines;
+        const std::function<CommandPoolsFunction>          getCommandPools;
+        const std::function<CommandBuffersFunction>        getCommandBuffers;
+        const std::function<BuffersFunction>               getBuffers;
     };
 
     InstanceConfiguration
