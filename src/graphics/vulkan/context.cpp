@@ -417,14 +417,18 @@ namespace nd::src::graphics::vulkan
             const auto indexBufferOffset  = 0;
             const auto vertexBufferOffset = indexBufferOffset + indexBufferSize;
 
-            setMemory(objects_.device.handle, stagingBufferMemory, indexBufferOffset, indexBufferSize, indices.data());
-            setMemory(objects_.device.handle, stagingBufferMemory, vertexBufferOffset, vertexBufferSize, vertices.data());
+            void* memoryPtr;
+
+            vkMapMemory(objects_.device.handle, stagingBufferMemory.handle, indexBufferOffset, indexBufferSize + vertexBufferSize, {}, &memoryPtr);
+
+            memcpy((char*)memoryPtr, indices.data(), indexBufferSize);
+            memcpy((char*)memoryPtr + indexBufferSize, vertices.data(), vertexBufferSize);
+
+            vkUnmapMemory(objects_.device.handle, stagingBufferMemory.handle);
 
             const auto transferQueue                  = getTransferQueueFamily().queues.front();
             const auto transferCommandBuffer          = getTransferCommandBuffers().front();
             const auto transferCommandBufferBeginInfo = getCommandBufferBeginInfo(nullptr);
-
-            vkBeginCommandBuffer(transferCommandBuffer, &transferCommandBufferBeginInfo);
 
             const auto& indexBuffer   = getIndexBuffer();
             const auto& vertexBuffer  = getVertexBuffer();
@@ -432,6 +436,8 @@ namespace nd::src::graphics::vulkan
 
             const auto indexRegions  = std::array {VkBufferCopy {indexBufferOffset, 0, indexBufferSize}};
             const auto vertexRegions = std::array {VkBufferCopy {vertexBufferOffset, 0, vertexBufferSize}};
+
+            vkBeginCommandBuffer(transferCommandBuffer, &transferCommandBufferBeginInfo);
 
             vkCmdCopyBuffer(transferCommandBuffer, stagingBuffer.handle, indexBuffer.handle, indexRegions.size(), indexRegions.data());
             vkCmdCopyBuffer(transferCommandBuffer, stagingBuffer.handle, vertexBuffer.handle, vertexRegions.size(), vertexRegions.data());

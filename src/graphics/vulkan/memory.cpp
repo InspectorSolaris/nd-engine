@@ -42,6 +42,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
+        auto memoryOffsets = std::vector<VkDeviceSize>(deviceMemories.size());
         auto memoryIndices = std::vector<size_t>(buffers.size());
 
         for(auto index = 0; index < buffers.size(); ++index)
@@ -78,9 +79,13 @@ namespace nd::src::graphics::vulkan
 
             ND_ASSERT(deviceMemory != deviceMemories.end());
 
-            vkBindBufferMemory(device, buffer.handle, deviceMemory->handle, getAlignedOffset(0, requirements.alignment));
+            const auto memoryIndex  = std::distance(deviceMemories.begin(), deviceMemory);
+            const auto memoryOffset = getAlignedOffset(memoryOffsets[memoryIndex], requirements.alignment);
 
-            memoryIndices[index] = std::distance(deviceMemories.begin(), deviceMemory);
+            vkBindBufferMemory(device, buffer.handle, deviceMemory->handle, memoryOffset);
+
+            memoryOffsets[memoryIndex] += requirements.size;
+            memoryIndices[index] = memoryIndex;
         }
 
         return memoryIndices;
