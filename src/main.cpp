@@ -1,6 +1,14 @@
 #include "main.hpp"
 #include "tools.hpp"
 
+void
+handleSignal(int signal)
+{
+    spdlog::shutdown();
+
+    std::exit(signal);
+}
+
 int
 main()
 {
@@ -14,6 +22,13 @@ main()
     using namespace nd::src::tools;
     using namespace nd::src::graphics::vulkan;
     using namespace nd::src::graphics::glfw;
+
+    std::signal(SIGABRT, handleSignal);
+    std::signal(SIGFPE, handleSignal);
+    std::signal(SIGILL, handleSignal);
+    std::signal(SIGINT, handleSignal);
+    std::signal(SIGSEGV, handleSignal);
+    std::signal(SIGTERM, handleSignal);
 
     const auto maxSize  = 1024 * 1024 * 8;
     const auto maxFiles = 8;
@@ -33,35 +48,28 @@ main()
 
     Scope::set(logScope);
 
-    try
+    glfwInit();
+
+    const auto windowConfig = WindowConfiguration {"nd-engine", 800, 600};
+    const auto window       = getWindow(windowConfig);
+
+    auto vulkanContext = getVulkanContext({windowConfig.title,
+                                           windowConfig.title,
+                                           {},
+                                           getRequiredExtensions(),
+                                           static_cast<uint32_t>(windowConfig.width),
+                                           static_cast<uint32_t>(windowConfig.height)},
+                                          initializersBuilder << bind(getSurface, cref(window), _1),
+                                          configurationsBuilder);
+
+    while(!glfwWindowShouldClose(window))
     {
-        ND_SET_SCOPE();
+        glfwPollEvents();
 
-        const auto windowConfiguration = WindowConfiguration {"nd-engine", 800, 600};
-
-        const auto glfwContext = getGlfwContext();
-        const auto glfwWindow  = getWindow(windowConfiguration);
-
-        auto vulkanContext = getVulkanContext({windowConfiguration.title,
-                                               windowConfiguration.title,
-                                               {},
-                                               getRequiredExtensions(),
-                                               static_cast<uint32_t>(windowConfiguration.width),
-                                               static_cast<uint32_t>(windowConfiguration.height)},
-                                              initializersBuilder << bind(getSurface, cref(glfwWindow), _1),
-                                              configurationsBuilder);
-
-        while(!glfwWindowShouldClose(glfwWindow))
-        {
-            glfwPollEvents();
-
-            vulkanContext.drawNextFrame();
-        }
+        vulkanContext.drawNextFrame();
     }
-    catch(std::runtime_error error)
-    {
-        logMain->critical(error.what());
-    }
+
+    glfwTerminate();
 
     return 0;
 }

@@ -318,7 +318,7 @@ namespace nd::src::graphics::vulkan
     constexpr int
     VulkanContext::getStagingBufferIndex() const
     {
-        return 2;
+        return 3;
     }
 
     const Buffer&
@@ -398,8 +398,42 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
+        static auto timeStart  = std::chrono::high_resolution_clock::now();
         static auto frameIndex = size_t {0};
         static auto loaded     = false;
+
+        static const auto graphicsQueue  = getGraphicsQueueFamily().queues.front();
+        static const auto swapchainQueue = getSwapchainQueueFamily().queues.front();
+
+        static const auto transferQueue                  = getTransferQueueFamily().queues.front();
+        static const auto transferCommandBuffer          = getTransferCommandBuffers().front();
+        static const auto transferCommandBufferBeginInfo = getCommandBufferBeginInfo(nullptr);
+
+        static const auto imageAcquiredSemaphores = getSemaphores(objects_.swapchainImages.size());
+        static const auto imageRenderedSemaphores = getSemaphores(objects_.swapchainImages.size());
+        static const auto imageAcquiredFences     = getFences(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
+        static const auto imageRenderedFences     = getFences(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
+
+        const auto imageAcquiredSemaphore = imageAcquiredSemaphores[frameIndex];
+        const auto imageRenderedSemaphore = imageRenderedSemaphores[frameIndex];
+        const auto imageAcquiredFence     = imageAcquiredFences[frameIndex];
+        const auto imageRenderedFence     = imageRenderedFences[frameIndex];
+
+        const auto fences = std::array {imageAcquiredFence, imageRenderedFence};
+
+        vkWaitForFences(objects_.device.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
+        vkResetFences(objects_.device.handle, fences.size(), fences.data());
+
+        const auto imageIndex = getNextSwapchainImage(objects_.device.handle, objects_.swapchain.handle, imageAcquiredSemaphore, imageAcquiredFence);
+
+        const auto time = std::chrono::high_resolution_clock::now() - timeStart;
+
+        const auto invertMatrix     = glm::mat4(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+        const auto modelMatrix      = glm::rotate(glm::mat4(1.0f), time.count() * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        const auto viewMatrix       = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        const auto projectionMatrix = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 10.0f) * invertMatrix;
+
+        const auto transformation = projectionMatrix * viewMatrix * modelMatrix;
 
         if(!loaded)
         {
@@ -426,10 +460,6 @@ namespace nd::src::graphics::vulkan
 
             vkUnmapMemory(objects_.device.handle, stagingBufferMemory.handle);
 
-            const auto transferQueue                  = getTransferQueueFamily().queues.front();
-            const auto transferCommandBuffer          = getTransferCommandBuffers().front();
-            const auto transferCommandBufferBeginInfo = getCommandBufferBeginInfo(nullptr);
-
             const auto& indexBuffer   = getIndexBuffer();
             const auto& vertexBuffer  = getVertexBuffer();
             const auto& stagingBuffer = getStagingBuffer();
@@ -450,31 +480,12 @@ namespace nd::src::graphics::vulkan
             transferSubmitInfo.commandBufferCount = 1;
             transferSubmitInfo.pCommandBuffers    = &transferCommandBuffer;
 
-            vkQueueSubmit(transferQueue, 1, &transferSubmitInfo, VK_NULL_HANDLE);
+            ND_ASSERT_EXEC(vkQueueSubmit(transferQueue, 1, &transferSubmitInfo, VK_NULL_HANDLE) == VK_SUCCESS);
+
             vkQueueWaitIdle(transferQueue);
 
             loaded = true;
         }
-
-        static const auto graphicsQueue  = getGraphicsQueueFamily().queues.front();
-        static const auto swapchainQueue = getSwapchainQueueFamily().queues.front();
-
-        static const auto imageAcquiredSemaphores = getSemaphores(objects_.swapchainImages.size());
-        static const auto imageRenderedSemaphores = getSemaphores(objects_.swapchainImages.size());
-        static const auto imageAcquiredFences     = getFences(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
-        static const auto imageRenderedFences     = getFences(objects_.swapchainImages.size(), VK_FENCE_CREATE_SIGNALED_BIT);
-
-        const auto imageAcquiredSemaphore = imageAcquiredSemaphores[frameIndex];
-        const auto imageRenderedSemaphore = imageRenderedSemaphores[frameIndex];
-        const auto imageAcquiredFence     = imageAcquiredFences[frameIndex];
-        const auto imageRenderedFence     = imageRenderedFences[frameIndex];
-
-        const auto fences = std::array {imageAcquiredFence, imageRenderedFence};
-
-        vkWaitForFences(objects_.device.handle, fences.size(), fences.data(), VK_TRUE, UINT64_MAX);
-        vkResetFences(objects_.device.handle, fences.size(), fences.data());
-
-        const auto imageIndex = getNextSwapchainImage(objects_.device.handle, objects_.swapchain.handle, imageAcquiredSemaphore, imageAcquiredFence);
 
         const auto commandBuffers   = std::array {objects_.commandBuffers[0][imageIndex]};
         const auto waitDstStageMask = std::array {static_cast<VkPipelineStageFlags>(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT)};
@@ -591,7 +602,7 @@ namespace nd::src::graphics::vulkan
             vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers.size(), vertexBuffers.data(), vertexBuffersOffsets.data());
             vkCmdBindIndexBuffer(commandBuffer, buffers[1].handle, VkDeviceSize {0}, VK_INDEX_TYPE_UINT16);
 
-            vkCmdDrawIndexed(commandBuffer, 6, 1, 0, 0, 0);
+            vkCmdDrawIndexed(commandBuffer, 3, 1, 0, 0, 0);
 
             vkCmdEndRenderPass(commandBuffer);
 

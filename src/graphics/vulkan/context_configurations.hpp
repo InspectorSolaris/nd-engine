@@ -11,6 +11,11 @@ namespace nd::src::graphics::vulkan
         glm::vec3 color;
     };
 
+    struct UniformObject final
+    {
+        glm::mat4 transform;
+    };
+
     struct VulkanConfigurationExternal final
     {
         const std::string& applicationName;

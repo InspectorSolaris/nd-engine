@@ -2,6 +2,7 @@
 
 // C library
 
+#include <csignal>
 #include <cassert>
 #include <cstdint>
 #include <cstring>

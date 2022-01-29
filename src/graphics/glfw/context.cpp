@@ -3,28 +3,6 @@
 
 namespace nd::src::graphics::glfw
 {
-    bool GlfwContext::s_initialized {};
-
-    GlfwContext::GlfwContext()
-    {
-        ND_SET_SCOPE();
-
-        ND_ASSERT(!s_initialized);
-
-        glfwInit();
-
-        s_initialized = true;
-    }
-
-    GlfwContext::~GlfwContext()
-    {
-        ND_SET_SCOPE();
-
-        glfwTerminate();
-
-        s_initialized = false;
-    }
-
     std::vector<std::string>
     getRequiredExtensions() noexcept
     {
@@ -59,13 +37,5 @@ namespace nd::src::graphics::glfw
         ND_ASSERT(glfwCreateWindowSurface(instance, window, nullptr, &surface) == VK_SUCCESS);
 
         return surface;
-    }
-
-    GlfwContext
-    getGlfwContext() noexcept
-    {
-        ND_SET_SCOPE();
-
-        return GlfwContext();
     }
 } // namespace nd::src::graphics::glfw

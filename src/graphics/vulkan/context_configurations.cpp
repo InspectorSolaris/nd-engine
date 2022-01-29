@@ -197,7 +197,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {{}};
+        return {{{{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT, nullptr}}}};
     }
 
     DescriptorSetConfiguration
@@ -354,6 +354,11 @@ namespace nd::src::graphics::vulkan
                 {{graphicsQueueFamily->index},
                  16 * sizeof(uint16_t),
                  VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT},
+                {{graphicsQueueFamily->index},
+                 16 * sizeof(UniformObject),
+                 VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT},
                 {{transferQueueFamily->index},
