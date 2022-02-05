@@ -10,6 +10,6 @@ namespace nd::src::graphics::vulkan
     PipelineLayout
     createPipelineLayout(opt<const PipelineLayoutCfg>::ref, const VkDevice) noexcept(ND_ASSERT_NOTHROW);
 
-    PipelineLayoutPool
-    createPipelineLayoutPool(opt<const PipelineLayoutPoolCfg>::ref, const VkDevice) noexcept(ND_ASSERT_NOTHROW);
+    PipelineLayoutObjects
+    createPipelineLayoutObjects(opt<const PipelineLayoutObjectsCfg>::ref, const VkDevice) noexcept(ND_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

@@ -62,13 +62,13 @@ namespace nd::src::graphics::vulkan
         VkQueueFlags queueFlagsNot;
     };
 
-    struct DeviceMemoryPoolCfg final
+    struct DeviceMemoryObjectsCfg final
     {
         DeviceMemoryCfg device;
         DeviceMemoryCfg host;
     };
 
-    struct QueueFamilyPoolCfg final
+    struct QueueFamilyObjectsCfg final
     {
         QueueFamilyCfg graphics;
         QueueFamilyCfg transfer;
@@ -79,8 +79,8 @@ namespace nd::src::graphics::vulkan
     {
         VkPhysicalDeviceFeatures features;
 
-        DeviceMemoryPoolCfg memoryPool;
-        QueueFamilyPoolCfg  queueFamilyPool;
+        DeviceMemoryObjectsCfg memory;
+        QueueFamilyObjectsCfg  queueFamily;
 
         vec<str> extensions;
 
@@ -92,7 +92,7 @@ namespace nd::src::graphics::vulkan
 
     struct SwapchainCfg final
     {
-        const QueueFamilyPool& queueFamilyPool;
+        const QueueFamilyObjects& queueFamily;
 
         VkPhysicalDevice physicalDevice;
         VkSurfaceKHR     surface;
@@ -197,7 +197,7 @@ namespace nd::src::graphics::vulkan
         VkDescriptorSetLayoutCreateFlags flags = {};
     };
 
-    struct DescriptorSetLayoutPoolCfg final
+    struct DescriptorSetLayoutObjectsCfg final
     {
         DescriptorSetLayoutCfg mesh;
     };
@@ -217,7 +217,7 @@ namespace nd::src::graphics::vulkan
         VkPipelineLayoutCreateFlags flags = {};
     };
 
-    struct PipelineLayoutPoolCfg final
+    struct PipelineLayoutObjectsCfg final
     {
         PipelineLayoutCfg mesh;
     };
@@ -289,7 +289,7 @@ namespace nd::src::graphics::vulkan
         VkPipelineCreateFlags flags = {};
     };
 
-    struct PipelinePoolCfg final
+    struct PipelineObjectsCfg final
     {
         GraphicsPipelineCfg mesh;
     };
@@ -318,44 +318,44 @@ namespace nd::src::graphics::vulkan
     DescriptorPoolCfg
     getDescriptorPoolCfg() noexcept(ND_ASSERT_NOTHROW);
 
-    DescriptorSetLayoutPoolCfg
-    getDescriptorSetLayoutPoolCfg() noexcept(ND_ASSERT_NOTHROW);
+    DescriptorSetLayoutObjectsCfg
+    getDescriptorSetLayoutObjectsCfg() noexcept(ND_ASSERT_NOTHROW);
 
     PipelineCacheCfg
     getPipelineCacheCfg() noexcept(ND_ASSERT_NOTHROW);
 
-    PipelineLayoutPoolCfg getPipelineLayoutPoolCfg(opt<const DescriptorSetLayoutPool>::ref) noexcept(ND_ASSERT_NOTHROW);
+    PipelineLayoutObjectsCfg getPipelineLayoutObjectsCfg(opt<const DescriptorSetLayoutObjects>::ref) noexcept(ND_ASSERT_NOTHROW);
 
-    PipelinePoolCfg getPipelinePoolCfg(opt<const RenderPass>::ref, opt<const PipelineLayoutPool>::ref) noexcept(ND_ASSERT_NOTHROW);
+    PipelineObjectsCfg getPipelineObjectsCfg(opt<const RenderPass>::ref, opt<const PipelineLayoutObjects>::ref) noexcept(ND_ASSERT_NOTHROW);
 
     struct VulkanObjectsCfg final
     {
-        using InstanceCfgInit                = rm_noexcept<decltype(getInstanceCfg)>;
-        using PhysicalDeviceCfgInit          = rm_noexcept<decltype(getPhysicalDeviceCfg)>;
-        using DeviceCfgInit                  = rm_noexcept<decltype(getDeviceCfg)>;
-        using SwapchainCfgInit               = rm_noexcept<decltype(getSwapchainCfg)>;
-        using RenderPassCfgInit              = rm_noexcept<decltype(getRenderPassCfg)>;
-        using SwapchainImageViewCfgInit      = rm_noexcept<decltype(getSwapchainImageViewCfg)>;
-        using SwapchainFramebufferCfgInit    = rm_noexcept<decltype(getSwapchainFramebufferCfg)>;
-        using ShaderModuleCfgsInit           = rm_noexcept<decltype(getShaderModuleCfgs)>;
-        using DescriptorPoolCfgInit          = rm_noexcept<decltype(getDescriptorPoolCfg)>;
-        using DescriptorSetLayoutPoolCfgInit = rm_noexcept<decltype(getDescriptorSetLayoutPoolCfg)>;
-        using PipelineCacheCfgInit           = rm_noexcept<decltype(getPipelineCacheCfg)>;
-        using PipelineLayoutPoolCfgInit      = rm_noexcept<decltype(getPipelineLayoutPoolCfg)>;
-        using PipelinePoolCfgInit            = rm_noexcept<decltype(getPipelinePoolCfg)>;
+        using InstanceCfgInit                   = rm_noexcept<decltype(getInstanceCfg)>;
+        using PhysicalDeviceCfgInit             = rm_noexcept<decltype(getPhysicalDeviceCfg)>;
+        using DeviceCfgInit                     = rm_noexcept<decltype(getDeviceCfg)>;
+        using SwapchainCfgInit                  = rm_noexcept<decltype(getSwapchainCfg)>;
+        using RenderPassCfgInit                 = rm_noexcept<decltype(getRenderPassCfg)>;
+        using SwapchainImageViewCfgInit         = rm_noexcept<decltype(getSwapchainImageViewCfg)>;
+        using SwapchainFramebufferCfgInit       = rm_noexcept<decltype(getSwapchainFramebufferCfg)>;
+        using ShaderModuleCfgsInit              = rm_noexcept<decltype(getShaderModuleCfgs)>;
+        using DescriptorPoolCfgInit             = rm_noexcept<decltype(getDescriptorPoolCfg)>;
+        using DescriptorSetLayoutObjectsCfgInit = rm_noexcept<decltype(getDescriptorSetLayoutObjectsCfg)>;
+        using PipelineCacheCfgInit              = rm_noexcept<decltype(getPipelineCacheCfg)>;
+        using PipelineLayoutObjectsCfgInit      = rm_noexcept<decltype(getPipelineLayoutObjectsCfg)>;
+        using PipelineObjectsCfgInit            = rm_noexcept<decltype(getPipelineObjectsCfg)>;
 
-        func<InstanceCfgInit>                instance;
-        func<PhysicalDeviceCfgInit>          physicalDevice;
-        func<DeviceCfgInit>                  device;
-        func<SwapchainCfgInit>               swapchain;
-        func<RenderPassCfgInit>              renderPass;
-        func<SwapchainImageViewCfgInit>      swapchainImageView;
-        func<SwapchainFramebufferCfgInit>    swapchainFramebuffer;
-        func<ShaderModuleCfgsInit>           shaderModules;
-        func<DescriptorPoolCfgInit>          descriptorPool;
-        func<DescriptorSetLayoutPoolCfgInit> descriptorSetLayoutPool;
-        func<PipelineCacheCfgInit>           pipelineCache;
-        func<PipelineLayoutPoolCfgInit>      pipelineLayoutPool;
-        func<PipelinePoolCfgInit>            pipelinePool;
+        func<InstanceCfgInit>                   instance;
+        func<PhysicalDeviceCfgInit>             physicalDevice;
+        func<DeviceCfgInit>                     device;
+        func<SwapchainCfgInit>                  swapchain;
+        func<RenderPassCfgInit>                 renderPass;
+        func<SwapchainImageViewCfgInit>         swapchainImageView;
+        func<SwapchainFramebufferCfgInit>       swapchainFramebuffer;
+        func<ShaderModuleCfgsInit>              shaderModules;
+        func<DescriptorPoolCfgInit>             descriptorPool;
+        func<DescriptorSetLayoutObjectsCfgInit> descriptorSetLayoutObjects;
+        func<PipelineCacheCfgInit>              pipelineCache;
+        func<PipelineLayoutObjectsCfgInit>      pipelineLayoutObjects;
+        func<PipelineObjectsCfgInit>            pipelineObjects;
     };
 } // namespace nd::src::graphics::vulkan

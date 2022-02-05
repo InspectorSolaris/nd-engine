@@ -33,13 +33,13 @@ namespace nd::src::graphics::vulkan
         u16          index;
     };
 
-    struct DeviceMemoryPool final
+    struct DeviceMemoryObjects final
     {
         DeviceMemory device;
         DeviceMemory host;
     };
 
-    struct QueueFamilyPool final
+    struct QueueFamilyObjects final
     {
         QueueFamily graphics;
         QueueFamily transfer;
@@ -48,8 +48,8 @@ namespace nd::src::graphics::vulkan
 
     struct Device final
     {
-        DeviceMemoryPool memoryPool;
-        QueueFamilyPool  queueFamilyPool;
+        DeviceMemoryObjects memory;
+        QueueFamilyObjects  queueFamily;
 
         VkDevice handle;
     };
@@ -68,17 +68,17 @@ namespace nd::src::graphics::vulkan
         VkShaderModule handle;
     };
 
-    struct DescriptorSetLayoutPool final
+    struct DescriptorSetLayoutObjects final
     {
         DescriptorSetLayout mesh;
     };
 
-    struct PipelineLayoutPool final
+    struct PipelineLayoutObjects final
     {
         PipelineLayout mesh;
     };
 
-    struct PipelinePool final
+    struct PipelineObjects final
     {
         Pipeline mesh;
     };
@@ -107,7 +107,7 @@ namespace nd::src::graphics::vulkan
         VkBuffer       handle;
     };
 
-    struct BufferPool final
+    struct BufferObjects final
     {
         BufferMesh  mesh;
         BufferStage stage;
@@ -122,9 +122,9 @@ namespace nd::src::graphics::vulkan
         vec<Framebuffer>  swapchainFramebuffers;
         vec<ShaderModule> shaderModules;
 
-        DescriptorSetLayoutPool descriptorSetLayoutPool;
-        PipelineLayoutPool      pipelineLayoutPool;
-        PipelinePool            pipelinePool;
+        DescriptorSetLayoutObjects descriptorSetLayoutObjects;
+        PipelineLayoutObjects      pipelineLayoutObjects;
+        PipelineObjects            pipelineObjects;
 
         Swapchain      swapchain;
         Instance       instance;

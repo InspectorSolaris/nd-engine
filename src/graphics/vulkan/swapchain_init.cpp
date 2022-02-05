@@ -165,7 +165,7 @@ namespace nd::src::graphics::vulkan
         const auto presentModes = getSurfacePresentModes(cfg.physicalDevice, cfg.surface);
         const auto capabilities = getSurfaceCapabilities(cfg.physicalDevice, cfg.surface);
 
-        ND_ASSERT(isSurfaceQueueFamilySupported(cfg.physicalDevice, cfg.surface, cfg.queueFamilyPool.graphics));
+        ND_ASSERT(isSurfaceQueueFamilySupported(cfg.physicalDevice, cfg.surface, cfg.queueFamily.graphics));
         ND_ASSERT(isSwapchainImageFormatSupported(cfg, formats));
         ND_ASSERT(isSwapchainImageUsageSupported(cfg, capabilities));
         ND_ASSERT(isSwapchainTransformSupported(cfg, capabilities));
@@ -176,7 +176,7 @@ namespace nd::src::graphics::vulkan
         const auto imageArrayLayers = getSwapchainImageArrayLayers(cfg, capabilities);
         const auto imageExtent      = getSwapchainImageExtent(cfg, capabilities);
 
-        const auto queueFamilyIndices = std::array {static_cast<u32>(cfg.queueFamilyPool.graphics.index)};
+        const auto queueFamilyIndices = std::array {static_cast<u32>(cfg.queueFamily.graphics.index)};
 
         const auto createInfo = VkSwapchainCreateInfoKHR {
             .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
@@ -202,7 +202,7 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT_EXEC(vkCreateSwapchainKHR(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &swapchain) == VK_SUCCESS);
 
-        return {.queueFamily = cfg.queueFamilyPool.graphics, .handle = swapchain};
+        return {.queueFamily = cfg.queueFamily.graphics, .handle = swapchain};
     }
 
     vec<ImageView>

@@ -254,11 +254,11 @@ namespace nd::src::graphics::vulkan
 
         const auto memoryProperties = getPhysicalDeviceMemoryProperties(physicalDevice);
 
-        return {.memoryPool      = {.device = allocateMemory(cfg.memoryPool.device, memoryProperties, device),
-                                    .host   = allocateMemory(cfg.memoryPool.host, memoryProperties, device)},
-                .queueFamilyPool = {.graphics = getQueueFamily(cfg.queueFamilyPool.graphics, queueFamilies),
-                                    .transfer = getQueueFamily(cfg.queueFamilyPool.transfer, queueFamilies),
-                                    .compute  = getQueueFamily(cfg.queueFamilyPool.compute, queueFamilies)},
-                .handle          = device};
+        return {.memory      = {.device = allocateMemory(cfg.memory.device, memoryProperties, device),
+                                .host   = allocateMemory(cfg.memory.host, memoryProperties, device)},
+                .queueFamily = {.graphics = getQueueFamily(cfg.queueFamily.graphics, queueFamilies),
+                                .transfer = getQueueFamily(cfg.queueFamily.transfer, queueFamilies),
+                                .compute  = getQueueFamily(cfg.queueFamily.compute, queueFamilies)},
+                .handle      = device};
     }
 } // namespace nd::src::graphics::vulkan

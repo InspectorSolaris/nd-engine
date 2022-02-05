@@ -56,18 +56,18 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {.features        = physicalDeviceCfg.features,
-                .memoryPool      = {.device = {.size             = 1024,
-                                               .propertyFlags    = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                                               .propertyFlagsNot = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT},
-                                    .host   = {.size             = 1024,
-                                               .propertyFlags    = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                                               .propertyFlagsNot = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT}},
-                .queueFamilyPool = {.graphics = {.queueFlags = VK_QUEUE_GRAPHICS_BIT, .queueFlagsNot = {}},
-                                    .transfer = {.queueFlags = VK_QUEUE_TRANSFER_BIT, .queueFlagsNot = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT},
-                                    .compute  = {.queueFlags = VK_QUEUE_COMPUTE_BIT, .queueFlagsNot = {}}},
-                .extensions      = physicalDeviceCfg.extensions,
-                .queueFlags      = physicalDeviceCfg.queueFlags};
+        return {.features    = physicalDeviceCfg.features,
+                .memory      = {.device = {.size             = 1024,
+                                           .propertyFlags    = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                                           .propertyFlagsNot = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT},
+                                .host   = {.size             = 1024,
+                                           .propertyFlags    = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                                           .propertyFlagsNot = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT}},
+                .queueFamily = {.graphics = {.queueFlags = VK_QUEUE_GRAPHICS_BIT, .queueFlagsNot = {}},
+                                .transfer = {.queueFlags = VK_QUEUE_TRANSFER_BIT, .queueFlagsNot = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT},
+                                .compute  = {.queueFlags = VK_QUEUE_COMPUTE_BIT, .queueFlagsNot = {}}},
+                .extensions  = physicalDeviceCfg.extensions,
+                .queueFlags  = physicalDeviceCfg.queueFlags};
     }
 
     SwapchainCfg
@@ -78,7 +78,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {.queueFamilyPool  = device.queueFamilyPool,
+        return {.queueFamily      = device.queueFamily,
                 .physicalDevice   = physicalDevice,
                 .surface          = surface,
                 .imageExtent      = {.width = dependency.width, .height = dependency.height},
@@ -162,8 +162,8 @@ namespace nd::src::graphics::vulkan
         return {.sizes = {VkDescriptorPoolSize {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 1U}}, .maxSets = 1U};
     }
 
-    DescriptorSetLayoutPoolCfg
-    getDescriptorSetLayoutPoolCfg() noexcept(ND_ASSERT_NOTHROW)
+    DescriptorSetLayoutObjectsCfg
+    getDescriptorSetLayoutObjectsCfg() noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -178,16 +178,17 @@ namespace nd::src::graphics::vulkan
         return {};
     }
 
-    PipelineLayoutPoolCfg
-    getPipelineLayoutPoolCfg(opt<const DescriptorSetLayoutPool>::ref descriptorSetLayoutPool) noexcept(ND_ASSERT_NOTHROW)
+    PipelineLayoutObjectsCfg
+    getPipelineLayoutObjectsCfg(opt<const DescriptorSetLayoutObjects>::ref descriptorSetLayoutObjects) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
         return {.mesh = PipelineLayoutCfg {}};
     }
 
-    PipelinePoolCfg
-    getPipelinePoolCfg(opt<const RenderPass>::ref renderPass, opt<const PipelineLayoutPool>::ref pipelineLayoutPool) noexcept(ND_ASSERT_NOTHROW)
+    PipelineObjectsCfg
+    getPipelineObjectsCfg(opt<const RenderPass>::ref            renderPass,
+                          opt<const PipelineLayoutObjects>::ref pipelineLayoutObjects) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 

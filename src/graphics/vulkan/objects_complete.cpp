@@ -59,8 +59,8 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        vkFreeMemory(objects.device.handle, objects.device.memoryPool.device.handle, ND_VULKAN_ALLOCATION_CALLBACKS);
-        vkFreeMemory(objects.device.handle, objects.device.memoryPool.host.handle, ND_VULKAN_ALLOCATION_CALLBACKS);
+        vkFreeMemory(objects.device.handle, objects.device.memory.device.handle, ND_VULKAN_ALLOCATION_CALLBACKS);
+        vkFreeMemory(objects.device.handle, objects.device.memory.host.handle, ND_VULKAN_ALLOCATION_CALLBACKS);
 
         vkDestroyPipelineCache(objects.device.handle, objects.pipelineCache, ND_VULKAN_ALLOCATION_CALLBACKS);
 

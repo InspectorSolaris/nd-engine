@@ -43,8 +43,8 @@ namespace nd::src::graphics::vulkan
         return pipelineLayout;
     }
 
-    PipelineLayoutPool
-    createPipelineLayoutPool(opt<const PipelineLayoutPoolCfg>::ref cfg, const VkDevice device) noexcept(ND_ASSERT_NOTHROW)
+    PipelineLayoutObjects
+    createPipelineLayoutObjects(opt<const PipelineLayoutObjectsCfg>::ref cfg, const VkDevice device) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
