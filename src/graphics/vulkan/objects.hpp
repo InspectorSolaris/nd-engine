@@ -122,9 +122,9 @@ namespace nd::src::graphics::vulkan
         vec<Framebuffer>  swapchainFramebuffers;
         vec<ShaderModule> shaderModules;
 
-        DescriptorSetLayoutObjects descriptorSetLayoutObjects;
-        PipelineLayoutObjects      pipelineLayoutObjects;
-        PipelineObjects            pipelineObjects;
+        DescriptorSetLayoutObjects descriptorSetLayout;
+        PipelineLayoutObjects      pipelineLayout;
+        PipelineObjects            pipeline;
 
         Swapchain      swapchain;
         Instance       instance;

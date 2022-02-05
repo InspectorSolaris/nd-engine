@@ -266,6 +266,14 @@ namespace nd::src::graphics::vulkan
     using PipelineMultisampleStateCreateInfo   = VkPipelineMultisampleStateCreateInfo;
     using PipelineDepthStencilStateCreateInfo  = VkPipelineDepthStencilStateCreateInfo;
 
+    struct GraphicsPipelineContainer final
+    {
+        VkPipelineVertexInputStateCreateInfo vertexInput;
+        VkPipelineViewportStateCreateInfo    viewport;
+        VkPipelineColorBlendStateCreateInfo  colorBlend;
+        VkPipelineDynamicStateCreateInfo     dynamicState;
+    };
+
     struct GraphicsPipelineCfg final
     {
         PipelineDepthStencilStateCreateInfo  depthStencil;
@@ -284,6 +292,16 @@ namespace nd::src::graphics::vulkan
         VkRenderPass     renderPass;
 
         u32 subpass;
+
+        bool depthStencilUse;
+        bool vertexInputUse;
+        bool viewportUse;
+        bool rasterizationUse;
+        bool colorBlendUse;
+        bool multisampleUse;
+        bool dynamicStateUse;
+        bool inputAssemblyUse;
+        bool tessellationUse;
 
         void*                 next  = {};
         VkPipelineCreateFlags flags = {};
@@ -313,7 +331,7 @@ namespace nd::src::graphics::vulkan
     FramebufferCfg getSwapchainFramebufferCfg(opt<const SwapchainCfg>::ref, opt<const RenderPass>::ref) noexcept(ND_ASSERT_NOTHROW);
 
     vec<ShaderModuleCfg>
-    getShaderModuleCfgs() noexcept(ND_ASSERT_NOTHROW);
+    getShaderModulesCfg() noexcept(ND_ASSERT_NOTHROW);
 
     DescriptorPoolCfg
     getDescriptorPoolCfg() noexcept(ND_ASSERT_NOTHROW);
@@ -326,7 +344,11 @@ namespace nd::src::graphics::vulkan
 
     PipelineLayoutObjectsCfg getPipelineLayoutObjectsCfg(opt<const DescriptorSetLayoutObjects>::ref) noexcept(ND_ASSERT_NOTHROW);
 
-    PipelineObjectsCfg getPipelineObjectsCfg(opt<const RenderPass>::ref, opt<const PipelineLayoutObjects>::ref) noexcept(ND_ASSERT_NOTHROW);
+    PipelineObjectsCfg
+    getPipelineObjectsCfg(opt<const SwapchainCfg>::ref,
+                          opt<const RenderPass>::ref,
+                          opt<const PipelineLayoutObjects>::ref,
+                          const vec<ShaderModule>&) noexcept(ND_ASSERT_NOTHROW);
 
     struct VulkanObjectsCfg final
     {
@@ -337,7 +359,7 @@ namespace nd::src::graphics::vulkan
         using RenderPassCfgInit                 = rm_noexcept<decltype(getRenderPassCfg)>;
         using SwapchainImageViewCfgInit         = rm_noexcept<decltype(getSwapchainImageViewCfg)>;
         using SwapchainFramebufferCfgInit       = rm_noexcept<decltype(getSwapchainFramebufferCfg)>;
-        using ShaderModuleCfgsInit              = rm_noexcept<decltype(getShaderModuleCfgs)>;
+        using ShaderModulesCfgInit              = rm_noexcept<decltype(getShaderModulesCfg)>;
         using DescriptorPoolCfgInit             = rm_noexcept<decltype(getDescriptorPoolCfg)>;
         using DescriptorSetLayoutObjectsCfgInit = rm_noexcept<decltype(getDescriptorSetLayoutObjectsCfg)>;
         using PipelineCacheCfgInit              = rm_noexcept<decltype(getPipelineCacheCfg)>;
@@ -351,11 +373,11 @@ namespace nd::src::graphics::vulkan
         func<RenderPassCfgInit>                 renderPass;
         func<SwapchainImageViewCfgInit>         swapchainImageView;
         func<SwapchainFramebufferCfgInit>       swapchainFramebuffer;
-        func<ShaderModuleCfgsInit>              shaderModules;
+        func<ShaderModulesCfgInit>              shaderModules;
         func<DescriptorPoolCfgInit>             descriptorPool;
-        func<DescriptorSetLayoutObjectsCfgInit> descriptorSetLayoutObjects;
+        func<DescriptorSetLayoutObjectsCfgInit> descriptorSetLayout;
         func<PipelineCacheCfgInit>              pipelineCache;
-        func<PipelineLayoutObjectsCfgInit>      pipelineLayoutObjects;
-        func<PipelineObjectsCfgInit>            pipelineObjects;
+        func<PipelineLayoutObjectsCfgInit>      pipelineLayout;
+        func<PipelineObjectsCfgInit>            pipeline;
     };
 } // namespace nd::src::graphics::vulkan

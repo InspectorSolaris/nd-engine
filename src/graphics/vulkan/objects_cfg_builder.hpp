@@ -17,7 +17,7 @@ namespace nd::src::graphics::vulkan
         getDefault() noexcept(ND_ASSERT_NOTHROW)
         {
             return Builder {} << getInstanceCfg << getPhysicalDeviceCfg << getDeviceCfg << getSwapchainCfg << getRenderPassCfg
-                              << getSwapchainImageViewCfg << getSwapchainFramebufferCfg << getShaderModuleCfgs << getDescriptorPoolCfg
+                              << getSwapchainImageViewCfg << getSwapchainFramebufferCfg << getShaderModulesCfg << getDescriptorPoolCfg
                               << getDescriptorSetLayoutObjectsCfg << getPipelineCacheCfg << getPipelineLayoutObjectsCfg << getPipelineObjectsCfg;
         }
 
@@ -38,10 +38,10 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_BUILDER_SET(swapchainFramebuffer);
         ND_DEFINE_BUILDER_SET(shaderModules);
         ND_DEFINE_BUILDER_SET(descriptorPool);
-        ND_DEFINE_BUILDER_SET(descriptorSetLayoutObjects);
+        ND_DEFINE_BUILDER_SET(descriptorSetLayout);
         ND_DEFINE_BUILDER_SET(pipelineCache);
-        ND_DEFINE_BUILDER_SET(pipelineLayoutObjects);
-        ND_DEFINE_BUILDER_SET(pipelineObjects);
+        ND_DEFINE_BUILDER_SET(pipelineLayout);
+        ND_DEFINE_BUILDER_SET(pipeline);
 
         ND_DEFINE_BUILDER_OPERATOR(instance);
         ND_DEFINE_BUILDER_OPERATOR(physicalDevice);
@@ -52,10 +52,10 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_BUILDER_OPERATOR(swapchainFramebuffer);
         ND_DEFINE_BUILDER_OPERATOR(shaderModules);
         ND_DEFINE_BUILDER_OPERATOR(descriptorPool);
-        ND_DEFINE_BUILDER_OPERATOR(descriptorSetLayoutObjects);
+        ND_DEFINE_BUILDER_OPERATOR(descriptorSetLayout);
         ND_DEFINE_BUILDER_OPERATOR(pipelineCache);
-        ND_DEFINE_BUILDER_OPERATOR(pipelineLayoutObjects);
-        ND_DEFINE_BUILDER_OPERATOR(pipelineObjects);
+        ND_DEFINE_BUILDER_OPERATOR(pipelineLayout);
+        ND_DEFINE_BUILDER_OPERATOR(pipeline);
 
     private:
         ND_DECLARE_BUILDER_FIELD(instance);
@@ -67,9 +67,9 @@ namespace nd::src::graphics::vulkan
         ND_DECLARE_BUILDER_FIELD(swapchainFramebuffer);
         ND_DECLARE_BUILDER_FIELD(shaderModules);
         ND_DECLARE_BUILDER_FIELD(descriptorPool);
-        ND_DECLARE_BUILDER_FIELD(descriptorSetLayoutObjects);
+        ND_DECLARE_BUILDER_FIELD(descriptorSetLayout);
         ND_DECLARE_BUILDER_FIELD(pipelineCache);
-        ND_DECLARE_BUILDER_FIELD(pipelineLayoutObjects);
-        ND_DECLARE_BUILDER_FIELD(pipelineObjects);
+        ND_DECLARE_BUILDER_FIELD(pipelineLayout);
+        ND_DECLARE_BUILDER_FIELD(pipeline);
     };
 } // namespace nd::src::graphics::vulkan

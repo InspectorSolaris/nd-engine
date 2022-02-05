@@ -11,21 +11,21 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         const auto instanceCfg = cfg.instance(dependency);
-        auto       instance    = init.instance(instanceCfg);
+        const auto instance    = init.instance(instanceCfg);
 
         const auto physicalDeviceCfg = cfg.physicalDevice();
-        auto       physicalDevice    = init.physicalDevice(physicalDeviceCfg, instance);
+        const auto physicalDevice    = init.physicalDevice(physicalDeviceCfg, instance);
 
         const auto deviceCfg = cfg.device(physicalDeviceCfg);
-        auto       device    = init.device(deviceCfg, physicalDevice);
+        const auto device    = init.device(deviceCfg, physicalDevice);
 
-        auto surface = init.surface(instance);
+        const auto surface = init.surface(instance);
 
         const auto swapchainCfg = cfg.swapchain(dependency, physicalDevice, device, surface);
-        auto       swapchain    = init.swapchain(swapchainCfg, device.handle);
+        const auto swapchain    = init.swapchain(swapchainCfg, device.handle);
 
         const auto renderPassCfg = cfg.renderPass(swapchainCfg);
-        auto       renderPass    = init.renderPass(renderPassCfg, device.handle);
+        const auto renderPass    = init.renderPass(renderPassCfg, device.handle);
 
         auto swapchainImages = init.swapchainImages(device.handle, swapchain.handle);
 
@@ -35,22 +35,38 @@ namespace nd::src::graphics::vulkan
         const auto swapchainFramebufferCfg = cfg.swapchainFramebuffer(swapchainCfg, renderPass);
         auto       swapchainFramebuffers   = init.swapchainFramebuffers(swapchainFramebufferCfg, device.handle, swapchainImageViews);
 
-        const auto shaderModuleCfgs = cfg.shaderModules();
-        auto       shaderModules    = init.shaderModules(shaderModuleCfgs, device.handle);
+        const auto shaderModulesCfg = cfg.shaderModules();
+        auto       shaderModules    = init.shaderModules(shaderModulesCfg, device.handle);
+
+        const auto descriptorPoolCfg = cfg.descriptorPool();
+        const auto descriptorPool    = init.descriptorPool(descriptorPoolCfg, device.handle);
+
+        const auto descriptorSetLayoutCfg = cfg.descriptorSetLayout();
+        const auto descriptorSetLayout    = init.descriptorSetLayout(descriptorSetLayoutCfg, device.handle);
 
         const auto pipelineCacheCfg = cfg.pipelineCache();
-        auto       pipelineCache    = init.pipelineCache(pipelineCacheCfg, device.handle);
+        const auto pipelineCache    = init.pipelineCache(pipelineCacheCfg, device.handle);
+
+        const auto pipelineLayoutCfg = cfg.pipelineLayout(descriptorSetLayout);
+        const auto pipelineLayout    = init.pipelineLayout(pipelineLayoutCfg, device.handle);
+
+        const auto pipelineCfg = cfg.pipeline(swapchainCfg, renderPass, pipelineLayout, shaderModules);
+        const auto pipeline    = init.pipeline(pipelineCfg, device.handle, pipelineCache);
 
         return {.device                = device,
                 .swapchainImages       = std::move(swapchainImages),
                 .swapchainImageViews   = std::move(swapchainImageViews),
                 .swapchainFramebuffers = std::move(swapchainFramebuffers),
                 .shaderModules         = std::move(shaderModules),
+                .descriptorSetLayout   = descriptorSetLayout,
+                .pipelineLayout        = pipelineLayout,
+                .pipeline              = pipeline,
                 .swapchain             = swapchain,
                 .instance              = instance,
                 .physicalDevice        = physicalDevice,
                 .surface               = surface,
                 .renderPass            = renderPass,
+                .descriptorPool        = descriptorPool,
                 .pipelineCache         = pipelineCache};
     }
 
@@ -62,7 +78,15 @@ namespace nd::src::graphics::vulkan
         vkFreeMemory(objects.device.handle, objects.device.memory.device.handle, ND_VULKAN_ALLOCATION_CALLBACKS);
         vkFreeMemory(objects.device.handle, objects.device.memory.host.handle, ND_VULKAN_ALLOCATION_CALLBACKS);
 
+        vkDestroyPipeline(objects.device.handle, objects.pipeline.mesh, ND_VULKAN_ALLOCATION_CALLBACKS);
+
+        vkDestroyPipelineLayout(objects.device.handle, objects.pipelineLayout.mesh, ND_VULKAN_ALLOCATION_CALLBACKS);
+
         vkDestroyPipelineCache(objects.device.handle, objects.pipelineCache, ND_VULKAN_ALLOCATION_CALLBACKS);
+
+        vkDestroyDescriptorSetLayout(objects.device.handle, objects.descriptorSetLayout.mesh, ND_VULKAN_ALLOCATION_CALLBACKS);
+
+        vkDestroyDescriptorPool(objects.device.handle, objects.descriptorPool, ND_VULKAN_ALLOCATION_CALLBACKS);
 
         for(opt<const ShaderModule>::ref shaderModule: objects.shaderModules)
         {

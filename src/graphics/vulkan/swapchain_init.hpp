@@ -1,8 +1,7 @@
 #pragma once
 
 #include "shared_init.hpp"
-#include "image_view_init.hpp"
-#include "framebuffer_init.hpp"
+#include "image_init.hpp"
 
 namespace nd::src::graphics::vulkan
 {

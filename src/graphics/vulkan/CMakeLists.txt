@@ -1,8 +1,8 @@
 set(TARGET_NAME nd-src-graphics-vulkan)
 set(TARGET_SRC
+    descriptor_init.cpp
     device_init.cpp
-    framebuffer_init.cpp
-    image_view_init.cpp
+    image_init.cpp
     instance_init.cpp
     memory_init.cpp
     objects_cfg_builder.cpp

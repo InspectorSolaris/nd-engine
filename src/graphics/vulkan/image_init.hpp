@@ -6,4 +6,7 @@ namespace nd::src::graphics::vulkan
 {
     ImageView
     createImageView(opt<const ImageViewCfg>::ref, const VkDevice, const VkImage) noexcept(ND_ASSERT_NOTHROW);
+
+    Framebuffer
+    createFramebuffer(opt<const FramebufferCfg>::ref, const VkDevice, const vec<VkImageView>&) noexcept(ND_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

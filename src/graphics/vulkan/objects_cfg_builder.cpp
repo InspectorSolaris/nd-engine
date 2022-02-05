@@ -11,20 +11,20 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         ND_ASSERT(instance && physicalDevice && device && swapchain && renderPass && swapchainImageView && swapchainFramebuffer && shaderModules &&
-                  descriptorPool && descriptorSetLayoutObjects && pipelineCache && pipelineLayoutObjects && pipelineObjects);
+                  descriptorPool && descriptorSetLayout && pipelineCache && pipelineLayout && pipeline);
 
-        return {.instance                   = instance,
-                .physicalDevice             = physicalDevice,
-                .device                     = device,
-                .swapchain                  = swapchain,
-                .renderPass                 = renderPass,
-                .swapchainImageView         = swapchainImageView,
-                .swapchainFramebuffer       = swapchainFramebuffer,
-                .shaderModules              = shaderModules,
-                .descriptorPool             = descriptorPool,
-                .descriptorSetLayoutObjects = descriptorSetLayoutObjects,
-                .pipelineCache              = pipelineCache,
-                .pipelineLayoutObjects      = pipelineLayoutObjects,
-                .pipelineObjects            = pipelineObjects};
+        return {.instance             = instance,
+                .physicalDevice       = physicalDevice,
+                .device               = device,
+                .swapchain            = swapchain,
+                .renderPass           = renderPass,
+                .swapchainImageView   = swapchainImageView,
+                .swapchainFramebuffer = swapchainFramebuffer,
+                .shaderModules        = shaderModules,
+                .descriptorPool       = descriptorPool,
+                .descriptorSetLayout  = descriptorSetLayout,
+                .pipelineCache        = pipelineCache,
+                .pipelineLayout       = pipelineLayout,
+                .pipeline             = pipeline};
     }
 } // namespace nd::src::graphics::vulkan
