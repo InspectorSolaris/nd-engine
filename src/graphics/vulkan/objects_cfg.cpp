@@ -154,8 +154,40 @@ namespace nd::src::graphics::vulkan
                 ShaderModuleCfg {.path = "src/graphics/vulkan/shaders/frag.spv", .stage = VK_SHADER_STAGE_FRAGMENT_BIT}};
     }
 
+    DescriptorPoolCfg
+    getDescriptorPoolCfg() noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        return {.sizes = {VkDescriptorPoolSize {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 1U}}, .maxSets = 1U};
+    }
+
+    DescriptorSetLayoutPoolCfg
+    getDescriptorSetLayoutPoolCfg() noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        return {.mesh = DescriptorSetLayoutCfg {}};
+    }
+
     PipelineCacheCfg
     getPipelineCacheCfg() noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        return {};
+    }
+
+    PipelineLayoutPoolCfg
+    getPipelineLayoutPoolCfg(opt<const DescriptorSetLayoutPool>::ref descriptorSetLayoutPool) noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        return {.mesh = PipelineLayoutCfg {}};
+    }
+
+    PipelinePoolCfg
+    getPipelinePoolCfg(opt<const RenderPass>::ref renderPass, opt<const PipelineLayoutPool>::ref pipelineLayoutPool) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 

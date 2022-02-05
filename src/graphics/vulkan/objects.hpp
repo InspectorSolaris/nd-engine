@@ -122,11 +122,16 @@ namespace nd::src::graphics::vulkan
         vec<Framebuffer>  swapchainFramebuffers;
         vec<ShaderModule> shaderModules;
 
+        DescriptorSetLayoutPool descriptorSetLayoutPool;
+        PipelineLayoutPool      pipelineLayoutPool;
+        PipelinePool            pipelinePool;
+
         Swapchain      swapchain;
         Instance       instance;
         PhysicalDevice physicalDevice;
         Surface        surface;
         RenderPass     renderPass;
+        DescriptorPool descriptorPool;
         PipelineCache  pipelineCache;
     };
 } // namespace nd::src::graphics::vulkan

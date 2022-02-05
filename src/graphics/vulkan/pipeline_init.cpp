@@ -22,4 +22,32 @@ namespace nd::src::graphics::vulkan
 
         return pipelineCache;
     }
+
+    PipelineLayout
+    createPipelineLayout(opt<const PipelineLayoutCfg>::ref cfg, const VkDevice device) noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        const auto createInfo = VkPipelineLayoutCreateInfo {.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+                                                            .pNext                  = cfg.next,
+                                                            .flags                  = cfg.flags,
+                                                            .setLayoutCount         = static_cast<u32>(cfg.descriptorSetLayouts.size()),
+                                                            .pSetLayouts            = cfg.descriptorSetLayouts.data(),
+                                                            .pushConstantRangeCount = static_cast<u32>(cfg.pushConstantRanges.size()),
+                                                            .pPushConstantRanges    = cfg.pushConstantRanges.data()};
+
+        VkPipelineLayout pipelineLayout;
+
+        ND_ASSERT_EXEC(vkCreatePipelineLayout(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &pipelineLayout) == VK_SUCCESS);
+
+        return pipelineLayout;
+    }
+
+    PipelineLayoutPool
+    createPipelineLayoutPool(opt<const PipelineLayoutPoolCfg>::ref cfg, const VkDevice device) noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        return {.mesh = createPipelineLayout(cfg.mesh, device)};
+    }
 } // namespace nd::src::graphics::vulkan
