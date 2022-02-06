@@ -53,11 +53,15 @@ namespace nd::src::graphics::vulkan
         const auto pipelineCfg = cfg.pipeline(swapchainCfg, renderPass, pipelineLayout, shaderModules);
         const auto pipeline    = init.pipeline(pipelineCfg, device.handle, pipelineCache);
 
+        const auto commandPoolCfg = cfg.commandPool(device);
+        const auto commandPool    = init.commandPool(commandPoolCfg, device.handle);
+
         return {.device                = device,
                 .swapchainImages       = std::move(swapchainImages),
                 .swapchainImageViews   = std::move(swapchainImageViews),
                 .swapchainFramebuffers = std::move(swapchainFramebuffers),
                 .shaderModules         = std::move(shaderModules),
+                .commandPool           = commandPool,
                 .descriptorSetLayout   = descriptorSetLayout,
                 .pipelineLayout        = pipelineLayout,
                 .pipeline              = pipeline,
@@ -77,6 +81,21 @@ namespace nd::src::graphics::vulkan
 
         vkFreeMemory(objects.device.handle, objects.device.memory.device.handle, ND_VULKAN_ALLOCATION_CALLBACKS);
         vkFreeMemory(objects.device.handle, objects.device.memory.host.handle, ND_VULKAN_ALLOCATION_CALLBACKS);
+
+        for(opt<const CommandPool>::ref commandPool: objects.commandPool.graphics)
+        {
+            vkDestroyCommandPool(objects.device.handle, commandPool, ND_VULKAN_ALLOCATION_CALLBACKS);
+        }
+
+        for(opt<const CommandPool>::ref commandPool: objects.commandPool.transfer)
+        {
+            vkDestroyCommandPool(objects.device.handle, commandPool, ND_VULKAN_ALLOCATION_CALLBACKS);
+        }
+
+        for(opt<const CommandPool>::ref commandPool: objects.commandPool.compute)
+        {
+            vkDestroyCommandPool(objects.device.handle, commandPool, ND_VULKAN_ALLOCATION_CALLBACKS);
+        }
 
         vkDestroyPipeline(objects.device.handle, objects.pipeline.mesh, ND_VULKAN_ALLOCATION_CALLBACKS);
 

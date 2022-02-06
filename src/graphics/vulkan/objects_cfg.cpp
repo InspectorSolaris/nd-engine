@@ -99,18 +99,18 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {.attachmentDescriptions = {AttachmentDescription {.flags          = {},
-                                                                  .format         = swapchainCfg.imageFormat,
-                                                                  .samples        = VK_SAMPLE_COUNT_1_BIT,
-                                                                  .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
-                                                                  .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
-                                                                  .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-                                                                  .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-                                                                  .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
-                                                                  .finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR}},
-                .subpassDescriptions    = {SubpassDescription {
+        return {.attachmentDescriptions = {{.flags          = {},
+                                            .format         = swapchainCfg.imageFormat,
+                                            .samples        = VK_SAMPLE_COUNT_1_BIT,
+                                            .loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR,
+                                            .storeOp        = VK_ATTACHMENT_STORE_OP_STORE,
+                                            .stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                                            .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+                                            .initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED,
+                                            .finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR}},
+                .subpassDescriptions    = {{
                        .inputAttachments        = {},
-                       .colorAttachments        = {VkAttachmentReference {.attachment = 0U, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}},
+                       .colorAttachments        = {{.attachment = 0U, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}},
                        .resolveAttachments      = {},
                        .depthStencilAttachments = {},
                        .pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -272,5 +272,16 @@ namespace nd::src::graphics::vulkan
                 .dynamicStateUse  = false,
                 .inputAssemblyUse = true,
                 .tessellationUse  = false}};
+    }
+
+
+    CommandPoolObjectsCfg
+    getCommandPoolObjectsCfg(opt<const Device>::ref device) noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        return {.graphics = {CommandPoolCfg {.queueFamily = device.queueFamily.graphics}},
+                .transfer = {CommandPoolCfg {.queueFamily = device.queueFamily.transfer}},
+                .compute  = {CommandPoolCfg {.queueFamily = device.queueFamily.compute}}};
     }
 } // namespace nd::src::graphics::vulkan

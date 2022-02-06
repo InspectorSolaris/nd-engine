@@ -18,7 +18,8 @@ namespace nd::src::graphics::vulkan
         {
             return Builder {} << createInstance << getPhysicalDevice << createDevice << createSwapchain << createRenderPass << getSwapchainImages
                               << createSwapchainImageViews << createSwapchainFramebuffers << createShaderModules << createDescriptorPool
-                              << createDescriptorSetLayoutObjects << createPipelineCache << createPipelineLayoutObjects << createPipelineObjects;
+                              << createDescriptorSetLayoutObjects << createPipelineCache << createPipelineLayoutObjects << createPipelineObjects
+                              << createCommandPoolObjects;
         }
 
         operator Type() const noexcept(ND_ASSERT_NOTHROW)
@@ -44,6 +45,7 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_BUILDER_SET(pipelineCache);
         ND_DEFINE_BUILDER_SET(pipelineLayout);
         ND_DEFINE_BUILDER_SET(pipeline);
+        ND_DEFINE_BUILDER_SET(commandPool);
 
         ND_DEFINE_BUILDER_OPERATOR(instance);
         ND_DEFINE_BUILDER_OPERATOR(physicalDevice);
@@ -60,6 +62,7 @@ namespace nd::src::graphics::vulkan
         ND_DEFINE_BUILDER_OPERATOR(pipelineCache);
         ND_DEFINE_BUILDER_OPERATOR(pipelineLayout);
         ND_DEFINE_BUILDER_OPERATOR(pipeline);
+        ND_DEFINE_BUILDER_OPERATOR(commandPool);
 
     private:
         ND_DECLARE_BUILDER_FIELD(instance);
@@ -77,5 +80,6 @@ namespace nd::src::graphics::vulkan
         ND_DECLARE_BUILDER_FIELD(pipelineCache);
         ND_DECLARE_BUILDER_FIELD(pipelineLayout);
         ND_DECLARE_BUILDER_FIELD(pipeline);
+        ND_DECLARE_BUILDER_FIELD(commandPool);
     };
 } // namespace nd::src::graphics::vulkan

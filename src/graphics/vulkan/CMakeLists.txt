@@ -1,5 +1,6 @@
 set(TARGET_NAME nd-src-graphics-vulkan)
 set(TARGET_SRC
+    command_init.cpp
     descriptor_init.cpp
     device_init.cpp
     image_init.cpp

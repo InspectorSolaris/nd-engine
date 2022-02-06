@@ -14,6 +14,7 @@
 #include "shader_module_init.hpp"
 #include "descriptor_init.hpp"
 #include "pipeline_init.hpp"
+#include "command_init.hpp"
 
 namespace nd::src::graphics::vulkan
 {
@@ -34,6 +35,7 @@ namespace nd::src::graphics::vulkan
         using PipelineCacheInit              = rm_noexcept<decltype(createPipelineCache)>;
         using PipelineLayoutObjectsInit      = rm_noexcept<decltype(createPipelineLayoutObjects)>;
         using PipelineObjectsInit            = rm_noexcept<decltype(createPipelineObjects)>;
+        using CommandPoolObjectsInit         = rm_noexcept<decltype(createCommandPoolObjects)>;
 
         func<InstanceInit>                   instance;
         func<PhysicalDeviceInit>             physicalDevice;
@@ -50,5 +52,6 @@ namespace nd::src::graphics::vulkan
         func<PipelineCacheInit>              pipelineCache;
         func<PipelineLayoutObjectsInit>      pipelineLayout;
         func<PipelineObjectsInit>            pipeline;
+        func<CommandPoolObjectsInit>         commandPool;
     };
 } // namespace nd::src::graphics::vulkan

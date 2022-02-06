@@ -312,6 +312,21 @@ namespace nd::src::graphics::vulkan
         GraphicsPipelineCfg mesh;
     };
 
+    struct CommandPoolCfg final
+    {
+        const QueueFamily& queueFamily;
+
+        void*                    next  = {};
+        VkCommandPoolCreateFlags flags = {};
+    };
+
+    struct CommandPoolObjectsCfg final
+    {
+        arr<CommandPoolCfg, CommandPoolObjects::graphicsCount> graphics;
+        arr<CommandPoolCfg, CommandPoolObjects::transferCount> transfer;
+        arr<CommandPoolCfg, CommandPoolObjects::computeCount>  compute;
+    };
+
     InstanceCfg getInstanceCfg(opt<const Dependency>::ref) noexcept(ND_ASSERT_NOTHROW);
 
     PhysicalDeviceCfg
@@ -350,6 +365,8 @@ namespace nd::src::graphics::vulkan
                           opt<const PipelineLayoutObjects>::ref,
                           const vec<ShaderModule>&) noexcept(ND_ASSERT_NOTHROW);
 
+    CommandPoolObjectsCfg getCommandPoolObjectsCfg(opt<const Device>::ref) noexcept(ND_ASSERT_NOTHROW);
+
     struct VulkanObjectsCfg final
     {
         using InstanceCfgInit                   = rm_noexcept<decltype(getInstanceCfg)>;
@@ -365,6 +382,7 @@ namespace nd::src::graphics::vulkan
         using PipelineCacheCfgInit              = rm_noexcept<decltype(getPipelineCacheCfg)>;
         using PipelineLayoutObjectsCfgInit      = rm_noexcept<decltype(getPipelineLayoutObjectsCfg)>;
         using PipelineObjectsCfgInit            = rm_noexcept<decltype(getPipelineObjectsCfg)>;
+        using CommandPoolObjectsCfgInit         = rm_noexcept<decltype(getCommandPoolObjectsCfg)>;
 
         func<InstanceCfgInit>                   instance;
         func<PhysicalDeviceCfgInit>             physicalDevice;
@@ -379,5 +397,6 @@ namespace nd::src::graphics::vulkan
         func<PipelineCacheCfgInit>              pipelineCache;
         func<PipelineLayoutObjectsCfgInit>      pipelineLayout;
         func<PipelineObjectsCfgInit>            pipeline;
+        func<CommandPoolObjectsCfgInit>         commandPool;
     };
 } // namespace nd::src::graphics::vulkan

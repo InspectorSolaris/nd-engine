@@ -18,6 +18,8 @@ namespace nd::src::graphics::vulkan
     using PipelineCache       = VkPipelineCache;
     using PipelineLayout      = VkPipelineLayout;
     using Pipeline            = VkPipeline;
+    using CommandPool         = VkCommandPool;
+    using CommandBuffer       = VkCommandBuffer;
 
     struct DeviceMemory final
     {
@@ -83,6 +85,17 @@ namespace nd::src::graphics::vulkan
         Pipeline mesh;
     };
 
+    struct CommandPoolObjects final
+    {
+        static const u16 graphicsCount = 1;
+        static const u16 transferCount = 1;
+        static const u16 computeCount  = 1;
+
+        arr<CommandPool, graphicsCount> graphics;
+        arr<CommandPool, transferCount> transfer;
+        arr<CommandPool, computeCount>  compute;
+    };
+
     struct BufferRange final
     {
         VkDeviceSize offset;
@@ -122,6 +135,7 @@ namespace nd::src::graphics::vulkan
         vec<Framebuffer>  swapchainFramebuffers;
         vec<ShaderModule> shaderModules;
 
+        CommandPoolObjects         commandPool;
         DescriptorSetLayoutObjects descriptorSetLayout;
         PipelineLayoutObjects      pipelineLayout;
         PipelineObjects            pipeline;

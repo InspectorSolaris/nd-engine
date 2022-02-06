@@ -11,7 +11,8 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         ND_ASSERT(instance && physicalDevice && device && surface && swapchain && renderPass && swapchainImages && swapchainImageViews &&
-                  swapchainFramebuffers && shaderModules && descriptorPool && descriptorSetLayout && pipelineCache && pipelineLayout && pipeline);
+                  swapchainFramebuffers && shaderModules && descriptorPool && descriptorSetLayout && pipelineCache && pipelineLayout && pipeline &&
+                  commandPool);
 
         return {.instance              = instance,
                 .physicalDevice        = physicalDevice,
@@ -27,6 +28,7 @@ namespace nd::src::graphics::vulkan
                 .descriptorSetLayout   = descriptorSetLayout,
                 .pipelineCache         = pipelineCache,
                 .pipelineLayout        = pipelineLayout,
-                .pipeline              = pipeline};
+                .pipeline              = pipeline,
+                .commandPool           = commandPool};
     }
 } // namespace nd::src::graphics::vulkan
