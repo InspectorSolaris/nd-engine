@@ -91,6 +91,8 @@ namespace nd::src::graphics::vulkan
         MemoryRange index;
         MemoryRange uniform;
 
+        VkDeviceSize offset;
+
         VkDeviceMemory memory;
         VkBuffer       handle;
     };
@@ -98,6 +100,8 @@ namespace nd::src::graphics::vulkan
     struct BufferStage final
     {
         MemoryRange range;
+
+        VkDeviceSize offset;
 
         VkDeviceMemory memory;
         VkBuffer       handle;

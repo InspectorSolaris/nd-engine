@@ -28,11 +28,7 @@ namespace nd::src::graphics::vulkan
 
         const auto offset = bindBufferMemory(buffer, cfg.memory, device, physicalDevice) - cfg.vertex.offset;
 
-        return {.vertex  = {.offset = cfg.vertex.offset + offset, .size = cfg.vertex.size},
-                .index   = {.offset = cfg.index.offset + offset, .size = cfg.index.size},
-                .uniform = {.offset = cfg.uniform.offset + offset, .size = cfg.uniform.size},
-                .memory  = cfg.memory.handle,
-                .handle  = buffer};
+        return {.vertex = cfg.vertex, .index = cfg.index, .uniform = cfg.uniform, .offset = offset, .memory = cfg.memory.handle, .handle = buffer};
     }
 
     BufferStage
@@ -58,7 +54,7 @@ namespace nd::src::graphics::vulkan
 
         const auto offset = bindBufferMemory(buffer, cfg.memory, device, physicalDevice) - cfg.range.offset;
 
-        return {.range = {.offset = cfg.range.offset + offset, .size = cfg.range.size}, .memory = cfg.memory.handle, .handle = buffer};
+        return {.range = cfg.range, .offset = offset, .memory = cfg.memory.handle, .handle = buffer};
     }
 
     BufferObjects

@@ -85,18 +85,22 @@ namespace nd::src::graphics::vulkan
         const auto indexOffset   = vertexOffset + vertexSize;
         const auto uniformOffset = indexOffset + indexSize;
 
+        const auto meshUsage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+
+        const auto stageUsage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+
         return {.mesh  = {.vertex             = {.offset = vertexOffset, .size = vertexSize},
                           .index              = {.offset = indexOffset, .size = indexSize},
                           .uniform            = {.offset = uniformOffset, .size = uniformSize},
                           .queueFamilyIndices = {},
                           .memory             = device.memory.device,
-                          .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
-                             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                          .sharingMode = VK_SHARING_MODE_EXCLUSIVE},
+                          .usage              = meshUsage,
+                          .sharingMode        = VK_SHARING_MODE_EXCLUSIVE},
                 .stage = {.range              = {.offset = stageOffset, .size = stageSize},
                           .queueFamilyIndices = {},
                           .memory             = device.memory.host,
-                          .usage              = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                          .usage              = stageUsage,
                           .sharingMode        = VK_SHARING_MODE_EXCLUSIVE}};
     }
 
