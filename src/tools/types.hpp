@@ -33,6 +33,12 @@ using arr = std::array<T, S>;
 template<typename T>
 using vec = std::vector<T>;
 
+template<typename T>
+using set = std::set<T>;
+
+template<typename K, typename V>
+using map = std::map<K, V>;
+
 using str   = std::string;
 using str_v = std::string_view;
 

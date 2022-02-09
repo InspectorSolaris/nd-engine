@@ -34,4 +34,38 @@ namespace nd::src::graphics::vulkan
 
         return *queueFamily;
     }
+
+    SubmitInfo
+    getSubmitInfo(opt<const SubmitInfoCfg>::ref cfg) noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        ND_ASSERT(cfg.semaphoresWait.size() == cfg.stages.size());
+
+        return {.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                .pNext                = cfg.next,
+                .waitSemaphoreCount   = static_cast<u32>(cfg.semaphoresWait.size()),
+                .pWaitSemaphores      = cfg.semaphoresWait.data(),
+                .pWaitDstStageMask    = cfg.stages.data(),
+                .commandBufferCount   = static_cast<u32>(cfg.commandBuffers.size()),
+                .pCommandBuffers      = cfg.commandBuffers.data(),
+                .signalSemaphoreCount = static_cast<u32>(cfg.semaphoresSignal.size()),
+                .pSignalSemaphores    = cfg.semaphoresSignal.data()};
+    }
+
+    PresentInfo
+    getPresentInfo(opt<const PresentInfoCfg>::ref cfg) noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        ND_ASSERT(cfg.swapchains.size() == cfg.images.size());
+
+        return VkPresentInfoKHR {.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+                                 .pNext              = cfg.next,
+                                 .waitSemaphoreCount = static_cast<u32>(cfg.semaphoresWait.size()),
+                                 .pWaitSemaphores    = cfg.semaphoresWait.data(),
+                                 .swapchainCount     = static_cast<u32>(cfg.swapchains.size()),
+                                 .pSwapchains        = cfg.swapchains.data(),
+                                 .pImageIndices      = cfg.images.data()};
+    }
 } // namespace nd::src::graphics::vulkan

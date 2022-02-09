@@ -57,10 +57,10 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         return {.features    = physicalDeviceCfg.features,
-                .memory      = {.device = {.size             = 1024,
+                .memory      = {.device = {.size             = 8 * 1024,
                                            .propertyFlags    = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                                            .propertyFlagsNot = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT},
-                                .host   = {.size             = 1024,
+                                .host   = {.size             = 8 * 1024,
                                            .propertyFlags    = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                                            .propertyFlagsNot = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT}},
                 .queueFamily = {.graphics = {.queueFlags = VK_QUEUE_GRAPHICS_BIT, .queueFlagsNot = {}},
@@ -68,6 +68,36 @@ namespace nd::src::graphics::vulkan
                                 .compute  = {.queueFlags = VK_QUEUE_COMPUTE_BIT, .queueFlagsNot = {}}},
                 .extensions  = physicalDeviceCfg.extensions,
                 .queueFlags  = physicalDeviceCfg.queueFlags};
+    }
+
+    BufferObjectsCfg
+    getBufferObjectsCfg(opt<const Device>::ref device) noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        const auto stageSize   = 1024ULL;
+        const auto vertexSize  = 1024ULL;
+        const auto indexSize   = 1024ULL;
+        const auto uniformSize = 1024ULL;
+
+        const auto stageOffset   = 0ULL;
+        const auto vertexOffset  = 0ULL;
+        const auto indexOffset   = vertexOffset + vertexSize;
+        const auto uniformOffset = indexOffset + indexSize;
+
+        return {.mesh  = {.vertex             = {.offset = vertexOffset, .size = vertexSize},
+                          .index              = {.offset = indexOffset, .size = indexSize},
+                          .uniform            = {.offset = uniformOffset, .size = uniformSize},
+                          .queueFamilyIndices = {},
+                          .memory             = device.memory.device,
+                          .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
+                             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                          .sharingMode = VK_SHARING_MODE_EXCLUSIVE},
+                .stage = {.range              = {.offset = stageOffset, .size = stageSize},
+                          .queueFamilyIndices = {},
+                          .memory             = device.memory.host,
+                          .usage              = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                          .sharingMode        = VK_SHARING_MODE_EXCLUSIVE}};
     }
 
     SwapchainCfg

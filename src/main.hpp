@@ -3,7 +3,7 @@
 #include "tools.hpp"
 
 #include "glfw/glfw_vulkan.hpp"
-#include "vulkan/objects_complete.hpp"
+#include "vulkan/render.hpp"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/rotating_file_sink.h>

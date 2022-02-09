@@ -5,6 +5,22 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
+    u32
+    getNextImageIndex(const VkDevice       device,
+                      const VkSwapchainKHR swapchain,
+                      const VkSemaphore    semaphore,
+                      const VkFence        fence,
+                      const u64            timeout) noexcept
+    {
+        ND_SET_SCOPE();
+
+        u32 index;
+
+        vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, &index);
+
+        return index;
+    }
+
     vec<Image>
     getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept
     {
@@ -202,7 +218,10 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT_EXEC(vkCreateSwapchainKHR(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &swapchain) == VK_SUCCESS);
 
-        return {.queueFamily = cfg.queueFamily.graphics, .handle = swapchain};
+        return {.queueFamily = cfg.queueFamily.graphics,
+                .handle      = swapchain,
+                .width       = static_cast<u16>(cfg.imageExtent.width),
+                .height      = static_cast<u16>(cfg.imageExtent.height)};
     }
 
     vec<ImageView>

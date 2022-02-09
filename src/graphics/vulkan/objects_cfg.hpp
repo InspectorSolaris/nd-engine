@@ -31,10 +31,16 @@ namespace nd::src::graphics::vulkan
         u32 engineVersion;
         u32 apiVersion;
 
-        void*                 instanceNext    = {};
-        void*                 applicationNext = {};
-        VkInstanceCreateFlags flags           = {};
+        void*                 instanceNext;
+        void*                 applicationNext;
+        VkInstanceCreateFlags flags;
     };
+
+    // -------------- SS --------------
+    // --------------------------------
+    // ------------ DEVICE ------------
+    // --------------------------------
+    // -------------- SS --------------
 
     struct PhysicalDeviceCfg final
     {
@@ -53,7 +59,7 @@ namespace nd::src::graphics::vulkan
         VkMemoryPropertyFlags propertyFlags;
         VkMemoryPropertyFlags propertyFlagsNot;
 
-        void* next = {};
+        void* next;
     };
 
     struct QueueFamilyCfg final
@@ -86,9 +92,75 @@ namespace nd::src::graphics::vulkan
 
         VkQueueFlags queueFlags;
 
-        void*               next  = {};
-        VkDeviceCreateFlags flags = {};
+        void*               next;
+        VkDeviceCreateFlags flags;
     };
+
+    // -------------- EE --------------
+    // --------------------------------
+    // ------------ DEVICE ------------
+    // --------------------------------
+    // -------------- EE --------------
+
+
+
+    // --------------- S ---------------
+    // ---------------------------------
+    // ------------ BUFFERS ------------
+    // ---------------------------------
+    // --------------- S ---------------
+
+    struct BufferMeshCfg final
+    {
+        MemoryRange vertex;
+        MemoryRange index;
+        MemoryRange uniform;
+
+        gsl::span<const u32> queueFamilyIndices;
+
+        const DeviceMemory& memory;
+
+        VkBufferUsageFlags usage;
+        VkSharingMode      sharingMode;
+
+        void*               next;
+        VkBufferCreateFlags flags;
+    };
+
+    struct BufferStageCfg final
+    {
+        MemoryRange range;
+
+        gsl::span<const u32> queueFamilyIndices;
+
+        const DeviceMemory& memory;
+
+        VkBufferUsageFlags usage;
+        VkSharingMode      sharingMode;
+
+        void*               next;
+        VkBufferCreateFlags flags;
+    };
+
+    struct BufferObjectsCfg final
+    {
+        BufferMeshCfg  mesh;
+        BufferStageCfg stage;
+    };
+
+    // --------------- E ---------------
+    // ---------------------------------
+    // ------------ BUFFERS ------------
+    // ---------------------------------
+    // --------------- E ---------------
+
+
+
+    // -------------- SS --------------
+    // --------------------------------
+    // ------------ SCREEN ------------
+    // --------------------------------
+    // -------------- SS --------------
 
     struct SwapchainCfg final
     {
@@ -112,9 +184,23 @@ namespace nd::src::graphics::vulkan
 
         bool clipped;
 
-        void*                     next  = {};
-        VkSwapchainCreateFlagsKHR flags = {};
+        void*                     next;
+        VkSwapchainCreateFlagsKHR flags;
     };
+
+    // -------------- EE --------------
+    // --------------------------------
+    // ------------ SCREEN ------------
+    // --------------------------------
+    // -------------- EE --------------
+
+
+
+    // ----------------- S -----------------
+    // -------------------------------------
+    // ------------ RENDER PASS ------------
+    // -------------------------------------
+    // ----------------- S -----------------
 
     using AttachmentDescription = VkAttachmentDescription;
     using SubpassDependency     = VkSubpassDependency;
@@ -138,8 +224,8 @@ namespace nd::src::graphics::vulkan
         vec<SubpassDescription>    subpassDescriptions;
         vec<SubpassDependency>     subpassDependencies;
 
-        void*                   next  = {};
-        VkRenderPassCreateFlags flags = {};
+        void*                   next;
+        VkRenderPassCreateFlags flags;
     };
 
     struct ImageCfg final
@@ -153,8 +239,8 @@ namespace nd::src::graphics::vulkan
         VkImageViewType         type;
         VkFormat                format;
 
-        void*                  next  = {};
-        VkImageViewCreateFlags flags = {};
+        void*                  next;
+        VkImageViewCreateFlags flags;
     };
 
     struct FramebufferCfg final
@@ -165,19 +251,23 @@ namespace nd::src::graphics::vulkan
         u16 height;
         u16 layers;
 
-        void*                    next  = {};
-        VkFramebufferCreateFlags flags = {};
+        void*                    next;
+        VkFramebufferCreateFlags flags;
     };
 
-    struct ShaderModuleCfg final
-    {
-        str path;
+    // ----------------- E -----------------
+    // -------------------------------------
+    // ------------ RENDER PASS ------------
+    // -------------------------------------
+    // ----------------- E -----------------
 
-        VkShaderStageFlagBits stage;
 
-        void*                     next  = {};
-        VkShaderModuleCreateFlags flags = {};
-    };
+
+    // ----------------- S -----------------
+    // -------------------------------------
+    // ------------ DESCRIPTORS ------------
+    // -------------------------------------
+    // ----------------- S -----------------
 
     struct DescriptorPoolCfg final
     {
@@ -185,16 +275,16 @@ namespace nd::src::graphics::vulkan
 
         u16 maxSets;
 
-        void*                       next  = {};
-        VkDescriptorPoolCreateFlags flags = {};
+        void*                       next;
+        VkDescriptorPoolCreateFlags flags;
     };
 
     struct DescriptorSetLayoutCfg final
     {
         vec<VkDescriptorSetLayoutBinding> bindings;
 
-        void*                            next  = {};
-        VkDescriptorSetLayoutCreateFlags flags = {};
+        void*                            next;
+        VkDescriptorSetLayoutCreateFlags flags;
     };
 
     struct DescriptorSetLayoutObjectsCfg final
@@ -202,10 +292,41 @@ namespace nd::src::graphics::vulkan
         DescriptorSetLayoutCfg mesh;
     };
 
+    struct DescriptorSetCfg final
+    {
+        gsl::span<const DescriptorSetLayout> layouts;
+
+        void* next = {};
+    };
+
+    // ----------------- E -----------------
+    // -------------------------------------
+    // ------------ DESCRIPTORS ------------
+    // -------------------------------------
+    // ----------------- E -----------------
+
+
+
+    // ---------------- S ----------------
+    // -----------------------------------
+    // ------------ PIPELINES ------------
+    // -----------------------------------
+    // ---------------- S ----------------
+
+    struct ShaderModuleCfg final
+    {
+        str path;
+
+        VkShaderStageFlagBits stage;
+
+        void*                     next;
+        VkShaderModuleCreateFlags flags;
+    };
+
     struct PipelineCacheCfg final
     {
-        void*                      next  = {};
-        VkPipelineCacheCreateFlags flags = {};
+        void*                      next;
+        VkPipelineCacheCreateFlags flags;
     };
 
     struct PipelineLayoutCfg final
@@ -213,8 +334,8 @@ namespace nd::src::graphics::vulkan
         vec<VkDescriptorSetLayout> descriptorSetLayouts;
         vec<VkPushConstantRange>   pushConstantRanges;
 
-        void*                       next  = {};
-        VkPipelineLayoutCreateFlags flags = {};
+        void*                       next;
+        VkPipelineLayoutCreateFlags flags;
     };
 
     struct PipelineLayoutObjectsCfg final
@@ -227,8 +348,8 @@ namespace nd::src::graphics::vulkan
         vec<VkVertexInputBindingDescription>   bindings;
         vec<VkVertexInputAttributeDescription> attributes;
 
-        void*                                 next  = {};
-        VkPipelineVertexInputStateCreateFlags flags = {};
+        void*                                 next;
+        VkPipelineVertexInputStateCreateFlags flags;
     };
 
     struct PipelineViewportStateCreateInfo final
@@ -236,8 +357,8 @@ namespace nd::src::graphics::vulkan
         vec<VkViewport> viewports;
         vec<VkRect2D>   scissors;
 
-        void*                              next  = {};
-        VkPipelineViewportStateCreateFlags flags = {};
+        void*                              next;
+        VkPipelineViewportStateCreateFlags flags;
     };
 
     struct PipelineColorBlendStateCreateInfo final
@@ -248,16 +369,16 @@ namespace nd::src::graphics::vulkan
         VkBool32  logicOpEnable;
         VkLogicOp logicOp;
 
-        void*                                next  = {};
-        VkPipelineColorBlendStateCreateFlags flags = {};
+        void*                                next;
+        VkPipelineColorBlendStateCreateFlags flags;
     };
 
     struct PipelineDynamicStateCreateInfo final
     {
         vec<VkDynamicState> dynamicStates;
 
-        void*                             next  = {};
-        VkPipelineDynamicStateCreateFlags flags = {};
+        void*                             next;
+        VkPipelineDynamicStateCreateFlags flags;
     };
 
     using PipelineInputAssemblyStateCreateInfo = VkPipelineInputAssemblyStateCreateInfo;
@@ -303,8 +424,8 @@ namespace nd::src::graphics::vulkan
         bool inputAssemblyUse;
         bool tessellationUse;
 
-        void*                 next  = {};
-        VkPipelineCreateFlags flags = {};
+        void*                 next;
+        VkPipelineCreateFlags flags;
     };
 
     struct PipelineObjectsCfg final
@@ -312,12 +433,26 @@ namespace nd::src::graphics::vulkan
         GraphicsPipelineCfg mesh;
     };
 
+    // ---------------- E ----------------
+    // -----------------------------------
+    // ------------ PIPELINES ------------
+    // -----------------------------------
+    // ---------------- E ----------------
+
+
+
+    // --------------- SS ---------------
+    // ----------------------------------
+    // ------------ COMMANDS ------------
+    // ----------------------------------
+    // --------------- SS ---------------
+
     struct CommandPoolCfg final
     {
         const QueueFamily& queueFamily;
 
-        void*                    next  = {};
-        VkCommandPoolCreateFlags flags = {};
+        void*                    next;
+        VkCommandPoolCreateFlags flags;
     };
 
     struct CommandPoolObjectsCfg final
@@ -327,12 +462,28 @@ namespace nd::src::graphics::vulkan
         arr<CommandPoolCfg, CommandPoolObjects::computeCount>  compute;
     };
 
+    struct CommandBufferCfg final
+    {
+        VkCommandBufferLevel level;
+        u16                  count;
+
+        void* next = {};
+    };
+
+    // --------------- EE ---------------
+    // ----------------------------------
+    // ------------ COMMANDS ------------
+    // ----------------------------------
+    // --------------- EE ---------------
+
     InstanceCfg getInstanceCfg(opt<const Dependency>::ref) noexcept(ND_ASSERT_NOTHROW);
 
     PhysicalDeviceCfg
     getPhysicalDeviceCfg() noexcept(ND_ASSERT_NOTHROW);
 
     DeviceCfg getDeviceCfg(opt<const PhysicalDeviceCfg>::ref) noexcept(ND_ASSERT_NOTHROW);
+
+    BufferObjectsCfg getBufferObjectsCfg(opt<const Device>::ref) noexcept(ND_ASSERT_NOTHROW);
 
     SwapchainCfg getSwapchainCfg(opt<const Dependency>::ref,
                                  opt<const PhysicalDevice>::ref,
@@ -345,14 +496,14 @@ namespace nd::src::graphics::vulkan
 
     FramebufferCfg getSwapchainFramebufferCfg(opt<const SwapchainCfg>::ref, opt<const RenderPass>::ref) noexcept(ND_ASSERT_NOTHROW);
 
-    vec<ShaderModuleCfg>
-    getShaderModulesCfg() noexcept(ND_ASSERT_NOTHROW);
-
     DescriptorPoolCfg
     getDescriptorPoolCfg() noexcept(ND_ASSERT_NOTHROW);
 
     DescriptorSetLayoutObjectsCfg
     getDescriptorSetLayoutObjectsCfg() noexcept(ND_ASSERT_NOTHROW);
+
+    vec<ShaderModuleCfg>
+    getShaderModulesCfg() noexcept(ND_ASSERT_NOTHROW);
 
     PipelineCacheCfg
     getPipelineCacheCfg() noexcept(ND_ASSERT_NOTHROW);
@@ -372,13 +523,14 @@ namespace nd::src::graphics::vulkan
         using InstanceCfgInit                   = rm_noexcept<decltype(getInstanceCfg)>;
         using PhysicalDeviceCfgInit             = rm_noexcept<decltype(getPhysicalDeviceCfg)>;
         using DeviceCfgInit                     = rm_noexcept<decltype(getDeviceCfg)>;
+        using BufferObjectsCfgInit              = rm_noexcept<decltype(getBufferObjectsCfg)>;
         using SwapchainCfgInit                  = rm_noexcept<decltype(getSwapchainCfg)>;
         using RenderPassCfgInit                 = rm_noexcept<decltype(getRenderPassCfg)>;
         using SwapchainImageViewCfgInit         = rm_noexcept<decltype(getSwapchainImageViewCfg)>;
         using SwapchainFramebufferCfgInit       = rm_noexcept<decltype(getSwapchainFramebufferCfg)>;
-        using ShaderModulesCfgInit              = rm_noexcept<decltype(getShaderModulesCfg)>;
         using DescriptorPoolCfgInit             = rm_noexcept<decltype(getDescriptorPoolCfg)>;
         using DescriptorSetLayoutObjectsCfgInit = rm_noexcept<decltype(getDescriptorSetLayoutObjectsCfg)>;
+        using ShaderModulesCfgInit              = rm_noexcept<decltype(getShaderModulesCfg)>;
         using PipelineCacheCfgInit              = rm_noexcept<decltype(getPipelineCacheCfg)>;
         using PipelineLayoutObjectsCfgInit      = rm_noexcept<decltype(getPipelineLayoutObjectsCfg)>;
         using PipelineObjectsCfgInit            = rm_noexcept<decltype(getPipelineObjectsCfg)>;
@@ -387,13 +539,14 @@ namespace nd::src::graphics::vulkan
         func<InstanceCfgInit>                   instance;
         func<PhysicalDeviceCfgInit>             physicalDevice;
         func<DeviceCfgInit>                     device;
+        func<BufferObjectsCfgInit>              buffer;
         func<SwapchainCfgInit>                  swapchain;
         func<RenderPassCfgInit>                 renderPass;
         func<SwapchainImageViewCfgInit>         swapchainImageView;
         func<SwapchainFramebufferCfgInit>       swapchainFramebuffer;
-        func<ShaderModulesCfgInit>              shaderModules;
         func<DescriptorPoolCfgInit>             descriptorPool;
         func<DescriptorSetLayoutObjectsCfgInit> descriptorSetLayout;
+        func<ShaderModulesCfgInit>              shaderModules;
         func<PipelineCacheCfgInit>              pipelineCache;
         func<PipelineLayoutObjectsCfgInit>      pipelineLayout;
         func<PipelineObjectsCfgInit>            pipeline;

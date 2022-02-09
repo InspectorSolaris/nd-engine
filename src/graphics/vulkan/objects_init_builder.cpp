@@ -10,22 +10,23 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        ND_ASSERT(instance && physicalDevice && device && surface && swapchain && renderPass && swapchainImages && swapchainImageViews &&
-                  swapchainFramebuffers && shaderModules && descriptorPool && descriptorSetLayout && pipelineCache && pipelineLayout && pipeline &&
+        ND_ASSERT(instance && physicalDevice && device && buffer && surface && swapchain && renderPass && swapchainImages && swapchainImageViews &&
+                  swapchainFramebuffers && descriptorPool && descriptorSetLayout && shaderModules && pipelineCache && pipelineLayout && pipeline &&
                   commandPool);
 
         return {.instance              = instance,
                 .physicalDevice        = physicalDevice,
                 .device                = device,
+                .buffer                = buffer,
                 .surface               = surface,
                 .swapchain             = swapchain,
                 .renderPass            = renderPass,
                 .swapchainImages       = swapchainImages,
                 .swapchainImageViews   = swapchainImageViews,
                 .swapchainFramebuffers = swapchainFramebuffers,
-                .shaderModules         = shaderModules,
                 .descriptorPool        = descriptorPool,
                 .descriptorSetLayout   = descriptorSetLayout,
+                .shaderModules         = shaderModules,
                 .pipelineCache         = pipelineCache,
                 .pipelineLayout        = pipelineLayout,
                 .pipeline              = pipeline,

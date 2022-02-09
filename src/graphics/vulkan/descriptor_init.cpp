@@ -49,4 +49,24 @@ namespace nd::src::graphics::vulkan
 
         return {.mesh = createDescriptorSetLayout(cfg.mesh, device)};
     }
+
+    vec<DescriptorSet>
+    allocateDescriptorSets(opt<const DescriptorSetCfg>::ref cfg,
+                           opt<const DescriptorPool>::ref   descriptorPool,
+                           const VkDevice                   device) noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        const auto allocateInfo = VkDescriptorSetAllocateInfo {.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+                                                               .pNext              = cfg.next,
+                                                               .descriptorPool     = descriptorPool,
+                                                               .descriptorSetCount = static_cast<u32>(cfg.layouts.size()),
+                                                               .pSetLayouts        = cfg.layouts.data()};
+
+        auto descriptorSets = vec<DescriptorSet>(cfg.layouts.size());
+
+        ND_ASSERT_EXEC(vkAllocateDescriptorSets(device, &allocateInfo, descriptorSets.data()) == VK_SUCCESS);
+
+        return descriptorSets;
+    }
 } // namespace nd::src::graphics::vulkan

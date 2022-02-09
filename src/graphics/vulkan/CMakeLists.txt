@@ -1,5 +1,6 @@
 set(TARGET_NAME nd-src-graphics-vulkan)
 set(TARGET_SRC
+    buffer_init.cpp
     command_init.cpp
     descriptor_init.cpp
     device_init.cpp
@@ -15,10 +16,12 @@ set(TARGET_SRC
     pipeline_init.cpp
     queue_init.cpp
     render_pass_init.cpp
+    render.cpp
     shader_module_init.cpp
     shared_init.cpp
     surface_init.cpp
-    swapchain_init.cpp)
+    swapchain_init.cpp
+    sync_init.cpp)
 
 set(SHADERS_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders)
 set(SHADERS_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders)

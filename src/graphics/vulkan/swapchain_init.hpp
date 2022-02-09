@@ -5,6 +5,13 @@
 
 namespace nd::src::graphics::vulkan
 {
+    u32
+    getNextImageIndex(const VkDevice,
+                      const VkSwapchainKHR,
+                      const VkSemaphore = VK_NULL_HANDLE,
+                      const VkFence     = VK_NULL_HANDLE,
+                      const u64         = std::numeric_limits<u64>::max()) noexcept;
+
     vec<Image>
     getSwapchainImages(const VkDevice, const VkSwapchainKHR) noexcept;
 

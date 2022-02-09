@@ -2,8 +2,8 @@
 
 namespace nd::src::tools
 {
-    shared<logger> Scope::s_logPtr {};
-    u64            Scope::s_depth {};
+    shared<logger> Scope::s_logPtr = {};
+    u64            Scope::s_depth  = {};
 
     Scope::Scope(const str_v name, const Event& onStart, const Event& onEnd) noexcept
         : onEnd_(onEnd)

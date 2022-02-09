@@ -20,12 +20,21 @@ namespace nd::src::graphics::vulkan
     using Pipeline            = VkPipeline;
     using CommandPool         = VkCommandPool;
     using CommandBuffer       = VkCommandBuffer;
+    using Semaphore           = VkSemaphore;
+    using Fence               = VkFence;
+
+    // -------------- SS --------------
+    // --------------------------------
+    // ------------ DEVICE ------------
+    // --------------------------------
+    // -------------- SS --------------
 
     struct DeviceMemory final
     {
-        VkDeviceSize size;
-
         VkDeviceMemory handle;
+
+        u8 typeIndex;
+        u8 heapIndex;
     };
 
     struct QueueFamily final
@@ -56,23 +65,112 @@ namespace nd::src::graphics::vulkan
         VkDevice handle;
     };
 
+    struct MemoryRange final
+    {
+        VkDeviceSize offset;
+        VkDeviceSize size;
+    };
+
+    // -------------- EE --------------
+    // --------------------------------
+    // ------------ DEVICE ------------
+    // --------------------------------
+    // -------------- EE --------------
+
+
+
+    // --------------- S ---------------
+    // ---------------------------------
+    // ------------ BUFFERS ------------
+    // ---------------------------------
+    // --------------- S ---------------
+
+    struct BufferMesh final
+    {
+        MemoryRange vertex;
+        MemoryRange index;
+        MemoryRange uniform;
+
+        VkDeviceMemory memory;
+        VkBuffer       handle;
+    };
+
+    struct BufferStage final
+    {
+        MemoryRange range;
+
+        VkDeviceMemory memory;
+        VkBuffer       handle;
+    };
+
+    struct BufferObjects final
+    {
+        BufferMesh  mesh;
+        BufferStage stage;
+    };
+
+    // --------------- E ---------------
+    // ---------------------------------
+    // ------------ BUFFERS ------------
+    // ---------------------------------
+    // --------------- E ---------------
+
+
+
+    // -------------- SS --------------
+    // --------------------------------
+    // ------------ SCREEN ------------
+    // --------------------------------
+    // -------------- SS --------------
+
     struct Swapchain final
     {
         QueueFamily queueFamily;
 
         VkSwapchainKHR handle;
+
+        u16 width;
+        u16 height;
     };
+
+    // -------------- EE --------------
+    // --------------------------------
+    // ------------ SCREEN ------------
+    // --------------------------------
+    // -------------- EE --------------
+
+
+
+    // ----------------- S -----------------
+    // -------------------------------------
+    // ------------ DESCRIPTORS ------------
+    // -------------------------------------
+    // ----------------- S -----------------
+
+    struct DescriptorSetLayoutObjects final
+    {
+        DescriptorSetLayout mesh;
+    };
+
+    // ----------------- E -----------------
+    // -------------------------------------
+    // ------------ DESCRIPTORS ------------
+    // -------------------------------------
+    // ----------------- E -----------------
+
+
+
+    // ---------------- S ----------------
+    // -----------------------------------
+    // ------------ PIPELINES ------------
+    // -----------------------------------
+    // ---------------- S ----------------
 
     struct ShaderModule final
     {
         VkShaderStageFlagBits stage;
 
         VkShaderModule handle;
-    };
-
-    struct DescriptorSetLayoutObjects final
-    {
-        DescriptorSetLayout mesh;
     };
 
     struct PipelineLayoutObjects final
@@ -85,6 +183,20 @@ namespace nd::src::graphics::vulkan
         Pipeline mesh;
     };
 
+    // ---------------- E ----------------
+    // -----------------------------------
+    // ------------ PIPELINES ------------
+    // -----------------------------------
+    // ---------------- E ----------------
+
+
+
+    // --------------- SS ---------------
+    // ----------------------------------
+    // ------------ COMMANDS ------------
+    // ----------------------------------
+    // --------------- SS ---------------
+
     struct CommandPoolObjects final
     {
         static const u16 graphicsCount = 1;
@@ -96,44 +208,24 @@ namespace nd::src::graphics::vulkan
         arr<CommandPool, computeCount>  compute;
     };
 
-    struct BufferRange final
-    {
-        VkDeviceSize offset;
-        VkDeviceSize size;
-    };
-
-    struct BufferMesh final
-    {
-        BufferRange vertex;
-        BufferRange index;
-        BufferRange uniform;
-
-        VkDeviceMemory memory;
-        VkBuffer       handle;
-    };
-
-    struct BufferStage final
-    {
-        BufferRange range;
-
-        VkDeviceMemory memory;
-        VkBuffer       handle;
-    };
-
-    struct BufferObjects final
-    {
-        BufferMesh  mesh;
-        BufferStage stage;
-    };
+    // --------------- EE ---------------
+    // ----------------------------------
+    // ------------ COMMANDS ------------
+    // ----------------------------------
+    // --------------- EE ---------------
 
     struct VulkanObjects final
     {
+        BufferObjects buffer;
+
         Device device;
 
         vec<Image>        swapchainImages;
         vec<ImageView>    swapchainImageViews;
         vec<Framebuffer>  swapchainFramebuffers;
         vec<ShaderModule> shaderModules;
+        vec<Semaphore>    semaphores;
+        vec<Fence>        fences;
 
         CommandPoolObjects         commandPool;
         DescriptorSetLayoutObjects descriptorSetLayout;

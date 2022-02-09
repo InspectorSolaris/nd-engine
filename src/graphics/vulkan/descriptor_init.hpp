@@ -12,4 +12,7 @@ namespace nd::src::graphics::vulkan
 
     DescriptorSetLayoutObjects
     createDescriptorSetLayoutObjects(opt<const DescriptorSetLayoutObjectsCfg>::ref, const VkDevice) noexcept(ND_ASSERT_NOTHROW);
+
+    vec<DescriptorSet>
+    allocateDescriptorSets(opt<const DescriptorSetCfg>::ref, opt<const DescriptorPool>::ref, const VkDevice) noexcept(ND_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

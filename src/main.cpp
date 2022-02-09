@@ -13,6 +13,7 @@ int
 main()
 {
     using namespace std;
+    using namespace std::chrono;
     using namespace std::placeholders;
 
     using namespace spdlog;
@@ -54,18 +55,22 @@ main()
 
     const auto createSurfaceLambda = bind(nd::src::graphics::glfw::createSurface, ref(window.handle), _1, ND_VULKAN_ALLOCATION_CALLBACKS);
 
-    const auto vulkanObjects = createVulkanObjects({.applicationName = "nd-application",
-                                                    .engineName      = "nd-engine",
-                                                    .layers          = {},
-                                                    .extensions      = getGlfwRequiredExtensions(),
-                                                    .width           = window.width,
-                                                    .height          = window.height},
-                                                   VulkanObjectsCfgBuilder::getDefault(),
-                                                   VulkanObjectsInitBuilder::getDefault() << createSurfaceLambda);
+    auto vulkanObjects = createVulkanObjects({.applicationName = "nd-application",
+                                              .engineName      = "nd-engine",
+                                              .layers          = {},
+                                              .extensions      = getGlfwRequiredExtensions(),
+                                              .width           = window.width,
+                                              .height          = window.height},
+                                             VulkanObjectsCfgBuilder::getDefault(),
+                                             VulkanObjectsInitBuilder::getDefault() << createSurfaceLambda);
+
+    const auto deltaMin = 1.0 / (1 << 16);
 
     while(!glfwWindowShouldClose(window.handle))
     {
         glfwPollEvents();
+
+        draw(vulkanObjects, getDt(deltaMin));
     }
 
     destroyVulkanObjects(vulkanObjects);

@@ -28,4 +28,6 @@
 
 namespace nd::src::tools
 {
+    f64
+    getDt(const f64 min) noexcept;
 } // namespace nd::src::tools

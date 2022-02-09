@@ -25,9 +25,6 @@ namespace nd::src::graphics::vulkan
     VkPhysicalDeviceProperties
     getPhysicalDeviceProperties(const VkPhysicalDevice) noexcept;
 
-    VkPhysicalDeviceMemoryProperties
-    getPhysicalDeviceMemoryProperties(const VkPhysicalDevice) noexcept;
-
     bool
     isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice, const vec<str>&) noexcept;
 

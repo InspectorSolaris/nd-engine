@@ -10,19 +10,20 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        ND_ASSERT(instance && physicalDevice && device && swapchain && renderPass && swapchainImageView && swapchainFramebuffer && shaderModules &&
-                  descriptorPool && descriptorSetLayout && pipelineCache && pipelineLayout && pipeline && commandPool);
+        ND_ASSERT(instance && physicalDevice && device && buffer && swapchain && renderPass && swapchainImageView && swapchainFramebuffer &&
+                  descriptorPool && descriptorSetLayout && shaderModules && pipelineCache && pipelineLayout && pipeline && commandPool);
 
         return {.instance             = instance,
                 .physicalDevice       = physicalDevice,
                 .device               = device,
+                .buffer               = buffer,
                 .swapchain            = swapchain,
                 .renderPass           = renderPass,
                 .swapchainImageView   = swapchainImageView,
                 .swapchainFramebuffer = swapchainFramebuffer,
-                .shaderModules        = shaderModules,
                 .descriptorPool       = descriptorPool,
                 .descriptorSetLayout  = descriptorSetLayout,
+                .shaderModules        = shaderModules,
                 .pipelineCache        = pipelineCache,
                 .pipelineLayout       = pipelineLayout,
                 .pipeline             = pipeline,

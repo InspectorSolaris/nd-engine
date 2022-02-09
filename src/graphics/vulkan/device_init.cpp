@@ -97,18 +97,6 @@ namespace nd::src::graphics::vulkan
         return properties;
     }
 
-    VkPhysicalDeviceMemoryProperties
-    getPhysicalDeviceMemoryProperties(const VkPhysicalDevice physicalDevice) noexcept
-    {
-        ND_SET_SCOPE();
-
-        VkPhysicalDeviceMemoryProperties properties;
-
-        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &properties);
-
-        return properties;
-    }
-
     bool
     isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice physicalDevice, const vec<str>& extensions) noexcept
     {
@@ -230,7 +218,7 @@ namespace nd::src::graphics::vulkan
 
             queuePriorities.push_back(vec<f32>(queueFamily.queueCount, 1.0f));
             queueCreateInfos.push_back(VkDeviceQueueCreateInfo {.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-                                                                .pNext            = nullptr,
+                                                                .pNext            = {},
                                                                 .flags            = {},
                                                                 .queueFamilyIndex = static_cast<u32>(queueFamily.index),
                                                                 .queueCount       = queueFamily.queueCount,
@@ -252,7 +240,7 @@ namespace nd::src::graphics::vulkan
 
         ND_ASSERT_EXEC(vkCreateDevice(physicalDevice, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &device) == VK_SUCCESS);
 
-        const auto memoryProperties = getPhysicalDeviceMemoryProperties(physicalDevice);
+        const auto memoryProperties = getMemoryProperties(physicalDevice);
 
         return {.memory      = {.device = allocateMemory(cfg.memory.device, memoryProperties, device),
                                 .host   = allocateMemory(cfg.memory.host, memoryProperties, device)},
