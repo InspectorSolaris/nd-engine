@@ -457,9 +457,9 @@ namespace nd::src::graphics::vulkan
 
     struct CommandPoolObjectsCfg final
     {
-        arr<CommandPoolCfg, CommandPoolObjects::graphicsCount> graphics;
-        arr<CommandPoolCfg, CommandPoolObjects::transferCount> transfer;
-        arr<CommandPoolCfg, CommandPoolObjects::computeCount>  compute;
+        vec<CommandPoolCfg> graphics;
+        vec<CommandPoolCfg> transfer;
+        vec<CommandPoolCfg> compute;
     };
 
     struct CommandBufferCfg final
@@ -516,7 +516,8 @@ namespace nd::src::graphics::vulkan
                           opt<const PipelineLayoutObjects>::ref,
                           const vec<ShaderModule>&) noexcept(ND_ASSERT_NOTHROW);
 
-    CommandPoolObjectsCfg getCommandPoolObjectsCfg(opt<const Device>::ref) noexcept(ND_ASSERT_NOTHROW);
+    CommandPoolObjectsCfg
+    getCommandPoolObjectsCfg(opt<const Device>::ref, const u16) noexcept(ND_ASSERT_NOTHROW);
 
     struct VulkanObjectsCfg final
     {

@@ -310,12 +310,26 @@ namespace nd::src::graphics::vulkan
 
 
     CommandPoolObjectsCfg
-    getCommandPoolObjectsCfg(opt<const Device>::ref device) noexcept(ND_ASSERT_NOTHROW)
+    getCommandPoolObjectsCfg(opt<const Device>::ref device, const u16 imageCount) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
-        return {.graphics = {CommandPoolCfg {.queueFamily = device.queueFamily.graphics}},
-                .transfer = {CommandPoolCfg {.queueFamily = device.queueFamily.transfer}},
-                .compute  = {CommandPoolCfg {.queueFamily = device.queueFamily.compute}}};
+        const auto size = imageCount;
+
+        return {.graphics = getMapped<CommandPoolCfg>(size,
+                                                      [&device](const auto index)
+                                                      {
+                                                          return CommandPoolCfg {.queueFamily = device.queueFamily.graphics};
+                                                      }),
+                .transfer = getMapped<CommandPoolCfg>(size,
+                                                      [&device](const auto index)
+                                                      {
+                                                          return CommandPoolCfg {.queueFamily = device.queueFamily.transfer};
+                                                      }),
+                .compute  = getMapped<CommandPoolCfg>(size,
+                                                     [&device](const auto index)
+                                                     {
+                                                         return CommandPoolCfg {.queueFamily = device.queueFamily.compute};
+                                                     })};
     }
 } // namespace nd::src::graphics::vulkan

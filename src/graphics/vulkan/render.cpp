@@ -20,7 +20,9 @@ namespace nd::src::graphics::vulkan
 
         ND_SET_SCOPE();
 
-        static auto       loaded   = false;
+        static auto index  = 0U;
+        static auto loaded = false;
+
         static const auto indices  = vec<Index> {0, 1, 2};
         static const auto vertices = vec<Vertex> {{.position = {+0.0, -0.5, 0.0}, .color = {1.0, 0.0, 0.0}},
                                                   {.position = {+0.5, +0.5, 0.0}, .color = {0.0, 1.0, 0.0}},
@@ -45,9 +47,9 @@ namespace nd::src::graphics::vulkan
         opt<const DeviceMemory>::ref deviceMemory = objects.device.memory.device;
         opt<const DeviceMemory>::ref hostMemory   = objects.device.memory.host;
 
-        opt<const arr<CommandPool, CommandPoolObjects::graphicsCount>>::ref graphicsCommandPools = objects.commandPool.graphics;
-        opt<const arr<CommandPool, CommandPoolObjects::transferCount>>::ref transferCommandPools = objects.commandPool.transfer;
-        opt<const arr<CommandPool, CommandPoolObjects::computeCount>>::ref  computeCommandPools  = objects.commandPool.compute;
+        const vec<CommandPool> graphicsCommandPools = objects.commandPool.graphics;
+        const vec<CommandPool> transferCommandPools = objects.commandPool.transfer;
+        const vec<CommandPool> computeCommandPools  = objects.commandPool.compute;
 
         const auto commandBufferCfg = CommandBufferCfg {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1};
 
@@ -59,7 +61,6 @@ namespace nd::src::graphics::vulkan
         const auto transferCommandBuffer = transferCommandBuffers[0];
         const auto computeCommandBuffer  = computeCommandBuffers[0];
 
-        static auto       index             = 0U;
         static const auto semaphoresAcquire = createSemaphores(objects, {}, imageCount);
         static const auto semaphoresSubmit  = createSemaphores(objects, {}, imageCount);
         static const auto fencesGraphics    = createFences(objects, {}, imageCount);
@@ -144,7 +145,6 @@ namespace nd::src::graphics::vulkan
         vkCmdBindVertexBuffers(graphicsCommandBuffer, 0, vertexBuffers.size(), vertexBuffers.data(), vertexBufferOffsets.data());
         vkCmdBindIndexBuffer(graphicsCommandBuffer, indexBuffer, indexOffset, VK_INDEX_TYPE_UINT16);
 
-        // vkCmdDraw(graphicsCommandBuffer, vertices.size(), 1, 0, 0);
         vkCmdDrawIndexed(graphicsCommandBuffer, indices.size(), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(graphicsCommandBuffer);

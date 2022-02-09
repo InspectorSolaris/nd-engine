@@ -203,13 +203,9 @@ namespace nd::src::graphics::vulkan
 
     struct CommandPoolObjects final
     {
-        static const u16 graphicsCount = 1;
-        static const u16 transferCount = 1;
-        static const u16 computeCount  = 1;
-
-        arr<CommandPool, graphicsCount> graphics;
-        arr<CommandPool, transferCount> transfer;
-        arr<CommandPool, computeCount>  compute;
+        vec<CommandPool> graphics;
+        vec<CommandPool> transfer;
+        vec<CommandPool> compute;
     };
 
     // --------------- EE ---------------

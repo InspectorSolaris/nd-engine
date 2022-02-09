@@ -33,20 +33,16 @@ namespace nd::src::graphics::vulkan
         return commandPool;
     }
 
-    template<u16 N>
-    arr<CommandPool, N>
-    createCommandPools(const arr<CommandPoolCfg, N>& cfg, const VkDevice device) noexcept(ND_ASSERT_NOTHROW)
+    vec<CommandPool>
+    createCommandPools(const vec<CommandPoolCfg>& cfg, const VkDevice device) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
-        auto commandPools = arr<CommandPool, N> {};
-
-        for(u16 i = 0; i < N; ++i)
-        {
-            commandPools[i] = createCommandPool(cfg[i], device);
-        }
-
-        return commandPools;
+        return getMapped<CommandPoolCfg, CommandPool>(cfg,
+                                                      [device](const auto& cfg, const auto index)
+                                                      {
+                                                          return createCommandPool(cfg, device);
+                                                      });
     }
 
     CommandPoolObjects
@@ -54,9 +50,9 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {.graphics = createCommandPools<CommandPoolObjects::graphicsCount>(cfg.graphics, device),
-                .transfer = createCommandPools<CommandPoolObjects::transferCount>(cfg.transfer, device),
-                .compute  = createCommandPools<CommandPoolObjects::computeCount>(cfg.compute, device)};
+        return {.graphics = createCommandPools(cfg.graphics, device),
+                .transfer = createCommandPools(cfg.transfer, device),
+                .compute  = createCommandPools(cfg.compute, device)};
     }
 
     vec<CommandBuffer>
