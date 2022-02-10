@@ -2,19 +2,21 @@
 
 #include "pch.hpp"
 
+#include "types.hpp"
+
 namespace nd::src::tools
 {
     class Scope final
     {
     public:
-        using Event = std::function<void(const std::shared_ptr<spdlog::logger>& logPtr, const std::string_view name, const int depth)>;
+        using Event = func<void(const shared<logger>&, const str_v, const u64)>;
 
-        Scope(const std::string_view name, const Event& onBegin, const Event& onEnd) noexcept;
+        Scope(const str_v, const Event&, const Event&) noexcept;
 
         ~Scope();
 
         static void
-        set(const std::shared_ptr<spdlog::logger> logPtr) noexcept
+        set(const shared<logger> logPtr) noexcept
         {
             assert(s_logPtr == nullptr);
 
@@ -22,16 +24,16 @@ namespace nd::src::tools
         }
 
     private:
-        static std::shared_ptr<spdlog::logger> s_logPtr;
-        static int                             s_depth;
+        static shared<logger> s_logPtr;
+        static u64            s_depth;
 
-        const Event&           onEnd_ {};
-        const std::string_view name_ {};
+        const Event& onEnd_ {};
+        const str_v  name_ {};
     };
 
     void
-    onScopeBegin(const std::shared_ptr<spdlog::logger>& logPtr, const std::string_view name, const int depth) noexcept;
+    onScopeBegin(const shared<logger>&, const str_v, const u64) noexcept;
 
     void
-    onScopeEnd(const std::shared_ptr<spdlog::logger>& logPtr, const std::string_view name, const int depth) noexcept;
+    onScopeEnd(const shared<logger>&, const str_v, const u64) noexcept;
 } // namespace nd::src::tools

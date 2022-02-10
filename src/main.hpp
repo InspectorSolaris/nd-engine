@@ -1,9 +1,9 @@
 #pragma once
 
-#include "vulkan/context_configurations_builder.hpp"
-#include "vulkan/context_initializers_builder.hpp"
-#include "vulkan/context.hpp"
-#include "glfw/context.hpp"
+#include "tools.hpp"
+
+#include "glfw/glfw_vulkan.hpp"
+#include "vulkan/render.hpp"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/rotating_file_sink.h>
