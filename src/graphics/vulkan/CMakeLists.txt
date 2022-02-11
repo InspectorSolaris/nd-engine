@@ -38,6 +38,7 @@ target_link_libraries(${TARGET_NAME}
     PUBLIC nd-src-libs-glm
     PUBLIC nd-src-tools)
 
+target_include_directories(${TARGET_NAME} INTERFACE "")
 target_precompile_headers(${TARGET_NAME} PRIVATE pch.hpp)
 
 add_custom_command(

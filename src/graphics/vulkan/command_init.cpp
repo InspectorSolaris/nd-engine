@@ -8,18 +8,18 @@ namespace nd::src::graphics::vulkan
     void
     resetCommandPools(gsl::span<const CommandPool>  commandPools,
                       const VkDevice                device,
-                      const VkCommandPoolResetFlags flags) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+                      const VkCommandPoolResetFlags flags) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         for(opt<const CommandPool>::ref commandPool: commandPools)
         {
-            ND_VULKAN_ASSERT_EXEC(vkResetCommandPool(device, commandPool, flags));
+            ND_VK_ASSERT_EXEC(vkResetCommandPool(device, commandPool, flags));
         }
     }
 
     CommandPool
-    createCommandPool(opt<const CommandPoolCfg>::ref cfg, const VkDevice device) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+    createCommandPool(opt<const CommandPoolCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -30,13 +30,13 @@ namespace nd::src::graphics::vulkan
 
         VkCommandPool commandPool;
 
-        ND_VULKAN_ASSERT_EXEC(vkCreateCommandPool(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &commandPool));
+        ND_VK_ASSERT_EXEC(vkCreateCommandPool(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &commandPool));
 
         return commandPool;
     }
 
     vec<CommandPool>
-    createCommandPools(const vec<CommandPoolCfg>& cfg, const VkDevice device) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+    createCommandPools(const vec<CommandPoolCfg>& cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -48,7 +48,7 @@ namespace nd::src::graphics::vulkan
     }
 
     CommandPoolObjects
-    createCommandPoolObjects(opt<const CommandPoolObjectsCfg>::ref cfg, const VkDevice device) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+    createCommandPoolObjects(opt<const CommandPoolObjectsCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -60,7 +60,7 @@ namespace nd::src::graphics::vulkan
     vec<CommandBuffer>
     allocateCommandBuffers(opt<const CommandBufferCfg>::ref cfg,
                            opt<const CommandPool>::ref      commandPool,
-                           const VkDevice                   device) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+                           const VkDevice                   device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -72,7 +72,7 @@ namespace nd::src::graphics::vulkan
 
         auto commandBuffers = vec<CommandBuffer>(cfg.count);
 
-        ND_VULKAN_ASSERT_EXEC(vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data()));
+        ND_VK_ASSERT_EXEC(vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data()));
 
         return commandBuffers;
     }
@@ -80,7 +80,7 @@ namespace nd::src::graphics::vulkan
     vec<CommandBuffer>
     allocateCommandBuffers(opt<const CommandBufferCfg>::ref cfg,
                            const vec<CommandPool>&          commandPools,
-                           const VkDevice                   device) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+                           const VkDevice                   device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 

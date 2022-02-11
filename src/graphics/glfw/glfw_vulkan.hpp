@@ -3,7 +3,9 @@
 #include "pch.hpp"
 #include "tools.hpp"
 
-#include "window.hpp"
+#include "shared_init.hpp"
+
+#include "window_init.hpp"
 
 namespace nd::src::graphics::glfw
 {
@@ -11,5 +13,5 @@ namespace nd::src::graphics::glfw
     getGlfwRequiredExtensions() noexcept;
 
     VkSurfaceKHR
-    createSurface(const GlfwWindow, const VkInstance, const VkAllocationCallbacks*);
+    createSurface(const GlfwWindow, const VkInstance);
 } // namespace nd::src::graphics::glfw

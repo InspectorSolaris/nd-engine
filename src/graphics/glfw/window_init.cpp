@@ -1,4 +1,4 @@
-#include "window.hpp"
+#include "window_init.hpp"
 #include "tools_runtime.hpp"
 
 namespace nd::src::graphics::glfw

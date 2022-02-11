@@ -53,7 +53,7 @@ main()
 
     const auto window = getWindow({"nd-engine", 800, 600});
 
-    const auto createSurfaceLambda = bind(nd::src::graphics::glfw::createSurface, ref(window.handle), _1, ND_VULKAN_ALLOCATION_CALLBACKS);
+    const auto createSurfaceLambda = bind(nd::src::graphics::glfw::createSurface, ref(window.handle), _1);
 
     auto vulkanObjects = createVulkanObjects({.applicationName = "nd-application",
                                               .engineName      = "nd-engine",

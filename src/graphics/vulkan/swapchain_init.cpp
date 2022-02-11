@@ -10,73 +10,73 @@ namespace nd::src::graphics::vulkan
                       const VkSwapchainKHR swapchain,
                       const VkSemaphore    semaphore,
                       const VkFence        fence,
-                      const u64            timeout) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+                      const u64            timeout) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         u32 index;
 
-        ND_VULKAN_ASSERT_EXEC(vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, &index));
+        ND_VK_ASSERT_EXEC(vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, &index));
 
         return index;
     }
 
     vec<Image>
-    getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+    getSwapchainImages(const VkDevice device, const VkSwapchainKHR swapchain) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         u32 count;
 
-        ND_VULKAN_ASSERT_EXEC(vkGetSwapchainImagesKHR(device, swapchain, &count, nullptr));
+        ND_VK_ASSERT_EXEC(vkGetSwapchainImagesKHR(device, swapchain, &count, nullptr));
 
         auto images = vec<Image>(count);
 
-        ND_VULKAN_ASSERT_EXEC(vkGetSwapchainImagesKHR(device, swapchain, &count, images.data()));
+        ND_VK_ASSERT_EXEC(vkGetSwapchainImagesKHR(device, swapchain, &count, images.data()));
 
         return images;
     }
 
     vec<VkSurfaceFormatKHR>
-    getSurfaceFormats(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+    getSurfaceFormats(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         u32 count;
 
-        ND_VULKAN_ASSERT_EXEC(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, nullptr));
+        ND_VK_ASSERT_EXEC(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, nullptr));
 
         auto formats = vec<VkSurfaceFormatKHR>(count);
 
-        ND_VULKAN_ASSERT_EXEC(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, formats.data()));
+        ND_VK_ASSERT_EXEC(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, formats.data()));
 
         return formats;
     }
 
     vec<VkPresentModeKHR>
-    getSurfacePresentModes(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+    getSurfacePresentModes(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         u32 count;
 
-        ND_VULKAN_ASSERT_EXEC(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, nullptr));
+        ND_VK_ASSERT_EXEC(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, nullptr));
 
         auto presentModes = vec<VkPresentModeKHR>(count);
 
-        ND_VULKAN_ASSERT_EXEC(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, presentModes.data()));
+        ND_VK_ASSERT_EXEC(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, presentModes.data()));
 
         return presentModes;
     }
 
     VkSurfaceCapabilitiesKHR
-    getSurfaceCapabilities(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+    getSurfaceCapabilities(const VkPhysicalDevice physicalDevice, const VkSurfaceKHR surface) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         VkSurfaceCapabilitiesKHR capabilities;
 
-        ND_VULKAN_ASSERT_EXEC(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &capabilities));
+        ND_VK_ASSERT_EXEC(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &capabilities));
 
         return capabilities;
     }
@@ -84,13 +84,13 @@ namespace nd::src::graphics::vulkan
     bool
     isSurfaceQueueFamilySupported(const VkPhysicalDevice physicalDevice,
                                   const VkSurfaceKHR     surface,
-                                  const QueueFamily&     queueFamily) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+                                  const QueueFamily&     queueFamily) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         VkBool32 supported;
 
-        ND_VULKAN_ASSERT_EXEC(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamily.index, surface, &supported));
+        ND_VK_ASSERT_EXEC(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamily.index, surface, &supported));
 
         return supported;
     }
@@ -175,7 +175,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Swapchain
-    createSwapchain(opt<const SwapchainCfg>::ref cfg, const VkDevice device) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW)
+    createSwapchain(opt<const SwapchainCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -218,7 +218,7 @@ namespace nd::src::graphics::vulkan
 
         VkSwapchainKHR swapchain;
 
-        ND_VULKAN_ASSERT_EXEC(vkCreateSwapchainKHR(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &swapchain));
+        ND_VK_ASSERT_EXEC(vkCreateSwapchainKHR(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &swapchain));
 
         return {.queueFamily = cfg.queueFamily.graphics,
                 .handle      = swapchain,
@@ -229,7 +229,7 @@ namespace nd::src::graphics::vulkan
     vec<ImageView>
     createSwapchainImageViews(opt<const ImageViewCfg>::ref cfg,
                               const VkDevice               device,
-                              const vec<VkImage>&          swapchainImages) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW)
+                              const vec<VkImage>&          swapchainImages) noexcept(ND_VK_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -243,7 +243,7 @@ namespace nd::src::graphics::vulkan
     vec<Framebuffer>
     createSwapchainFramebuffers(opt<const FramebufferCfg>::ref cfg,
                                 const VkDevice                 device,
-                                const vec<VkImageView>&        swapchainImageViews) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW)
+                                const vec<VkImageView>&        swapchainImageViews) noexcept(ND_VK_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 

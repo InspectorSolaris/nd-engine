@@ -28,13 +28,13 @@ namespace nd::src::graphics::glfw
     }
 
     VkSurfaceKHR
-    createSurface(const GlfwWindow window, const VkInstance instance, const VkAllocationCallbacks* allocationCallbacks)
+    createSurface(const GlfwWindow window, const VkInstance instance)
     {
         ND_SET_SCOPE();
 
         VkSurfaceKHR surface;
 
-        ND_ASSERT_EXEC(glfwCreateWindowSurface(instance, window, allocationCallbacks, &surface) == VK_SUCCESS);
+        ND_VK_ASSERT_EXEC(glfwCreateWindowSurface(instance, window, ND_VK_ALLOCATION_CALLBACKS, &surface));
 
         return surface;
     }

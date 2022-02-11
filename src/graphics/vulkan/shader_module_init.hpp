@@ -8,8 +8,8 @@ namespace nd::src::graphics::vulkan
     getShaderModuleCode(const str_v path) noexcept(ND_ASSERT_NOTHROW);
 
     ShaderModule
-    createShaderModule(opt<const ShaderModuleCfg>::ref, const VkDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
+    createShaderModule(opt<const ShaderModuleCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
 
     vec<ShaderModule>
-    createShaderModules(const span<const ShaderModuleCfg>, const VkDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
+    createShaderModules(const span<const ShaderModuleCfg>, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
 } // namespace nd::src::graphics::vulkan

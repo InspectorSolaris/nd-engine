@@ -6,7 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     RenderPass
-    createRenderPass(opt<const RenderPassCfg>::ref cfg, const VkDevice device) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
+    createRenderPass(opt<const RenderPassCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -38,7 +38,7 @@ namespace nd::src::graphics::vulkan
 
         VkRenderPass renderPass;
 
-        ND_VULKAN_ASSERT_EXEC(vkCreateRenderPass(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &renderPass));
+        ND_VK_ASSERT_EXEC(vkCreateRenderPass(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &renderPass));
 
         return renderPass;
     }
