@@ -14,7 +14,7 @@ namespace nd::src::graphics::vulkan
     };
 
     void
-    draw(VulkanObjects& objects, const f64 dt) noexcept(ND_ASSERT_NOTHROW)
+    draw(VulkanObjects& objects, const f64 dt) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW)
     {
         using namespace std;
 
@@ -124,7 +124,7 @@ namespace nd::src::graphics::vulkan
 
         const auto graphicsCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
-        ND_ASSERT_EXEC(vkBeginCommandBuffer(graphicsCommandBuffer, &graphicsCommandBufferBeginInfo) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkBeginCommandBuffer(graphicsCommandBuffer, &graphicsCommandBufferBeginInfo));
 
         const auto width  = static_cast<u32>(objects.swapchain.width);
         const auto height = static_cast<u32>(objects.swapchain.height);
@@ -154,7 +154,7 @@ namespace nd::src::graphics::vulkan
 
         vkCmdEndRenderPass(graphicsCommandBuffer);
 
-        ND_ASSERT_EXEC(vkEndCommandBuffer(graphicsCommandBuffer) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkEndCommandBuffer(graphicsCommandBuffer));
 
         const auto submitInfoCfg = SubmitInfoCfg {.stages = std::array {VkPipelineStageFlags {} | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
                                                   .semaphoresWait   = std::array {semaphoresAcquire[index]},

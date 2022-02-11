@@ -25,11 +25,11 @@ namespace nd::src::graphics::vulkan
                     const VkPhysicalDevice       physicalDevice) noexcept(ND_ASSERT_NOTHROW);
 
     DeviceMemory
-    allocateMemory(opt<const DeviceMemoryCfg>::ref, const VkPhysicalDeviceMemoryProperties&, const VkDevice) noexcept(ND_ASSERT_NOTHROW);
+    allocateMemory(opt<const DeviceMemoryCfg>::ref, const VkPhysicalDeviceMemoryProperties&, const VkDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     VkDeviceSize
-    bindBufferMemory(const VkBuffer, opt<const DeviceMemory>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_ASSERT_NOTHROW);
+    bindBufferMemory(const VkBuffer, opt<const DeviceMemory>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     VkDeviceSize
-    bindImageMemory(const VkImage, opt<const DeviceMemory>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_ASSERT_NOTHROW);
+    bindImageMemory(const VkImage, opt<const DeviceMemory>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 } // namespace nd::src::graphics::vulkan

@@ -6,7 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     ImageView
-    createImageView(opt<const ImageViewCfg>::ref cfg, const VkDevice device, const VkImage image) noexcept(ND_ASSERT_NOTHROW)
+    createImageView(opt<const ImageViewCfg>::ref cfg, const VkDevice device, const VkImage image) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -21,13 +21,15 @@ namespace nd::src::graphics::vulkan
 
         VkImageView imageView;
 
-        ND_ASSERT_EXEC(vkCreateImageView(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &imageView) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkCreateImageView(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &imageView));
 
         return imageView;
     }
 
     Framebuffer
-    createFramebuffer(opt<const FramebufferCfg>::ref cfg, const VkDevice device, const vec<VkImageView>& imageViews) noexcept(ND_ASSERT_NOTHROW)
+    createFramebuffer(opt<const FramebufferCfg>::ref cfg,
+                      const VkDevice                 device,
+                      const vec<VkImageView>&        imageViews) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -43,7 +45,7 @@ namespace nd::src::graphics::vulkan
 
         VkFramebuffer framebuffer;
 
-        ND_ASSERT_EXEC(vkCreateFramebuffer(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &framebuffer) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkCreateFramebuffer(device, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &framebuffer));
 
         return framebuffer;
     }

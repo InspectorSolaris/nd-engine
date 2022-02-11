@@ -5,8 +5,6 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-
-
     struct MemoryState final
     {
         vec<VkDeviceSize> offsets;
@@ -37,8 +35,6 @@ namespace nd::src::graphics::vulkan
 
         return memoryStates[physicalDevice];
     }
-
-
 
     VkPhysicalDeviceMemoryProperties
     getMemoryProperties(const VkPhysicalDevice physicalDevice) noexcept
@@ -129,7 +125,7 @@ namespace nd::src::graphics::vulkan
     DeviceMemory
     allocateMemory(opt<const DeviceMemoryCfg>::ref         cfg,
                    const VkPhysicalDeviceMemoryProperties& memoryProperties,
-                   const VkDevice                          device) noexcept(ND_ASSERT_NOTHROW)
+                   const VkDevice                          device) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -143,7 +139,7 @@ namespace nd::src::graphics::vulkan
 
         VkDeviceMemory deviceMemory;
 
-        ND_ASSERT_EXEC(vkAllocateMemory(device, &allocateInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &deviceMemory) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkAllocateMemory(device, &allocateInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &deviceMemory));
 
         return {.handle = deviceMemory, .typeIndex = memoryTypeIndex, .heapIndex = memoryHeapIndex};
     }
@@ -152,14 +148,14 @@ namespace nd::src::graphics::vulkan
     bindBufferMemory(const VkBuffer               buffer,
                      opt<const DeviceMemory>::ref memory,
                      const VkDevice               device,
-                     const VkPhysicalDevice       physicalDevice) noexcept(ND_ASSERT_NOTHROW)
+                     const VkPhysicalDevice       physicalDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         const auto requirements = getBufferMemoryRequirements(buffer, device);
         const auto offset       = getMemoryOffset(memory, requirements, physicalDevice);
 
-        ND_ASSERT_EXEC(vkBindBufferMemory(device, buffer, memory.handle, offset) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkBindBufferMemory(device, buffer, memory.handle, offset));
 
         return getMemoryState(physicalDevice).offsets[memory.heapIndex] = offset;
     }
@@ -168,14 +164,14 @@ namespace nd::src::graphics::vulkan
     bindImageMemory(const VkImage                image,
                     opt<const DeviceMemory>::ref memory,
                     const VkDevice               device,
-                    const VkPhysicalDevice       physicalDevice) noexcept(ND_ASSERT_NOTHROW)
+                    const VkPhysicalDevice       physicalDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         const auto requirements = getImageMemoryRequirements(image, device);
         const auto offset       = getMemoryOffset(memory, requirements, physicalDevice);
 
-        ND_ASSERT_EXEC(vkBindImageMemory(device, image, memory.handle, offset) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkBindImageMemory(device, image, memory.handle, offset));
 
         return getMemoryState(physicalDevice).offsets[memory.heapIndex] = offset;
     }

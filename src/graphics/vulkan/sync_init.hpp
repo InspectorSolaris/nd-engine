@@ -17,14 +17,14 @@ namespace nd::src::graphics::vulkan
     };
 
     Semaphore
-    createSemaphore(VulkanObjects&, opt<const SemaphoreCfg>::ref) noexcept(ND_VULKAN_ALLOCATION_CALLBACKS);
+    createSemaphore(VulkanObjects&, opt<const SemaphoreCfg>::ref) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     vec<Semaphore>
-    createSemaphores(VulkanObjects&, opt<const SemaphoreCfg>::ref, const u16) noexcept(ND_VULKAN_ALLOCATION_CALLBACKS);
+    createSemaphores(VulkanObjects&, opt<const SemaphoreCfg>::ref, const u16) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     Fence
-    createFence(VulkanObjects&, opt<const FenceCfg>::ref) noexcept(ND_VULKAN_ALLOCATION_CALLBACKS);
+    createFence(VulkanObjects&, opt<const FenceCfg>::ref) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     vec<Fence>
-    createFences(VulkanObjects&, opt<const FenceCfg>::ref, const u16) noexcept(ND_VULKAN_ALLOCATION_CALLBACKS);
+    createFences(VulkanObjects&, opt<const FenceCfg>::ref, const u16) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 } // namespace nd::src::graphics::vulkan

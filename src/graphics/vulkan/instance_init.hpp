@@ -5,16 +5,16 @@
 namespace nd::src::graphics::vulkan
 {
     vec<VkLayerProperties>
-    getInstanceLayerProperties() noexcept;
+    getInstanceLayerProperties() noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     vec<VkExtensionProperties>
-    getInstanceExtensionProperties() noexcept;
+    getInstanceExtensionProperties() noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     bool
-    isInstanceLayersSupported(const vec<str>&) noexcept;
+    isInstanceLayersSupported(const vec<str>&) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     bool
-    isInstanceExtensionsSupported(const vec<str>&) noexcept;
+    isInstanceExtensionsSupported(const vec<str>&) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
-    Instance createInstance(opt<const InstanceCfg>::ref) noexcept(ND_ASSERT_NOTHROW);
+    Instance createInstance(opt<const InstanceCfg>::ref) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

@@ -6,33 +6,33 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     vec<VkPhysicalDevice>
-    getPhysicalDevices(const VkInstance instance) noexcept
+    getPhysicalDevices(const VkInstance instance) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         u32 count;
 
-        vkEnumeratePhysicalDevices(instance, &count, nullptr);
+        ND_VULKAN_ASSERT_EXEC(vkEnumeratePhysicalDevices(instance, &count, nullptr));
 
         auto physicalDevices = vec<VkPhysicalDevice>(count);
 
-        vkEnumeratePhysicalDevices(instance, &count, physicalDevices.data());
+        ND_VULKAN_ASSERT_EXEC(vkEnumeratePhysicalDevices(instance, &count, physicalDevices.data()));
 
         return physicalDevices;
     }
 
     vec<VkExtensionProperties>
-    getPhysicalDeviceExtensionProperties(const VkPhysicalDevice physicalDevice) noexcept
+    getPhysicalDeviceExtensionProperties(const VkPhysicalDevice physicalDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
         u32 count;
 
-        vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, nullptr);
+        ND_VULKAN_ASSERT_EXEC(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, nullptr));
 
         auto properties = vec<VkExtensionProperties>(count);
 
-        vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, properties.data());
+        ND_VULKAN_ASSERT_EXEC(vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &count, properties.data()));
 
         return properties;
     }
@@ -98,7 +98,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice physicalDevice, const vec<str>& extensions) noexcept
+    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice physicalDevice, const vec<str>& extensions) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -166,7 +166,7 @@ namespace nd::src::graphics::vulkan
     }
 
     PhysicalDevice
-    getPhysicalDevice(opt<const PhysicalDeviceCfg>::ref cfg, const VkInstance instance) noexcept(ND_ASSERT_NOTHROW)
+    getPhysicalDevice(opt<const PhysicalDeviceCfg>::ref cfg, const VkInstance instance) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -196,7 +196,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Device
-    createDevice(opt<const DeviceCfg>::ref cfg, const VkPhysicalDevice physicalDevice) noexcept(ND_ASSERT_NOTHROW)
+    createDevice(opt<const DeviceCfg>::ref cfg, const VkPhysicalDevice physicalDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -238,7 +238,7 @@ namespace nd::src::graphics::vulkan
 
         VkDevice device;
 
-        ND_ASSERT_EXEC(vkCreateDevice(physicalDevice, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &device) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkCreateDevice(physicalDevice, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &device));
 
         const auto memoryProperties = getMemoryProperties(physicalDevice);
 

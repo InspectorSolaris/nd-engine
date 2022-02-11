@@ -6,7 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     Semaphore
-    createSemaphore(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg) noexcept(ND_VULKAN_ALLOCATION_CALLBACKS)
+    createSemaphore(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -14,7 +14,7 @@ namespace nd::src::graphics::vulkan
 
         VkSemaphore semaphore;
 
-        ND_ASSERT_EXEC(vkCreateSemaphore(objects.device.handle, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &semaphore) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkCreateSemaphore(objects.device.handle, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &semaphore));
 
         objects.semaphores.push_back(semaphore);
 
@@ -22,7 +22,7 @@ namespace nd::src::graphics::vulkan
     }
 
     vec<Semaphore>
-    createSemaphores(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg, const u16 count) noexcept(ND_VULKAN_ALLOCATION_CALLBACKS)
+    createSemaphores(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg, const u16 count) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -34,7 +34,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Fence
-    createFence(VulkanObjects& objects, opt<const FenceCfg>::ref cfg) noexcept(ND_VULKAN_ALLOCATION_CALLBACKS)
+    createFence(VulkanObjects& objects, opt<const FenceCfg>::ref cfg) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -42,7 +42,7 @@ namespace nd::src::graphics::vulkan
 
         VkFence fence;
 
-        ND_ASSERT_EXEC(vkCreateFence(objects.device.handle, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &fence) == VK_SUCCESS);
+        ND_VULKAN_ASSERT_EXEC(vkCreateFence(objects.device.handle, &createInfo, ND_VULKAN_ALLOCATION_CALLBACKS, &fence));
 
         objects.fences.push_back(fence);
 
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
     }
 
     vec<Fence>
-    createFences(VulkanObjects& objects, opt<const FenceCfg>::ref cfg, const u16 count) noexcept(ND_VULKAN_ALLOCATION_CALLBACKS)
+    createFences(VulkanObjects& objects, opt<const FenceCfg>::ref cfg, const u16 count) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW)
     {
         ND_SET_SCOPE();
 

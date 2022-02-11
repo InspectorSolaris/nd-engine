@@ -10,22 +10,22 @@ namespace nd::src::graphics::vulkan
                       const VkSwapchainKHR,
                       const VkSemaphore = VK_NULL_HANDLE,
                       const VkFence     = VK_NULL_HANDLE,
-                      const u64         = std::numeric_limits<u64>::max()) noexcept;
+                      const u64         = std::numeric_limits<u64>::max()) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     vec<Image>
-    getSwapchainImages(const VkDevice, const VkSwapchainKHR) noexcept;
+    getSwapchainImages(const VkDevice, const VkSwapchainKHR) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     vec<VkSurfaceFormatKHR>
-    getSurfaceFormats(const VkPhysicalDevice, const VkSurfaceKHR) noexcept;
+    getSurfaceFormats(const VkPhysicalDevice, const VkSurfaceKHR) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     vec<VkPresentModeKHR>
-    getSurfacePresentModes(const VkPhysicalDevice, const VkSurfaceKHR) noexcept;
+    getSurfacePresentModes(const VkPhysicalDevice, const VkSurfaceKHR) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     VkSurfaceCapabilitiesKHR
-    getSurfaceCapabilities(const VkPhysicalDevice, const VkSurfaceKHR) noexcept;
+    getSurfaceCapabilities(const VkPhysicalDevice, const VkSurfaceKHR) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     bool
-    isSurfaceQueueFamilySupported(const VkPhysicalDevice, const VkSurfaceKHR, const QueueFamily&) noexcept;
+    isSurfaceQueueFamilySupported(const VkPhysicalDevice, const VkSurfaceKHR, const QueueFamily&) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     bool
     isSwapchainImageFormatSupported(opt<const SwapchainCfg>::ref, const vec<VkSurfaceFormatKHR>&) noexcept;
@@ -52,11 +52,15 @@ namespace nd::src::graphics::vulkan
     getSwapchainImageExtent(opt<const SwapchainCfg>::ref, const VkSurfaceCapabilitiesKHR&) noexcept;
 
     Swapchain
-    createSwapchain(opt<const SwapchainCfg>::ref, const VkDevice) noexcept(ND_ASSERT_NOTHROW);
+    createSwapchain(opt<const SwapchainCfg>::ref, const VkDevice) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW);
 
     vec<ImageView>
-    createSwapchainImageViews(opt<const ImageViewCfg>::ref, const VkDevice, const vec<VkImage>&) noexcept(ND_ASSERT_NOTHROW);
+    createSwapchainImageViews(opt<const ImageViewCfg>::ref,
+                              const VkDevice,
+                              const vec<VkImage>&) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW&& ND_VULKAN_ASSERT_EXEC_NOTHROW);
 
     vec<Framebuffer>
-    createSwapchainFramebuffers(opt<const FramebufferCfg>::ref, const VkDevice, const vec<VkImageView>&) noexcept(ND_ASSERT_NOTHROW);
+    createSwapchainFramebuffers(opt<const FramebufferCfg>::ref,
+                                const VkDevice,
+                                const vec<VkImageView>&) noexcept(ND_VULKAN_ASSERT_EXEC_NOTHROW&& ND_VULKAN_ASSERT_EXEC_NOTHROW);
 } // namespace nd::src::graphics::vulkan
