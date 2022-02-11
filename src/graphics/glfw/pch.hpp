@@ -23,7 +23,7 @@
 #include <forward_list>
 
 #include <span>
-#include <ranges>
+// #include <ranges>
 
 #include <string>
 #include <string_view>
@@ -56,3 +56,5 @@
 #include "GLFW/glfw3.h"
 #include "spdlog/spdlog.h"
 #include "gsl/gsl"
+
+#include "range/v3/all.hpp"

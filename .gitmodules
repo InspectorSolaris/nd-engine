@@ -13,3 +13,6 @@
 [submodule "src/libs/gsl"]
 	path = src/libs/gsl
 	url = https://github.com/microsoft/GSL
+[submodule "src/libs/range-v3"]
+	path = src/libs/range-v3
+	url = https://github.com/ericniebler/range-v3
