@@ -22,12 +22,16 @@
 #include <list>
 #include <forward_list>
 
+#include <span>
+#include <ranges>
+
 #include <string>
 #include <string_view>
 
 #include <optional>
 #include <algorithm>
 #include <functional>
+#include <numbers>
 
 #include <atomic>
 #include <condition_variable>

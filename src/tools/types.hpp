@@ -15,6 +15,10 @@ using u64 = uint64_t;
 using f32 = float;
 using f64 = double;
 
+using std::set;
+using std::map;
+using std::span;
+
 template<typename T>
 using shared = std::shared_ptr<T>;
 
@@ -32,12 +36,6 @@ using arr = std::array<T, S>;
 
 template<typename T>
 using vec = std::vector<T>;
-
-template<typename T>
-using set = std::set<T>;
-
-template<typename K, typename V>
-using map = std::map<K, V>;
 
 using str   = std::string;
 using str_v = std::string_view;

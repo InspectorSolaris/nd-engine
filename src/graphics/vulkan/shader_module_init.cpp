@@ -46,11 +46,11 @@ namespace nd::src::graphics::vulkan
     }
 
     vec<ShaderModule>
-    createShaderModules(const vec<ShaderModuleCfg>& cfgs, const VkDevice device) noexcept(ND_ASSERT_NOTHROW)
+    createShaderModules(const vec<ShaderModuleCfg>& cfg, const VkDevice device) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
-        return getMapped<ShaderModuleCfg, ShaderModule>(cfgs,
+        return getMapped<ShaderModuleCfg, ShaderModule>(cfg,
                                                         [device](const auto& cfg, const auto index)
                                                         {
                                                             return createShaderModule(cfg, device);

@@ -83,6 +83,8 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
+        vkDeviceWaitIdle(objects.device.handle);
+
         for(opt<const Semaphore>::ref semaphore: objects.semaphores)
         {
             vkDestroySemaphore(objects.device.handle, semaphore, ND_VULKAN_ALLOCATION_CALLBACKS);

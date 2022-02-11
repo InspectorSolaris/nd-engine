@@ -66,11 +66,11 @@ namespace nd::src::graphics::vulkan
                 return QueueFamily {properties.queueFlags, static_cast<u16>(properties.queueCount), static_cast<u16>(index)};
             });
 
-        return getFiltered<VkQueueFamilyProperties>(queueFamilies,
-                                                    [queueFlags](const auto& queueFamily, const auto index)
-                                                    {
-                                                        return isContainsAny(queueFamily.queueFlags, queueFlags);
-                                                    });
+        return getFiltered<QueueFamily>(queueFamilies,
+                                        [queueFlags](const auto& queueFamily, const auto index)
+                                        {
+                                            return isContainsAny(queueFamily.queueFlags, queueFlags);
+                                        });
     }
 
     VkPhysicalDeviceFeatures

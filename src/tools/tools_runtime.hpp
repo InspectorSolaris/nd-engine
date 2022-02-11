@@ -50,7 +50,7 @@
 #if defined(NDEBUG)
     #define ND_ASSERT_EXEC(code) (code)
     #define ND_ASSERT(code)
-    #define ND_ASSERT_STATIC
+    #define ND_ASSERT_STATIC(code)
 #else
     #define ND_ASSERT_EXEC(code)              \
         if(!(code))                           \
@@ -90,15 +90,15 @@ namespace nd::src::tools
     vec<const char*>
     getRawStrings(const vec<str>&) noexcept;
 
-    template<typename T, typename FilterT, typename CollectionT = vec<T>>
-    CollectionT
-    getFiltered(const CollectionT& ts, const FilterT& filter) noexcept
+    template<typename Type, typename FilterType>
+    vec<Type>
+    getFiltered(const span<const Type> collection, const FilterType&& filter) noexcept
     {
-        auto filtered = CollectionT {};
+        auto filtered = vec<Type> {};
 
-        for(u64 index = 0; index < ts.size(); ++index)
+        for(u64 index = 0; index < collection.size(); ++index)
         {
-            const auto& t = ts[index];
+            const auto& t = collection[index];
 
             if(filter(t, index))
             {
@@ -109,11 +109,55 @@ namespace nd::src::tools
         return filtered;
     }
 
-    template<typename T, typename MapT, typename CollectionT = vec<T>>
-    CollectionT
-    getMapped(const u64 size, const MapT& map) noexcept
+    template<typename Type, typename MapType>
+    vec<Type>
+    getMappedFlat(const u64 size, const MapType&& map) noexcept
     {
-        auto mapped = CollectionT {};
+        auto mapped = vec<Type> {};
+
+        mapped.reserve(size);
+
+        for(u64 index = 0; index < size; ++index)
+        {
+            auto mappedItems = map(index);
+
+            using std::begin;
+            using std::end;
+            using std::make_move_iterator;
+
+            mapped.insert(end(mapped), make_move_iterator(begin(mappedItems)), make_move_iterator(end(mappedItems)));
+        }
+
+        return mapped;
+    }
+
+    template<typename Type, typename TypeResult, typename MapType>
+    vec<TypeResult>
+    getMappedFlat(const span<const Type> collection, const MapType&& map) noexcept
+    {
+        auto mapped = vec<TypeResult> {};
+
+        mapped.reserve(collection.size());
+
+        for(u64 index = 0; index < collection.size(); ++index)
+        {
+            auto mappedItems = map(collection[index], index);
+
+            using std::begin;
+            using std::end;
+            using std::make_move_iterator;
+
+            mapped.insert(end(mapped), make_move_iterator(begin(mappedItems)), make_move_iterator(end(mappedItems)));
+        }
+
+        return mapped;
+    }
+
+    template<typename Type, typename MapType>
+    vec<Type>
+    getMapped(const u64 size, const MapType&& map) noexcept
+    {
+        auto mapped = vec<Type> {};
 
         mapped.reserve(size);
 
@@ -125,25 +169,25 @@ namespace nd::src::tools
         return mapped;
     }
 
-    template<typename TIn, typename T, typename MapT, typename CollectionTIn = vec<TIn>, typename CollectionT = vec<T>>
-    CollectionT
-    getMapped(const CollectionTIn& tins, const MapT& map) noexcept
+    template<typename Type, typename TypeResult, typename MapType>
+    vec<TypeResult>
+    getMapped(const span<const Type> collection, const MapType&& map) noexcept
     {
-        auto mapped = CollectionT {};
+        auto mapped = vec<TypeResult> {};
 
-        mapped.reserve(tins.size());
+        mapped.reserve(collection.size());
 
-        for(u64 index = 0; index < tins.size(); ++index)
+        for(u64 index = 0; index < collection.size(); ++index)
         {
-            mapped.push_back(map(tins[index], index));
+            mapped.push_back(map(collection[index], index));
         }
 
         return mapped;
     }
 
-    template<typename T, typename CompareT, typename CollectionT = vec<T>>
-    CollectionT
-    getSorted(const CollectionT& ts, const CompareT& compare) noexcept
+    template<typename Type, typename CompareType>
+    vec<Type>
+    getSorted(const vec<Type>& ts, const CompareType&& compare) noexcept
     {
         auto sorted = ts;
 

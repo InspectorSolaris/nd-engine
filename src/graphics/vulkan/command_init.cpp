@@ -74,4 +74,18 @@ namespace nd::src::graphics::vulkan
 
         return commandBuffers;
     }
+
+    vec<CommandBuffer>
+    allocateCommandBuffers(opt<const CommandBufferCfg>::ref cfg,
+                           const vec<CommandPool>&          commandPools,
+                           const VkDevice                   device) noexcept(ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        return getMappedFlat<CommandPool, CommandBuffer>(commandPools,
+                                                         [&cfg, device](const auto& commandPool, const auto index)
+                                                         {
+                                                             return allocateCommandBuffers(cfg, commandPool, device);
+                                                         });
+    }
 } // namespace nd::src::graphics::vulkan

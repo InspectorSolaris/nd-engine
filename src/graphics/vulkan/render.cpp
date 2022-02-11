@@ -34,37 +34,42 @@ namespace nd::src::graphics::vulkan
         const auto swapchain  = objects.swapchain.handle;
         const auto renderPass = objects.renderPass;
 
+        opt<const DeviceMemory>::ref deviceMemory = objects.device.memory.device;
+        opt<const DeviceMemory>::ref hostMemory   = objects.device.memory.host;
+
         opt<const QueueFamily>::ref graphicsQueueFamily  = objects.device.queueFamily.graphics;
         opt<const QueueFamily>::ref transferQueueFamily  = objects.device.queueFamily.transfer;
         opt<const QueueFamily>::ref computeQueueFamily   = objects.device.queueFamily.compute;
         opt<const QueueFamily>::ref swapchainQueueFamily = objects.swapchain.queueFamily;
+
+        const auto& graphicsCommandPools = objects.commandPool.graphics;
+        const auto& transferCommandPools = objects.commandPool.transfer;
+        const auto& computeCommandPools  = objects.commandPool.compute;
 
         static const auto graphicsQueue  = getQueue(device, graphicsQueueFamily.index, 0);
         static const auto transferQueue  = getQueue(device, transferQueueFamily.index, 0);
         static const auto computeQueue   = getQueue(device, computeQueueFamily.index, 0);
         static const auto swapchainQueue = getQueue(device, swapchainQueueFamily.index, 0);
 
-        opt<const DeviceMemory>::ref deviceMemory = objects.device.memory.device;
-        opt<const DeviceMemory>::ref hostMemory   = objects.device.memory.host;
-
-        const vec<CommandPool> graphicsCommandPools = objects.commandPool.graphics;
-        const vec<CommandPool> transferCommandPools = objects.commandPool.transfer;
-        const vec<CommandPool> computeCommandPools  = objects.commandPool.compute;
-
         const auto commandBufferCfg = CommandBufferCfg {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1};
 
-        static const auto graphicsCommandBuffers = allocateCommandBuffers(commandBufferCfg, graphicsCommandPools[0], device);
-        static const auto transferCommandBuffers = allocateCommandBuffers(commandBufferCfg, transferCommandPools[0], device);
-        static const auto computeCommandBuffers  = allocateCommandBuffers(commandBufferCfg, computeCommandPools[0], device);
-
-        const auto graphicsCommandBuffer = graphicsCommandBuffers[0];
-        const auto transferCommandBuffer = transferCommandBuffers[0];
-        const auto computeCommandBuffer  = computeCommandBuffers[0];
+        static const auto graphicsCommandBuffers = allocateCommandBuffers(commandBufferCfg, graphicsCommandPools, device);
+        static const auto transferCommandBuffers = allocateCommandBuffers(commandBufferCfg, transferCommandPools, device);
+        static const auto computeCommandBuffers  = allocateCommandBuffers(commandBufferCfg, computeCommandPools, device);
 
         static const auto semaphoresAcquire = createSemaphores(objects, {}, imageCount);
         static const auto semaphoresSubmit  = createSemaphores(objects, {}, imageCount);
         static const auto fencesGraphics    = createFences(objects, {}, imageCount);
         static const auto fencesTransfer    = createFences(objects, {}, imageCount);
+        static const auto fencesCompute     = createFences(objects, {}, imageCount);
+
+        const auto graphicsCommandBuffer = graphicsCommandBuffers[index];
+        const auto transferCommandBuffer = transferCommandBuffers[index];
+        const auto computeCommandBuffer  = computeCommandBuffers[index];
+
+        resetCommandPools(graphicsCommandPools, device);
+        resetCommandPools(transferCommandPools, device);
+        resetCommandPools(computeCommandPools, device);
 
         const auto imageIndex = getNextImageIndex(device, swapchain, semaphoresAcquire[index]);
 
@@ -156,12 +161,11 @@ namespace nd::src::graphics::vulkan
                                                   .semaphoresSignal = std::array {semaphoresSubmit[index]},
                                                   .commandBuffers   = std::array {graphicsCommandBuffer}};
 
-        const auto submitInfos = std::array {getSubmitInfo(submitInfoCfg)};
-
         const auto presentInfoCfg = PresentInfoCfg {.semaphoresWait = std::array {semaphoresSubmit[index]},
                                                     .swapchains     = std::array {swapchain},
                                                     .images         = std::array {imageIndex}};
 
+        const auto submitInfos = std::array {getSubmitInfo(submitInfoCfg)};
         const auto presentInfo = getPresentInfo(presentInfoCfg);
 
         vkQueueSubmit(graphicsQueue, submitInfos.size(), submitInfos.data(), fencesGraphics[index]);
@@ -171,10 +175,6 @@ namespace nd::src::graphics::vulkan
 
         vkWaitForFences(device, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
         vkResetFences(device, fencesWait.size(), fencesWait.data());
-
-        resetCommandPools(graphicsCommandPools, device);
-        resetCommandPools(transferCommandPools, device);
-        resetCommandPools(computeCommandPools, device);
 
         index = (index + 1) % imageCount;
     }

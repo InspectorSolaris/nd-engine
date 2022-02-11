@@ -224,8 +224,9 @@ namespace nd::src::graphics::vulkan
         vec<ImageView>    swapchainImageViews;
         vec<Framebuffer>  swapchainFramebuffers;
         vec<ShaderModule> shaderModules;
-        vec<Semaphore>    semaphores;
-        vec<Fence>        fences;
+
+        vec<Semaphore> semaphores;
+        vec<Fence>     fences;
 
         CommandPoolObjects         commandPool;
         DescriptorSetLayoutObjects descriptorSetLayout;
