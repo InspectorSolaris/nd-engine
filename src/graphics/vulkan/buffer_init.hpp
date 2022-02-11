@@ -7,11 +7,11 @@
 namespace nd::src::graphics::vulkan
 {
     BufferMesh
-    createBufferMesh(opt<const BufferMeshCfg>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createBufferMesh(opt<const BufferMeshCfg>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 
     BufferStage
-    createBufferStage(opt<const BufferStageCfg>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createBufferStage(opt<const BufferStageCfg>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 
     BufferObjects
-    createBufferObjects(opt<const BufferObjectsCfg>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createBufferObjects(opt<const BufferObjectsCfg>::ref, const VkDevice, const VkPhysicalDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

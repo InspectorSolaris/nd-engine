@@ -6,7 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     DescriptorPool
-    createDescriptorPool(opt<const DescriptorPoolCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createDescriptorPool(opt<const DescriptorPoolCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -19,13 +19,13 @@ namespace nd::src::graphics::vulkan
 
         VkDescriptorPool descriptorPool;
 
-        ND_VK_ASSERT_EXEC(vkCreateDescriptorPool(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &descriptorPool));
+        ND_VK_ASSERT(vkCreateDescriptorPool(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &descriptorPool));
 
         return descriptorPool;
     }
 
     DescriptorSetLayout
-    createDescriptorSetLayout(opt<const DescriptorSetLayoutCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createDescriptorSetLayout(opt<const DescriptorSetLayoutCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -37,13 +37,13 @@ namespace nd::src::graphics::vulkan
 
         VkDescriptorSetLayout descriptorSetLayout;
 
-        ND_VK_ASSERT_EXEC(vkCreateDescriptorSetLayout(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &descriptorSetLayout));
+        ND_VK_ASSERT(vkCreateDescriptorSetLayout(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &descriptorSetLayout));
 
         return descriptorSetLayout;
     }
 
     DescriptorSetLayoutObjects
-    createDescriptorSetLayoutObjects(opt<const DescriptorSetLayoutObjectsCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createDescriptorSetLayoutObjects(opt<const DescriptorSetLayoutObjectsCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -53,7 +53,7 @@ namespace nd::src::graphics::vulkan
     vec<DescriptorSet>
     allocateDescriptorSets(opt<const DescriptorSetCfg>::ref cfg,
                            opt<const DescriptorPool>::ref   descriptorPool,
-                           const VkDevice                   device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+                           const VkDevice                   device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -65,7 +65,7 @@ namespace nd::src::graphics::vulkan
 
         auto descriptorSets = vec<DescriptorSet>(cfg.layouts.size());
 
-        ND_VK_ASSERT_EXEC(vkAllocateDescriptorSets(device, &allocateInfo, descriptorSets.data()));
+        ND_VK_ASSERT(vkAllocateDescriptorSets(device, &allocateInfo, descriptorSets.data()));
 
         return descriptorSets;
     }

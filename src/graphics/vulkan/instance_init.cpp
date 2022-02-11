@@ -6,39 +6,39 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     vec<VkLayerProperties>
-    getInstanceLayerProperties() noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    getInstanceLayerProperties() noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
         u32 count;
 
-        ND_VK_ASSERT_EXEC(vkEnumerateInstanceLayerProperties(&count, nullptr));
+        ND_VK_ASSERT(vkEnumerateInstanceLayerProperties(&count, nullptr));
 
         auto properties = vec<VkLayerProperties>(count);
 
-        ND_VK_ASSERT_EXEC(vkEnumerateInstanceLayerProperties(&count, properties.data()));
+        ND_VK_ASSERT(vkEnumerateInstanceLayerProperties(&count, properties.data()));
 
         return properties;
     }
 
     vec<VkExtensionProperties>
-    getInstanceExtensionProperties() noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    getInstanceExtensionProperties() noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
         u32 count;
 
-        ND_VK_ASSERT_EXEC(vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr));
+        ND_VK_ASSERT(vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr));
 
         auto properties = vec<VkExtensionProperties>(count);
 
-        ND_VK_ASSERT_EXEC(vkEnumerateInstanceExtensionProperties(nullptr, &count, properties.data()));
+        ND_VK_ASSERT(vkEnumerateInstanceExtensionProperties(nullptr, &count, properties.data()));
 
         return properties;
     }
 
     bool
-    isInstanceLayersSupported(const vec<str>& layers) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    isInstanceLayersSupported(const vec<str>& layers) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -58,7 +58,7 @@ namespace nd::src::graphics::vulkan
     }
 
     bool
-    isInstanceExtensionsSupported(const vec<str>& extensions) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    isInstanceExtensionsSupported(const vec<str>& extensions) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -78,7 +78,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Instance
-    createInstance(opt<const InstanceCfg>::ref cfg) noexcept(ND_VK_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW)
+    createInstance(opt<const InstanceCfg>::ref cfg) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -110,7 +110,7 @@ namespace nd::src::graphics::vulkan
 
         VkInstance instance;
 
-        ND_VK_ASSERT_EXEC(vkCreateInstance(&createInfo, ND_VK_ALLOCATION_CALLBACKS, &instance));
+        ND_VK_ASSERT(vkCreateInstance(&createInfo, ND_VK_ALLOCATION_CALLBACKS, &instance));
 
         return instance;
     }

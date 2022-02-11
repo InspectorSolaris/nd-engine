@@ -5,14 +5,14 @@
 namespace nd::src::graphics::vulkan
 {
     DescriptorPool
-    createDescriptorPool(opt<const DescriptorPoolCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createDescriptorPool(opt<const DescriptorPoolCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 
     DescriptorSetLayout
-    createDescriptorSetLayout(opt<const DescriptorSetLayoutCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createDescriptorSetLayout(opt<const DescriptorSetLayoutCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 
     DescriptorSetLayoutObjects
-    createDescriptorSetLayoutObjects(opt<const DescriptorSetLayoutObjectsCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createDescriptorSetLayoutObjects(opt<const DescriptorSetLayoutObjectsCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 
     vec<DescriptorSet>
-    allocateDescriptorSets(opt<const DescriptorSetCfg>::ref, opt<const DescriptorPool>::ref, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    allocateDescriptorSets(opt<const DescriptorSetCfg>::ref, opt<const DescriptorPool>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

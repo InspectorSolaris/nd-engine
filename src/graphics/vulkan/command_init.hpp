@@ -5,22 +5,22 @@
 namespace nd::src::graphics::vulkan
 {
     void
-    resetCommandPools(gsl::span<const CommandPool>, const VkDevice, const VkCommandPoolResetFlags = {}) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    resetCommandPools(gsl::span<const CommandPool>, const VkDevice, const VkCommandPoolResetFlags = {}) noexcept(ND_VK_ASSERT_NOTHROW);
 
     CommandPool
-    createCommandPool(opt<const CommandPoolCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createCommandPool(opt<const CommandPoolCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 
     vec<CommandPool>
-    createCommandPools(const vec<CommandPoolCfg>& cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createCommandPools(const vec<CommandPoolCfg>& cfg, const VkDevice device) noexcept(ND_VK_ASSERT_NOTHROW);
 
     CommandPoolObjects
-    createCommandPoolObjects(opt<const CommandPoolObjectsCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createCommandPoolObjects(opt<const CommandPoolObjectsCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 
     vec<CommandBuffer>
-    allocateCommandBuffers(opt<const CommandBufferCfg>::ref, opt<const CommandPool>::ref, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    allocateCommandBuffers(opt<const CommandBufferCfg>::ref, opt<const CommandPool>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 
     vec<CommandBuffer>
     allocateCommandBuffers(opt<const CommandBufferCfg>::ref cfg,
                            const vec<CommandPool>&          commandPools,
-                           const VkDevice                   device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+                           const VkDevice                   device) noexcept(ND_VK_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

@@ -6,7 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     vec<char>
-    getShaderModuleCode(const str_v path) noexcept(ND_ASSERT_NOTHROW)
+    getShaderModuleCode(const str& path) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -26,7 +26,7 @@ namespace nd::src::graphics::vulkan
     }
 
     ShaderModule
-    createShaderModule(opt<const ShaderModuleCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createShaderModule(opt<const ShaderModuleCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -40,13 +40,13 @@ namespace nd::src::graphics::vulkan
 
         VkShaderModule shaderModule;
 
-        ND_VK_ASSERT_EXEC(vkCreateShaderModule(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &shaderModule));
+        ND_VK_ASSERT(vkCreateShaderModule(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &shaderModule));
 
         return {.stage = cfg.stage, .handle = shaderModule};
     }
 
     vec<ShaderModule>
-    createShaderModules(const span<const ShaderModuleCfg> cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createShaderModules(const vec<ShaderModuleCfg>& cfg, const VkDevice device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 

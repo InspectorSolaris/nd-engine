@@ -125,7 +125,7 @@ namespace nd::src::graphics::vulkan
     DeviceMemory
     allocateMemory(opt<const DeviceMemoryCfg>::ref         cfg,
                    const VkPhysicalDeviceMemoryProperties& memoryProperties,
-                   const VkDevice                          device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+                   const VkDevice                          device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -139,7 +139,7 @@ namespace nd::src::graphics::vulkan
 
         VkDeviceMemory deviceMemory;
 
-        ND_VK_ASSERT_EXEC(vkAllocateMemory(device, &allocateInfo, ND_VK_ALLOCATION_CALLBACKS, &deviceMemory));
+        ND_VK_ASSERT(vkAllocateMemory(device, &allocateInfo, ND_VK_ALLOCATION_CALLBACKS, &deviceMemory));
 
         return {.handle = deviceMemory, .typeIndex = memoryTypeIndex, .heapIndex = memoryHeapIndex};
     }
@@ -148,14 +148,14 @@ namespace nd::src::graphics::vulkan
     bindBufferMemory(const VkBuffer               buffer,
                      opt<const DeviceMemory>::ref memory,
                      const VkDevice               device,
-                     const VkPhysicalDevice       physicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+                     const VkPhysicalDevice       physicalDevice) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
         const auto requirements = getBufferMemoryRequirements(buffer, device);
         const auto offset       = getMemoryOffset(memory, requirements, physicalDevice);
 
-        ND_VK_ASSERT_EXEC(vkBindBufferMemory(device, buffer, memory.handle, offset));
+        ND_VK_ASSERT(vkBindBufferMemory(device, buffer, memory.handle, offset));
 
         return getMemoryState(physicalDevice).offsets[memory.heapIndex] = offset;
     }
@@ -164,14 +164,14 @@ namespace nd::src::graphics::vulkan
     bindImageMemory(const VkImage                image,
                     opt<const DeviceMemory>::ref memory,
                     const VkDevice               device,
-                    const VkPhysicalDevice       physicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+                    const VkPhysicalDevice       physicalDevice) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
         const auto requirements = getImageMemoryRequirements(image, device);
         const auto offset       = getMemoryOffset(memory, requirements, physicalDevice);
 
-        ND_VK_ASSERT_EXEC(vkBindImageMemory(device, image, memory.handle, offset));
+        ND_VK_ASSERT(vkBindImageMemory(device, image, memory.handle, offset));
 
         return getMemoryState(physicalDevice).offsets[memory.heapIndex] = offset;
     }

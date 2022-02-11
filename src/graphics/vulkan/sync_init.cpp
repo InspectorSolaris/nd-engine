@@ -6,7 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     Semaphore
-    createSemaphore(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createSemaphore(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -14,7 +14,7 @@ namespace nd::src::graphics::vulkan
 
         VkSemaphore semaphore;
 
-        ND_VK_ASSERT_EXEC(vkCreateSemaphore(objects.device.handle, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &semaphore));
+        ND_VK_ASSERT(vkCreateSemaphore(objects.device.handle, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &semaphore));
 
         objects.semaphores.push_back(semaphore);
 
@@ -22,7 +22,7 @@ namespace nd::src::graphics::vulkan
     }
 
     vec<Semaphore>
-    createSemaphores(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg, const u16 count) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createSemaphores(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg, const u16 count) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -34,7 +34,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Fence
-    createFence(VulkanObjects& objects, opt<const FenceCfg>::ref cfg) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createFence(VulkanObjects& objects, opt<const FenceCfg>::ref cfg) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -42,7 +42,7 @@ namespace nd::src::graphics::vulkan
 
         VkFence fence;
 
-        ND_VK_ASSERT_EXEC(vkCreateFence(objects.device.handle, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &fence));
+        ND_VK_ASSERT(vkCreateFence(objects.device.handle, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &fence));
 
         objects.fences.push_back(fence);
 
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
     }
 
     vec<Fence>
-    createFences(VulkanObjects& objects, opt<const FenceCfg>::ref cfg, const u16 count) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createFences(VulkanObjects& objects, opt<const FenceCfg>::ref cfg, const u16 count) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 

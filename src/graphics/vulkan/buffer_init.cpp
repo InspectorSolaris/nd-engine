@@ -6,9 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     BufferMesh
-    createBufferMesh(opt<const BufferMeshCfg>::ref cfg,
-                     const VkDevice                device,
-                     const VkPhysicalDevice        physicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createBufferMesh(opt<const BufferMeshCfg>::ref cfg, const VkDevice device, const VkPhysicalDevice physicalDevice) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -26,7 +24,7 @@ namespace nd::src::graphics::vulkan
 
         VkBuffer buffer;
 
-        ND_VK_ASSERT_EXEC(vkCreateBuffer(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &buffer));
+        ND_VK_ASSERT(vkCreateBuffer(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &buffer));
 
         const auto offset = bindBufferMemory(buffer, cfg.memory, device, physicalDevice) - cfg.vertex.offset;
 
@@ -34,9 +32,7 @@ namespace nd::src::graphics::vulkan
     }
 
     BufferStage
-    createBufferStage(opt<const BufferStageCfg>::ref cfg,
-                      const VkDevice                 device,
-                      const VkPhysicalDevice         physicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createBufferStage(opt<const BufferStageCfg>::ref cfg, const VkDevice device, const VkPhysicalDevice physicalDevice) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -54,7 +50,7 @@ namespace nd::src::graphics::vulkan
 
         VkBuffer buffer;
 
-        ND_VK_ASSERT_EXEC(vkCreateBuffer(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &buffer));
+        ND_VK_ASSERT(vkCreateBuffer(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &buffer));
 
         const auto offset = bindBufferMemory(buffer, cfg.memory, device, physicalDevice) - cfg.range.offset;
 
@@ -64,7 +60,7 @@ namespace nd::src::graphics::vulkan
     BufferObjects
     createBufferObjects(opt<const BufferObjectsCfg>::ref cfg,
                         const VkDevice                   device,
-                        const VkPhysicalDevice           physicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+                        const VkPhysicalDevice           physicalDevice) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 

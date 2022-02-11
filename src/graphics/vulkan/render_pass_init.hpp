@@ -5,5 +5,5 @@
 namespace nd::src::graphics::vulkan
 {
     RenderPass
-    createRenderPass(opt<const RenderPassCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createRenderPass(opt<const RenderPassCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

@@ -66,7 +66,7 @@ namespace nd::src::graphics::vulkan
     }
 
     PipelineCache
-    createPipelineCache(opt<const PipelineCacheCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createPipelineCache(opt<const PipelineCacheCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -78,13 +78,13 @@ namespace nd::src::graphics::vulkan
 
         VkPipelineCache pipelineCache;
 
-        ND_VK_ASSERT_EXEC(vkCreatePipelineCache(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &pipelineCache));
+        ND_VK_ASSERT(vkCreatePipelineCache(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &pipelineCache));
 
         return pipelineCache;
     }
 
     PipelineLayout
-    createPipelineLayout(opt<const PipelineLayoutCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createPipelineLayout(opt<const PipelineLayoutCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -98,13 +98,13 @@ namespace nd::src::graphics::vulkan
 
         VkPipelineLayout pipelineLayout;
 
-        ND_VK_ASSERT_EXEC(vkCreatePipelineLayout(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &pipelineLayout));
+        ND_VK_ASSERT(vkCreatePipelineLayout(device, &createInfo, ND_VK_ALLOCATION_CALLBACKS, &pipelineLayout));
 
         return pipelineLayout;
     }
 
     PipelineLayoutObjects
-    createPipelineLayoutObjects(opt<const PipelineLayoutObjectsCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+    createPipelineLayoutObjects(opt<const PipelineLayoutObjectsCfg>::ref cfg, const VkDevice device) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -114,7 +114,7 @@ namespace nd::src::graphics::vulkan
     PipelineObjects
     createPipelineObjects(opt<const PipelineObjectsCfg>::ref cfg,
                           const VkDevice                     device,
-                          const VkPipelineCache              pipelineCache) noexcept(ND_VK_ASSERT_EXEC_NOTHROW)
+                          const VkPipelineCache              pipelineCache) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -124,12 +124,12 @@ namespace nd::src::graphics::vulkan
 
         auto graphicsPipelines = std::array<VkPipeline, graphicsCreateInfos.size()> {};
 
-        ND_VK_ASSERT_EXEC(vkCreateGraphicsPipelines(device,
-                                                    pipelineCache,
-                                                    graphicsCreateInfos.size(),
-                                                    graphicsCreateInfos.data(),
-                                                    ND_VK_ALLOCATION_CALLBACKS,
-                                                    graphicsPipelines.data()));
+        ND_VK_ASSERT(vkCreateGraphicsPipelines(device,
+                                               pipelineCache,
+                                               graphicsCreateInfos.size(),
+                                               graphicsCreateInfos.data(),
+                                               ND_VK_ALLOCATION_CALLBACKS,
+                                               graphicsPipelines.data()));
 
         return {.mesh = graphicsPipelines[0]};
     }

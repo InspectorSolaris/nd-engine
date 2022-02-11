@@ -34,7 +34,7 @@ namespace nd::src::graphics::glfw
 
         VkSurfaceKHR surface;
 
-        ND_VK_ASSERT_EXEC(glfwCreateWindowSurface(instance, window, ND_VK_ALLOCATION_CALLBACKS, &surface));
+        ND_VK_ASSERT(glfwCreateWindowSurface(instance, window, ND_VK_ALLOCATION_CALLBACKS, &surface));
 
         return surface;
     }

@@ -8,10 +8,10 @@
 namespace nd::src::graphics::vulkan
 {
     vec<VkPhysicalDevice>
-    getPhysicalDevices(const VkInstance) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    getPhysicalDevices(const VkInstance) noexcept(ND_VK_ASSERT_NOTHROW);
 
     vec<VkExtensionProperties>
-    getPhysicalDeviceExtensionProperties(const VkPhysicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    getPhysicalDeviceExtensionProperties(const VkPhysicalDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 
     vec<VkQueueFamilyProperties>
     getPhysicalDeviceQueueFamilyProperties(const VkPhysicalDevice) noexcept;
@@ -26,7 +26,7 @@ namespace nd::src::graphics::vulkan
     getPhysicalDeviceProperties(const VkPhysicalDevice) noexcept;
 
     bool
-    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice, const vec<str>&) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    isPhysicalDeviceExtensionsSupported(const VkPhysicalDevice, const vec<str>&) noexcept(ND_VK_ASSERT_NOTHROW);
 
     bool
     isPhysicalDeviceFeaturesSupported(const VkPhysicalDevice, const VkPhysicalDeviceFeatures&) noexcept;
@@ -35,8 +35,8 @@ namespace nd::src::graphics::vulkan
     isPhysicalDeviceQueuesSupported(const VkPhysicalDevice, const VkQueueFlags) noexcept;
 
     PhysicalDevice
-    getPhysicalDevice(opt<const PhysicalDeviceCfg>::ref, const VkInstance) noexcept(ND_VK_ASSERT_EXEC_NOTHROW&& ND_ASSERT_NOTHROW);
+    getPhysicalDevice(opt<const PhysicalDeviceCfg>::ref, const VkInstance) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW);
 
     Device
-    createDevice(opt<const DeviceCfg>::ref, const VkPhysicalDevice) noexcept(ND_VK_ASSERT_EXEC_NOTHROW);
+    createDevice(opt<const DeviceCfg>::ref, const VkPhysicalDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan
