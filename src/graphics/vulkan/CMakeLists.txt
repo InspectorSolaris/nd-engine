@@ -28,8 +28,8 @@ set(SHADERS_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders)
 
 set(SHADERS_NAME nd-src-graphics-vulkan-shaders)
 set(SHADERS_SRC
-    ${SHADERS_SRC_DIR}/vert.vert
-    ${SHADERS_SRC_DIR}/frag.frag)
+    ${SHADERS_SRC_DIR}/vert.glsl
+    ${SHADERS_SRC_DIR}/frag.glsl)
 
 add_library(${TARGET_NAME} ${TARGET_SRC})
 
