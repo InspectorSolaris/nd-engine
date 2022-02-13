@@ -27,9 +27,9 @@ set(SHADERS_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders)
 set(SHADERS_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders)
 
 set(SHADERS_NAME nd-src-graphics-vulkan-shaders)
-set(SHADERS_SRC
-    ${SHADERS_SRC_DIR}/vert.glsl
-    ${SHADERS_SRC_DIR}/frag.glsl)
+set(SHADERS
+    ${SHADERS_SRC_DIR}/vert.glsl:vert
+    ${SHADERS_SRC_DIR}/frag.glsl:frag)
 
 add_library(${TARGET_NAME} ${TARGET_SRC})
 
@@ -46,19 +46,24 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E make_directory ${SHADERS_BIN_DIR}
     COMMENT "Creating ${SHADERS_BIN_DIR} directory")
 
-foreach(SHADER_SRC IN LISTS SHADERS_SRC)
+foreach(SHADER IN LISTS SHADERS)
+    string(REPLACE ":" ";" SHADER_LIST ${SHADER})
+    
+    list(GET SHADER_LIST 0 SHADER_SRC)
+    list(GET SHADER_LIST 1 SHADER_STG)
+
     get_filename_component(SHADER_SRC_NAME ${SHADER_SRC} NAME_WE)
 
     set(SHADER_BIN ${SHADERS_BIN_DIR}/${SHADER_SRC_NAME}.spv)
 
     add_custom_command(
         OUTPUT ${SHADER_BIN}
-        COMMAND ${Vulkan_GLSLC_EXECUTABLE} ${SHADER_SRC} -o ${SHADER_BIN}
+        COMMAND ${Vulkan_GLSLC_EXECUTABLE} --target-env=vulkan1.2 -fshader-stage=${SHADER_STG} -O ${SHADER_SRC} -o ${SHADER_BIN}
         COMMENT "Compiling ${SHADER_SRC} shader"
         DEPENDS ${SHADERS_BIN_DIR} ${SHADER_SRC})
 
     list(APPEND SHADERS_BIN ${SHADER_BIN})
-endforeach(SHADER_SRC)
+endforeach(SHADER)
 
 add_custom_target(${SHADERS_NAME} DEPENDS ${SHADERS_BIN})
 
