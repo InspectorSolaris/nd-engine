@@ -5,6 +5,12 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
+    struct Memory final
+    {
+        VkDeviceSize offset;
+        VkDeviceSize size;
+    };
+
     using Index = u16;
 
     struct Vertex final
@@ -27,6 +33,11 @@ namespace nd::src::graphics::vulkan
 
         static auto index  = 0U;
         static auto loaded = false;
+
+        static const auto vertexMemory  = Memory {.offset = 0 * 1024, .size = 1024};
+        static const auto indexMemory   = Memory {.offset = 1 * 1024, .size = 1024};
+        static const auto uniformMemory = Memory {.offset = 2 * 1024, .size = 1024};
+        static const auto stageMemory   = Memory {.offset = 0, .size = 1024};
 
         static const auto indices  = vec<Index> {0, 1, 2};
         static const auto vertices = vec<Vertex> {{.position = {+0.0, -0.5, 0.0}, .color = {1.0, 0.0, 0.0}},
@@ -99,8 +110,8 @@ namespace nd::src::graphics::vulkan
             vkUnmapMemory(device, hostMemory.handle);
 
             const auto regions = std::array {
-                VkBufferCopy {.srcOffset = verticesOffset, .dstOffset = objects.buffer.mesh.vertex.offset, .size = verticesSize},
-                VkBufferCopy {.srcOffset = indicesOffset, .dstOffset = objects.buffer.mesh.index.offset, .size = indicesSize}};
+                VkBufferCopy {.srcOffset = verticesOffset, .dstOffset = objects.buffer.mesh.offset + vertexMemory.offset, .size = verticesSize},
+                VkBufferCopy {.srcOffset = indicesOffset, .dstOffset = objects.buffer.mesh.offset + indexMemory.offset, .size = indicesSize}};
 
             const auto transferCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
@@ -147,9 +158,9 @@ namespace nd::src::graphics::vulkan
         vkCmdBeginRenderPass(graphicsCommandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         const auto vertexBuffers       = std::array {objects.buffer.mesh.handle};
-        const auto vertexBufferOffsets = std::array {objects.buffer.mesh.vertex.offset};
+        const auto vertexBufferOffsets = std::array {vertexMemory.offset};
         const auto indexBuffer         = objects.buffer.mesh.handle;
-        const auto indexOffset         = objects.buffer.mesh.index.offset;
+        const auto indexOffset         = indexMemory.offset;
 
         vkCmdBindPipeline(graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, objects.pipeline.mesh);
         vkCmdBindVertexBuffers(graphicsCommandBuffer, 0, vertexBuffers.size(), vertexBuffers.data(), vertexBufferOffsets.data());

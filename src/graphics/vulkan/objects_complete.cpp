@@ -59,8 +59,8 @@ namespace nd::src::graphics::vulkan
         const auto commandPoolCfg = cfg.commandPool(device, swapchainImages.size());
         const auto commandPool    = init.commandPool(commandPoolCfg, device.handle);
 
-        return {.buffer                = buffer,
-                .device                = device,
+        return {.device                = device,
+                .buffer                = buffer,
                 .swapchainImages       = std::move(swapchainImages),
                 .swapchainImageViews   = std::move(swapchainImageViews),
                 .swapchainFramebuffers = std::move(swapchainFramebuffers),

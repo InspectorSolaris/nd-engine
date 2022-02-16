@@ -110,30 +110,13 @@ namespace nd::src::graphics::vulkan
     // ---------------------------------
     // --------------- S ---------------
 
-    struct BufferMeshCfg final
+    struct BufferCfg final
     {
-        MemoryRange vertex;
-        MemoryRange index;
-        MemoryRange uniform;
-
         span<const u32> queueFamilyIndices;
 
-        const DeviceMemory& memory;
+        opt<const DeviceMemory>::ref memory;
 
-        VkBufferUsageFlags usage;
-        VkSharingMode      sharingMode;
-
-        void*               next;
-        VkBufferCreateFlags flags;
-    };
-
-    struct BufferStageCfg final
-    {
-        MemoryRange range;
-
-        span<const u32> queueFamilyIndices;
-
-        const DeviceMemory& memory;
+        VkDeviceSize size;
 
         VkBufferUsageFlags usage;
         VkSharingMode      sharingMode;
@@ -144,8 +127,8 @@ namespace nd::src::graphics::vulkan
 
     struct BufferObjectsCfg final
     {
-        BufferMeshCfg  mesh;
-        BufferStageCfg stage;
+        BufferCfg mesh;
+        BufferCfg stage;
     };
 
     // --------------- E ---------------
@@ -164,7 +147,7 @@ namespace nd::src::graphics::vulkan
 
     struct SwapchainCfg final
     {
-        const QueueFamilyObjects& queueFamily;
+        opt<const QueueFamilyObjects>::ref queueFamily;
 
         VkPhysicalDevice physicalDevice;
         VkSurfaceKHR     surface;

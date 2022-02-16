@@ -65,12 +65,6 @@ namespace nd::src::graphics::vulkan
         VkDevice handle;
     };
 
-    struct MemoryRange final
-    {
-        VkDeviceSize offset;
-        VkDeviceSize size;
-    };
-
     // -------------- EE --------------
     // --------------------------------
     // ------------ DEVICE ------------
@@ -85,32 +79,17 @@ namespace nd::src::graphics::vulkan
     // ---------------------------------
     // --------------- S ---------------
 
-    struct BufferMesh final
+    struct Buffer final
     {
-        MemoryRange vertex;
-        MemoryRange index;
-        MemoryRange uniform;
-
         VkDeviceSize offset;
 
-        VkDeviceMemory memory;
-        VkBuffer       handle;
-    };
-
-    struct BufferStage final
-    {
-        MemoryRange range;
-
-        VkDeviceSize offset;
-
-        VkDeviceMemory memory;
-        VkBuffer       handle;
+        VkBuffer handle;
     };
 
     struct BufferObjects final
     {
-        BufferMesh  mesh;
-        BufferStage stage;
+        Buffer mesh;
+        Buffer stage;
     };
 
     // --------------- E ---------------
@@ -216,9 +195,9 @@ namespace nd::src::graphics::vulkan
 
     struct VulkanObjects final
     {
-        BufferObjects buffer;
-
         Device device;
+
+        BufferObjects buffer;
 
         vec<Image>        swapchainImages;
         vec<ImageView>    swapchainImageViews;
