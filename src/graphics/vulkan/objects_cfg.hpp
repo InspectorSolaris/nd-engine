@@ -116,7 +116,7 @@ namespace nd::src::graphics::vulkan
         MemoryRange index;
         MemoryRange uniform;
 
-        gsl::span<const u32> queueFamilyIndices;
+        span<const u32> queueFamilyIndices;
 
         const DeviceMemory& memory;
 
@@ -131,7 +131,7 @@ namespace nd::src::graphics::vulkan
     {
         MemoryRange range;
 
-        gsl::span<const u32> queueFamilyIndices;
+        span<const u32> queueFamilyIndices;
 
         const DeviceMemory& memory;
 
@@ -294,7 +294,7 @@ namespace nd::src::graphics::vulkan
 
     struct DescriptorSetCfg final
     {
-        gsl::span<const DescriptorSetLayout> layouts;
+        span<const DescriptorSetLayout> layouts;
 
         void* next = {};
     };

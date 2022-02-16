@@ -13,6 +13,11 @@ namespace nd::src::graphics::vulkan
         glm::vec3 color;
     };
 
+    struct Uniform final
+    {
+        glm::mat4 transform;
+    };
+
     void
     draw(VulkanObjects& objects, const f64 dt) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW)
     {

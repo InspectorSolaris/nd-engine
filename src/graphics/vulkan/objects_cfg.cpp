@@ -65,7 +65,7 @@ namespace nd::src::graphics::vulkan
                                            .propertyFlagsNot = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT}},
                 .queueFamily = {.graphics = {.queueFlags = VK_QUEUE_GRAPHICS_BIT, .queueFlagsNot = {}},
                                 .transfer = {.queueFlags = VK_QUEUE_TRANSFER_BIT, .queueFlagsNot = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT},
-                                .compute  = {.queueFlags = VK_QUEUE_COMPUTE_BIT, .queueFlagsNot = {}}},
+                                .compute  = {.queueFlags = VK_QUEUE_COMPUTE_BIT, .queueFlagsNot = VK_QUEUE_GRAPHICS_BIT}},
                 .extensions  = physicalDeviceCfg.extensions,
                 .queueFlags  = physicalDeviceCfg.queueFlags};
     }
@@ -201,7 +201,11 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {.mesh = DescriptorSetLayoutCfg {}};
+        return {.mesh = DescriptorSetLayoutCfg {.bindings = {{.binding            = 0,
+                                                              .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                                              .descriptorCount    = 1,
+                                                              .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
+                                                              .pImmutableSamplers = nullptr}}}};
     }
 
     PipelineCacheCfg

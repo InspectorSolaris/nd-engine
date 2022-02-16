@@ -19,7 +19,7 @@
 #define ND_USE_SCOPE_MEDIUM 2
 #define ND_USE_SCOPE_LOW    1
 
-#define ND_USE_SCOPE_LEVEL 5
+#define ND_USE_SCOPE_LEVEL 0
 
 #if(ND_USE_SCOPE_LEVEL <= ND_USE_SCOPE)
     #define ND_SET_SCOPE() const auto scope = nd::src::tools::Scope(ND_FUNCTION, nd::src::tools::onScopeBegin, nd::src::tools::onScopeEnd)

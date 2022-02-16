@@ -5,8 +5,8 @@ namespace nd::src::tools
     shared<logger> Scope::s_logPtr = {};
     u64            Scope::s_depth  = {};
 
-    Scope::Scope(const str_v name, const Event& onStart, const Event& onEnd) noexcept
-        : onEnd_(onEnd)
+    Scope::Scope(const str_v name, Event&& onStart, Event&& onEnd) noexcept
+        : onEnd_(std::move(onEnd))
         , name_(name)
     {
         onStart(s_logPtr, name_, ++s_depth);

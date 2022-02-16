@@ -90,6 +90,8 @@ namespace nd::src::graphics::vulkan
         }
 
         ND_ASSERT_STATIC();
+        
+        return 0;
     }
 
     VkDeviceSize

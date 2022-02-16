@@ -11,5 +11,7 @@ namespace nd::src::graphics::vulkan
         ND_SET_SCOPE();
 
         ND_ASSERT_STATIC();
+
+        return VK_NULL_HANDLE;
     }
 } // namespace nd::src::graphics::vulkan

@@ -11,7 +11,7 @@ namespace nd::src::tools
     public:
         using Event = func<void(const shared<logger>&, const str_v, const u64)>;
 
-        Scope(const str_v, const Event&, const Event&) noexcept;
+        Scope(const str_v, Event&&, Event&&) noexcept;
 
         ~Scope();
 
@@ -27,8 +27,8 @@ namespace nd::src::tools
         static shared<logger> s_logPtr;
         static u64            s_depth;
 
-        const Event& onEnd_ {};
-        const str_v  name_ {};
+        const Event onEnd_ {};
+        const str_v name_ {};
     };
 
     void
