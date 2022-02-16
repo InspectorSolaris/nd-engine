@@ -9,19 +9,19 @@ namespace nd::src::graphics::vulkan
 
     struct SubmitInfoCfg final
     {
-        gsl::span<const VkPipelineStageFlags> stages;
-        gsl::span<const VkSemaphore>          semaphoresWait;
-        gsl::span<const VkSemaphore>          semaphoresSignal;
-        gsl::span<const VkCommandBuffer>      commandBuffers;
+        span<const VkPipelineStageFlags> stages;
+        span<const VkSemaphore>          semaphoresWait;
+        span<const VkSemaphore>          semaphoresSignal;
+        span<const VkCommandBuffer>      commandBuffers;
 
         void* next = {};
     };
 
     struct PresentInfoCfg final
     {
-        gsl::span<const VkSemaphore>    semaphoresWait;
-        gsl::span<const VkSwapchainKHR> swapchains;
-        gsl::span<const u32>            images;
+        span<const VkSemaphore>    semaphoresWait;
+        span<const VkSwapchainKHR> swapchains;
+        span<const u32>            images;
 
         void* next = {};
     };

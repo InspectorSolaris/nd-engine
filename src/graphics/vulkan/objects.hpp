@@ -187,6 +187,13 @@ namespace nd::src::graphics::vulkan
         vec<CommandPool> compute;
     };
 
+    struct CommandBufferObjects final
+    {
+        vec<CommandBuffer> graphics;
+        vec<CommandBuffer> transfer;
+        vec<CommandBuffer> compute;
+    };
+
     // --------------- EE ---------------
     // ----------------------------------
     // ------------ COMMANDS ------------
@@ -208,6 +215,7 @@ namespace nd::src::graphics::vulkan
         vec<Fence>     fences;
 
         CommandPoolObjects         commandPool;
+        CommandBufferObjects       commandBuffer;
         DescriptorSetLayoutObjects descriptorSetLayout;
         PipelineLayoutObjects      pipelineLayout;
         PipelineObjects            pipeline;

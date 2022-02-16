@@ -453,6 +453,13 @@ namespace nd::src::graphics::vulkan
         void* next = {};
     };
 
+    struct CommandBufferObjectsCfg final
+    {
+        CommandBufferCfg graphics;
+        CommandBufferCfg transfer;
+        CommandBufferCfg compute;
+    };
+
     // --------------- EE ---------------
     // ----------------------------------
     // ------------ COMMANDS ------------

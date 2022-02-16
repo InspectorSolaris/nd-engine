@@ -44,34 +44,20 @@ namespace nd::src::graphics::vulkan
                                                   {.position = {+0.5, +0.5, 0.0}, .color = {0.0, 1.0, 0.0}},
                                                   {.position = {-0.5, +0.5, 0.0}, .color = {0.0, 0.0, 1.0}}};
 
+        static const auto graphicsQueue  = getQueue(objects.device.handle, objects.device.queueFamily.graphics.index, 0);
+        static const auto transferQueue  = getQueue(objects.device.handle, objects.device.queueFamily.transfer.index, 0);
+        static const auto computeQueue   = getQueue(objects.device.handle, objects.device.queueFamily.compute.index, 0);
+        static const auto swapchainQueue = getQueue(objects.device.handle, objects.swapchain.queueFamily.index, 0);
+
+        static const auto commandBuffer = allocateCommandBufferObjects(
+            objects,
+            CommandBufferObjectsCfg {.graphics = {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1},
+                                     .transfer = {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1},
+                                     .compute  = {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1}},
+            objects.commandPool,
+            objects.device.handle);
+
         const auto imageCount = objects.swapchainImages.size();
-
-        const auto device     = objects.device.handle;
-        const auto swapchain  = objects.swapchain.handle;
-        const auto renderPass = objects.renderPass;
-
-        opt<const DeviceMemory>::ref deviceMemory = objects.device.memory.device;
-        opt<const DeviceMemory>::ref hostMemory   = objects.device.memory.host;
-
-        opt<const QueueFamily>::ref graphicsQueueFamily  = objects.device.queueFamily.graphics;
-        opt<const QueueFamily>::ref transferQueueFamily  = objects.device.queueFamily.transfer;
-        opt<const QueueFamily>::ref computeQueueFamily   = objects.device.queueFamily.compute;
-        opt<const QueueFamily>::ref swapchainQueueFamily = objects.swapchain.queueFamily;
-
-        const auto& graphicsCommandPools = objects.commandPool.graphics;
-        const auto& transferCommandPools = objects.commandPool.transfer;
-        const auto& computeCommandPools  = objects.commandPool.compute;
-
-        static const auto graphicsQueue  = getQueue(device, graphicsQueueFamily.index, 0);
-        static const auto transferQueue  = getQueue(device, transferQueueFamily.index, 0);
-        static const auto computeQueue   = getQueue(device, computeQueueFamily.index, 0);
-        static const auto swapchainQueue = getQueue(device, swapchainQueueFamily.index, 0);
-
-        const auto commandBufferCfg = CommandBufferCfg {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1};
-
-        static const auto graphicsCommandBuffers = allocateCommandBuffers(commandBufferCfg, graphicsCommandPools, device);
-        static const auto transferCommandBuffers = allocateCommandBuffers(commandBufferCfg, transferCommandPools, device);
-        static const auto computeCommandBuffers  = allocateCommandBuffers(commandBufferCfg, computeCommandPools, device);
 
         static const auto semaphoresAcquire = createSemaphores(objects, {}, imageCount);
         static const auto semaphoresSubmit  = createSemaphores(objects, {}, imageCount);
@@ -79,15 +65,17 @@ namespace nd::src::graphics::vulkan
         static const auto fencesTransfer    = createFences(objects, {}, imageCount);
         static const auto fencesCompute     = createFences(objects, {}, imageCount);
 
-        const auto graphicsCommandBuffer = graphicsCommandBuffers[index];
-        const auto transferCommandBuffer = transferCommandBuffers[index];
-        const auto computeCommandBuffer  = computeCommandBuffers[index];
+        const auto graphicsCommandBuffer = commandBuffer.graphics[index];
+        const auto transferCommandBuffer = commandBuffer.transfer[index];
+        const auto computeCommandBuffer  = commandBuffer.compute[index];
 
-        resetCommandPools(graphicsCommandPools, device);
-        resetCommandPools(transferCommandPools, device);
-        resetCommandPools(computeCommandPools, device);
+        const auto threadCount = 1;
 
-        const auto imageIndex = getNextImageIndex(device, swapchain, semaphoresAcquire[index]);
+        resetCommandPools(index * threadCount, threadCount, objects.commandPool.graphics, objects.device.handle);
+        resetCommandPools(index * threadCount, threadCount, objects.commandPool.transfer, objects.device.handle);
+        resetCommandPools(index * threadCount, threadCount, objects.commandPool.compute, objects.device.handle);
+
+        const auto imageIndex = getNextImageIndex(objects.device.handle, objects.swapchain.handle, semaphoresAcquire[index]);
 
         if(!loaded)
         {
@@ -97,17 +85,14 @@ namespace nd::src::graphics::vulkan
             const auto verticesOffset = 0ULL;
             const auto indicesOffset  = verticesOffset + verticesSize;
 
-            const auto offset = VkDeviceSize {objects.buffer.stage.offset};
-            const auto size   = VkDeviceSize {indicesSize + verticesSize};
-
             void* data;
 
-            vkMapMemory(device, hostMemory.handle, offset, size, {}, &data);
+            vkMapMemory(objects.device.handle, objects.device.memory.host.handle, objects.buffer.stage.offset, verticesSize + indicesSize, {}, &data);
 
             memcpy((i8*)data + verticesOffset, vertices.data(), verticesSize);
             memcpy((i8*)data + indicesOffset, indices.data(), indicesSize);
 
-            vkUnmapMemory(device, hostMemory.handle);
+            vkUnmapMemory(objects.device.handle, objects.device.memory.host.handle);
 
             const auto regions = std::array {
                 VkBufferCopy {.srcOffset = verticesOffset, .dstOffset = objects.buffer.mesh.offset + vertexMemory.offset, .size = verticesSize},
@@ -132,8 +117,8 @@ namespace nd::src::graphics::vulkan
 
             const auto fencesWait = std::array {fencesTransfer[index]};
 
-            vkWaitForFences(device, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
-            vkResetFences(device, fencesWait.size(), fencesWait.data());
+            vkWaitForFences(objects.device.handle, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
+            vkResetFences(objects.device.handle, fencesWait.size(), fencesWait.data());
 
             loaded = true;
         }
@@ -149,7 +134,7 @@ namespace nd::src::graphics::vulkan
 
         const auto renderPassBeginInfo = VkRenderPassBeginInfo {
             .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .renderPass      = renderPass,
+            .renderPass      = objects.renderPass,
             .framebuffer     = objects.swapchainFramebuffers[imageIndex],
             .renderArea      = {.offset = {.x = 0, .y = 0}, .extent = {.width = width, .height = height}},
             .clearValueCount = static_cast<u32>(clearValues.size()),
@@ -178,7 +163,7 @@ namespace nd::src::graphics::vulkan
                                                   .commandBuffers   = std::array {graphicsCommandBuffer}};
 
         const auto presentInfoCfg = PresentInfoCfg {.semaphoresWait = std::array {semaphoresSubmit[index]},
-                                                    .swapchains     = std::array {swapchain},
+                                                    .swapchains     = std::array {objects.swapchain.handle},
                                                     .images         = std::array {imageIndex}};
 
         const auto submitInfos = std::array {getSubmitInfo(submitInfoCfg)};
@@ -189,8 +174,8 @@ namespace nd::src::graphics::vulkan
 
         const auto fencesWait = std::array {fencesGraphics[index]};
 
-        vkWaitForFences(device, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
-        vkResetFences(device, fencesWait.size(), fencesWait.data());
+        vkWaitForFences(objects.device.handle, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
+        vkResetFences(objects.device.handle, fencesWait.size(), fencesWait.data());
 
         index = (index + 1) % imageCount;
     }

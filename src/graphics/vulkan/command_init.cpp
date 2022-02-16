@@ -6,13 +6,15 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     void
-    resetCommandPools(gsl::span<const CommandPool>  commandPools,
+    resetCommandPools(const u64                     offset,
+                      const u64                     count,
+                      span<const CommandPool>       commandPools,
                       const VkDevice                device,
                       const VkCommandPoolResetFlags flags) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
-        for(opt<const CommandPool>::ref commandPool: commandPools)
+        for(opt<const CommandPool>::ref commandPool: commandPools.subspan(offset, count))
         {
             ND_VK_ASSERT(vkResetCommandPool(device, commandPool, flags));
         }
@@ -89,5 +91,27 @@ namespace nd::src::graphics::vulkan
                                                          {
                                                              return allocateCommandBuffers(cfg, commandPool, device);
                                                          });
+    }
+
+    CommandBufferObjects
+    allocateCommandBufferObjects(VulkanObjects&                          objects,
+                                 opt<const CommandBufferObjectsCfg>::ref cfg,
+                                 opt<const CommandPoolObjects>::ref      commandPool,
+                                 const VkDevice                          device) noexcept(ND_VK_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        auto commandBuffer = CommandBufferObjects {.graphics = allocateCommandBuffers(cfg.graphics, commandPool.graphics, device),
+                                                   .transfer = allocateCommandBuffers(cfg.transfer, commandPool.transfer, device),
+                                                   .compute  = allocateCommandBuffers(cfg.compute, commandPool.compute, device)};
+
+        using std::begin;
+        using std::end;
+
+        objects.commandBuffer.graphics.insert(end(objects.commandBuffer.graphics), begin(commandBuffer.graphics), end(commandBuffer.graphics));
+        objects.commandBuffer.transfer.insert(end(objects.commandBuffer.transfer), begin(commandBuffer.transfer), end(commandBuffer.transfer));
+        objects.commandBuffer.compute.insert(end(objects.commandBuffer.compute), begin(commandBuffer.compute), end(commandBuffer.compute));
+
+        return commandBuffer;
     }
 } // namespace nd::src::graphics::vulkan
