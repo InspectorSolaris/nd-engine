@@ -39,25 +39,25 @@ namespace nd::src::graphics::vulkan
         static const auto uniformMemory = Memory {.offset = 2 * 1024, .size = 1024};
         static const auto stageMemory   = Memory {.offset = 0, .size = 1024};
 
-        static const auto indices  = vec<Index> {0, 1, 2};
-        static const auto vertices = vec<Vertex> {{.position = {+0.0, -0.5, 0.0}, .color = {1.0, 0.0, 0.0}},
-                                                  {.position = {+0.5, +0.5, 0.0}, .color = {0.0, 1.0, 0.0}},
-                                                  {.position = {-0.5, +0.5, 0.0}, .color = {0.0, 0.0, 1.0}}};
-
         static const auto graphicsQueue  = getQueue(objects.device.handle, objects.device.queueFamily.graphics.index, 0);
         static const auto transferQueue  = getQueue(objects.device.handle, objects.device.queueFamily.transfer.index, 0);
         static const auto computeQueue   = getQueue(objects.device.handle, objects.device.queueFamily.compute.index, 0);
         static const auto swapchainQueue = getQueue(objects.device.handle, objects.swapchain.queueFamily.index, 0);
 
-        static const auto commandBuffer = allocateCommandBufferObjects(
+        const auto imageCount = objects.swapchainImages.size();
+
+        static const auto descriptorSet = allocateDescriptorSetObjects(
             objects,
-            CommandBufferObjectsCfg {.graphics = {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1},
-                                     .transfer = {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1},
-                                     .compute  = {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1}},
-            objects.commandPool,
+            {.mesh = {.layouts = vec<VkDescriptorSetLayout>(imageCount, objects.descriptorSetLayout.mesh)}},
+            objects.descriptorPool,
             objects.device.handle);
 
-        const auto imageCount = objects.swapchainImages.size();
+        static const auto commandBuffer = allocateCommandBufferObjects(objects,
+                                                                       {.graphics = {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1},
+                                                                        .transfer = {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1},
+                                                                        .compute  = {.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1}},
+                                                                       objects.commandPool,
+                                                                       objects.device.handle);
 
         static const auto semaphoresAcquire = createSemaphores(objects, {}, imageCount);
         static const auto semaphoresSubmit  = createSemaphores(objects, {}, imageCount);
@@ -77,26 +77,52 @@ namespace nd::src::graphics::vulkan
 
         const auto imageIndex = getNextImageIndex(objects.device.handle, objects.swapchain.handle, semaphoresAcquire[index]);
 
+        const auto width  = static_cast<u32>(objects.swapchain.width);
+        const auto height = static_cast<u32>(objects.swapchain.height);
+
+        const auto identityMatrix   = glm::mat4(1.0f);
+        const auto modelMatrix      = glm::rotate(identityMatrix, static_cast<f32>(dt * glm::radians(90.0f)), glm::vec3(0.0f, 0.0f, 1.0f));
+        const auto viewMatrix       = glm::lookAt(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        const auto projectionMatrix = glm::perspective(glm::radians(60.0f), static_cast<f32>(width) / height, 0.1f, 10.0f);
+        const auto vulkanMatrix     = glm::mat4(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+
+        const auto uniform = Uniform {.transform = vulkanMatrix * projectionMatrix * viewMatrix * modelMatrix};
+
+        static const auto indices  = vec<Index> {0, 1, 2};
+        static const auto vertices = vec<Vertex> {{.position = {+0.0, -0.5, 0.0}, .color = {1.0, 0.0, 0.0}},
+                                                  {.position = {+0.5, +0.5, 0.0}, .color = {0.0, 1.0, 0.0}},
+                                                  {.position = {-0.5, +0.5, 0.0}, .color = {0.0, 0.0, 1.0}}};
+
         if(!loaded)
         {
+            static const auto uniforms = vec<Uniform>(imageCount, uniform);
+
             const auto verticesSize = sizeof(Vertex) * vertices.size();
             const auto indicesSize  = sizeof(Index) * indices.size();
+            const auto uniformsSize = sizeof(Uniform) * uniforms.size();
 
             const auto verticesOffset = 0ULL;
             const auto indicesOffset  = verticesOffset + verticesSize;
+            const auto uniformsOffset = indicesOffset + indicesSize;
 
             void* data;
 
-            vkMapMemory(objects.device.handle, objects.device.memory.host.handle, objects.buffer.stage.offset, verticesSize + indicesSize, {}, &data);
+            vkMapMemory(objects.device.handle,
+                        objects.device.memory.host.handle,
+                        objects.buffer.stage.offset,
+                        verticesSize + indicesSize + uniformsSize,
+                        {},
+                        &data);
 
             memcpy((i8*)data + verticesOffset, vertices.data(), verticesSize);
             memcpy((i8*)data + indicesOffset, indices.data(), indicesSize);
+            memcpy((i8*)data + uniformsOffset, uniforms.data(), uniformsSize);
 
             vkUnmapMemory(objects.device.handle, objects.device.memory.host.handle);
 
-            const auto regions = std::array {
-                VkBufferCopy {.srcOffset = verticesOffset, .dstOffset = objects.buffer.mesh.offset + vertexMemory.offset, .size = verticesSize},
-                VkBufferCopy {.srcOffset = indicesOffset, .dstOffset = objects.buffer.mesh.offset + indexMemory.offset, .size = indicesSize}};
+            const auto regions = std::array {VkBufferCopy {.srcOffset = verticesOffset, .dstOffset = vertexMemory.offset, .size = verticesSize},
+                                             VkBufferCopy {.srcOffset = indicesOffset, .dstOffset = indexMemory.offset, .size = indicesSize},
+                                             VkBufferCopy {.srcOffset = uniformsOffset, .dstOffset = uniformMemory.offset, .size = uniformsSize}};
 
             const auto transferCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
@@ -120,15 +146,34 @@ namespace nd::src::graphics::vulkan
             vkWaitForFences(objects.device.handle, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
             vkResetFences(objects.device.handle, fencesWait.size(), fencesWait.data());
 
+            for(auto index = 0; index < descriptorSet.mesh.size(); ++index)
+            {
+                const auto bufferInfo = VkDescriptorBufferInfo {.buffer = objects.buffer.mesh.handle,
+                                                                .offset = sizeof(Uniform) * index + uniformMemory.offset,
+                                                                .range  = sizeof(Uniform)};
+
+                const auto write = VkWriteDescriptorSet {.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+                                                         .pNext            = {},
+                                                         .dstSet           = descriptorSet.mesh[index],
+                                                         .dstBinding       = 0,
+                                                         .dstArrayElement  = 0,
+                                                         .descriptorCount  = 1,
+                                                         .descriptorType   = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                                         .pImageInfo       = {},
+                                                         .pBufferInfo      = &bufferInfo,
+                                                         .pTexelBufferView = {}};
+
+                const auto writes = std::array {write};
+
+                vkUpdateDescriptorSets(objects.device.handle, writes.size(), writes.data(), 0, nullptr);
+            }
+
             loaded = true;
         }
 
         const auto graphicsCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
         ND_VK_ASSERT(vkBeginCommandBuffer(graphicsCommandBuffer, &graphicsCommandBufferBeginInfo));
-
-        const auto width  = static_cast<u32>(objects.swapchain.width);
-        const auto height = static_cast<u32>(objects.swapchain.height);
 
         const auto clearValues = vec<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
 
@@ -147,7 +192,18 @@ namespace nd::src::graphics::vulkan
         const auto indexBuffer         = objects.buffer.mesh.handle;
         const auto indexOffset         = indexMemory.offset;
 
+        const auto descriptorSets = std::array {descriptorSet.mesh[index]};
+
         vkCmdBindPipeline(graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, objects.pipeline.mesh);
+        vkCmdBindDescriptorSets(graphicsCommandBuffer,
+                                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                objects.pipelineLayout.mesh,
+                                0,
+                                descriptorSets.size(),
+                                descriptorSets.data(),
+                                0,
+                                nullptr);
+
         vkCmdBindVertexBuffers(graphicsCommandBuffer, 0, vertexBuffers.size(), vertexBuffers.data(), vertexBufferOffsets.data());
         vkCmdBindIndexBuffer(graphicsCommandBuffer, indexBuffer, indexOffset, VK_INDEX_TYPE_UINT16);
 

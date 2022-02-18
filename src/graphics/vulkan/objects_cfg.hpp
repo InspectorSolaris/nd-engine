@@ -282,6 +282,11 @@ namespace nd::src::graphics::vulkan
         void* next = {};
     };
 
+    struct DescriptorSetObjectsCfg final
+    {
+        DescriptorSetCfg mesh;
+    };
+
     // ----------------- E -----------------
     // -------------------------------------
     // ------------ DESCRIPTORS ------------

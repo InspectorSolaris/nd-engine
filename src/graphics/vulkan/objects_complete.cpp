@@ -60,12 +60,12 @@ namespace nd::src::graphics::vulkan
         const auto commandPool    = init.commandPool(commandPoolCfg, device.handle);
 
         return {.device                = device,
+                .commandPool           = commandPool,
                 .buffer                = buffer,
                 .swapchainImages       = std::move(swapchainImages),
                 .swapchainImageViews   = std::move(swapchainImageViews),
                 .swapchainFramebuffers = std::move(swapchainFramebuffers),
                 .shaderModules         = std::move(shaderModules),
-                .commandPool           = commandPool,
                 .descriptorSetLayout   = descriptorSetLayout,
                 .pipelineLayout        = pipelineLayout,
                 .pipeline              = pipeline,
@@ -111,13 +111,10 @@ namespace nd::src::graphics::vulkan
         }
 
         vkDestroyPipeline(objects.device.handle, objects.pipeline.mesh, ND_VK_ALLOCATION_CALLBACKS);
-
         vkDestroyPipelineLayout(objects.device.handle, objects.pipelineLayout.mesh, ND_VK_ALLOCATION_CALLBACKS);
-
         vkDestroyPipelineCache(objects.device.handle, objects.pipelineCache, ND_VK_ALLOCATION_CALLBACKS);
 
         vkDestroyDescriptorSetLayout(objects.device.handle, objects.descriptorSetLayout.mesh, ND_VK_ALLOCATION_CALLBACKS);
-
         vkDestroyDescriptorPool(objects.device.handle, objects.descriptorPool, ND_VK_ALLOCATION_CALLBACKS);
 
         for(opt<const ShaderModule>::ref shaderModule: objects.shaderModules)

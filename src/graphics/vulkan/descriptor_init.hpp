@@ -15,4 +15,10 @@ namespace nd::src::graphics::vulkan
 
     vec<DescriptorSet>
     allocateDescriptorSets(opt<const DescriptorSetCfg>::ref, opt<const DescriptorPool>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
+
+    DescriptorSetObjects
+    allocateDescriptorSetObjects(VulkanObjects&,
+                                 opt<const DescriptorSetObjectsCfg>::ref,
+                                 opt<const DescriptorPool>::ref,
+                                 const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

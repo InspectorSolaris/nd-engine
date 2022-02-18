@@ -177,7 +177,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {.sizes = {VkDescriptorPoolSize {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 1U}}, .maxSets = 1U};
+        return {.sizes = {VkDescriptorPoolSize {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 16U}}, .maxSets = 16U};
     }
 
     DescriptorSetLayoutObjectsCfg
@@ -205,7 +205,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {.mesh = PipelineLayoutCfg {}};
+        return {.mesh = PipelineLayoutCfg {.descriptorSetLayouts = {descriptorSetLayout.mesh}, .pushConstantRanges = {}}};
     }
 
     PipelineObjectsCfg
