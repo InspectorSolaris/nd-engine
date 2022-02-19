@@ -16,7 +16,6 @@ set(TARGET_SRC
     pipeline_init.cpp
     queue_init.cpp
     render_pass_init.cpp
-    render.cpp
     shader_module_init.cpp
     shared_init.cpp
     surface_init.cpp

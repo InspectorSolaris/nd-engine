@@ -2,8 +2,8 @@
 
 #include "tools.hpp"
 
-#include "glfw/glfw_vulkan.hpp"
-#include "vulkan/render.hpp"
+#include "glfw_vulkan.hpp"
+#include "render.hpp"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/rotating_file_sink.h>

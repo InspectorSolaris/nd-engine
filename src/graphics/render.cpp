@@ -24,6 +24,44 @@ namespace nd::src::graphics::vulkan
         glm::mat4 transform;
     };
 
+    struct Camera final
+    {
+        glm::vec3 position;
+        glm::vec3 center;
+        glm::vec3 up;
+    };
+
+    struct Scene final
+    {
+        vec<Index>   indices;
+        vec<Vertex>  vertices;
+        vec<Uniform> uniforms;
+    };
+
+    void
+    setIndeices() noexcept
+    {
+        ND_SET_SCOPE();
+    }
+
+    void
+    setVertices() noexcept
+    {
+        ND_SET_SCOPE();
+    }
+
+    void
+    setUniforms() noexcept
+    {
+        ND_SET_SCOPE();
+    }
+
+    void
+    setScene() noexcept
+    {
+        ND_SET_SCOPE();
+    }
+
     void
     draw(VulkanObjects& objects, const f64 dt) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW)
     {

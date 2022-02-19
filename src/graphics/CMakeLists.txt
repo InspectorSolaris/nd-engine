@@ -1,13 +1,16 @@
 set(TARGET_NAME nd-src-graphics)
-set(TARGET_SRC)
+set(TARGET_SRC
+    render.cpp)
 
 add_subdirectory(vulkan)
 add_subdirectory(glfw)
 
-add_library(${TARGET_NAME} INTERFACE ${TARGET_SRC})
-
-target_include_directories(${TARGET_NAME} INTERFACE "")
+add_library(${TARGET_NAME} ${TARGET_SRC})
 
 target_link_libraries(${TARGET_NAME}
-    INTERFACE ${TARGET_NAME}-vulkan
-    INTERFACE ${TARGET_NAME}-glfw)
+    PUBLIC ${TARGET_NAME}-vulkan
+    PUBLIC ${TARGET_NAME}-glfw)
+
+target_include_directories(${TARGET_NAME} INTERFACE "")
+target_precompile_headers(${TARGET_NAME} PRIVATE pch.hpp)
+
