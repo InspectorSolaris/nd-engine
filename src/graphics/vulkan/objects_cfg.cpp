@@ -168,8 +168,8 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {ShaderModuleCfg {.path = "src/graphics/vulkan/shaders/vert.spv", .stage = VK_SHADER_STAGE_VERTEX_BIT},
-                ShaderModuleCfg {.path = "src/graphics/vulkan/shaders/frag.spv", .stage = VK_SHADER_STAGE_FRAGMENT_BIT}};
+        return {{.path = "src/graphics/vulkan/shaders/vert.spv", .stage = VK_SHADER_STAGE_VERTEX_BIT},
+                {.path = "src/graphics/vulkan/shaders/frag.spv", .stage = VK_SHADER_STAGE_FRAGMENT_BIT}};
     }
 
     DescriptorPoolCfg
@@ -185,11 +185,11 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {.mesh = DescriptorSetLayoutCfg {.bindings = {{.binding            = 0,
-                                                              .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                                              .descriptorCount    = 1,
-                                                              .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
-                                                              .pImmutableSamplers = nullptr}}}};
+        return {.mesh = {.bindings = {{.binding            = 0,
+                                       .descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                       .descriptorCount    = 1,
+                                       .stageFlags         = VK_SHADER_STAGE_VERTEX_BIT,
+                                       .pImmutableSamplers = nullptr}}}};
     }
 
     PipelineCacheCfg
@@ -205,7 +205,7 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        return {.mesh = PipelineLayoutCfg {.descriptorSetLayouts = {descriptorSetLayout.mesh}, .pushConstantRanges = {}}};
+        return {.mesh = {.descriptorSetLayouts = {descriptorSetLayout.mesh}, .pushConstantRanges = {}}};
     }
 
     PipelineObjectsCfg

@@ -118,11 +118,11 @@ namespace nd::src::graphics::vulkan
     {
         ND_SET_SCOPE();
 
-        auto graphicsContainers = std::array<GraphicsPipelineContainer, 1> {};
+        auto graphicsContainers = array<GraphicsPipelineContainer, 1> {};
 
-        auto graphicsCreateInfos = std::array {getGraphicsPipelineCreateInfo(cfg.mesh, graphicsContainers[0])};
+        auto graphicsCreateInfos = array {getGraphicsPipelineCreateInfo(cfg.mesh, graphicsContainers[0])};
 
-        auto graphicsPipelines = std::array<VkPipeline, graphicsCreateInfos.size()> {};
+        auto graphicsPipelines = array<VkPipeline, graphicsCreateInfos.size()> {};
 
         ND_VK_ASSERT(vkCreateGraphicsPipelines(device,
                                                pipelineCache,

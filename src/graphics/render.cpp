@@ -61,20 +61,21 @@ namespace nd::src::graphics
         using nd::src::graphics::vulkan::SubmitInfoCfg;
         using nd::src::graphics::vulkan::PresentInfoCfg;
 
+        const auto threadCount = 1;
+        const auto imageCount  = objects.swapchainImages.size();
+
+        const auto memoryLayout = MemoryLayout {.vertex  = {.offset = 0 * 1024, .size = 1024},
+                                                .index   = {.offset = 1 * 1024, .size = 1024},
+                                                .uniform = {.offset = 2 * 1024, .size = 1024},
+                                                .stage   = {.offset = 0 * 1024, .size = 1024}};
+
         static auto index  = 0U;
         static auto loaded = false;
-
-        static const auto memoryLayout = MemoryLayout {.vertex  = {.offset = 0 * 1024, .size = 1024},
-                                                       .index   = {.offset = 1 * 1024, .size = 1024},
-                                                       .uniform = {.offset = 2 * 1024, .size = 1024},
-                                                       .stage   = {.offset = 0 * 1024, .size = 1024}};
 
         static const auto graphicsQueue  = getQueue(objects.device.handle, objects.device.queueFamily.graphics.index, 0);
         static const auto transferQueue  = getQueue(objects.device.handle, objects.device.queueFamily.transfer.index, 0);
         static const auto computeQueue   = getQueue(objects.device.handle, objects.device.queueFamily.compute.index, 0);
         static const auto swapchainQueue = getQueue(objects.device.handle, objects.swapchain.queueFamily.index, 0);
-
-        const auto imageCount = objects.swapchainImages.size();
 
         static const auto descriptorSet = allocateDescriptorSetObjects(
             objects,
@@ -91,21 +92,25 @@ namespace nd::src::graphics
 
         static const auto semaphoresAcquire = createSemaphores(objects, {}, imageCount);
         static const auto semaphoresSubmit  = createSemaphores(objects, {}, imageCount);
-        static const auto fencesGraphics    = createFences(objects, {}, imageCount);
-        static const auto fencesTransfer    = createFences(objects, {}, imageCount);
-        static const auto fencesCompute     = createFences(objects, {}, imageCount);
-
-        const auto threadCount = 1;
-
-        const auto graphicsCommandBuffer = commandBuffer.graphics[index * threadCount];
-        const auto transferCommandBuffer = commandBuffer.transfer[index * threadCount];
-        const auto computeCommandBuffer  = commandBuffer.compute[index * threadCount];
-
-        resetCommandPools(index * threadCount, threadCount, objects.commandPool.graphics, objects.device.handle);
-        resetCommandPools(index * threadCount, threadCount, objects.commandPool.transfer, objects.device.handle);
-        resetCommandPools(index * threadCount, threadCount, objects.commandPool.compute, objects.device.handle);
+        static const auto fencesGraphics    = createFences(objects, {.flags = VK_FENCE_CREATE_SIGNALED_BIT}, imageCount);
+        static const auto fencesTransfer    = createFences(objects, {.flags = VK_FENCE_CREATE_SIGNALED_BIT}, imageCount);
+        static const auto fencesCompute     = createFences(objects, {.flags = VK_FENCE_CREATE_SIGNALED_BIT}, imageCount);
 
         const auto imageIndex = getNextImageIndex(objects.device.handle, objects.swapchain.handle, semaphoresAcquire[index]);
+
+        const auto fencesWait  = array {fencesGraphics[imageIndex]};
+        const auto fencesReset = array {fencesGraphics[imageIndex], fencesTransfer[imageIndex], fencesCompute[imageIndex]};
+
+        vkWaitForFences(objects.device.handle, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
+        vkResetFences(objects.device.handle, fencesReset.size(), fencesReset.data());
+
+        resetCommandPools(imageIndex * threadCount, threadCount, objects.commandPool.graphics, objects.device.handle);
+        resetCommandPools(imageIndex * threadCount, threadCount, objects.commandPool.transfer, objects.device.handle);
+        resetCommandPools(imageIndex * threadCount, threadCount, objects.commandPool.compute, objects.device.handle);
+
+        const auto graphicsCommandBuffer = commandBuffer.graphics[imageIndex * threadCount];
+        const auto transferCommandBuffer = commandBuffer.transfer[imageIndex * threadCount];
+        const auto computeCommandBuffer  = commandBuffer.compute[imageIndex * threadCount];
 
         const auto width  = static_cast<u32>(objects.swapchain.width);
         const auto height = static_cast<u32>(objects.swapchain.height);
@@ -150,10 +155,9 @@ namespace nd::src::graphics
 
             vkUnmapMemory(objects.device.handle, objects.device.memory.host.handle);
 
-            const auto regions = std::array {
-                VkBufferCopy {.srcOffset = verticesOffset, .dstOffset = memoryLayout.vertex.offset, .size = verticesSize},
-                VkBufferCopy {.srcOffset = indicesOffset, .dstOffset = memoryLayout.index.offset, .size = indicesSize},
-                VkBufferCopy {.srcOffset = uniformsOffset, .dstOffset = memoryLayout.uniform.offset, .size = uniformsSize}};
+            const auto regions = array {VkBufferCopy {.srcOffset = verticesOffset, .dstOffset = memoryLayout.vertex.offset, .size = verticesSize},
+                                        VkBufferCopy {.srcOffset = indicesOffset, .dstOffset = memoryLayout.index.offset, .size = indicesSize},
+                                        VkBufferCopy {.srcOffset = uniformsOffset, .dstOffset = memoryLayout.uniform.offset, .size = uniformsSize}};
 
             const auto transferCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
@@ -166,13 +170,13 @@ namespace nd::src::graphics
             const auto submitInfoCfg = SubmitInfoCfg {.stages           = {},
                                                       .semaphoresWait   = {},
                                                       .semaphoresSignal = {},
-                                                      .commandBuffers   = std::array {transferCommandBuffer}};
+                                                      .commandBuffers   = array {transferCommandBuffer}};
 
-            const auto submitInfos = std::array {getSubmitInfo(submitInfoCfg)};
+            const auto submitInfos = array {getSubmitInfo(submitInfoCfg)};
 
-            vkQueueSubmit(transferQueue, submitInfos.size(), submitInfos.data(), fencesTransfer[index]);
+            vkQueueSubmit(transferQueue, submitInfos.size(), submitInfos.data(), fencesTransfer[imageIndex]);
 
-            const auto fencesWait = std::array {fencesTransfer[index]};
+            const auto fencesWait = array {fencesTransfer[imageIndex]};
 
             vkWaitForFences(objects.device.handle, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
             vkResetFences(objects.device.handle, fencesWait.size(), fencesWait.data());
@@ -194,7 +198,7 @@ namespace nd::src::graphics
                                                          .pBufferInfo      = &bufferInfo,
                                                          .pTexelBufferView = {}};
 
-                const auto writes = std::array {write};
+                const auto writes = array {write};
 
                 vkUpdateDescriptorSets(objects.device.handle, writes.size(), writes.data(), 0, nullptr);
             }
@@ -202,7 +206,9 @@ namespace nd::src::graphics
             loaded = true;
         }
 
-        const auto clearValues = vec<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
+        const auto clearValues = array {VkClearValue {0.0f, 0.0f, 0.0f, 0.0f}};
+
+        const auto graphicsCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
         const auto renderPassBeginInfo = VkRenderPassBeginInfo {
             .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
@@ -212,14 +218,12 @@ namespace nd::src::graphics
             .clearValueCount = static_cast<u32>(clearValues.size()),
             .pClearValues    = clearValues.data()};
 
-        const auto vertexBuffers       = std::array {objects.buffer.mesh.handle};
-        const auto vertexBufferOffsets = std::array {memoryLayout.vertex.offset};
+        const auto vertexBuffers       = array {objects.buffer.mesh.handle};
+        const auto vertexBufferOffsets = array {memoryLayout.vertex.offset};
         const auto indexBuffer         = objects.buffer.mesh.handle;
         const auto indexOffset         = memoryLayout.index.offset;
 
-        const auto descriptorSets = std::array {descriptorSet.mesh[index]};
-
-        const auto graphicsCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+        const auto descriptorSets = array {descriptorSet.mesh[imageIndex]};
 
         ND_VK_ASSERT(vkBeginCommandBuffer(graphicsCommandBuffer, &graphicsCommandBufferBeginInfo));
 
@@ -244,25 +248,20 @@ namespace nd::src::graphics
 
         ND_VK_ASSERT(vkEndCommandBuffer(graphicsCommandBuffer));
 
-        const auto submitInfoCfg = SubmitInfoCfg {.stages = std::array {VkPipelineStageFlags {} | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
-                                                  .semaphoresWait   = std::array {semaphoresAcquire[index]},
-                                                  .semaphoresSignal = std::array {semaphoresSubmit[index]},
-                                                  .commandBuffers   = std::array {graphicsCommandBuffer}};
+        const auto submitInfoCfg = SubmitInfoCfg {.stages           = array {VkPipelineStageFlags {} | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
+                                                  .semaphoresWait   = array {semaphoresAcquire[index]},
+                                                  .semaphoresSignal = array {semaphoresSubmit[imageIndex]},
+                                                  .commandBuffers   = array {graphicsCommandBuffer}};
 
-        const auto presentInfoCfg = PresentInfoCfg {.semaphoresWait = std::array {semaphoresSubmit[index]},
-                                                    .swapchains     = std::array {objects.swapchain.handle},
-                                                    .images         = std::array {imageIndex}};
+        const auto presentInfoCfg = PresentInfoCfg {.semaphoresWait = array {semaphoresSubmit[imageIndex]},
+                                                    .swapchains     = array {objects.swapchain.handle},
+                                                    .images         = array {imageIndex}};
 
-        const auto submitInfos = std::array {getSubmitInfo(submitInfoCfg)};
+        const auto submitInfos = array {getSubmitInfo(submitInfoCfg)};
         const auto presentInfo = getPresentInfo(presentInfoCfg);
 
-        vkQueueSubmit(graphicsQueue, submitInfos.size(), submitInfos.data(), fencesGraphics[index]);
+        vkQueueSubmit(graphicsQueue, submitInfos.size(), submitInfos.data(), fencesGraphics[imageIndex]);
         vkQueuePresentKHR(swapchainQueue, &presentInfo);
-
-        const auto fencesWait = std::array {fencesGraphics[index]};
-
-        vkWaitForFences(objects.device.handle, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
-        vkResetFences(objects.device.handle, fencesWait.size(), fencesWait.data());
 
         index = (index + 1) % imageCount;
     }

@@ -15,9 +15,10 @@ using u64 = uint64_t;
 using f32 = float;
 using f64 = double;
 
+using std::array;
+using std::span;
 using std::set;
 using std::map;
-using std::span;
 
 template<typename T>
 using shared = std::shared_ptr<T>;
@@ -30,9 +31,6 @@ using unique = std::unique_ptr<T>;
 
 template<typename T>
 using func = std::function<T>;
-
-template<typename T, u64 S>
-using arr = std::array<T, S>;
 
 template<typename T>
 using vec = std::vector<T>;

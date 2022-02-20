@@ -352,7 +352,7 @@ namespace nd::src::graphics::vulkan
     struct PipelineColorBlendStateCreateInfo final
     {
         vec<VkPipelineColorBlendAttachmentState> attachments;
-        arr<f32, 4>                              blendConstants;
+        array<f32, 4>                            blendConstants;
 
         VkBool32  logicOpEnable;
         VkLogicOp logicOp;

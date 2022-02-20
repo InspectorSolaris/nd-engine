@@ -194,7 +194,7 @@ namespace nd::src::graphics::vulkan
         const auto imageArrayLayers = getSwapchainImageArrayLayers(cfg, capabilities);
         const auto imageExtent      = getSwapchainImageExtent(cfg, capabilities);
 
-        const auto queueFamilyIndices = std::array {static_cast<u32>(cfg.queueFamily.graphics.index)};
+        const auto queueFamilyIndices = array {static_cast<u32>(cfg.queueFamily.graphics.index)};
 
         const auto createInfo = VkSwapchainCreateInfoKHR {
             .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
