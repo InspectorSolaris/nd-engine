@@ -1,7 +1,7 @@
 #include "render.hpp"
 #include "tools_runtime.hpp"
 
-namespace nd::src::graphics::vulkan
+namespace nd::src::graphics
 {
     using namespace nd::src::tools;
 
@@ -11,12 +11,12 @@ namespace nd::src::graphics::vulkan
         VkDeviceSize size;
     };
 
-    using Index = u16;
-
-    struct Vertex final
+    struct MemoryLayout final
     {
-        glm::vec3 position;
-        glm::vec3 color;
+        Memory vertex;
+        Memory index;
+        Memory uniform;
+        Memory stage;
     };
 
     struct Uniform final
@@ -24,58 +24,50 @@ namespace nd::src::graphics::vulkan
         glm::mat4 transform;
     };
 
-    struct Camera final
-    {
-        glm::vec3 position;
-        glm::vec3 center;
-        glm::vec3 up;
-    };
-
-    struct Scene final
-    {
-        vec<Index>   indices;
-        vec<Vertex>  vertices;
-        vec<Uniform> uniforms;
-    };
-
     void
-    setIndeices() noexcept
+    setScene(VulkanObjects& objects, const f64 dt) noexcept
     {
         ND_SET_SCOPE();
-    }
 
-    void
-    setVertices() noexcept
-    {
-        ND_SET_SCOPE();
-    }
-
-    void
-    setUniforms() noexcept
-    {
-        ND_SET_SCOPE();
-    }
-
-    void
-    setScene() noexcept
-    {
-        ND_SET_SCOPE();
+        const auto scene = Scene {
+            .camera    = {.location = {2.0f * std::cos(dt / 4), 2.0f * std::sin(dt / 4), 1.0f},
+                          .center   = {0.0f, 0.0f, 0.0f},
+                          .up       = {0.0f, 0.0f, 1.0f},
+                          .fovx     = 90.0f,
+                          .ratio    = static_cast<f32>(objects.swapchain.width) / objects.swapchain.height,
+                          .near     = 0.1f,
+                          .far      = 10.0f},
+            .meshes    = {{.indices  = {0, 1, 2, 1, 2, 3, 4, 5, 6, 5, 6, 7, 0, 4, 5, 0, 1, 5, 1, 5, 6, 1, 2, 6, 2, 6, 7, 2, 3, 7, 3, 7, 4, 3, 0, 4},
+                           .vertices = {{.position = {+0.5f, +0.5f, +0.5f}, .color = {0.75f, 0.75f, 0.75f}},
+                                     {.position = {+0.5f, -0.5f, +0.5f}, .color = {0.75f, 0.75f, 0.75f}},
+                                     {.position = {-0.5f, -0.5f, +0.5f}, .color = {0.75f, 0.75f, 0.75f}},
+                                     {.position = {-0.5f, +0.5f, +0.5f}, .color = {0.75f, 0.75f, 0.75f}},
+                                     {.position = {+0.5f, +0.5f, -0.5f}, .color = {0.75f, 0.75f, 0.75f}},
+                                     {.position = {+0.5f, -0.5f, -0.5f}, .color = {0.75f, 0.75f, 0.75f}},
+                                     {.position = {-0.5f, -0.5f, -0.5f}, .color = {0.75f, 0.75f, 0.75f}},
+                                     {.position = {-0.5f, +0.5f, -0.5f}, .color = {0.75f, 0.75f, 0.75f}}}}},
+            .instances = {
+                {.transform = {.rotation = {0.0f, 0.0f, 0.0f}, .scalation = {1.0f, 1.0f, 1.0f}, .translation = {0.0f, 0.0f, 0.0f}}, .meshIndex = 0}}};
     }
 
     void
     draw(VulkanObjects& objects, const f64 dt) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW)
     {
-        using namespace std;
-
         ND_SET_SCOPE();
+
+        using nd::src::graphics::vulkan::getQueue;
+        using nd::src::graphics::vulkan::getNextImageIndex;
+        using nd::src::graphics::vulkan::resetCommandPools;
+        using nd::src::graphics::vulkan::SubmitInfoCfg;
+        using nd::src::graphics::vulkan::PresentInfoCfg;
 
         static auto index  = 0U;
         static auto loaded = false;
 
-        static const auto vertexMemory  = Memory {.offset = 0 * 1024, .size = 1024};
-        static const auto indexMemory   = Memory {.offset = 1 * 1024, .size = 1024};
-        static const auto uniformMemory = Memory {.offset = 2 * 1024, .size = 1024};
-        static const auto stageMemory   = Memory {.offset = 0, .size = 1024};
+        static const auto memoryLayout = MemoryLayout {.vertex  = {.offset = 0 * 1024, .size = 1024},
+                                                       .index   = {.offset = 1 * 1024, .size = 1024},
+                                                       .uniform = {.offset = 2 * 1024, .size = 1024},
+                                                       .stage   = {.offset = 0 * 1024, .size = 1024}};
 
         static const auto graphicsQueue  = getQueue(objects.device.handle, objects.device.queueFamily.graphics.index, 0);
         static const auto transferQueue  = getQueue(objects.device.handle, objects.device.queueFamily.transfer.index, 0);
@@ -103,11 +95,11 @@ namespace nd::src::graphics::vulkan
         static const auto fencesTransfer    = createFences(objects, {}, imageCount);
         static const auto fencesCompute     = createFences(objects, {}, imageCount);
 
-        const auto graphicsCommandBuffer = commandBuffer.graphics[index];
-        const auto transferCommandBuffer = commandBuffer.transfer[index];
-        const auto computeCommandBuffer  = commandBuffer.compute[index];
-
         const auto threadCount = 1;
+
+        const auto graphicsCommandBuffer = commandBuffer.graphics[index * threadCount];
+        const auto transferCommandBuffer = commandBuffer.transfer[index * threadCount];
+        const auto computeCommandBuffer  = commandBuffer.compute[index * threadCount];
 
         resetCommandPools(index * threadCount, threadCount, objects.commandPool.graphics, objects.device.handle);
         resetCommandPools(index * threadCount, threadCount, objects.commandPool.transfer, objects.device.handle);
@@ -131,10 +123,10 @@ namespace nd::src::graphics::vulkan
                                                   {.position = {+0.5, +0.5, 0.0}, .color = {0.0, 1.0, 0.0}},
                                                   {.position = {-0.5, +0.5, 0.0}, .color = {0.0, 0.0, 1.0}}};
 
+        static const auto uniforms = vec<Uniform>(imageCount, uniform);
+
         if(!loaded)
         {
-            static const auto uniforms = vec<Uniform>(imageCount, uniform);
-
             const auto verticesSize = sizeof(Vertex) * vertices.size();
             const auto indicesSize  = sizeof(Index) * indices.size();
             const auto uniformsSize = sizeof(Uniform) * uniforms.size();
@@ -158,17 +150,18 @@ namespace nd::src::graphics::vulkan
 
             vkUnmapMemory(objects.device.handle, objects.device.memory.host.handle);
 
-            const auto regions = std::array {VkBufferCopy {.srcOffset = verticesOffset, .dstOffset = vertexMemory.offset, .size = verticesSize},
-                                             VkBufferCopy {.srcOffset = indicesOffset, .dstOffset = indexMemory.offset, .size = indicesSize},
-                                             VkBufferCopy {.srcOffset = uniformsOffset, .dstOffset = uniformMemory.offset, .size = uniformsSize}};
+            const auto regions = std::array {
+                VkBufferCopy {.srcOffset = verticesOffset, .dstOffset = memoryLayout.vertex.offset, .size = verticesSize},
+                VkBufferCopy {.srcOffset = indicesOffset, .dstOffset = memoryLayout.index.offset, .size = indicesSize},
+                VkBufferCopy {.srcOffset = uniformsOffset, .dstOffset = memoryLayout.uniform.offset, .size = uniformsSize}};
 
             const auto transferCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
-            vkBeginCommandBuffer(transferCommandBuffer, &transferCommandBufferBeginInfo);
+            ND_VK_ASSERT(vkBeginCommandBuffer(transferCommandBuffer, &transferCommandBufferBeginInfo));
 
             vkCmdCopyBuffer(transferCommandBuffer, objects.buffer.stage.handle, objects.buffer.mesh.handle, regions.size(), regions.data());
 
-            vkEndCommandBuffer(transferCommandBuffer);
+            ND_VK_ASSERT(vkEndCommandBuffer(transferCommandBuffer));
 
             const auto submitInfoCfg = SubmitInfoCfg {.stages           = {},
                                                       .semaphoresWait   = {},
@@ -187,7 +180,7 @@ namespace nd::src::graphics::vulkan
             for(auto index = 0; index < descriptorSet.mesh.size(); ++index)
             {
                 const auto bufferInfo = VkDescriptorBufferInfo {.buffer = objects.buffer.mesh.handle,
-                                                                .offset = sizeof(Uniform) * index + uniformMemory.offset,
+                                                                .offset = sizeof(Uniform) * index + memoryLayout.uniform.offset,
                                                                 .range  = sizeof(Uniform)};
 
                 const auto write = VkWriteDescriptorSet {.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
@@ -209,10 +202,6 @@ namespace nd::src::graphics::vulkan
             loaded = true;
         }
 
-        const auto graphicsCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
-
-        ND_VK_ASSERT(vkBeginCommandBuffer(graphicsCommandBuffer, &graphicsCommandBufferBeginInfo));
-
         const auto clearValues = vec<VkClearValue> {{{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f}}};
 
         const auto renderPassBeginInfo = VkRenderPassBeginInfo {
@@ -223,14 +212,18 @@ namespace nd::src::graphics::vulkan
             .clearValueCount = static_cast<u32>(clearValues.size()),
             .pClearValues    = clearValues.data()};
 
-        vkCmdBeginRenderPass(graphicsCommandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-
         const auto vertexBuffers       = std::array {objects.buffer.mesh.handle};
-        const auto vertexBufferOffsets = std::array {vertexMemory.offset};
+        const auto vertexBufferOffsets = std::array {memoryLayout.vertex.offset};
         const auto indexBuffer         = objects.buffer.mesh.handle;
-        const auto indexOffset         = indexMemory.offset;
+        const auto indexOffset         = memoryLayout.index.offset;
 
         const auto descriptorSets = std::array {descriptorSet.mesh[index]};
+
+        const auto graphicsCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+
+        ND_VK_ASSERT(vkBeginCommandBuffer(graphicsCommandBuffer, &graphicsCommandBufferBeginInfo));
+
+        vkCmdBeginRenderPass(graphicsCommandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         vkCmdBindPipeline(graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, objects.pipeline.mesh);
         vkCmdBindDescriptorSets(graphicsCommandBuffer,
@@ -273,4 +266,4 @@ namespace nd::src::graphics::vulkan
 
         index = (index + 1) % imageCount;
     }
-} // namespace nd::src::graphics::vulkan
+} // namespace nd::src::graphics

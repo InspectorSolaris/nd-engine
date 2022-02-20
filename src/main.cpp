@@ -21,6 +21,7 @@ main()
     using namespace spdlog::level;
 
     using namespace nd::src::tools;
+    using namespace nd::src::graphics;
     using namespace nd::src::graphics::vulkan;
     using namespace nd::src::graphics::glfw;
 

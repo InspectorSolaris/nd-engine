@@ -173,11 +173,11 @@ namespace nd::src::graphics::vulkan
     }
 
     DescriptorPoolCfg
-    getDescriptorPoolCfg() noexcept(ND_ASSERT_NOTHROW)
+    getDescriptorPoolCfg(const u16 imageCount) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
-        return {.sizes = {VkDescriptorPoolSize {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 16U}}, .maxSets = 16U};
+        return {.sizes = {{.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = imageCount}}, .maxSets = imageCount};
     }
 
     DescriptorSetLayoutObjectsCfg

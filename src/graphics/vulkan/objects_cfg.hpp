@@ -492,7 +492,7 @@ namespace nd::src::graphics::vulkan
     FramebufferCfg getSwapchainFramebufferCfg(opt<const SwapchainCfg>::ref, opt<const RenderPass>::ref) noexcept(ND_ASSERT_NOTHROW);
 
     DescriptorPoolCfg
-    getDescriptorPoolCfg() noexcept(ND_ASSERT_NOTHROW);
+    getDescriptorPoolCfg(const u16) noexcept(ND_ASSERT_NOTHROW);
 
     DescriptorSetLayoutObjectsCfg
     getDescriptorSetLayoutObjectsCfg() noexcept(ND_ASSERT_NOTHROW);

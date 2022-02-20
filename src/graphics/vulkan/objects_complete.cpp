@@ -38,7 +38,7 @@ namespace nd::src::graphics::vulkan
         const auto swapchainFramebufferCfg = cfg.swapchainFramebuffer(swapchainCfg, renderPass);
         auto       swapchainFramebuffers   = init.swapchainFramebuffers(swapchainFramebufferCfg, device.handle, swapchainImageViews);
 
-        const auto descriptorPoolCfg = cfg.descriptorPool();
+        const auto descriptorPoolCfg = cfg.descriptorPool(swapchainImages.size());
         const auto descriptorPool    = init.descriptorPool(descriptorPoolCfg, device.handle);
 
         const auto descriptorSetLayoutCfg = cfg.descriptorSetLayout();
