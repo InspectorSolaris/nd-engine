@@ -77,13 +77,13 @@ namespace nd::src::graphics::vulkan
 
         return {.mesh  = {.queueFamilyIndices = {},
                           .memory             = device.memory.device,
-                          .size               = 3 * 1024,
+                          .size               = 8 * 1024,
                           .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
                              VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                           .sharingMode = VK_SHARING_MODE_EXCLUSIVE},
                 .stage = {.queueFamilyIndices = {},
                           .memory             = device.memory.host,
-                          .size               = 1 * 1024,
+                          .size               = 8 * 1024,
                           .usage              = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                           .sharingMode        = VK_SHARING_MODE_EXCLUSIVE}};
     }

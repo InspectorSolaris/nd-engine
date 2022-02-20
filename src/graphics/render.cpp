@@ -64,10 +64,10 @@ namespace nd::src::graphics
         const auto threadCount = 1;
         const auto imageCount  = objects.swapchainImages.size();
 
-        const auto memoryLayout = MemoryLayout {.vertex  = {.offset = 0 * 1024, .size = 1024},
-                                                .index   = {.offset = 1 * 1024, .size = 1024},
-                                                .uniform = {.offset = 2 * 1024, .size = 1024},
-                                                .stage   = {.offset = 0 * 1024, .size = 1024}};
+        const auto memoryLayout = MemoryLayout {.vertex  = {.offset = 0 * 1024, .size = 5 * 1024},
+                                                .index   = {.offset = 5 * 1024, .size = 1 * 1024},
+                                                .uniform = {.offset = 6 * 1024, .size = 2 * 1024},
+                                                .stage   = {.offset = 0 * 1024, .size = 8 * 1024}};
 
         static auto index  = 0U;
         static auto loaded = false;
@@ -176,11 +176,6 @@ namespace nd::src::graphics
 
             vkQueueSubmit(transferQueue, submitInfos.size(), submitInfos.data(), fencesTransfer[imageIndex]);
 
-            const auto fencesWait = array {fencesTransfer[imageIndex]};
-
-            vkWaitForFences(objects.device.handle, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
-            vkResetFences(objects.device.handle, fencesWait.size(), fencesWait.data());
-
             for(auto index = 0; index < descriptorSet.mesh.size(); ++index)
             {
                 const auto bufferInfo = VkDescriptorBufferInfo {.buffer = objects.buffer.mesh.handle,
@@ -202,6 +197,11 @@ namespace nd::src::graphics
 
                 vkUpdateDescriptorSets(objects.device.handle, writes.size(), writes.data(), 0, nullptr);
             }
+
+            const auto fencesWait = array {fencesTransfer[imageIndex]};
+
+            vkWaitForFences(objects.device.handle, fencesWait.size(), fencesWait.data(), VK_TRUE, std::numeric_limits<u64>::max());
+            vkResetFences(objects.device.handle, fencesWait.size(), fencesWait.data());
 
             loaded = true;
         }
