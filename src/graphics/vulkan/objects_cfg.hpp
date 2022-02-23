@@ -502,7 +502,7 @@ namespace nd::src::graphics::vulkan
     CommandPoolObjectsCfg
     getCommandPoolObjectsCfg(opt<const Device>::ref, const u16) noexcept(ND_ASSERT_NOTHROW);
 
-    struct VulkanObjectsCfg final
+    struct ObjectsCfg final
     {
         using InstanceCfgInit                   = rm_noexcept<decltype(getInstanceCfg)>;
         using PhysicalDeviceCfgInit             = rm_noexcept<decltype(getPhysicalDeviceCfg)>;

@@ -5,8 +5,8 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    VulkanObjectsCfgBuilder::Type
-    VulkanObjectsCfgBuilder::get() const noexcept(ND_ASSERT_NOTHROW)
+    ObjectsCfgBuilder::Type
+    ObjectsCfgBuilder::get() const noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 

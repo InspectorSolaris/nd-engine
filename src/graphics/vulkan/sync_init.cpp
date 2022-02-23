@@ -6,7 +6,7 @@ namespace nd::src::graphics::vulkan
     using namespace nd::src::tools;
 
     Semaphore
-    createSemaphore(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg) noexcept(ND_VK_ASSERT_NOTHROW)
+    createSemaphore(Objects& objects, opt<const SemaphoreCfg>::ref cfg) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -22,7 +22,7 @@ namespace nd::src::graphics::vulkan
     }
 
     vec<Semaphore>
-    createSemaphores(VulkanObjects& objects, opt<const SemaphoreCfg>::ref cfg, const u16 count) noexcept(ND_VK_ASSERT_NOTHROW)
+    createSemaphores(Objects& objects, opt<const SemaphoreCfg>::ref cfg, const u16 count) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -34,7 +34,7 @@ namespace nd::src::graphics::vulkan
     }
 
     Fence
-    createFence(VulkanObjects& objects, opt<const FenceCfg>::ref cfg) noexcept(ND_VK_ASSERT_NOTHROW)
+    createFence(Objects& objects, opt<const FenceCfg>::ref cfg) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
@@ -50,7 +50,7 @@ namespace nd::src::graphics::vulkan
     }
 
     vec<Fence>
-    createFences(VulkanObjects& objects, opt<const FenceCfg>::ref cfg, const u16 count) noexcept(ND_VK_ASSERT_NOTHROW)
+    createFences(Objects& objects, opt<const FenceCfg>::ref cfg, const u16 count) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 

@@ -10,7 +10,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    VulkanObjects createVulkanObjects(opt<const Dependency>::ref, opt<const VulkanObjectsCfg>::ref, opt<const VulkanObjectsInit>::ref) noexcept;
+    Objects createObjects(opt<const Dependency>::ref, opt<const ObjectsCfg>::ref, opt<const ObjectsInit>::ref) noexcept;
 
-    void destroyVulkanObjects(opt<const VulkanObjects>::ref) noexcept;
+    void destroyObjects(opt<const Objects>::ref) noexcept;
 } // namespace nd::src::graphics::vulkan

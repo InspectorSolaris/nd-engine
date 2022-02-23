@@ -5,6 +5,16 @@ namespace nd::src::graphics
 {
     using namespace nd::src::tools;
 
+    using nd::src::graphics::vulkan::getQueue;
+    using nd::src::graphics::vulkan::getNextImageIndex;
+    using nd::src::graphics::vulkan::resetCommandPools;
+    using nd::src::graphics::vulkan::allocateDescriptorSets;
+    using nd::src::graphics::vulkan::allocateCommandBuffers;
+
+    using nd::src::graphics::vulkan::Objects;
+    using nd::src::graphics::vulkan::SubmitInfoCfg;
+    using nd::src::graphics::vulkan::PresentInfoCfg;
+
     struct Memory final
     {
         VkDeviceSize offset;
@@ -25,7 +35,7 @@ namespace nd::src::graphics
     };
 
     void
-    setScene(VulkanObjects& objects, const f64 dt) noexcept
+    setScene(Objects& objects, const f64 dt) noexcept
     {
         ND_SET_SCOPE();
 
@@ -51,17 +61,9 @@ namespace nd::src::graphics
     }
 
     void
-    draw(VulkanObjects& objects, const f64 dt) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW)
+    draw(Objects& objects, const f64 dt) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
-
-        using nd::src::graphics::vulkan::getQueue;
-        using nd::src::graphics::vulkan::getNextImageIndex;
-        using nd::src::graphics::vulkan::resetCommandPools;
-        using nd::src::graphics::vulkan::allocateDescriptorSets;
-        using nd::src::graphics::vulkan::allocateCommandBuffers;
-        using nd::src::graphics::vulkan::SubmitInfoCfg;
-        using nd::src::graphics::vulkan::PresentInfoCfg;
 
         const auto threadCount = 1;
         const auto imageCount  = objects.swapchainImages.size();

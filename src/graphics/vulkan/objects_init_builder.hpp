@@ -7,11 +7,11 @@
 
 namespace nd::src::graphics::vulkan
 {
-    class VulkanObjectsInitBuilder final
+    class ObjectsInitBuilder final
     {
     public:
-        using Type    = VulkanObjectsInit;
-        using Builder = VulkanObjectsInitBuilder;
+        using Type    = ObjectsInit;
+        using Builder = ObjectsInitBuilder;
 
         static Builder
         getDefault() noexcept(ND_ASSERT_NOTHROW)

@@ -10,8 +10,6 @@
 
 namespace nd::src::graphics
 {
-    using VulkanObjects = nd::src::graphics::vulkan::VulkanObjects;
-
     void
-    draw(VulkanObjects&, const f64) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW);
+    draw(vulkan::Objects&, const f64) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW);
 } // namespace nd::src::graphics

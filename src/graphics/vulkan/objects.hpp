@@ -193,7 +193,7 @@ namespace nd::src::graphics::vulkan
     // ----------------------------------
     // --------------- EE ---------------
 
-    struct VulkanObjects final
+    struct Objects final
     {
         Device device;
 

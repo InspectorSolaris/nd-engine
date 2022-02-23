@@ -19,7 +19,7 @@
 
 namespace nd::src::graphics::vulkan
 {
-    struct VulkanObjectsInit final
+    struct ObjectsInit final
     {
         using InstanceInit                   = rm_noexcept<decltype(createInstance)>;
         using PhysicalDeviceInit             = rm_noexcept<decltype(getPhysicalDevice)>;

@@ -5,8 +5,8 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    VulkanObjects
-    createVulkanObjects(opt<const Dependency>::ref dependency, opt<const VulkanObjectsCfg>::ref cfg, opt<const VulkanObjectsInit>::ref init) noexcept
+    Objects
+    createObjects(opt<const Dependency>::ref dependency, opt<const ObjectsCfg>::ref cfg, opt<const ObjectsInit>::ref init) noexcept
     {
         ND_SET_SCOPE();
 
@@ -79,7 +79,7 @@ namespace nd::src::graphics::vulkan
     }
 
     void
-    destroyVulkanObjects(opt<const VulkanObjects>::ref objects) noexcept
+    destroyObjects(opt<const Objects>::ref objects) noexcept
     {
         ND_SET_SCOPE();
 
