@@ -5,7 +5,7 @@
 namespace nd::src::graphics::vulkan
 {
     void
-    resetCommandPools(u64, u64, span<const CommandPool>, const VkDevice, const VkCommandPoolResetFlags = {}) noexcept(ND_VK_ASSERT_NOTHROW);
+    resetCommandPools(span<const CommandPool>, const VkDevice, const VkCommandPoolResetFlags = {}) noexcept(ND_VK_ASSERT_NOTHROW);
 
     CommandPool
     createCommandPool(opt<const CommandPoolCfg>::ref, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
@@ -21,10 +21,4 @@ namespace nd::src::graphics::vulkan
 
     vec<CommandBuffer>
     allocateCommandBuffers(opt<const CommandBufferCfg>::ref, const vec<CommandPool>&, const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
-
-    CommandBufferObjects
-    allocateCommandBufferObjects(VulkanObjects&,
-                                 opt<const CommandBufferObjectsCfg>::ref,
-                                 opt<const CommandPoolObjects>::ref,
-                                 const VkDevice) noexcept(ND_VK_ASSERT_NOTHROW);
 } // namespace nd::src::graphics::vulkan

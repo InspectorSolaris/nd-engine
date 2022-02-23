@@ -69,22 +69,4 @@ namespace nd::src::graphics::vulkan
 
         return descriptorSets;
     }
-
-    DescriptorSetObjects
-    allocateDescriptorSetObjects(VulkanObjects&                          objects,
-                                 opt<const DescriptorSetObjectsCfg>::ref cfg,
-                                 opt<const DescriptorPool>::ref          descriptorPool,
-                                 const VkDevice                          device) noexcept(ND_VK_ASSERT_NOTHROW)
-    {
-        ND_SET_SCOPE();
-
-        auto descriptorSet = DescriptorSetObjects {.mesh = allocateDescriptorSets(cfg.mesh, descriptorPool, device)};
-
-        using std::begin;
-        using std::end;
-
-        objects.descriptorSet.mesh.insert(end(objects.descriptorSet.mesh), begin(descriptorSet.mesh), end(descriptorSet.mesh));
-
-        return descriptorSet;
-    }
 } // namespace nd::src::graphics::vulkan

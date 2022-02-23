@@ -135,11 +135,6 @@ namespace nd::src::graphics::vulkan
         DescriptorSetLayout mesh;
     };
 
-    struct DescriptorSetObjects final
-    {
-        vec<DescriptorSet> mesh;
-    };
-
     // ----------------- E -----------------
     // -------------------------------------
     // ------------ DESCRIPTORS ------------
@@ -192,13 +187,6 @@ namespace nd::src::graphics::vulkan
         vec<CommandPool> compute;
     };
 
-    struct CommandBufferObjects final
-    {
-        vec<CommandBuffer> graphics;
-        vec<CommandBuffer> transfer;
-        vec<CommandBuffer> compute;
-    };
-
     // --------------- EE ---------------
     // ----------------------------------
     // ------------ COMMANDS ------------
@@ -209,8 +197,7 @@ namespace nd::src::graphics::vulkan
     {
         Device device;
 
-        CommandPoolObjects   commandPool;
-        CommandBufferObjects commandBuffer;
+        CommandPoolObjects commandPool;
 
         BufferObjects buffer;
 
@@ -222,7 +209,6 @@ namespace nd::src::graphics::vulkan
         vec<Semaphore> semaphores;
         vec<Fence>     fences;
 
-        DescriptorSetObjects       descriptorSet;
         DescriptorSetLayoutObjects descriptorSetLayout;
         PipelineLayoutObjects      pipelineLayout;
         PipelineObjects            pipeline;

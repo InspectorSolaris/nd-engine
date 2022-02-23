@@ -282,11 +282,6 @@ namespace nd::src::graphics::vulkan
         void* next = {};
     };
 
-    struct DescriptorSetObjectsCfg final
-    {
-        DescriptorSetCfg mesh;
-    };
-
     // ----------------- E -----------------
     // -------------------------------------
     // ------------ DESCRIPTORS ------------
@@ -456,13 +451,6 @@ namespace nd::src::graphics::vulkan
         u16                  count;
 
         void* next = {};
-    };
-
-    struct CommandBufferObjectsCfg final
-    {
-        CommandBufferCfg graphics;
-        CommandBufferCfg transfer;
-        CommandBufferCfg compute;
     };
 
     // --------------- EE ---------------
