@@ -5,7 +5,7 @@ namespace nd::src::graphics::vulkan
 {
     using namespace nd::src::tools;
 
-    VkQueue
+    Queue
     getQueue(const VkDevice device, const u32 queueFamilyIndex, const u32 queueIndex) noexcept
     {
         ND_SET_SCOPE();
@@ -15,6 +15,18 @@ namespace nd::src::graphics::vulkan
         vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, &queue);
 
         return queue;
+    }
+
+    vec<Queue>
+    getQueues(const VkDevice device, const u32 queueFamilyIndex, const u32 queueCount) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return getMapped<Queue>(queueCount,
+                                [device, queueFamilyIndex](const auto queueIndex)
+                                {
+                                    return getQueue(device, queueFamilyIndex, queueIndex);
+                                });
     }
 
     QueueFamily

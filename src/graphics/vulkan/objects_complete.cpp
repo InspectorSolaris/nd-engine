@@ -56,7 +56,7 @@ namespace nd::src::graphics::vulkan
         const auto pipelineCfg = cfg.pipeline(swapchainCfg, renderPass, pipelineLayout, shaderModules);
         const auto pipeline    = init.pipeline(pipelineCfg, device.handle, pipelineCache);
 
-        const auto commandPoolCfg = cfg.commandPool(device, swapchainImages.size());
+        const auto commandPoolCfg = cfg.commandPool(device, swapchainImages.size(), 1);
         const auto commandPool    = init.commandPool(commandPoolCfg, device.handle);
 
         return {.device                = device,

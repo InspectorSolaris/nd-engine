@@ -22,6 +22,7 @@ namespace nd::src::graphics::vulkan
     using CommandBuffer       = VkCommandBuffer;
     using Semaphore           = VkSemaphore;
     using Fence               = VkFence;
+    using Queue               = VkQueue;
 
     // -------------- SS --------------
     // --------------------------------

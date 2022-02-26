@@ -173,11 +173,11 @@ namespace nd::src::graphics::vulkan
     }
 
     DescriptorPoolCfg
-    getDescriptorPoolCfg(const u16 imageCount) noexcept(ND_ASSERT_NOTHROW)
+    getDescriptorPoolCfg(const u16 frameCount) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
-        return {.sizes = {{.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = imageCount}}, .maxSets = imageCount};
+        return {.sizes = {{.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = frameCount}}, .maxSets = frameCount};
     }
 
     DescriptorSetLayoutObjectsCfg
@@ -298,23 +298,21 @@ namespace nd::src::graphics::vulkan
 
 
     CommandPoolObjectsCfg
-    getCommandPoolObjectsCfg(opt<const Device>::ref device, const u16 imageCount) noexcept(ND_ASSERT_NOTHROW)
+    getCommandPoolObjectsCfg(opt<const Device>::ref device, const u16 frameCount, const u16 threadCount) noexcept(ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
-        const auto size = imageCount;
-
-        return {.graphics = getMapped<CommandPoolCfg>(size,
+        return {.graphics = getMapped<CommandPoolCfg>(frameCount * threadCount,
                                                       [&device](const auto index)
                                                       {
                                                           return CommandPoolCfg {.queueFamily = device.queueFamily.graphics};
                                                       }),
-                .transfer = getMapped<CommandPoolCfg>(size,
+                .transfer = getMapped<CommandPoolCfg>(frameCount * threadCount,
                                                       [&device](const auto index)
                                                       {
                                                           return CommandPoolCfg {.queueFamily = device.queueFamily.transfer};
                                                       }),
-                .compute  = getMapped<CommandPoolCfg>(size,
+                .compute  = getMapped<CommandPoolCfg>(frameCount * threadCount,
                                                      [&device](const auto index)
                                                      {
                                                          return CommandPoolCfg {.queueFamily = device.queueFamily.compute};

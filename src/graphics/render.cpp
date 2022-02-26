@@ -34,12 +34,12 @@ namespace nd::src::graphics
         glm::mat4 transform;
     };
 
-    void
-    setScene(Objects& objects, const f64 dt) noexcept
+    Scene
+    getScene(const Objects& objects, const f64 dt) noexcept
     {
         ND_SET_SCOPE();
 
-        const auto scene = Scene {
+        return Scene {
             .camera    = {.location = {2.0f * std::cos(dt / 4), 2.0f * std::sin(dt / 4), 1.0f},
                           .center   = {0.0f, 0.0f, 0.0f},
                           .up       = {0.0f, 0.0f, 1.0f},
@@ -61,12 +61,42 @@ namespace nd::src::graphics
     }
 
     void
+    setTransfer(const Objects&              objects,
+                const Scene&                scene,
+                const RenderContext&        renderContext,
+                const RenderContext::Frame& renderContextFrame,
+                const f64                   dt) noexcept(ND_VK_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+    }
+
+    void
+    setCompute(const Objects&              objects,
+               const Scene&                scene,
+               const RenderContext&        renderContext,
+               const RenderContext::Frame& renderContextFrame,
+               const f64                   dt) noexcept(ND_VK_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+    }
+
+    void
+    setGraphics(const Objects&              objects,
+                const Scene&                scene,
+                const RenderContext&        renderContext,
+                const RenderContext::Frame& renderContextFrame,
+                const f64                   dt) noexcept(ND_VK_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+    }
+
+    void
     draw(Objects& objects, const f64 dt) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
 
         const auto threadCount = 1;
-        const auto imageCount  = objects.swapchainImages.size();
+        const auto frameCount  = objects.swapchainImages.size();
 
         const auto memoryLayout = MemoryLayout {.vertex  = {.offset = 0 * 1024, .size = 5 * 1024},
                                                 .index   = {.offset = 5 * 1024, .size = 1 * 1024},
@@ -76,52 +106,31 @@ namespace nd::src::graphics
         static auto index  = 0U;
         static auto loaded = false;
 
-        static const auto queueGraphics  = getQueue(objects.device.handle, objects.device.queueFamily.graphics.index, 0);
-        static const auto queueTransfer  = getQueue(objects.device.handle, objects.device.queueFamily.transfer.index, 0);
-        static const auto queueCompute   = getQueue(objects.device.handle, objects.device.queueFamily.compute.index, 0);
-        static const auto queueSwapchain = getQueue(objects.device.handle, objects.swapchain.queueFamily.index, 0);
+        static const auto renderContext = getRenderContext(objects,
+                                                           {.graphicsCount = 1, .transferCount = 1, .computeCount = 1},
+                                                           threadCount,
+                                                           frameCount);
 
-        static const auto descriptorSetsMesh = allocateDescriptorSets(
-            {.layouts = vec<VkDescriptorSetLayout>(imageCount, objects.descriptorSetLayout.mesh)},
-            objects.descriptorPool,
-            objects.device.handle);
+        const auto frameIndex = getNextImageIndex(objects.device.handle, objects.swapchain.handle, renderContext.semaphore.acquired[index]);
 
-        static const auto commandBuffersGraphics = allocateCommandBuffers({.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1},
-                                                                          objects.commandPool.graphics,
-                                                                          objects.device.handle);
+        const auto renderContextFrame = getRenderContextFrame(renderContext,
+                                                              {.graphicsCount = 1, .transferCount = 1, .computeCount = 1},
+                                                              threadCount,
+                                                              frameCount,
+                                                              frameIndex);
 
-        static const auto commandBuffersTransfer = allocateCommandBuffers({.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1},
-                                                                          objects.commandPool.transfer,
-                                                                          objects.device.handle);
+        vkWaitForFences(objects.device.handle, 1, &renderContextFrame.fence.rendered, VK_TRUE, std::numeric_limits<u64>::max());
+        vkResetFences(objects.device.handle, 1, &renderContextFrame.fence.rendered);
 
-        static const auto commandBuffersCompute = allocateCommandBuffers({.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .count = 1},
-                                                                         objects.commandPool.compute,
-                                                                         objects.device.handle);
+        resetCommandPools(span {objects.commandPool.graphics}.subspan(frameIndex * threadCount, threadCount), objects.device.handle);
+        resetCommandPools(span {objects.commandPool.transfer}.subspan(frameIndex * threadCount, threadCount), objects.device.handle);
+        resetCommandPools(span {objects.commandPool.compute}.subspan(frameIndex * threadCount, threadCount), objects.device.handle);
 
-        static const auto semaphoresAcquired = createSemaphores(objects, {}, imageCount);
-        static const auto semaphoresGraphics = createSemaphores(objects, {}, imageCount);
-        static const auto semaphoresTransfer = createSemaphores(objects, {}, imageCount);
-        static const auto semaphoresCompute  = createSemaphores(objects, {}, imageCount);
-        static const auto fencesRendered     = createFences(objects, {.flags = VK_FENCE_CREATE_SIGNALED_BIT}, imageCount);
+        const auto scene = getScene(objects, dt);
 
-        const auto imageIndex = getNextImageIndex(objects.device.handle, objects.swapchain.handle, semaphoresAcquired[index]);
-
-        const auto fences = array {fencesRendered[imageIndex]};
-
-        vkWaitForFences(objects.device.handle, fences.size(), fences.data(), VK_TRUE, std::numeric_limits<u64>::max());
-        vkResetFences(objects.device.handle, fences.size(), fences.data());
-
-        const auto commandPoolGraphics = span {objects.commandPool.graphics}.subspan(imageIndex * threadCount, threadCount);
-        const auto commandPoolTransfer = span {objects.commandPool.transfer}.subspan(imageIndex * threadCount, threadCount);
-        const auto commandPoolCompute  = span {objects.commandPool.compute}.subspan(imageIndex * threadCount, threadCount);
-
-        resetCommandPools(commandPoolGraphics, objects.device.handle);
-        resetCommandPools(commandPoolTransfer, objects.device.handle);
-        resetCommandPools(commandPoolCompute, objects.device.handle);
-
-        const auto commandBufferGraphics = commandBuffersGraphics[imageIndex * threadCount];
-        const auto commandBufferTransfer = commandBuffersTransfer[imageIndex * threadCount];
-        const auto commandBufferCompute  = commandBuffersCompute[imageIndex * threadCount];
+        setTransfer(objects, scene, renderContext, renderContextFrame, dt);
+        setCompute(objects, scene, renderContext, renderContextFrame, dt);
+        setGraphics(objects, scene, renderContext, renderContextFrame, dt);
 
         const auto width  = static_cast<u32>(objects.swapchain.width);
         const auto height = static_cast<u32>(objects.swapchain.height);
@@ -139,7 +148,11 @@ namespace nd::src::graphics
                                                   {.position = {+0.5, +0.5, 0.0}, .color = {0.0, 1.0, 0.0}},
                                                   {.position = {-0.5, +0.5, 0.0}, .color = {0.0, 0.0, 1.0}}};
 
-        static const auto uniforms = vec<Uniform>(imageCount, uniform);
+        static const auto uniforms = vec<Uniform>(frameCount, uniform);
+
+        const auto commandBufferTransferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+
+        ND_VK_ASSERT(vkBeginCommandBuffer(renderContextFrame.commandBuffer.transfer[0], &commandBufferTransferBeginInfo));
 
         if(!loaded)
         {
@@ -170,24 +183,13 @@ namespace nd::src::graphics
                                         VkBufferCopy {.srcOffset = indicesOffset, .dstOffset = memoryLayout.index.offset, .size = indicesSize},
                                         VkBufferCopy {.srcOffset = uniformsOffset, .dstOffset = memoryLayout.uniform.offset, .size = uniformsSize}};
 
-            const auto transferCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+            vkCmdCopyBuffer(renderContextFrame.commandBuffer.transfer[0],
+                            objects.buffer.stage.handle,
+                            objects.buffer.mesh.handle,
+                            regions.size(),
+                            regions.data());
 
-            ND_VK_ASSERT(vkBeginCommandBuffer(commandBufferTransfer, &transferCommandBufferBeginInfo));
-
-            vkCmdCopyBuffer(commandBufferTransfer, objects.buffer.stage.handle, objects.buffer.mesh.handle, regions.size(), regions.data());
-
-            ND_VK_ASSERT(vkEndCommandBuffer(commandBufferTransfer));
-
-            const auto submitInfoCfg = SubmitInfoCfg {.stages           = {},
-                                                      .semaphoresWait   = {},
-                                                      .semaphoresSignal = {},
-                                                      .commandBuffers   = array {commandBufferTransfer}};
-
-            const auto submitInfos = array {getSubmitInfo(submitInfoCfg)};
-
-            vkQueueSubmit(queueTransfer, submitInfos.size(), submitInfos.data(), VK_NULL_HANDLE);
-
-            for(auto index = 0; index < descriptorSetsMesh.size(); ++index)
+            for(auto index = 0; index < renderContext.descriptorSet.mesh.size(); ++index)
             {
                 const auto bufferInfo = VkDescriptorBufferInfo {.buffer = objects.buffer.mesh.handle,
                                                                 .offset = sizeof(Uniform) * index + memoryLayout.uniform.offset,
@@ -195,7 +197,7 @@ namespace nd::src::graphics
 
                 const auto write = VkWriteDescriptorSet {.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
                                                          .pNext            = {},
-                                                         .dstSet           = descriptorSetsMesh[index],
+                                                         .dstSet           = renderContext.descriptorSet.mesh[index],
                                                          .dstBinding       = 0,
                                                          .dstArrayElement  = 0,
                                                          .descriptorCount  = 1,
@@ -212,14 +214,25 @@ namespace nd::src::graphics
             loaded = true;
         }
 
+        ND_VK_ASSERT(vkEndCommandBuffer(renderContextFrame.commandBuffer.transfer[0]));
+
+        const auto submitInfoTransferCfg = SubmitInfoCfg {.stages           = {},
+                                                          .semaphoresWait   = {},
+                                                          .semaphoresSignal = array {renderContextFrame.semaphore.transfer},
+                                                          .commandBuffers   = array {renderContextFrame.commandBuffer.transfer[0]}};
+
+        const auto submitInfoTransfers = array {getSubmitInfo(submitInfoTransferCfg)};
+
+        vkQueueSubmit(renderContext.queue.transfer[0], submitInfoTransfers.size(), submitInfoTransfers.data(), VK_NULL_HANDLE);
+
         const auto clearValues = array {VkClearValue {0.0f, 0.0f, 0.0f, 0.0f}};
 
-        const auto graphicsCommandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+        const auto commandBufferGraphicsBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
         const auto renderPassBeginInfo = VkRenderPassBeginInfo {
             .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
             .renderPass      = objects.renderPass,
-            .framebuffer     = objects.swapchainFramebuffers[imageIndex],
+            .framebuffer     = objects.swapchainFramebuffers[frameIndex],
             .renderArea      = {.offset = {.x = 0, .y = 0}, .extent = {.width = width, .height = height}},
             .clearValueCount = static_cast<u32>(clearValues.size()),
             .pClearValues    = clearValues.data()};
@@ -229,14 +242,14 @@ namespace nd::src::graphics
         const auto indexBuffer         = objects.buffer.mesh.handle;
         const auto indexOffset         = memoryLayout.index.offset;
 
-        const auto descriptorSets = array {descriptorSetsMesh[imageIndex]};
+        const auto descriptorSets = array {renderContextFrame.descriptorSet.mesh};
 
-        ND_VK_ASSERT(vkBeginCommandBuffer(commandBufferGraphics, &graphicsCommandBufferBeginInfo));
+        ND_VK_ASSERT(vkBeginCommandBuffer(renderContextFrame.commandBuffer.graphics[0], &commandBufferGraphicsBeginInfo));
 
-        vkCmdBeginRenderPass(commandBufferGraphics, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBeginRenderPass(renderContextFrame.commandBuffer.graphics[0], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-        vkCmdBindPipeline(commandBufferGraphics, VK_PIPELINE_BIND_POINT_GRAPHICS, objects.pipeline.mesh);
-        vkCmdBindDescriptorSets(commandBufferGraphics,
+        vkCmdBindPipeline(renderContextFrame.commandBuffer.graphics[0], VK_PIPELINE_BIND_POINT_GRAPHICS, objects.pipeline.mesh);
+        vkCmdBindDescriptorSets(renderContextFrame.commandBuffer.graphics[0],
                                 VK_PIPELINE_BIND_POINT_GRAPHICS,
                                 objects.pipelineLayout.mesh,
                                 0,
@@ -245,30 +258,35 @@ namespace nd::src::graphics
                                 0,
                                 nullptr);
 
-        vkCmdBindVertexBuffers(commandBufferGraphics, 0, vertexBuffers.size(), vertexBuffers.data(), vertexBufferOffsets.data());
-        vkCmdBindIndexBuffer(commandBufferGraphics, indexBuffer, indexOffset, VK_INDEX_TYPE_UINT16);
+        vkCmdBindVertexBuffers(renderContextFrame.commandBuffer.graphics[0],
+                               0,
+                               vertexBuffers.size(),
+                               vertexBuffers.data(),
+                               vertexBufferOffsets.data());
+        vkCmdBindIndexBuffer(renderContextFrame.commandBuffer.graphics[0], indexBuffer, indexOffset, VK_INDEX_TYPE_UINT16);
 
-        vkCmdDrawIndexed(commandBufferGraphics, indices.size(), 1, 0, 0, 0);
+        vkCmdDrawIndexed(renderContextFrame.commandBuffer.graphics[0], indices.size(), 1, 0, 0, 0);
 
-        vkCmdEndRenderPass(commandBufferGraphics);
+        vkCmdEndRenderPass(renderContextFrame.commandBuffer.graphics[0]);
 
-        ND_VK_ASSERT(vkEndCommandBuffer(commandBufferGraphics));
+        ND_VK_ASSERT(vkEndCommandBuffer(renderContextFrame.commandBuffer.graphics[0]));
 
-        const auto submitInfoCfg = SubmitInfoCfg {.stages           = array {0U | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
-                                                  .semaphoresWait   = array {semaphoresAcquired[index]},
-                                                  .semaphoresSignal = array {semaphoresGraphics[imageIndex]},
-                                                  .commandBuffers   = array {commandBufferGraphics}};
+        const auto submitInfoCfg = SubmitInfoCfg {
+            .stages           = array {0U | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0U | VK_PIPELINE_STAGE_VERTEX_INPUT_BIT},
+            .semaphoresWait   = array {renderContext.semaphore.acquired[index], renderContextFrame.semaphore.transfer},
+            .semaphoresSignal = array {renderContextFrame.semaphore.graphics},
+            .commandBuffers   = array {renderContextFrame.commandBuffer.graphics[0]}};
 
-        const auto presentInfoCfg = PresentInfoCfg {.semaphoresWait = array {semaphoresGraphics[imageIndex]},
+        const auto presentInfoCfg = PresentInfoCfg {.semaphoresWait = array {renderContextFrame.semaphore.graphics},
                                                     .swapchains     = array {objects.swapchain.handle},
-                                                    .images         = array {imageIndex}};
+                                                    .images         = array {frameIndex}};
 
         const auto submitInfos = array {getSubmitInfo(submitInfoCfg)};
         const auto presentInfo = getPresentInfo(presentInfoCfg);
 
-        vkQueueSubmit(queueGraphics, submitInfos.size(), submitInfos.data(), fencesRendered[imageIndex]);
-        vkQueuePresentKHR(queueSwapchain, &presentInfo);
+        vkQueueSubmit(renderContext.queue.graphics[0], submitInfos.size(), submitInfos.data(), renderContextFrame.fence.rendered);
+        vkQueuePresentKHR(renderContext.queue.swapchain[0], &presentInfo);
 
-        index = (index + 1) % imageCount;
+        index = (index + 1) % frameCount;
     }
 } // namespace nd::src::graphics

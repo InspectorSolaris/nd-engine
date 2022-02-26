@@ -1,6 +1,8 @@
 set(TARGET_NAME nd-src-graphics)
 set(TARGET_SRC
-    render.cpp)
+    render_context.cpp
+    render.cpp
+    scene.cpp)
 
 add_subdirectory(vulkan)
 add_subdirectory(glfw)

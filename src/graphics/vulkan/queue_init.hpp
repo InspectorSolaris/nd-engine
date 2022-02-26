@@ -26,8 +26,11 @@ namespace nd::src::graphics::vulkan
         void* next = {};
     };
 
-    VkQueue
+    Queue
     getQueue(const VkDevice, const u32, const u32) noexcept;
+
+    vec<Queue>
+    getQueues(const VkDevice, const u32, const u32) noexcept;
 
     QueueFamily
     getQueueFamily(opt<const QueueFamilyCfg>::ref, const vec<QueueFamily>&) noexcept(ND_ASSERT_NOTHROW);

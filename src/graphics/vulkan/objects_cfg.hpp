@@ -500,7 +500,7 @@ namespace nd::src::graphics::vulkan
                           const vec<ShaderModule>&) noexcept(ND_ASSERT_NOTHROW);
 
     CommandPoolObjectsCfg
-    getCommandPoolObjectsCfg(opt<const Device>::ref, const u16) noexcept(ND_ASSERT_NOTHROW);
+    getCommandPoolObjectsCfg(opt<const Device>::ref, const u16, const u16) noexcept(ND_ASSERT_NOTHROW);
 
     struct ObjectsCfg final
     {
