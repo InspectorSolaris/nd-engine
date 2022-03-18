@@ -60,77 +60,31 @@ namespace nd::src::graphics
                 {.transform = {.rotation = {0.0f, 0.0f, 0.0f}, .scalation = {1.0f, 1.0f, 1.0f}, .translation = {0.0f, 0.0f, 0.0f}}, .meshIndex = 0}}};
     }
 
+    MemoryLayout
+    getMemoryLayout(const Objects& objects, const f64 dt) noexcept
+    {
+        ND_SET_SCOPE();
+
+        return MemoryLayout {.vertex  = {.offset = 0 * 1024, .size = 5 * 1024},
+                             .index   = {.offset = 5 * 1024, .size = 1 * 1024},
+                             .uniform = {.offset = 6 * 1024, .size = 2 * 1024},
+                             .stage   = {.offset = 0 * 1024, .size = 8 * 1024}};
+    }
+
     void
     setTransfer(const Objects&              objects,
                 const Scene&                scene,
+                const MemoryLayout&         memoryLayout,
                 const RenderContext&        renderContext,
                 const RenderContext::Frame& renderContextFrame,
+                const u16                   frameCount,
+                const u16                   frameIndex,
+                const u16                   index,
                 const f64                   dt) noexcept(ND_VK_ASSERT_NOTHROW)
     {
         ND_SET_SCOPE();
-    }
 
-    void
-    setCompute(const Objects&              objects,
-               const Scene&                scene,
-               const RenderContext&        renderContext,
-               const RenderContext::Frame& renderContextFrame,
-               const f64                   dt) noexcept(ND_VK_ASSERT_NOTHROW)
-    {
-        ND_SET_SCOPE();
-    }
-
-    void
-    setGraphics(const Objects&              objects,
-                const Scene&                scene,
-                const RenderContext&        renderContext,
-                const RenderContext::Frame& renderContextFrame,
-                const f64                   dt) noexcept(ND_VK_ASSERT_NOTHROW)
-    {
-        ND_SET_SCOPE();
-    }
-
-    void
-    draw(Objects& objects, const f64 dt) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW)
-    {
-        ND_SET_SCOPE();
-
-        const auto threadCount = 1;
-        const auto frameCount  = objects.swapchainImages.size();
-
-        const auto memoryLayout = MemoryLayout {.vertex  = {.offset = 0 * 1024, .size = 5 * 1024},
-                                                .index   = {.offset = 5 * 1024, .size = 1 * 1024},
-                                                .uniform = {.offset = 6 * 1024, .size = 2 * 1024},
-                                                .stage   = {.offset = 0 * 1024, .size = 8 * 1024}};
-
-        static auto index  = 0U;
         static auto loaded = false;
-
-        static const auto renderContext = getRenderContext(objects,
-                                                           {.graphicsCount = 1, .transferCount = 1, .computeCount = 1},
-                                                           threadCount,
-                                                           frameCount);
-
-        const auto frameIndex = getNextImageIndex(objects.device.handle, objects.swapchain.handle, renderContext.semaphore.acquired[index]);
-
-        const auto renderContextFrame = getRenderContextFrame(renderContext,
-                                                              {.graphicsCount = 1, .transferCount = 1, .computeCount = 1},
-                                                              threadCount,
-                                                              frameCount,
-                                                              frameIndex);
-
-        vkWaitForFences(objects.device.handle, 1, &renderContextFrame.fence.rendered, VK_TRUE, std::numeric_limits<u64>::max());
-        vkResetFences(objects.device.handle, 1, &renderContextFrame.fence.rendered);
-
-        resetCommandPools(span {objects.commandPool.graphics}.subspan(frameIndex * threadCount, threadCount), objects.device.handle);
-        resetCommandPools(span {objects.commandPool.transfer}.subspan(frameIndex * threadCount, threadCount), objects.device.handle);
-        resetCommandPools(span {objects.commandPool.compute}.subspan(frameIndex * threadCount, threadCount), objects.device.handle);
-
-        const auto scene = getScene(objects, dt);
-
-        setTransfer(objects, scene, renderContext, renderContextFrame, dt);
-        setCompute(objects, scene, renderContext, renderContextFrame, dt);
-        setGraphics(objects, scene, renderContext, renderContextFrame, dt);
 
         const auto width  = static_cast<u32>(objects.swapchain.width);
         const auto height = static_cast<u32>(objects.swapchain.height);
@@ -150,9 +104,9 @@ namespace nd::src::graphics
 
         static const auto uniforms = vec<Uniform>(frameCount, uniform);
 
-        const auto commandBufferTransferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+        const auto commandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
-        ND_VK_ASSERT(vkBeginCommandBuffer(renderContextFrame.commandBuffer.transfer[0], &commandBufferTransferBeginInfo));
+        ND_VK_ASSERT(vkBeginCommandBuffer(renderContextFrame.commandBuffer.transfer[0], &commandBufferBeginInfo));
 
         if(!loaded)
         {
@@ -224,10 +178,41 @@ namespace nd::src::graphics
         const auto submitInfoTransfers = array {getSubmitInfo(submitInfoTransferCfg)};
 
         vkQueueSubmit(renderContext.queue.transfer[0], submitInfoTransfers.size(), submitInfoTransfers.data(), VK_NULL_HANDLE);
+    }
+
+    void
+    setCompute(const Objects&              objects,
+               const Scene&                scene,
+               const MemoryLayout&         memoryLayout,
+               const RenderContext&        renderContext,
+               const RenderContext::Frame& renderContextFrame,
+               const u16                   frameCount,
+               const u16                   frameIndex,
+               const u16                   index,
+               const f64                   dt) noexcept(ND_VK_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+    }
+
+    void
+    setGraphics(const Objects&              objects,
+                const Scene&                scene,
+                const MemoryLayout&         memoryLayout,
+                const RenderContext&        renderContext,
+                const RenderContext::Frame& renderContextFrame,
+                const u16                   frameCount,
+                const u16                   frameIndex,
+                const u16                   index,
+                const f64                   dt) noexcept(ND_VK_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        const auto width  = static_cast<u32>(objects.swapchain.width);
+        const auto height = static_cast<u32>(objects.swapchain.height);
 
         const auto clearValues = array {VkClearValue {0.0f, 0.0f, 0.0f, 0.0f}};
 
-        const auto commandBufferGraphicsBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+        const auto commandBufferBeginInfo = VkCommandBufferBeginInfo {.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
 
         const auto renderPassBeginInfo = VkRenderPassBeginInfo {
             .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
@@ -244,7 +229,7 @@ namespace nd::src::graphics
 
         const auto descriptorSets = array {renderContextFrame.descriptorSet.mesh};
 
-        ND_VK_ASSERT(vkBeginCommandBuffer(renderContextFrame.commandBuffer.graphics[0], &commandBufferGraphicsBeginInfo));
+        ND_VK_ASSERT(vkBeginCommandBuffer(renderContextFrame.commandBuffer.graphics[0], &commandBufferBeginInfo));
 
         vkCmdBeginRenderPass(renderContextFrame.commandBuffer.graphics[0], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -263,9 +248,10 @@ namespace nd::src::graphics
                                vertexBuffers.size(),
                                vertexBuffers.data(),
                                vertexBufferOffsets.data());
+
         vkCmdBindIndexBuffer(renderContextFrame.commandBuffer.graphics[0], indexBuffer, indexOffset, VK_INDEX_TYPE_UINT16);
 
-        vkCmdDrawIndexed(renderContextFrame.commandBuffer.graphics[0], indices.size(), 1, 0, 0, 0);
+        vkCmdDrawIndexed(renderContextFrame.commandBuffer.graphics[0], 6, 1, 0, 0, 0);
 
         vkCmdEndRenderPass(renderContextFrame.commandBuffer.graphics[0]);
 
@@ -279,13 +265,52 @@ namespace nd::src::graphics
 
         const auto presentInfoCfg = PresentInfoCfg {.semaphoresWait = array {renderContextFrame.semaphore.graphics},
                                                     .swapchains     = array {objects.swapchain.handle},
-                                                    .images         = array {frameIndex}};
+                                                    .images         = array {static_cast<u32>(frameIndex)}};
 
         const auto submitInfos = array {getSubmitInfo(submitInfoCfg)};
         const auto presentInfo = getPresentInfo(presentInfoCfg);
 
         vkQueueSubmit(renderContext.queue.graphics[0], submitInfos.size(), submitInfos.data(), renderContextFrame.fence.rendered);
         vkQueuePresentKHR(renderContext.queue.swapchain[0], &presentInfo);
+    }
+
+    void
+    draw(Objects& objects, const f64 dt) noexcept(ND_VK_ASSERT_NOTHROW&& ND_ASSERT_NOTHROW)
+    {
+        ND_SET_SCOPE();
+
+        const auto threadCount = 1;
+        const auto frameCount  = objects.swapchainImages.size();
+
+        static auto index  = 0U;
+        static auto loaded = false;
+
+        static const auto renderContext = getRenderContext(objects,
+                                                           {.graphicsCount = 1, .transferCount = 1, .computeCount = 1},
+                                                           threadCount,
+                                                           frameCount);
+
+        const auto frameIndex = getNextImageIndex(objects.device.handle, objects.swapchain.handle, renderContext.semaphore.acquired[index]);
+
+        const auto renderContextFrame = getRenderContextFrame(renderContext,
+                                                              {.graphicsCount = 1, .transferCount = 1, .computeCount = 1},
+                                                              threadCount,
+                                                              frameCount,
+                                                              frameIndex);
+
+        vkWaitForFences(objects.device.handle, 1, &renderContextFrame.fence.rendered, VK_TRUE, std::numeric_limits<u64>::max());
+        vkResetFences(objects.device.handle, 1, &renderContextFrame.fence.rendered);
+
+        resetCommandPools(span {objects.commandPool.graphics}.subspan(frameIndex * threadCount, threadCount), objects.device.handle);
+        resetCommandPools(span {objects.commandPool.transfer}.subspan(frameIndex * threadCount, threadCount), objects.device.handle);
+        resetCommandPools(span {objects.commandPool.compute}.subspan(frameIndex * threadCount, threadCount), objects.device.handle);
+
+        const auto scene        = getScene(objects, dt);
+        const auto memoryLayout = getMemoryLayout(objects, dt);
+
+        setTransfer(objects, scene, memoryLayout, renderContext, renderContextFrame, frameCount, frameIndex, index, dt);
+        setCompute(objects, scene, memoryLayout, renderContext, renderContextFrame, frameCount, frameIndex, index, dt);
+        setGraphics(objects, scene, memoryLayout, renderContext, renderContextFrame, frameCount, frameIndex, index, dt);
 
         index = (index + 1) % frameCount;
     }
